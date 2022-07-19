@@ -1,0 +1,27 @@
+Package: inputs
+Title: NHP Model Inputs
+Version: 0.0.0.9000
+Authors@R: person('Tom', 'Jemmett', email = 'thomas.jemmett@nhs.net', role = c('cre', 'aut'))
+Description: A shiny app for getting model input parameters.
+License: MIT + file LICENSE
+Imports: 
+    bs4Dash,
+    config (>= 0.3.1),
+    dplyr,
+    golem (>= 0.3.3),
+    pkgload,
+    shiny (>= 1.7.1),
+    shinycssloaders,
+    shinyjs
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.1
+Suggests: 
+    covr,
+    devtools,
+    mockery,
+    spelling,
+    testthat (>= 3.0.0),
+    usethis
+Config/testthat/edition: 3
+Language: en-US
