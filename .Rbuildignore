@@ -10,3 +10,7 @@ $run_dev.*
 ^README\.Rmd$
 ^app\.R$
 ^rsconnect$
+
+^_targets$
+^targets$
+^_targets.R$

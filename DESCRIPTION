@@ -21,6 +21,7 @@ Suggests:
     devtools,
     mockery,
     spelling,
+    targets,
     testthat (>= 3.0.0),
     usethis
 Config/testthat/edition: 3
