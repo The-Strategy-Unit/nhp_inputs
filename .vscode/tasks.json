@@ -1,0 +1,14 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "R",
+			"code": [
+				"golem::run_dev()"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"label": "R: Run App"
+		}
+	]
+}
