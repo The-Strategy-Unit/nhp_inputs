@@ -29,10 +29,12 @@ list(
   tar_target(ods_succ_update_date, get_ods_succ_update_date(), cue = targets::tar_cue("always")),
   tar_target(ods_successors, get_ods_successors(ods_succ_update_date)),
   tar_target(provider_successors, get_provider_successors(ods_successors, list_providers)),
+  tar_target(provider_successors_last_updated, upload_provider_successors(provider_successors)),
   tar_target(lkp_peers_file, "targets/data/Peer+finder+Appendix+A.xlsx", format = "file"),
   tar_target(lkp_peers, get_lkp_peers(lkp_peers_file, provider_successors)),
   tar_target(providers, get_providers(lkp_peers, lkp_provider_names2, lkp_provider_names)),
-  tar_target(catchment_activity, get_catchment_activity(provider_successors, providers)),
   tar_target(pop_year_long, get_pop_year_long(age_table)),
-  tar_target(catchments, get_catchments(catchment_activity, pop_year_long))
+  tar_target(catchments, get_catchments(provider_successors_last_updated, pop_year_long)),
+  tar_target(ip_dsr_data, get_ip_dsr_data(provider_successors_last_updated, catchments, lkp_euro_2013)),
+  tar_target(ip_diag_data, get_ip_diag_data(provider_successors_last_updated))
 )

@@ -6,12 +6,12 @@ get_lkp_euro_2013 <- function() {
   ) |>
     dplyr::rename(
       pop_euro = .data$EuropeanStandardPopulation,
-      age_grp = .data$AgeGroup,
+      age_group = .data$AgeGroup,
       sex = .data$Sex
     ) |>
     dplyr::mutate(
       dplyr::across(
-        .data$age_grp,
+        .data$age_group,
         purrr::compose(
           .dir = "forward",
           purrr::partial(stringr::str_remove, pattern = " years"),

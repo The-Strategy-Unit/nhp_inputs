@@ -48,7 +48,7 @@ get_pop_year_long <- function(age_table) {
       dplyr::filter(stringr::str_starts(.data$lsoa11, "E")) |>
       tidyr::pivot_longer(tidyselect::matches("^\\d"), names_to = "age", values_to = "pop") |>
       dplyr::inner_join(age_table, by = "age") |>
-      dplyr::count(.data$sex, .data$age_grp, .data$lsoa11, wt = .data$pop, name = "pop")
+      dplyr::count(.data$sex, .data$age_group, .data$lsoa11, wt = .data$pop, name = "pop")
   }
 
   urls |>
