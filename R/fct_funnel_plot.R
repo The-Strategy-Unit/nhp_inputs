@@ -35,24 +35,24 @@ calculate_funnel_plot_data <- function(data, peers, provider, fyear, strategy) {
       std_rate = sum(.data$std_number) / sum(.data$pop_euro),
       .groups = "drop"
     ) |>
-    dplyr::arrange(procode3)
+    dplyr::arrange(.data$procode3)
 
   peer_rate <- dplyr::filter(dsr_rates, is.na(.data$procode3))$std_rate
 
   funnel_data <- dsr_rates |>
     tidyr::drop_na(.data$procode3) |>
     dplyr::mutate(
-      sdev_pop_i = sqrt(abs(peer_rate) / .data$pop_catch),
-      z = (.data$std_rate - peer_rate) / .data$sdev_pop_i,
+      sdev_pop_i = sqrt(abs(.env$peer_rate) / .data$pop_catch),
+      z = (.data$std_rate - .env$peer_rate) / .data$sdev_pop_i,
       sigz = sd(.data$z, na.rm = TRUE),
       cl2 = 2 * .data$sdev_pop_i * .data$sigz,
       cl3 = 3 * .data$sdev_pop_i * .data$sigz,
-      lower2 = peer_rate - cl2,
-      lower3 = peer_rate - cl3,
-      upper2 = peer_rate + cl2,
-      upper3 = peer_rate + cl3,
-      mean = peer_rate,
-      is_peer = procode3 != provider
+      lower2 = peer_rate - .data$cl2,
+      lower3 = peer_rate - .data$cl3,
+      upper2 = peer_rate + .data$cl2,
+      upper3 = peer_rate + .data$cl3,
+      mean = .env$peer_rate,
+      is_peer = .data$procode3 != .env$provider
     )
 
   structure(funnel_data, class = c("nhp_funnel_plot", class(funnel_data)))
