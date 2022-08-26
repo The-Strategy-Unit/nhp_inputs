@@ -4,5 +4,5 @@ get_lkp_peers <- function(lkp_peers_file, provider_successors) {
     janitor::clean_names() |>
     dplyr::inner_join(provider_successors, by = c("procode" = "old_code")) |>
     dplyr::inner_join(provider_successors, by = c("peer" = "old_code")) |>
-    dplyr::select(procode = .data$new_code.x, .data$new_code.y)
+    dplyr::select(procode = .data$new_code.x, peer = .data$new_code.y)
 }
