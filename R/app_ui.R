@@ -16,6 +16,13 @@ app_ui <- function(request) {
         "Home",
         tabName = "tab_home",
         icon = shiny::icon("house")
+      ),
+      bs4Dash::menuItem(
+        "Activity Mitigators",
+        bs4Dash::menuSubItem(
+          "Admission Avoidance",
+          tabName = "am_admission_avoidance"
+        )
       )
     )
   )
@@ -30,6 +37,10 @@ app_ui <- function(request) {
             # "About Text should go here"
           )
         )
+      ),
+      bs4Dash::tabItem(
+        tabName = "am_admission_avoidance",
+        mod_mitigators_admission_avoidance_ui("mitigators_admission_avoidance")
       )
     )
   )
