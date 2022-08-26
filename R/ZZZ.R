@@ -3,5 +3,6 @@
 NULL
 
 utils::globalVariables(c(
-  "where" # source: https://github.com/r-lib/tidyselect/issues/201#issuecomment-650547846
+  "where", # source: https://github.com/r-lib/tidyselect/issues/201#issuecomment-650547846
+  ".data", ".env"
 ))
