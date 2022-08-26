@@ -10,6 +10,7 @@ Imports:
     dplyr,
     golem (>= 0.3.3),
     pkgload,
+    plotly,
     shiny (>= 1.7.1),
     shinycssloaders,
     shinyjs
