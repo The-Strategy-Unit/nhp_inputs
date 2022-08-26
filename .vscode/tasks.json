@@ -9,6 +9,15 @@
 			"group": "build",
 			"problemMatcher": [],
 			"label": "R: Run App"
+		},
+		{
+			"type": "R",
+			"code": [
+				"targets::tar_make()"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"label": "R: Run Targets"
 		}
 	]
 }
