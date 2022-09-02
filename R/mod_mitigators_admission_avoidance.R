@@ -13,6 +13,9 @@ mod_mitigators_admission_avoidance_ui <- function(id) {
     shiny::selectInput(ns("strategy"), "Strategy", choices = NULL),
     shiny::textOutput(ns("strategy_text")),
     shinycssloaders::withSpinner({
+      shiny::plotOutput(ns("trend_plot"))
+    }),
+    shinycssloaders::withSpinner({
       shiny::plotOutput(ns("funnel_plot"))
     })
   )
@@ -39,8 +42,27 @@ mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_yea
       }
     })
 
+    filtered_dsr_data <- shiny::reactive({
+      dsr_data |>
+        dplyr::filter(.data$procode == provider(), .data$strategy == input$strategy)
+    })
+
+    trend_data <- shiny::reactive({
+      filtered_dsr_data() |>
+        dplyr::filter(.data$peer == provider())
+    })
+
+    output$trend_plot <- shiny::renderPlot({
+      ggplot2::ggplot(trend_data(), ggplot2::aes(.data$fyear, .data$std_rate)) +
+        ggplot2::geom_line() +
+        ggplot2::geom_point(ggplot2::aes(colour = .data$fyear == baseline_year())) +
+        ggplot2::theme(legend.position = "none")
+    })
+
     funnel_data <- shiny::reactive({
-      calculate_funnel_plot_data(dsr_data, peers, provider(), baseline_year(), input$strategy)
+      filtered_dsr_data() |>
+        dplyr::filter(.data$fyear == baseline_year()) |>
+        generate_dsr_funnel_data(provider())
     })
 
     output$funnel_plot <- shiny::renderPlot({

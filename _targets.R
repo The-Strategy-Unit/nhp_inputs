@@ -35,11 +35,13 @@ list(
   tar_target(providers, get_providers(lkp_peers, lkp_provider_names2, lkp_provider_names)),
   tar_target(pop_year_long, get_pop_year_long(age_table)),
   tar_target(catchments, get_catchments(provider_successors_last_updated, pop_year_long)),
-  tar_target(ip_dsr_data, get_ip_dsr_data(provider_successors_last_updated, catchments, lkp_euro_2013)),
+  tar_target(ip_age_sex_data, get_ip_age_sex_data(provider_successors_last_updated)),
+  tar_target(ip_dsr_data, get_ip_dsr_data(ip_age_sex_data, lkp_peers, catchments, lkp_euro_2013)),
   tar_target(ip_diag_data, get_ip_diag_data(provider_successors_last_updated)),
   tar_target(strategies, get_strategies()),
   tar_target(data_last_updated, {
     withr::with_dir("inst/app/data", {
+      saveRDS(ip_age_sex_data, "ip_age_sex_data.Rds")
       saveRDS(ip_dsr_data, "ip_dsr_data.Rds")
       saveRDS(ip_diag_data, "ip_diag_data.Rds")
       saveRDS(lkp_peers, "peers.Rds")
