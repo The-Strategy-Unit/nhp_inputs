@@ -21,8 +21,6 @@ get_ip_age_sex_data <- function(provider_successors_last_updated) {
 
 get_ip_dsr_data <- function(ip_age_sex, peers, catchments, lkp_euro_2013) {
   dsr <- peers |>
-    # TODO: peers has duplicates?
-    dplyr::distinct(.data$procode, .data$peer) |>
     dplyr::inner_join(ip_age_sex, by = c("peer" = "procode3")) |>
     dplyr::left_join(catchments, by = c("fyear", "sex", "age_group", "peer" = "provider")) |>
     dplyr::mutate(dplyr::across(.data$pop_catch, tidyr::replace_na, 0)) |>
