@@ -5,23 +5,19 @@
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
-  # this will load:
-  # * ip_diag_data
-  # * ip_dsr_data
-  # * lkp_peers
-  # * providers
-  # * strategies
+  # load the data
+  ip_age_sex_data <- readRDS(app_sys("app", "data", "ip_age_sex_data.Rds"))
   ip_diag_data <- readRDS(app_sys("app", "data", "ip_diag_data.Rds"))
   ip_dsr_data <- readRDS(app_sys("app", "data", "ip_dsr_data.Rds"))
   peers <- readRDS(app_sys("app", "data", "peers.Rds"))
   providers <- readRDS(app_sys("app", "data", "providers.Rds"))
   strategies <- readRDS(app_sys("app", "data", "strategies.Rds"))
 
-  selected_provider <- reactive({
+  selected_provider <- shiny::reactive({
     "RL4" # todo: convert to an input
   })
 
-  selected_baseline_year <- reactive({
+  selected_baseline_year <- shiny::reactive({
     201819 # todo: create an input
   })
 
@@ -30,6 +26,7 @@ app_server <- function(input, output, session) {
     selected_provider,
     selected_baseline_year,
     ip_dsr_data,
+    ip_age_sex_data,
     ip_diag_data,
     peers,
     strategies[["admission avoidance"]]

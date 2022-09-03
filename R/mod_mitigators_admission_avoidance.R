@@ -31,8 +31,8 @@ dsr_trend_plot <- function(trend_data, baseline_year) {
 #' mitigators_admission_avoidance Server Functions
 #'
 #' @noRd
-mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_year, dsr_data, diag_data, peers,
-                                                      strategies) {
+mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_year, dsr_data, age_sex_data, diag_data,
+                                                      peers, strategies) {
   shiny::moduleServer(id, function(input, output, session) {
     shiny::observe({
       shiny::updateSelectInput(session, "strategy", choices = strategies)
@@ -52,6 +52,16 @@ mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_yea
     filtered_dsr_data <- shiny::reactive({
       dsr_data |>
         dplyr::filter(.data$procode == provider(), .data$strategy == input$strategy)
+    })
+
+    filtered_age_sex_data <- shiny::reactive({
+      age_sex_data |>
+        dplyr::filter(
+          .data$procode3 == provider(),
+          .data$strategy == input$strategy,
+          .data$fyear == baseline_year()
+        ) |>
+        dplyr::count(.data$age_group, wt = .data$n)
     })
 
     trend_data <- shiny::reactive({
