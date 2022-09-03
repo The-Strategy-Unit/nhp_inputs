@@ -21,6 +21,13 @@ mod_mitigators_admission_avoidance_ui <- function(id) {
   )
 }
 
+dsr_trend_plot <- function(trend_data, baseline_year) {
+  ggplot2::ggplot(trend_data, ggplot2::aes(.data$fyear, .data$std_rate)) +
+    ggplot2::geom_line() +
+    ggplot2::geom_point(ggplot2::aes(colour = .data$fyear == baseline_year)) +
+    ggplot2::theme(legend.position = "none")
+}
+
 #' mitigators_admission_avoidance Server Functions
 #'
 #' @noRd
@@ -53,10 +60,7 @@ mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_yea
     })
 
     output$trend_plot <- shiny::renderPlot({
-      ggplot2::ggplot(trend_data(), ggplot2::aes(.data$fyear, .data$std_rate)) +
-        ggplot2::geom_line() +
-        ggplot2::geom_point(ggplot2::aes(colour = .data$fyear == baseline_year())) +
-        ggplot2::theme(legend.position = "none")
+      dsr_trend_plot(trend_data(), baseline_year())
     })
 
     funnel_data <- shiny::reactive({
