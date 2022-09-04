@@ -41,9 +41,12 @@ list(
   tar_target(strategies, get_strategies()),
   tar_target(data_last_updated, {
     withr::with_dir("inst/app/data", {
-      saveRDS(ip_age_sex_data, "ip_age_sex_data.Rds")
-      saveRDS(ip_dsr_data, "ip_dsr_data.Rds")
-      saveRDS(ip_diag_data, "ip_diag_data.Rds")
+      save_data(
+        age_sex = ip_age_sex_data,
+        dsr = ip_dsr_data,
+        diagnoses = ip_diag_data
+      )
+
       saveRDS(lkp_peers, "peers.Rds")
       saveRDS(providers, "providers.Rds")
       saveRDS(strategies, "strategies.Rds")
