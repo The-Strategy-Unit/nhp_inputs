@@ -14,14 +14,15 @@ get_ip_age_sex_data <- function(provider_successors_last_updated) {
     dplyr::filter(.data$sex %in% c(1, 2)) |>
     dplyr::inner_join(tbl_age_table, by = c("ADMIAGE" = "age")) |>
     dplyr::inner_join(tbl_ip_strategies, by = c("EPIKEY")) |>
-    dplyr::count(.data$FYEAR, .data$age_group, .data$SEX, .data$PROCODE3, .data$strategy, wt = .data$sample_rate) |>
+    dplyr::count(.data$FYEAR, .data$age_group, .data$SEX, procode = .data$PROCODE3, .data$strategy, wt = .data$sample_rate) |>
     dplyr::collect() |>
-    janitor::clean_names()
+    janitor::clean_names() |>
+    dplyr::ungroup()
 }
 
 get_ip_dsr_data <- function(ip_age_sex, peers, catchments, lkp_euro_2013) {
   dsr <- peers |>
-    dplyr::inner_join(ip_age_sex, by = c("peer" = "procode3")) |>
+    dplyr::inner_join(ip_age_sex, by = c("peer" = "procode")) |>
     dplyr::left_join(catchments, by = c("fyear", "sex", "age_group", "peer" = "provider")) |>
     dplyr::mutate(dplyr::across(.data$pop_catch, tidyr::replace_na, 0)) |>
     dplyr::inner_join(lkp_euro_2013, by = c("sex", "age_group"))
@@ -75,5 +76,6 @@ get_ip_diag_data <- function(provider_successors_last_updated) {
     dplyr::filter(dplyr::row_number() <= 6) |>
     dplyr::ungroup() |>
     dplyr::collect() |>
-    janitor::clean_names()
+    janitor::clean_names() |>
+    dplyr::rename(procode = .data$procode3)
 }
