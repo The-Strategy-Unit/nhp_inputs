@@ -6,9 +6,6 @@
 #' @noRd
 app_server <- function(input, output, session) {
   # load the data
-  ip_age_sex_data <- readRDS(app_sys("app", "data", "ip_age_sex_data.Rds"))
-  ip_diag_data <- readRDS(app_sys("app", "data", "ip_diag_data.Rds"))
-  ip_dsr_data <- readRDS(app_sys("app", "data", "ip_dsr_data.Rds"))
   peers <- readRDS(app_sys("app", "data", "peers.Rds"))
   providers <- readRDS(app_sys("app", "data", "providers.Rds"))
   strategies <- readRDS(app_sys("app", "data", "strategies.Rds"))
@@ -25,9 +22,6 @@ app_server <- function(input, output, session) {
     "mitigators_admission_avoidance",
     selected_provider,
     selected_baseline_year,
-    ip_dsr_data,
-    ip_age_sex_data,
-    ip_diag_data,
     peers,
     strategies[["admission avoidance"]]
   )

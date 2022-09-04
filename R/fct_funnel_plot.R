@@ -11,15 +11,14 @@ generate_dsr_funnel_data <- function(data, provider) {
   peer_rates <- data |>
     dplyr::filter(is.na(.data$peer)) |>
     dplyr::select(
-      .data$strategy,
       .data$fyear,
       mean = .data$std_rate
     )
 
   funnel_data <- data |>
     tidyr::drop_na(.data$peer) |>
-    dplyr::inner_join(peer_rates, by = c("strategy", "fyear")) |>
-    dplyr::group_by(.data$strategy, .data$fyear) |>
+    dplyr::inner_join(peer_rates, by = c("fyear")) |>
+    dplyr::group_by(.data$fyear) |>
     dplyr::mutate(
       sdev_pop_i = sqrt(abs(.data$mean) / .data$pop_catch),
       z = (.data$std_rate - .data$mean) / .data$sdev_pop_i,

@@ -31,12 +31,15 @@ dsr_trend_plot <- function(trend_data, baseline_year) {
 #' mitigators_admission_avoidance Server Functions
 #'
 #' @noRd
-mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_year, dsr_data, age_sex_data, diag_data,
-                                                      peers, strategies) {
+mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_year, peers, strategies) {
   shiny::moduleServer(id, function(input, output, session) {
     shiny::observe({
       shiny::updateSelectInput(session, "strategy", choices = strategies)
     })
+
+    ip_age_sex_data <- readRDS(app_sys("app", "data", "ip_age_sex_data.Rds"))
+    ip_diag_data <- readRDS(app_sys("app", "data", "ip_diag_data.Rds"))
+    ip_dsr_data <- readRDS(app_sys("app", "data", "ip_dsr_data.Rds"))
 
     output$strategy_text <- shiny::renderText({
       strategy <- shiny::req(input$strategy)
@@ -49,23 +52,22 @@ mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_yea
       }
     })
 
-    filtered_dsr_data <- shiny::reactive({
-      dsr_data |>
-        dplyr::filter(.data$procode == provider(), .data$strategy == input$strategy)
+    data_path <- shiny::reactive({
+      strategy <- req(input$strategy)
+      app_sys("app", "data", "providers", provider(), strategy)
     })
 
-    filtered_age_sex_data <- shiny::reactive({
-      age_sex_data |>
-        dplyr::filter(
-          .data$procode3 == provider(),
-          .data$strategy == input$strategy,
-          .data$fyear == baseline_year()
-        ) |>
-        dplyr::count(.data$age_group, wt = .data$n)
-    })
+    read_data_file <- function(filename) {
+      shiny::reactive({
+        readRDS(file.path(data_path(), filename))
+      })
+    }
+    dsr_data <- read_data_file("dsr.rds")
+    age_sex_data <- read_data_file("age_sex.rds")
+    diagnoses_data <- read_data_file("diagnoses.rds")
 
     trend_data <- shiny::reactive({
-      filtered_dsr_data() |>
+      dsr_data() |>
         dplyr::filter(.data$peer == provider())
     })
 
@@ -74,7 +76,7 @@ mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_yea
     })
 
     funnel_data <- shiny::reactive({
-      filtered_dsr_data() |>
+      dsr_data() |>
         dplyr::filter(.data$fyear == baseline_year()) |>
         generate_dsr_funnel_data(provider())
     })
