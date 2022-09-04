@@ -14,7 +14,7 @@ save_data <- function(...) {
             dir.create(path, showWarnings = FALSE, recursive = TRUE)
 
             value |>
-              janitor::remove_empty_cols() |>
+              janitor::remove_empty(which = "cols") |>
               saveRDS(paste0(path, "/", name, ".rds"))
           }
         )
