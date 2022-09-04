@@ -14,7 +14,14 @@ get_ip_age_sex_data <- function(provider_successors_last_updated) {
     dplyr::filter(.data$sex %in% c(1, 2)) |>
     dplyr::inner_join(tbl_age_table, by = c("ADMIAGE" = "age")) |>
     dplyr::inner_join(tbl_ip_strategies, by = c("EPIKEY")) |>
-    dplyr::count(.data$FYEAR, .data$age_group, .data$SEX, procode = .data$PROCODE3, .data$strategy, wt = .data$sample_rate) |>
+    dplyr::count(
+      .data$FYEAR,
+      .data$age_group,
+      .data$SEX,
+      procode = .data$PROCODE3,
+      .data$strategy,
+      wt = .data$sample_rate
+    ) |>
     dplyr::collect() |>
     janitor::clean_names() |>
     dplyr::ungroup()
