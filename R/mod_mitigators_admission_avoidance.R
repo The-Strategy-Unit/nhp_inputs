@@ -37,10 +37,6 @@ mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_yea
       shiny::updateSelectInput(session, "strategy", choices = strategies)
     })
 
-    ip_age_sex_data <- readRDS(app_sys("app", "data", "ip_age_sex_data.Rds"))
-    ip_diag_data <- readRDS(app_sys("app", "data", "ip_diag_data.Rds"))
-    ip_dsr_data <- readRDS(app_sys("app", "data", "ip_dsr_data.Rds"))
-
     output$strategy_text <- shiny::renderText({
       strategy <- shiny::req(input$strategy)
 
@@ -52,20 +48,23 @@ mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_yea
       }
     })
 
+    # load data files ----
+    # create a reactive for the path to where our data files live
     data_path <- shiny::reactive({
       strategy <- req(input$strategy)
       app_sys("app", "data", "providers", provider(), strategy)
     })
-
+    # a helper function to create a reactive to load a specific file
     read_data_file <- function(filename) {
-      shiny::reactive({
-        readRDS(file.path(data_path(), filename))
-      })
+      shiny::reactive(readRDS(file.path(data_path(), filename)))
     }
+    # create the reactives to load the files
     dsr_data <- read_data_file("dsr.rds")
     age_sex_data <- read_data_file("age_sex.rds")
     diagnoses_data <- read_data_file("diagnoses.rds")
 
+    # trend plot ----
+    # use the DSR data, filtered to the provider that has been selected
     trend_data <- shiny::reactive({
       dsr_data() |>
         dplyr::filter(.data$peer == provider())
@@ -75,6 +74,7 @@ mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_yea
       dsr_trend_plot(trend_data(), baseline_year())
     })
 
+    # funnel plot ----
     funnel_data <- shiny::reactive({
       dsr_data() |>
         dplyr::filter(.data$fyear == baseline_year()) |>
