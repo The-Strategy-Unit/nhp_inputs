@@ -33,7 +33,26 @@ dsr_trend_plot <- function(trend_data, baseline_year) {
 #' @noRd
 mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_year, peers, strategies) {
   shiny::moduleServer(id, function(input, output, session) {
+    # on load, update the strategy drop down to include the strategies that are available
     shiny::observe({
+      # find the strategies that are available for this provider
+      p <- req(provider())
+      available_strategies <- dir(app_sys("app", "data", "providers", p))
+      # set the names of the strategies to title case, but fix up some of the replaced words to upper case
+      strategies <- strategies |>
+        intersect(available_strategies) |>
+        purrr::set_names(
+          purrr::compose(
+            purrr::partial(
+              gsub,
+              pattern = "(Bads |Eol |Ent$|Gi |Msk$|Nsaids$|Los |Ae$|Ip$)",
+              replacement = "\\U\\1",
+              perl = TRUE
+            ),
+            snakecase::to_title_case
+          )
+        )
+      # update the drop down
       shiny::updateSelectInput(session, "strategy", choices = strategies)
     })
 
