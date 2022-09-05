@@ -10,6 +10,8 @@
 mod_mitigators_admission_avoidance_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
+    shiny::h1("Activity Mitigators"),
+    shiny::h2("Admission Avoidance"),
     shiny::selectInput(ns("strategy"), "Strategy", choices = NULL),
     shiny::uiOutput(ns("strategy_text")),
     shinycssloaders::withSpinner({
