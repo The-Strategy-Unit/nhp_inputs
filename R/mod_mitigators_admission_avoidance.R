@@ -11,7 +11,7 @@ mod_mitigators_admission_avoidance_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::selectInput(ns("strategy"), "Strategy", choices = NULL),
-    shiny::textOutput(ns("strategy_text")),
+    shiny::uiOutput(ns("strategy_text")),
     shinycssloaders::withSpinner({
       shiny::plotOutput(ns("trend_plot"))
     }),
@@ -37,15 +37,12 @@ mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_yea
       shiny::updateSelectInput(session, "strategy", choices = strategies)
     })
 
-    output$strategy_text <- shiny::renderText({
+    # set the strategy text by loading the contents of the file for that strategy
+    output$strategy_text <- shiny::renderUI({
       strategy <- shiny::req(input$strategy)
-
-      text_file <- app_sys("app", "strategy_text", paste0(strategy, ".md"))
-
-      if (file.exists(text_file)) {
-        # todo: convert to render markdown?
-        readr::read_lines(text_file)
-      }
+      file <- app_sys("app", "strategy_text", paste0(strategy, ".md"))
+      req(file.exists(file))
+      shiny::htmlTemplate(text_ = markdown::renderMarkdown(file))
     })
 
     # load data files ----
