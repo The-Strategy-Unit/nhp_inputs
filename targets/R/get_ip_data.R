@@ -3,14 +3,10 @@ get_ip_age_sex_data <- function(provider_successors_last_updated) {
 
   con <- get_con("HESData")
 
-  tbl_provider_successors <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "provider_successors"))
-
   tbl_age_table <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling_reference", "age_groups"))
   tbl_ip_strategies <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "strategies_grouped"))
 
   dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients")) |>
-    dplyr::inner_join(tbl_provider_successors, by = c("PROCODE3" = "old_code")) |>
-    dplyr::mutate(PROCODE3 = .data$new_code) |>
     dplyr::filter(.data$sex %in% c(1, 2)) |>
     dplyr::inner_join(tbl_age_table, by = c("ADMIAGE" = "age")) |>
     dplyr::inner_join(tbl_ip_strategies, by = c("EPIKEY")) |>
@@ -60,11 +56,7 @@ get_ip_diag_data <- function(provider_successors_last_updated) {
 
   con <- get_con("HESData")
 
-  tbl_provider_successors <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "provider_successors"))
-
-  tbl_inpatients <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients")) |>
-    dplyr::inner_join(tbl_provider_successors, by = c("PROCODE3" = "old_code")) |>
-    dplyr::mutate(PROCODE3 = .data$new_code)
+  tbl_inpatients <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients"))
 
   tbl_ip_strategies <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "strategies_grouped"))
   tbl_inpatients_diagnoses <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients_diagnoses")) |>
