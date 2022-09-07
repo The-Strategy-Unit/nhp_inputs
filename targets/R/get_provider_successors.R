@@ -1,14 +1,31 @@
 get_provider_successors <- function(ods_successors, list_providers) {
-  list_providers |>
+  successors <- list_providers |>
     dplyr::left_join(ods_successors, by = c("PROCODE3" = "org_code")) |>
     dplyr::transmute(
       old_code = .data$PROCODE3,
       new_code = purrr::map2_chr(.data$succ_org_code, .data$PROCODE3, tidyr::replace_na)
     ) |>
-    # TODO: address multiple successors
-    dplyr::group_by(.data$old_code) |>
-    dplyr::filter(dplyr::row_number() == 1) |>
-    dplyr::ungroup()
+    # remove duplicates:
+    # Penine Acute Hospitals NHS Trust -> Manchester Univesity NHS FT
+    #   (most activity should be mapped to Northern Care Allicance NHS FT)
+    dplyr::filter(!(.data$old_code == "RW6" & .data$new_code == "R0A")) |>
+    # update successors: (add in any missing successors from the ODS file)
+    dplyr::rows_update(
+      tibble::tribble(
+        ~old_code, ~new_code,
+        "RBA", "RH5" # missing row for Taunton and Somerset NHS FT -> Somerset NHS FT
+      ),
+      by = "old_code"
+    )
+
+  stopifnot(
+    "non-unique mappings in successors file" = successors |>
+      dplyr::group_by(.data$old_code) |>
+      dplyr::filter(dplyr::n() > 1) |>
+      nrow() == 0
+  )
+
+  successors
 }
 
 upload_provider_successors <- function(provider_successors) {
@@ -45,5 +62,5 @@ upload_provider_successors <- function(provider_successors) {
     "
   )
 
-  list(last_updated = Sys.time)
+  list(last_updated = Sys.time())
 }
