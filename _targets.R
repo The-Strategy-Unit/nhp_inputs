@@ -47,6 +47,7 @@ list(
         diagnoses = ip_diag_data
       )
 
+      saveRDS(lkp_diag, "diagnoses.Rds")
       saveRDS(lkp_peers, "peers.Rds")
       saveRDS(providers, "providers.Rds")
       saveRDS(strategies, "strategies.Rds")
