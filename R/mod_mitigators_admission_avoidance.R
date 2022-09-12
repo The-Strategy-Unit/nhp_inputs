@@ -33,7 +33,7 @@ dsr_trend_plot <- function(trend_data, baseline_year) {
 #' mitigators_admission_avoidance Server Functions
 #'
 #' @noRd
-mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_year, peers, strategies) {
+mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_year, strategies) {
   shiny::moduleServer(id, function(input, output, session) {
     # on load, update the strategy drop down to include the strategies that are available
     shiny::observe({

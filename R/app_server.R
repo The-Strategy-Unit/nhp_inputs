@@ -22,7 +22,6 @@ app_server <- function(input, output, session) {
     "mitigators_admission_avoidance",
     selected_provider,
     selected_baseline_year,
-    peers,
     strategies[["admission avoidance"]]
   )
 }
