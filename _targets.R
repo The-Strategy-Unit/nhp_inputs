@@ -33,6 +33,7 @@ list(
   tar_target(lkp_peers_file, "targets/data/Peer+finder+Appendix+A.xlsx", format = "file"),
   tar_target(lkp_peers, get_lkp_peers(lkp_peers_file, provider_successors)),
   tar_target(providers, get_providers(lkp_peers, lkp_provider_names2, lkp_provider_names)),
+  tar_target(provider_locations, get_provider_locations(providers)),
   tar_target(pop_year_long, get_pop_year_long(age_table)),
   tar_target(catchments, get_catchments(provider_successors_last_updated, pop_year_long)),
   tar_target(ip_age_sex_data, get_ip_age_sex_data(provider_successors_last_updated)),
@@ -46,11 +47,17 @@ list(
         dsr = ip_dsr_data,
         diagnoses = ip_diag_data
       )
+    })
 
+    Sys.time()
+  }),
+  tar_target(reference_data_last_updated, {
+    withr::with_dir("inst/app/data", {
       saveRDS(lkp_diag, "diagnoses.Rds")
       saveRDS(lkp_peers, "peers.Rds")
       saveRDS(providers, "providers.Rds")
       saveRDS(strategies, "strategies.Rds")
+      sf::write_sf(provider_locations, "provider_locations.geojson")
     })
 
     Sys.time()
