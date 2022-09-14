@@ -78,3 +78,21 @@ get_ip_diag_data <- function(provider_successors_last_updated) {
     janitor::clean_names() |>
     dplyr::rename(procode = .data$procode3)
 }
+
+get_ip_los_data <- function(provider_successors_last_updated) {
+  force(provider_successors_last_updated)
+
+  con <- get_con("HESData")
+
+  tbl_inpatients <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients"))
+
+  tbl_ip_strategies <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "strategies_grouped")) |>
+    dplyr::filter(.data$strategy_type == "los reduction")
+
+  tbl_inpatients |>
+    dplyr::inner_join(tbl_ip_strategies, by = c("EPIKEY")) |>
+    dplyr::count(.data$FYEAR, procode = .data$PROCODE3, .data$strategy, .data$SPELDUR) |>
+    dplyr::ungroup() |>
+    dplyr::collect() |>
+    janitor::clean_names()
+}
