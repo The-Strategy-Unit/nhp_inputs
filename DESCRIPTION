@@ -9,8 +9,11 @@ Imports:
     config (>= 0.3.1),
     dplyr,
     golem (>= 0.3.3),
+    gt,
+    leaflet,
     pkgload,
     plotly,
+    sf,
     shiny (>= 1.7.1),
     shinycssloaders,
     shinyjs

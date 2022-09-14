@@ -31,12 +31,7 @@ app_ui <- function(request) {
     bs4Dash::tabItems(
       bs4Dash::tabItem(
         tabName = "tab_home",
-        shiny::fluidRow(
-          col_6(
-            htmltools::h1("NHP Model Inputs")
-            # "About Text should go here"
-          )
-        )
+        mod_home_ui("home")
       ),
       bs4Dash::tabItem(
         tabName = "am_admission_avoidance",
