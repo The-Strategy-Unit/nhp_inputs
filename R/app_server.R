@@ -9,6 +9,7 @@ app_server <- function(input, output, session) {
   peers <- readRDS(app_sys("app", "data", "peers.Rds"))
   providers <- readRDS(app_sys("app", "data", "providers.Rds"))
   strategies <- readRDS(app_sys("app", "data", "strategies.Rds"))
+  diagnoses_lkup <- readRDS(app_sys("app", "data", "diagnoses.Rds"))
 
   home_module <- mod_home_server("home", providers, peers)
   selected_provider <- shiny::reactive(shiny::req(home_module()$provider))
@@ -18,6 +19,8 @@ app_server <- function(input, output, session) {
     "mitigators_admission_avoidance",
     selected_provider,
     selected_baseline_year,
-    strategies[["admission avoidance"]]
+    strategies[["admission avoidance"]],
+    diagnoses_lkup
   )
 }
+
