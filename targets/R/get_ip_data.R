@@ -23,7 +23,10 @@ get_ip_age_sex_data <- function(provider_successors_last_updated) {
     dplyr::ungroup()
 }
 
-get_ip_dsr_data <- function(ip_age_sex, peers, catchments, lkp_euro_2013) {
+get_ip_dsr_data <- function(ip_age_sex, peers, catchments, lkp_euro_2013, strategies) {
+  ip_age_sex <- ip_age_sex |>
+    dplyr::filter(.data$strategy %in% strategies[["admission avoidance"]])
+
   dsr <- peers |>
     dplyr::inner_join(ip_age_sex, by = c("peer" = "procode")) |>
     dplyr::left_join(catchments, by = c("fyear", "sex", "age_group", "peer" = "provider")) |>
