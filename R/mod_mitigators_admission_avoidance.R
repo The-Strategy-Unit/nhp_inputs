@@ -12,26 +12,59 @@ mod_mitigators_admission_avoidance_ui <- function(id) {
   shiny::tagList(
     shiny::h1("Activity Mitigators"),
     shiny::h2("Admission Avoidance"),
-    shiny::selectInput(ns("strategy"), "Strategy", choices = NULL),
-    shiny::uiOutput(ns("strategy_text")),
-    shinycssloaders::withSpinner({
-      shiny::plotOutput(ns("trend_plot"))
-    }),
-    shinycssloaders::withSpinner({
-      shiny::plotOutput(ns("funnel_plot"))
-    }),
-    shinycssloaders::withSpinner({
-      shiny::plotOutput(ns("boxplot"))
-    }),
-    shinycssloaders::withSpinner({
-      shiny::tableOutput(ns("diagnoses_table"))
-    }),
-    shinycssloaders::withSpinner({
-      shiny::plotOutput(ns('age_grp_plot'))
-    })
+    shiny::fluidRow(
+      bs4Dash::box(
+        title = "Strategy Selection",
+        width = 2,
+        shiny::selectInput(ns("strategy"), "Strategy", choices = NULL),
+        shiny::uiOutput(ns("strategy_text"))
+        ),
+      col_10(
+        shiny::fluidRow(
+          bs4Dash::box(
+            title = "Trend",
+            shinycssloaders::withSpinner({
+              shiny::plotOutput(ns("trend_plot"))
+              }),
+            width = 4
+            ),
+          bs4Dash::box(
+            title = "Funnel",
+            shinycssloaders::withSpinner({
+              shiny::plotOutput(ns("funnel_plot"))
+              }),
+            width = 4
+            ),
+          bs4Dash::box(
+            title = "Boxplot",
+            shinycssloaders::withSpinner({
+              shiny::plotOutput(ns("boxplot"))
+              }),
+            width = 4
+            )
+          ,
+        bs4Dash::box(
+          title = "diagnoses",
+          shinycssloaders::withSpinner({
+            shiny::tableOutput(ns("diagnoses_table"))
+            }),
+          width = 6
+          ),
+        bs4Dash::box(
+          title = "Age and Sex",
+          shinycssloaders::withSpinner({
+            shiny::plotOutput(ns('age_grp_plot'))
+            }),
+          width = 6
+        )
+        )
+      )
+
+      )
 
   )
-}
+
+  }
 
 dsr_trend_plot <- function(trend_data, baseline_year) {
   ggplot2::ggplot(trend_data, ggplot2::aes(.data$fyear, .data$std_rate)) +
@@ -42,7 +75,7 @@ dsr_trend_plot <- function(trend_data, baseline_year) {
 
 dsr_boxplot <- function(trend_data) {
   ggplot2::ggplot(trend_data, ggplot2::aes(x = "", y = .data$std_rate)) +
-    ggplot2::geom_boxplot(alpha = 0.2)+
+    ggplot2::geom_boxplot(alpha = 0.2, outlier.shape = NA)+
     ggbeeswarm::geom_quasirandom(ggplot2::aes(colour = .data$is_peer))
 }
 
@@ -108,7 +141,8 @@ mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_yea
     dsr_baseline_data <- shiny::reactive({
       dsr_data() |>
         dplyr::filter(.data$fyear == baseline_year()) |>
-        dplyr::mutate(is_peer = .data$peer != .env$provider())
+        dplyr::mutate(is_peer = .data$peer != .env$provider()) #|>
+        #tidyr::drop_na(is_peer)
       #print(dsr_baseline_data)
     })
 
@@ -139,7 +173,8 @@ mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_yea
     # boxplot ----
 
     output$boxplot <- shiny::renderPlot({
-      dsr_boxplot(dsr_baseline_data())
+      dsr_boxplot(dsr_baseline_data()|>
+                    tidyr::drop_na(is_peer))
     })
 
 
