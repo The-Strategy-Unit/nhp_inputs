@@ -7,7 +7,7 @@
 #' @return The return value, if any, from executing the function.
 #'
 #' @noRd
-generate_dsr_funnel_data <- function(data, provider) {
+generate_dsr_funnel_data <- function(data) {
   peer_rates <- data |>
     dplyr::filter(is.na(.data$peer)) |>
     dplyr::select(
@@ -28,9 +28,7 @@ generate_dsr_funnel_data <- function(data, provider) {
       lower2 = .data$mean - .data$cl2,
       lower3 = .data$mean - .data$cl3,
       upper2 = .data$mean + .data$cl2,
-      upper3 = .data$mean + .data$cl3,
-      is_peer = .data$peer != .env$provider
-    ) |>
+      upper3 = .data$mean + .data$cl3) |>
     dplyr::ungroup()
 
   structure(funnel_data, class = c("nhp_funnel_plot", class(funnel_data)))

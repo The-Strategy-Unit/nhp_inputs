@@ -12,16 +12,59 @@ mod_mitigators_admission_avoidance_ui <- function(id) {
   shiny::tagList(
     shiny::h1("Activity Mitigators"),
     shiny::h2("Admission Avoidance"),
-    shiny::selectInput(ns("strategy"), "Strategy", choices = NULL),
-    shiny::uiOutput(ns("strategy_text")),
-    shinycssloaders::withSpinner({
-      shiny::plotOutput(ns("trend_plot"))
-    }),
-    shinycssloaders::withSpinner({
-      shiny::plotOutput(ns("funnel_plot"))
-    })
+    shiny::fluidRow(
+      bs4Dash::box(
+        title = "Strategy Selection",
+        width = 2,
+        shiny::selectInput(ns("strategy"), "Strategy", choices = NULL),
+        shiny::uiOutput(ns("strategy_text"))
+        ),
+      col_10(
+        shiny::fluidRow(
+          bs4Dash::box(
+            title = "Trend",
+            shinycssloaders::withSpinner({
+              shiny::plotOutput(ns("trend_plot"))
+              }),
+            width = 4
+            ),
+          bs4Dash::box(
+            title = "Funnel",
+            shinycssloaders::withSpinner({
+              shiny::plotOutput(ns("funnel_plot"))
+              }),
+            width = 4
+            ),
+          bs4Dash::box(
+            title = "Boxplot",
+            shinycssloaders::withSpinner({
+              shiny::plotOutput(ns("boxplot"))
+              }),
+            width = 4
+            )
+          ,
+        bs4Dash::box(
+          title = "diagnoses",
+          shinycssloaders::withSpinner({
+            shiny::tableOutput(ns("diagnoses_table"))
+            }),
+          width = 6
+          ),
+        bs4Dash::box(
+          title = "Age and Sex",
+          shinycssloaders::withSpinner({
+            shiny::plotOutput(ns('age_grp_plot'))
+            }),
+          width = 6
+        )
+        )
+      )
+
+      )
+
   )
-}
+
+  }
 
 dsr_trend_plot <- function(trend_data, baseline_year) {
   ggplot2::ggplot(trend_data, ggplot2::aes(.data$fyear, .data$std_rate)) +
@@ -30,10 +73,22 @@ dsr_trend_plot <- function(trend_data, baseline_year) {
     ggplot2::theme(legend.position = "none")
 }
 
+dsr_boxplot <- function(trend_data) {
+  ggplot2::ggplot(trend_data, ggplot2::aes(x = "", y = .data$std_rate)) +
+    ggplot2::geom_boxplot(alpha = 0.2, outlier.shape = NA)+
+    ggbeeswarm::geom_quasirandom(ggplot2::aes(colour = .data$is_peer))
+}
+
+age_pyramid <- function(age_data){
+  ggplot2::ggplot(age_data, ggplot2::aes(age_group, n))+
+    ggplot2::stat_summary(fun = 'sum', geom = 'bar', position = 'identity')+
+    ggplot2::coord_flip()
+}
+
 #' mitigators_admission_avoidance Server Functions
 #'
 #' @noRd
-mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_year, strategies) {
+mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_year, strategies, diagnoses_lkup) {
   shiny::moduleServer(id, function(input, output, session) {
     # on load, update the strategy drop down to include the strategies that are available
     shiny::observe({
@@ -81,8 +136,21 @@ mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_yea
     age_sex_data <- read_data_file("age_sex.rds")
     diagnoses_data <- read_data_file("diagnoses.rds")
 
+    # dsr data baseline year ----
+
+    dsr_baseline_data <- shiny::reactive({
+      dsr_data() |>
+        dplyr::filter(.data$fyear == baseline_year()) |>
+        dplyr::mutate(is_peer = .data$peer != .env$provider()) #|>
+        #tidyr::drop_na(is_peer)
+      #print(dsr_baseline_data)
+    })
+
     # trend plot ----
     # use the DSR data, filtered to the provider that has been selected
+
+
+
     trend_data <- shiny::reactive({
       dsr_data() |>
         dplyr::filter(.data$peer == provider())
@@ -94,13 +162,43 @@ mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_yea
 
     # funnel plot ----
     funnel_data <- shiny::reactive({
-      dsr_data() |>
-        dplyr::filter(.data$fyear == baseline_year()) |>
-        generate_dsr_funnel_data(provider())
+      dsr_baseline_data() |>
+        generate_dsr_funnel_data()
     })
 
     output$funnel_plot <- shiny::renderPlot({
       plot(funnel_data())
     })
+
+    # boxplot ----
+
+    output$boxplot <- shiny::renderPlot({
+      dsr_boxplot(dsr_baseline_data()|>
+                    tidyr::drop_na(is_peer))
+    })
+
+
+    # diagnoses ----
+
+    output$diagnoses_table <- shiny::renderTable({
+      diagnoses_data() |>
+        dplyr::filter(fyear == baseline_year()) |>
+        dplyr::left_join(diagnoses_lkup, by = c(diagnosis = 'diagnosis_code')) |>
+        dplyr::mutate(`%` = scales::percent(p, accuracy = 1))|>
+        dplyr::select('Diagnosis Description' = diagnosis_description,
+                      Activity = n,
+                      `%`)
+    })
+
+    # age group ----
+
+    output$age_grp_plot <- shiny::renderPlot({
+        age_pyramid(age_sex_data()|>
+                      dplyr::select(-sex)|>
+                      dplyr::filter(fyear == baseline_year()))
+    })
+
+
+
   })
 }
