@@ -35,7 +35,7 @@ app_ui <- function(request) {
       ),
       bs4Dash::tabItem(
         tabName = "am_admission_avoidance",
-        mod_mitigators_admission_avoidance_ui("mitigators_admission_avoidance")
+        mod_mitigators_ui("mitigators_admission_avoidance")
       )
     )
   )
