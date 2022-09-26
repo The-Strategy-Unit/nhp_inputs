@@ -13,6 +13,7 @@ Imports:
     leaflet,
     pkgload,
     plotly,
+    scales,
     sf,
     shiny (>= 1.7.1),
     shinycssloaders,

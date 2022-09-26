@@ -37,15 +37,17 @@ list(
   tar_target(pop_year_long, get_pop_year_long(age_table)),
   tar_target(catchments, get_catchments(provider_successors_last_updated, pop_year_long)),
   tar_target(ip_age_sex_data, get_ip_age_sex_data(provider_successors_last_updated)),
-  tar_target(ip_dsr_data, get_ip_dsr_data(ip_age_sex_data, lkp_peers, catchments, lkp_euro_2013)),
-  tar_target(ip_diag_data, get_ip_diag_data(provider_successors_last_updated)),
   tar_target(strategies, get_strategies()),
+  tar_target(ip_dsr_data, get_ip_dsr_data(ip_age_sex_data, lkp_peers, catchments, lkp_euro_2013, strategies)),
+  tar_target(ip_diag_data, get_ip_diag_data(provider_successors_last_updated)),
+  tar_target(ip_los_data, get_ip_los_data(provider_successors_last_updated)),
   tar_target(data_last_updated, {
     withr::with_dir("inst/app/data", {
       save_data(
         age_sex = ip_age_sex_data,
         dsr = ip_dsr_data,
-        diagnoses = ip_diag_data
+        diagnoses = ip_diag_data,
+        los = ip_los_data
       )
     })
 

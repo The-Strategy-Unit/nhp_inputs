@@ -4,9 +4,11 @@
 		{
 			"type": "R",
 			"code": [
+				"browseURL('http://localhost:8080/')",
 				"golem::run_dev()"
 			],
-			"group": "build",
+			"group": "none",
+			"isBackground": true,
 			"problemMatcher": [],
 			"label": "R: Run App"
 		},
