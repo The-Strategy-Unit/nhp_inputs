@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_mitigators_admission_avoidance_ui <- function(id) {
+mod_mitigators_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::h1("Activity Mitigators"),
@@ -88,7 +88,7 @@ age_pyramid <- function(age_data){
 #' mitigators_admission_avoidance Server Functions
 #'
 #' @noRd
-mod_mitigators_admission_avoidance_server <- function(id, provider, baseline_year, strategies, diagnoses_lkup) {
+mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagnoses_lkup) {
   shiny::moduleServer(id, function(input, output, session) {
     # on load, update the strategy drop down to include the strategies that are available
     shiny::observe({

@@ -15,7 +15,7 @@ app_server <- function(input, output, session) {
   selected_provider <- shiny::reactive(shiny::req(home_module()$provider))
   selected_baseline_year <- shiny::reactive(shiny::req(home_module()$baseline))
 
-  mod_mitigators_admission_avoidance_server(
+  mod_mitigators_server(
     "mitigators_admission_avoidance",
     selected_provider,
     selected_baseline_year,
@@ -23,4 +23,3 @@ app_server <- function(input, output, session) {
     diagnoses_lkup
   )
 }
-
