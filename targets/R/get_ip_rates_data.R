@@ -30,6 +30,17 @@ get_ip_dsr_data <- function(ip_age_sex, peers, catchments, lkp_euro_2013, strate
     dplyr::arrange(.data$procode, .data$strategy, .data$fyear, .data$peer)
 }
 
+add_mean_rows <- function(data) {
+  mean <- data |>
+    dplyr::group_by(.data$fyear, .data$procode, .data$strategy) |>
+    dplyr::summarise(
+      rate = sum(.data$rate * .data$n) / sum(.data$n),
+      dplyr::across(.data$n, sum),
+      .groups = "drop"
+    )
+  dplyr::bind_rows(data, mean)
+}
+
 get_mean_los_data <- function(ip_los_data, peers) {
   mean_los_reduction_strategies <- c(
     "emergency_elderly",
@@ -64,7 +75,8 @@ get_mean_los_data <- function(ip_los_data, peers) {
       .data$peer,
       .data$rate,
       .data$n
-    )
+    ) |>
+    add_mean_rows()
 }
 
 get_zero_los_data <- function(ip_los_data, peers) {
@@ -92,7 +104,8 @@ get_zero_los_data <- function(ip_los_data, peers) {
       .data$peer,
       .data$rate,
       .data$n
-    )
+    ) |>
+    add_mean_rows()
 }
 
 get_preop_los_data <- function(ip_los_data, peers) {
@@ -139,7 +152,8 @@ get_preop_los_data <- function(ip_los_data, peers) {
       .data$peer,
       .data$rate,
       .data$n
-    )
+    ) |>
+    add_mean_rows()
 }
 
 get_bads_data <- function(ip_los_data, peers) {
@@ -181,5 +195,6 @@ get_bads_data <- function(ip_los_data, peers) {
       .data$rate,
       .data$n,
       .data$split
-    )
+    ) |>
+    add_mean_rows()
 }
