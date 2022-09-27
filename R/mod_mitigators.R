@@ -7,11 +7,11 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_mitigators_ui <- function(id) {
+mod_mitigators_ui <- function(id, title) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::h1("Activity Mitigators"),
-    shiny::h2("Admission Avoidance"),
+    shiny::h2(title),
     shiny::fluidRow(
       bs4Dash::box(
         title = "Strategy Selection",

@@ -22,4 +22,26 @@ app_server <- function(input, output, session) {
     strategies[["admission avoidance"]],
     diagnoses_lkup
   )
+
+  mod_mitigators_server(
+    "mitigators_mean_los_reduction",
+    selected_provider,
+    selected_baseline_year,
+    c(
+      "emergency_elderly",
+      "enhanced_recovery_bladder",
+      "enhanced_recovery_breast",
+      "enhanced_recovery_colectomy",
+      "enhanced_recovery_hip",
+      "enhanced_recovery_hysterectomy",
+      "enhanced_recovery_knee",
+      "enhanced_recovery_prostate",
+      "enhanced_recovery_rectum",
+      "excess_beddays_elective",
+      "excess_beddays_emergency",
+      "raid_ip",
+      "stroke_early_supported_discharge"
+    ),
+    diagnoses_lkup
+  )
 }

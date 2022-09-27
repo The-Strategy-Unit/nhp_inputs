@@ -22,6 +22,10 @@ app_ui <- function(request) {
         bs4Dash::menuSubItem(
           "Admission Avoidance",
           tabName = "am_admission_avoidance"
+        ),
+        bs4Dash::menuSubItem(
+          "Mean LoS Reduction",
+          tabName = "am_mean_los_reduction"
         )
       )
     )
@@ -35,7 +39,11 @@ app_ui <- function(request) {
       ),
       bs4Dash::tabItem(
         tabName = "am_admission_avoidance",
-        mod_mitigators_ui("mitigators_admission_avoidance")
+        mod_mitigators_ui("mitigators_admission_avoidance", "Admission Avoidance")
+      ),
+      bs4Dash::tabItem(
+        tabName = "am_mean_los_reduction",
+        mod_mitigators_ui("mitigators_mean_los_reduction", "Mean Length of Stay Reduction")
       )
     )
   )
