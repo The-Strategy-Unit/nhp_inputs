@@ -22,6 +22,22 @@ app_ui <- function(request) {
         bs4Dash::menuSubItem(
           "Admission Avoidance",
           tabName = "am_admission_avoidance"
+        ),
+        bs4Dash::menuSubItem(
+          "Mean LoS Reduction",
+          tabName = "am_mean_los_reduction"
+        ),
+        bs4Dash::menuSubItem(
+          "AEC LoS Reduction",
+          tabName = "am_aec_los_reduction"
+        ),
+        bs4Dash::menuSubItem(
+          "Pre-op LoS Reduction",
+          tabName = "am_preop_los_reduction"
+        ),
+        bs4Dash::menuSubItem(
+          "Day Surgery Type Conversion",
+          tabName = "am_bads"
         )
       )
     )
@@ -35,7 +51,23 @@ app_ui <- function(request) {
       ),
       bs4Dash::tabItem(
         tabName = "am_admission_avoidance",
-        mod_mitigators_ui("mitigators_admission_avoidance")
+        mod_mitigators_ui("mitigators_admission_avoidance", "Admission Avoidance")
+      ),
+      bs4Dash::tabItem(
+        tabName = "am_mean_los_reduction",
+        mod_mitigators_ui("mitigators_mean_los_reduction", "Mean Length of Stay Reduction")
+      ),
+      bs4Dash::tabItem(
+        tabName = "am_aec_los_reduction",
+        mod_mitigators_ui("mitigators_aec_los_reduction", "AEC Length of Stay Reduction")
+      ),
+      bs4Dash::tabItem(
+        tabName = "am_preop_los_reduction",
+        mod_mitigators_ui("mitigators_preop_los_reduction", "Pre-op Length of Stay Reduction")
+      ),
+      bs4Dash::tabItem(
+        tabName = "am_bads",
+        mod_mitigators_ui("mitigators_bads", "Day Surgery Type Conversion")
       )
     )
   )

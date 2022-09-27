@@ -23,37 +23,6 @@ get_ip_age_sex_data <- function(provider_successors_last_updated) {
     dplyr::ungroup()
 }
 
-get_ip_dsr_data <- function(ip_age_sex, peers, catchments, lkp_euro_2013, strategies) {
-  ip_age_sex <- ip_age_sex |>
-    dplyr::filter(.data$strategy %in% strategies[["admission avoidance"]])
-
-  dsr <- peers |>
-    dplyr::inner_join(ip_age_sex, by = c("peer" = "procode")) |>
-    dplyr::left_join(catchments, by = c("fyear", "sex", "age_group", "peer" = "provider")) |>
-    dplyr::mutate(dplyr::across(.data$pop_catch, tidyr::replace_na, 0)) |>
-    dplyr::inner_join(lkp_euro_2013, by = c("sex", "age_group"))
-
-  dplyr::bind_rows(
-    dsr,
-    dsr |>
-      dplyr::group_by(.data$procode, .data$strategy, .data$fyear) |>
-      dplyr::summarise(
-        dplyr::across(
-          c(.data$n, .data$pop_catch, .data$pop_euro),
-          sum
-        ),
-        .groups = "drop"
-      )
-  ) |>
-    dplyr::group_by(.data$procode, .data$strategy, .data$fyear, .data$peer) |>
-    dplyr::summarise(
-      std_rate = sum(.data$n / .data$pop_catch * .data$pop_euro) / sum(.data$pop_euro),
-      dplyr::across(.data$pop_catch, sum),
-      .groups = "drop"
-    ) |>
-    dplyr::arrange(.data$procode, .data$strategy, .data$fyear, .data$peer)
-}
-
 get_ip_diag_data <- function(provider_successors_last_updated) {
   force(provider_successors_last_updated)
 

@@ -1,4 +1,6 @@
 save_data <- function(...) {
+  unlink("providers", TRUE, TRUE)
+
   list(...) |>
     purrr::imap(\(data, key) dplyr::group_nest(data, .data$procode, .data$strategy, .key = key)) |>
     purrr::reduce(dplyr::full_join, by = c("procode", "strategy")) |>

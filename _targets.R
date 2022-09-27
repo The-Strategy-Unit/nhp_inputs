@@ -36,18 +36,30 @@ list(
   tar_target(provider_locations, get_provider_locations(providers)),
   tar_target(pop_year_long, get_pop_year_long(age_table)),
   tar_target(catchments, get_catchments(provider_successors_last_updated, pop_year_long)),
-  tar_target(ip_age_sex_data, get_ip_age_sex_data(provider_successors_last_updated)),
   tar_target(strategies, get_strategies()),
-  tar_target(ip_dsr_data, get_ip_dsr_data(ip_age_sex_data, lkp_peers, catchments, lkp_euro_2013, strategies)),
+  # ip data
+  tar_target(ip_age_sex_data, get_ip_age_sex_data(provider_successors_last_updated)),
   tar_target(ip_diag_data, get_ip_diag_data(provider_successors_last_updated)),
   tar_target(ip_los_data, get_ip_los_data(provider_successors_last_updated)),
+  # rates
+  tar_target(ip_dsr_data, get_ip_dsr_data(ip_age_sex_data, lkp_peers, catchments, lkp_euro_2013, strategies)),
+  tar_target(mean_los_data, get_mean_los_data(ip_los_data, lkp_peers)),
+  tar_target(zero_los_data, get_zero_los_data(ip_los_data, lkp_peers)),
+  tar_target(preop_los_data, get_preop_los_data(ip_los_data, lkp_peers)),
+  tar_target(bads_data, get_bads_data(ip_los_data, lkp_peers)),
+  # save data
   tar_target(data_last_updated, {
     withr::with_dir("inst/app/data", {
       save_data(
         age_sex = ip_age_sex_data,
-        dsr = ip_dsr_data,
         diagnoses = ip_diag_data,
-        los = ip_los_data
+        rates = dplyr::bind_rows(
+          ip_dsr_data,
+          mean_los_data,
+          zero_los_data,
+          preop_los_data,
+          bads_data
+        )
       )
     })
 
@@ -59,7 +71,7 @@ list(
       saveRDS(lkp_peers, "peers.Rds")
       saveRDS(providers, "providers.Rds")
       saveRDS(strategies, "strategies.Rds")
-      sf::write_sf(provider_locations, "provider_locations.geojson")
+      sf::write_sf(provider_locations, "provider_locations.geojson", delete_dsn = TRUE)
     })
 
     Sys.time()
