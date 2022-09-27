@@ -7,12 +7,12 @@
 #' @return The return value, if any, from executing the function.
 #'
 #' @noRd
-generate_dsr_funnel_data <- function(data) {
+generate_rates_funnel_data <- function(data) {
   peer_rates <- data |>
     dplyr::filter(is.na(.data$peer)) |>
     dplyr::select(
       .data$fyear,
-      mean = .data$std_rate
+      mean = .data$rate
     )
 
   funnel_data <- data |>
@@ -20,15 +20,16 @@ generate_dsr_funnel_data <- function(data) {
     dplyr::inner_join(peer_rates, by = c("fyear")) |>
     dplyr::group_by(.data$fyear) |>
     dplyr::mutate(
-      sdev_pop_i = sqrt(abs(.data$mean) / .data$pop_catch),
-      z = (.data$std_rate - .data$mean) / .data$sdev_pop_i,
+      sdev_pop_i = sqrt(abs(.data$mean) / .data$n),
+      z = (.data$rate - .data$mean) / .data$sdev_pop_i,
       sigz = sd(.data$z, na.rm = TRUE),
       cl2 = 2 * .data$sdev_pop_i * .data$sigz,
       cl3 = 3 * .data$sdev_pop_i * .data$sigz,
       lower2 = .data$mean - .data$cl2,
       lower3 = .data$mean - .data$cl3,
       upper2 = .data$mean + .data$cl2,
-      upper3 = .data$mean + .data$cl3) |>
+      upper3 = .data$mean + .data$cl3
+    ) |>
     dplyr::ungroup()
 
   structure(funnel_data, class = c("nhp_funnel_plot", class(funnel_data)))
@@ -36,7 +37,7 @@ generate_dsr_funnel_data <- function(data) {
 
 #' @export
 plot.nhp_funnel_plot <- function(x, ...) {
-  ggplot2::ggplot(x, ggplot2::aes(.data$pop_catch, .data$std_rate)) +
+  ggplot2::ggplot(x, ggplot2::aes(.data$n, .data$rate)) +
     ggplot2::geom_line(ggplot2::aes(y = .data$lower2), linetype = "dashed") +
     ggplot2::geom_line(ggplot2::aes(y = .data$lower3), linetype = "dashed") +
     ggplot2::geom_line(ggplot2::aes(y = .data$upper2), linetype = "dashed") +
