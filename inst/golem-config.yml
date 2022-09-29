@@ -2,6 +2,15 @@ default:
   golem_name: inputs
   golem_version: 0.0.0.9000
   app_prod: no
+  mitigators_config:
+    mitigators_admission_avoidance:
+      y_axis_title: "Directly Standardised Rate"
+      number_type: !expr scales::comma_format(accuracy = 0.001)
+      trend_box_title: "Trend in DSR"
+    mitigators_mean_los_reduction:
+      y_axis_title: "Mean Length of Stay (days)"
+      number_type: !expr scales::comma_format(accuacy = 0.1)
+      trend_box_title: "Trend in Mean LoS"
 production:
   app_prod: yes
 dev:

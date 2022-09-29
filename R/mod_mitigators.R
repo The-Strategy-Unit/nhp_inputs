@@ -8,6 +8,8 @@
 #'
 #' @importFrom shiny NS tagList
 mod_mitigators_ui <- function(id, title) {
+  config <- get_golem_config("mitigators_config")[[id]]
+
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::h1("Activity Mitigators"),
@@ -23,7 +25,7 @@ mod_mitigators_ui <- function(id, title) {
         width = 9,
         shiny::fluidRow(
           bs4Dash::box(
-            title = "Trend",
+            title = config$trend_box_title,
             shinycssloaders::withSpinner({
               shiny::plotOutput(ns("trend_plot"))
             }),
@@ -63,14 +65,18 @@ mod_mitigators_ui <- function(id, title) {
   )
 }
 
-rates_trend_plot <- function(trend_data, baseline_year, plot_range) {
+rates_trend_plot <- function(trend_data, baseline_year, plot_range, y_axis_title, number_format) {
   ggplot2::ggplot(trend_data, ggplot2::aes(.data$fyear, .data$rate)) +
     ggplot2::geom_line() +
     ggplot2::geom_point(
       data = \(.x) dplyr::filter(.x, .data$fyear == baseline_year),
       colour = "red"
     ) +
-    ggplot2::scale_y_continuous(limits = plot_range) +
+    ggplot2::scale_y_continuous(
+      name = y_axis_title,
+      labels = number_format,
+      limits = plot_range
+    ) +
     ggplot2::theme(
       legend.position = "none",
       panel.background = ggplot2::element_blank()
@@ -107,6 +113,8 @@ age_pyramid <- function(age_data) {
 #' @noRd
 mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagnoses_lkup) {
   shiny::moduleServer(id, function(input, output, session) {
+    config <- get_golem_config("mitigators_config")[[id]]
+
     # on load, update the strategy drop down to include the strategies that are available
     shiny::observe({
       # find the strategies that are available for this provider
@@ -170,7 +178,13 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagn
     })
 
     output$trend_plot <- shiny::renderPlot({
-      rates_trend_plot(trend_data(), baseline_year(), plot_range())
+      rates_trend_plot(
+        trend_data(),
+        baseline_year(),
+        plot_range(),
+        config$y_axis_title,
+        config$number_type
+      )
     })
 
     # funnel plot ----
