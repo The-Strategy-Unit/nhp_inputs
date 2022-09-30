@@ -96,6 +96,8 @@ get_zero_los_data <- function(ip_los_data, peers) {
       dplyr::across(.data$n, sum),
       .groups = "drop"
     ) |>
+    # ensure there is no statistical disclosure
+    dplyr::filter(.data$n >= 5, .data$rate * .data$n >= 5, (1 - .data$rate) * .data$n >= 5) |>
     dplyr::inner_join(peers, by = c("peer")) |>
     dplyr::select(
       .data$fyear,
@@ -144,6 +146,8 @@ get_preop_los_data <- function(ip_los_data, peers) {
       rate = .data$preops / .data$n
     ) |>
     dplyr::rename(peer = .data$procode) |>
+    # ensure there is no statistical disclosure
+    dplyr::filter(.data$n >= 5, .data$rate * .data$n >= 5, (1 - .data$rate) * .data$n >= 5) |>
     dplyr::inner_join(peers, by = c("peer")) |>
     dplyr::select(
       .data$fyear,
@@ -159,7 +163,7 @@ get_preop_los_data <- function(ip_los_data, peers) {
 get_bads_data <- function(ip_los_data, peers) {
   con <- get_con("HESData")
 
-  bads_data <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "bads_admission_type_breakdowns")) |>
+  dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "bads_admission_type_breakdowns")) |>
     dplyr::collect() |>
     tidyr::pivot_wider(names_from = .data$admission_type, values_from = .data$n, values_fill = 0) |>
     dplyr::mutate(
@@ -183,9 +187,9 @@ get_bads_data <- function(ip_los_data, peers) {
       .data$rate,
       .data$n,
       .data$split
-    )
-
-  bads_data |>
+    ) |>
+    # ensure there is no statistical disclosure
+    dplyr::filter(.data$n >= 5, .data$rate * .data$n >= 5, (1 - .data$rate) * .data$n >= 5) |>
     dplyr::inner_join(peers, by = c("peer")) |>
     dplyr::select(
       .data$fyear,
