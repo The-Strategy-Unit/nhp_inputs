@@ -15,35 +15,36 @@ mod_mitigators_ui <- function(id, title) {
     shiny::fluidRow(
       bs4Dash::box(
         title = "Strategy Selection",
-        width = 2,
+        width = 3,
         shiny::selectInput(ns("strategy"), "Strategy", choices = NULL),
         shiny::uiOutput(ns("strategy_text"))
       ),
-      col_10(
+      shiny::column(
+        width = 9,
         shiny::fluidRow(
           bs4Dash::box(
             title = "Trend",
             shinycssloaders::withSpinner({
               shiny::plotOutput(ns("trend_plot"))
             }),
-            width = 4
+            width = 5
           ),
           bs4Dash::box(
             title = "Funnel",
             shinycssloaders::withSpinner({
               shiny::plotOutput(ns("funnel_plot"))
             }),
-            width = 4
+            width = 5
           ),
           bs4Dash::box(
             title = "Boxplot",
             shinycssloaders::withSpinner({
               shiny::plotOutput(ns("boxplot"))
             }),
-            width = 4
+            width = 2
           ),
           bs4Dash::box(
-            title = "diagnoses",
+            title = "Top 6 Diagnoses",
             shinycssloaders::withSpinner({
               shiny::tableOutput(ns("diagnoses_table"))
             }),
@@ -62,23 +63,43 @@ mod_mitigators_ui <- function(id, title) {
   )
 }
 
-rates_trend_plot <- function(trend_data, baseline_year) {
+rates_trend_plot <- function(trend_data, baseline_year, plot_range) {
   ggplot2::ggplot(trend_data, ggplot2::aes(.data$fyear, .data$rate)) +
     ggplot2::geom_line() +
-    ggplot2::geom_point(ggplot2::aes(colour = .data$fyear == baseline_year)) +
-    ggplot2::theme(legend.position = "none")
+    ggplot2::geom_point(
+      data = \(.x) dplyr::filter(.x, .data$fyear == baseline_year),
+      colour = "red"
+    ) +
+    ggplot2::scale_y_continuous(limits = plot_range) +
+    ggplot2::theme(
+      legend.position = "none",
+      panel.background = ggplot2::element_blank()
+    )
 }
 
-rates_boxplot <- function(trend_data) {
+rates_boxplot <- function(trend_data, plot_range) {
   ggplot2::ggplot(trend_data, ggplot2::aes(x = "", y = .data$rate)) +
     ggplot2::geom_boxplot(alpha = 0.2, outlier.shape = NA) +
-    ggbeeswarm::geom_quasirandom(ggplot2::aes(colour = .data$is_peer))
+    ggbeeswarm::geom_quasirandom(ggplot2::aes(colour = .data$is_peer)) +
+    ggplot2::scale_y_continuous(limits = plot_range) +
+    ggplot2::scale_colour_manual(values = c("TRUE" = "black", "FALSE" = "red")) +
+    ggplot2::theme(
+      axis.ticks.y = ggplot2::element_blank(),
+      axis.text.y = ggplot2::element_blank(),
+      axis.title.y = ggplot2::element_blank(),
+      legend.position = "none",
+      panel.background = ggplot2::element_blank()
+    )
 }
 
 age_pyramid <- function(age_data) {
-  ggplot2::ggplot(age_data, ggplot2::aes(age_group, n)) +
-    ggplot2::stat_summary(fun = "sum", geom = "bar", position = "identity") +
-    ggplot2::coord_flip()
+  age_data |>
+    ggplot2::ggplot(ggplot2::aes(.data$n, .data$age_group)) +
+    ggplot2::geom_col() +
+    ggplot2::theme(
+      legend.position = "none",
+      panel.background = ggplot2::element_blank()
+    )
 }
 
 #' mitigators_admission_avoidance Server Functions
@@ -137,7 +158,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagn
     rates_baseline_data <- shiny::reactive({
       rates_data() |>
         dplyr::filter(.data$fyear == baseline_year()) |>
-        dplyr::mutate(is_peer = .data$peer != .env$provider()) #|>
+        dplyr::mutate(is_peer = .data$peer != .env$provider())
     })
 
     # trend plot ----
@@ -149,7 +170,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagn
     })
 
     output$trend_plot <- shiny::renderPlot({
-      rates_trend_plot(trend_data(), baseline_year())
+      rates_trend_plot(trend_data(), baseline_year(), plot_range())
     })
 
     # funnel plot ----
@@ -158,15 +179,26 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagn
         generate_rates_funnel_data()
     })
 
+
+    # calculate thge range across our plots
+    plot_range <- shiny::reactive({
+      range(c(
+        trend_data()$rate,
+        funnel_data()$lower3,
+        funnel_data()$upper3
+      ))
+    })
+
     output$funnel_plot <- shiny::renderPlot({
-      plot(funnel_data())
+      plot(funnel_data(), plot_range())
     })
 
     # boxplot ----
 
     output$boxplot <- shiny::renderPlot({
-      rates_boxplot(rates_baseline_data() |>
-        tidyr::drop_na(.data$is_peer))
+      rates_baseline_data() |>
+        tidyr::drop_na(.data$is_peer) |>
+        rates_boxplot(plot_range())
     })
 
 
@@ -187,9 +219,11 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagn
     # age group ----
 
     output$age_grp_plot <- shiny::renderPlot({
-      age_pyramid(age_sex_data() |>
-        dplyr::select(-.data$sex) |>
-        dplyr::filter(fyear == baseline_year()))
+      age_sex_data() |>
+        dplyr::filter(.data$fyear == baseline_year()) |>
+        dplyr::count(age_group, wt = n) |>
+        tidyr::complete(age_group, fill = list(n = 0)) |>
+        age_pyramid()
     })
   })
 }

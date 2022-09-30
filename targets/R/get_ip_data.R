@@ -18,9 +18,15 @@ get_ip_age_sex_data <- function(provider_successors_last_updated) {
       .data$strategy,
       wt = .data$sample_rate
     ) |>
+    dplyr::arrange(.data$age_group) |>
     dplyr::collect() |>
     janitor::clean_names() |>
-    dplyr::ungroup()
+    # ensure there is no statistical disclosure
+    dplyr::group_by(.data$fyear, .data$procode, .data$strategy) |>
+    dplyr::filter(sum(.data$n) >= 5) |>
+    dplyr::ungroup() |>
+    dplyr::mutate(dplyr::across(.data$age_group, forcats::fct_inorder)) |>
+    dplyr::arrange(.data$fyear, .data$procode, .data$strategy, .data$age_group, .data$sex)
 }
 
 get_ip_diag_data <- function(provider_successors_last_updated) {

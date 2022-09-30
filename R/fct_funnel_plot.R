@@ -36,7 +36,7 @@ generate_rates_funnel_data <- function(data) {
 }
 
 #' @export
-plot.nhp_funnel_plot <- function(x, ...) {
+plot.nhp_funnel_plot <- function(x, plot_range, ...) {
   ggplot2::ggplot(x, ggplot2::aes(.data$n, .data$rate)) +
     ggplot2::geom_line(ggplot2::aes(y = .data$lower2), linetype = "dashed") +
     ggplot2::geom_line(ggplot2::aes(y = .data$lower3), linetype = "dashed") +
@@ -44,7 +44,15 @@ plot.nhp_funnel_plot <- function(x, ...) {
     ggplot2::geom_line(ggplot2::aes(y = .data$upper3), linetype = "dashed") +
     ggplot2::geom_line(ggplot2::aes(y = .data$mean), linetype = "dashed") +
     ggplot2::geom_point(ggplot2::aes(colour = .data$is_peer)) +
-    ggrepel::geom_label_repel(ggplot2::aes(label = .data$peer)) +
+    ggrepel::geom_text_repel(ggplot2::aes(label = .data$peer, colour = .data$is_peer)) +
     ggplot2::scale_colour_manual(values = c("TRUE" = "black", "FALSE" = "red")) +
-    ggplot2::theme(legend.position = "none")
+    ggplot2::theme(legend.position = "none") +
+    ggplot2::scale_y_continuous(limits = plot_range) +
+    ggplot2::theme(
+      axis.ticks.y = ggplot2::element_blank(),
+      axis.text.y = ggplot2::element_blank(),
+      axis.title.y = ggplot2::element_blank(),
+      legend.position = "none",
+      panel.background = ggplot2::element_blank()
+    )
 }
