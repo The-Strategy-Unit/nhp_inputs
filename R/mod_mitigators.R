@@ -16,9 +16,9 @@ mod_mitigators_ui <- function(id, title) {
     shiny::h2(title),
     shiny::fluidRow(
       bs4Dash::box(
-        title = "Strategy Selection",
+        title = "Activity Mitigator",
         width = 3,
-        shiny::selectInput(ns("strategy"), "Strategy", choices = NULL),
+        shiny::selectInput(ns("strategy"), "Selection", choices = NULL),
         shiny::uiOutput(ns("strategy_text"))
       ),
       shiny::column(
@@ -32,28 +32,28 @@ mod_mitigators_ui <- function(id, title) {
             width = 5
           ),
           bs4Dash::box(
-            title = "Funnel",
+            title = config$funnel_box_title,
             shinycssloaders::withSpinner({
               shiny::plotOutput(ns("funnel_plot"))
             }),
             width = 5
           ),
           bs4Dash::box(
-            title = "Boxplot",
+            title = config$boxplot_title,
             shinycssloaders::withSpinner({
               shiny::plotOutput(ns("boxplot"))
             }),
             width = 2
           ),
           bs4Dash::box(
-            title = "Top 6 Diagnoses",
+            title = "Top 6 Primary Diagnoses",
             shinycssloaders::withSpinner({
               shiny::tableOutput(ns("diagnoses_table"))
             }),
             width = 6
           ),
           bs4Dash::box(
-            title = "Age and Sex",
+            title = "Bar Chart of Activity by Age and Sex",
             shinycssloaders::withSpinner({
               shiny::plotOutput(ns("age_grp_plot"))
             }),
@@ -65,7 +65,7 @@ mod_mitigators_ui <- function(id, title) {
   )
 }
 
-rates_trend_plot <- function(trend_data, baseline_year, plot_range, y_axis_title, number_format) {
+rates_trend_plot <- function(trend_data, baseline_year, plot_range, y_axis_title, x_axis_title, number_format) {
   ggplot2::ggplot(trend_data, ggplot2::aes(.data$fyear, .data$rate)) +
     ggplot2::geom_line() +
     ggplot2::geom_point(
@@ -80,7 +80,8 @@ rates_trend_plot <- function(trend_data, baseline_year, plot_range, y_axis_title
     ggplot2::theme(
       legend.position = "none",
       panel.background = ggplot2::element_blank()
-    )
+    )+
+    ggplot2::xlab(x_axis_title)
 }
 
 rates_boxplot <- function(trend_data, plot_range) {
@@ -88,13 +89,15 @@ rates_boxplot <- function(trend_data, plot_range) {
     ggplot2::geom_boxplot(alpha = 0.2, outlier.shape = NA) +
     ggbeeswarm::geom_quasirandom(ggplot2::aes(colour = .data$is_peer)) +
     ggplot2::scale_y_continuous(limits = plot_range) +
+    ggplot2::xlab('')+
     ggplot2::scale_colour_manual(values = c("TRUE" = "black", "FALSE" = "red")) +
     ggplot2::theme(
       axis.ticks.y = ggplot2::element_blank(),
       axis.text.y = ggplot2::element_blank(),
       axis.title.y = ggplot2::element_blank(),
       legend.position = "none",
-      panel.background = ggplot2::element_blank()
+      panel.background = ggplot2::element_blank(),
+      axis.ticks.x = ggplot2::element_blank()
     )
 }
 
@@ -183,6 +186,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagn
         baseline_year(),
         plot_range(),
         config$y_axis_title,
+        config$x_axis_title,
         config$number_type
       )
     })
@@ -204,7 +208,8 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagn
     })
 
     output$funnel_plot <- shiny::renderPlot({
-      plot(funnel_data(), plot_range())
+      plot(funnel_data(), plot_range())+
+        ggplot2::xlab(config$funnel_x_title)
     })
 
     # boxplot ----
@@ -223,10 +228,11 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagn
         dplyr::filter(fyear == baseline_year()) |>
         dplyr::left_join(diagnoses_lkup, by = c(diagnosis = "diagnosis_code")) |>
         dplyr::mutate(`%` = scales::percent(p, accuracy = 1)) |>
+        dplyr::mutate(n = scales::number(n, accuracy = 1))|>
         dplyr::select(
           "Diagnosis Description" = .data$diagnosis_description,
-          Activity = .data$n,
-          `%`
+          "Count of Activity (spells)" = .data$n,
+          "% of Total Activity" = `%`
         )
     })
 
