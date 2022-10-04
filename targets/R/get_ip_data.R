@@ -47,7 +47,7 @@ get_ip_diag_data <- function(provider_successors_last_updated) {
     dplyr::inner_join(tbl_inpatients_diagnoses, by = c("FYEAR", "EPIKEY")) |>
     dplyr::inner_join(tbl_ip_strategies, by = c("EPIKEY")) |>
     dplyr::group_by(.data$FYEAR, .data$PROCODE3, .data$strategy, .data$DIAGNOSIS) |>
-    dplyr::summarise(n = n(), .groups = "drop_last") |>
+    dplyr::summarise(n = sum(.data$sample_rate, na.rm = TRUE), .groups = "drop_last") |>
     dplyr::mutate(p = .data$n * 1.0 / sum(.data$n, na.rm = TRUE)) |>
     dbplyr::window_order(dplyr::desc(.data$n)) |>
     dplyr::filter(dplyr::row_number() <= 6) |>
