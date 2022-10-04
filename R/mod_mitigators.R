@@ -66,7 +66,7 @@ mod_mitigators_ui <- function(id, title) {
 }
 
 rates_trend_plot <- function(trend_data, baseline_year, plot_range, y_axis_title, x_axis_title, number_format) {
-  ggplot2::ggplot(trend_data, ggplot2::aes(.data$fyear, .data$rate)) +
+  ggplot2::ggplot(trend_data, ggplot2::aes(as.factor(.data$fyear), .data$rate, group = 1)) +
     ggplot2::geom_line() +
     ggplot2::geom_point(
       data = \(.x) dplyr::filter(.x, .data$fyear == baseline_year),
@@ -76,6 +76,9 @@ rates_trend_plot <- function(trend_data, baseline_year, plot_range, y_axis_title
       name = y_axis_title,
       labels = number_format,
       limits = plot_range
+    ) +
+    ggplot2::scale_x_discrete(
+      labels = \(.x) stringr::str_replace(.x, "^(\\d{4})(\\d{2})$", "\\1/\\2")
     ) +
     ggplot2::theme(
       legend.position = "none",
