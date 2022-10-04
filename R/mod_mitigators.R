@@ -80,7 +80,7 @@ rates_trend_plot <- function(trend_data, baseline_year, plot_range, y_axis_title
     ggplot2::theme(
       legend.position = "none",
       panel.background = ggplot2::element_blank()
-    )+
+    ) +
     ggplot2::xlab(x_axis_title)
 }
 
@@ -89,7 +89,7 @@ rates_boxplot <- function(trend_data, plot_range) {
     ggplot2::geom_boxplot(alpha = 0.2, outlier.shape = NA) +
     ggbeeswarm::geom_quasirandom(ggplot2::aes(colour = .data$is_peer)) +
     ggplot2::scale_y_continuous(limits = plot_range) +
-    ggplot2::xlab('')+
+    ggplot2::xlab("") +
     ggplot2::scale_colour_manual(values = c("TRUE" = "black", "FALSE" = "red")) +
     ggplot2::theme(
       axis.ticks.y = ggplot2::element_blank(),
@@ -103,10 +103,28 @@ rates_boxplot <- function(trend_data, plot_range) {
 
 age_pyramid <- function(age_data) {
   age_data |>
-    ggplot2::ggplot(ggplot2::aes(.data$n, .data$age_group)) +
-    ggplot2::geom_col() +
+    dplyr::mutate(
+      dplyr::across(.data$n, `*`, ifelse(.data$sex == 1, -1, 1)),
+      dplyr::across(.data$sex, ~ ifelse(.x == 1, "Males", "Females"))
+    ) |>
+    ggplot2::ggplot(
+      ggplot2::aes(
+        .data$n,
+        .data$age_group,
+        colour = .data$sex,
+        fill = ggplot2::after_scale(ggplot2::alpha(colour, 0.4))
+      )
+    ) +
+    ggplot2::geom_col(position = "stack", width = 1, na.rm = TRUE) +
+    ggplot2::scale_colour_manual(values = c("Males" = "#5881c1", "Females" = "#ec6555")) +
+    ggplot2::scale_x_continuous(labels = purrr::compose(scales::comma, abs)) +
+    ggplot2::scale_y_discrete(drop = FALSE) +
+    ggplot2::guides(
+      colour = ggplot2::guide_legend(NULL)
+    ) +
+    ggplot2::labs(x = NULL, y = NULL) +
     ggplot2::theme(
-      legend.position = "none",
+      legend.position = "bottom",
       panel.background = ggplot2::element_blank()
     )
 }
@@ -208,7 +226,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagn
     })
 
     output$funnel_plot <- shiny::renderPlot({
-      plot(funnel_data(), plot_range())+
+      plot(funnel_data(), plot_range()) +
         ggplot2::xlab(config$funnel_x_title)
     })
 
@@ -228,7 +246,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagn
         dplyr::filter(fyear == baseline_year()) |>
         dplyr::left_join(diagnoses_lkup, by = c(diagnosis = "diagnosis_code")) |>
         dplyr::mutate(`%` = scales::percent(p, accuracy = 1)) |>
-        dplyr::mutate(n = scales::number(n, accuracy = 1))|>
+        dplyr::mutate(n = scales::number(n, accuracy = 1)) |>
         dplyr::select(
           "Diagnosis Description" = .data$diagnosis_description,
           "Count of Activity (spells)" = .data$n,
@@ -241,8 +259,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagn
     output$age_grp_plot <- shiny::renderPlot({
       age_sex_data() |>
         dplyr::filter(.data$fyear == baseline_year()) |>
-        dplyr::count(age_group, wt = n) |>
-        tidyr::complete(age_group, fill = list(n = 0)) |>
+        dplyr::count(.data$sex, .data$age_group, wt = .data$n) |>
         age_pyramid()
     })
   })
