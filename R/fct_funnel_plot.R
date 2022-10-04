@@ -36,7 +36,7 @@ generate_rates_funnel_data <- function(data) {
 }
 
 #' @export
-plot.nhp_funnel_plot <- function(x, plot_range, ...) {
+plot.nhp_funnel_plot <- function(x, plot_range, x_axis_title, ...) {
   ggplot2::ggplot(x, ggplot2::aes(.data$n, .data$rate)) +
     ggplot2::geom_line(ggplot2::aes(y = .data$lower2), linetype = "dashed") +
     ggplot2::geom_line(ggplot2::aes(y = .data$lower3), linetype = "dashed") +
@@ -49,6 +49,7 @@ plot.nhp_funnel_plot <- function(x, plot_range, ...) {
     ggplot2::theme(legend.position = "none") +
     ggplot2::scale_y_continuous(limits = plot_range) +
     ggplot2::scale_x_continuous(labels = scales::comma_format()) +
+    ggplot2::labs(x = x_axis_title) +
     ggplot2::theme(
       axis.ticks.y = ggplot2::element_blank(),
       axis.text.y = ggplot2::element_blank(),

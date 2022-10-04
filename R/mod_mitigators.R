@@ -80,12 +80,12 @@ rates_trend_plot <- function(trend_data, baseline_year, plot_range, y_axis_title
     ggplot2::scale_x_discrete(
       labels = \(.x) stringr::str_replace(.x, "^(\\d{4})(\\d{2})$", "\\1/\\2")
     ) +
+    ggplot2::labs(x = x_axis_title) +
     ggplot2::theme(
       legend.position = "none",
       panel.background = ggplot2::element_blank(),
       panel.grid.major.y = ggplot2::element_line("#9d928a", linetype = "dotted")
-    ) +
-    ggplot2::xlab(x_axis_title)
+    )
 }
 
 rates_boxplot <- function(trend_data, plot_range) {
@@ -93,8 +93,8 @@ rates_boxplot <- function(trend_data, plot_range) {
     ggplot2::geom_boxplot(alpha = 0.2, outlier.shape = NA) +
     ggbeeswarm::geom_quasirandom(ggplot2::aes(colour = .data$is_peer)) +
     ggplot2::scale_y_continuous(limits = plot_range) +
-    ggplot2::xlab("") +
     ggplot2::scale_colour_manual(values = c("TRUE" = "black", "FALSE" = "red")) +
+    ggplot2::labs(x = "") +
     ggplot2::theme(
       axis.ticks.y = ggplot2::element_blank(),
       axis.text.y = ggplot2::element_blank(),
@@ -231,8 +231,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagn
     })
 
     output$funnel_plot <- shiny::renderPlot({
-      plot(funnel_data(), plot_range()) +
-        ggplot2::xlab(config$funnel_x_title)
+      plot(funnel_data(), plot_range(), config$funnel_x_title)
     })
 
     # boxplot ----
