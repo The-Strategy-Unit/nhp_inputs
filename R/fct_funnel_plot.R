@@ -48,12 +48,13 @@ plot.nhp_funnel_plot <- function(x, plot_range, ...) {
     ggplot2::scale_colour_manual(values = c("TRUE" = "black", "FALSE" = "red")) +
     ggplot2::theme(legend.position = "none") +
     ggplot2::scale_y_continuous(limits = plot_range) +
-    ggplot2::scale_x_continuous(labels = scales::comma_format())+
+    ggplot2::scale_x_continuous(labels = scales::comma_format()) +
     ggplot2::theme(
       axis.ticks.y = ggplot2::element_blank(),
       axis.text.y = ggplot2::element_blank(),
       axis.title.y = ggplot2::element_blank(),
       legend.position = "none",
-      panel.background = ggplot2::element_blank()
+      panel.background = ggplot2::element_blank(),
+      panel.grid.major.y = ggplot2::element_line("#9d928a", linetype = "dotted")
     )
 }

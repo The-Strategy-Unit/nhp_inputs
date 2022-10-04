@@ -79,7 +79,8 @@ rates_trend_plot <- function(trend_data, baseline_year, plot_range, y_axis_title
     ) +
     ggplot2::theme(
       legend.position = "none",
-      panel.background = ggplot2::element_blank()
+      panel.background = ggplot2::element_blank(),
+      panel.grid.major.y = ggplot2::element_line("#9d928a", linetype = "dotted")
     ) +
     ggplot2::xlab(x_axis_title)
 }
@@ -97,7 +98,8 @@ rates_boxplot <- function(trend_data, plot_range) {
       axis.title.y = ggplot2::element_blank(),
       legend.position = "none",
       panel.background = ggplot2::element_blank(),
-      axis.ticks.x = ggplot2::element_blank()
+      axis.ticks.x = ggplot2::element_blank(),
+      panel.grid.major.y = ggplot2::element_line("#9d928a", linetype = "dotted")
     )
 }
 
