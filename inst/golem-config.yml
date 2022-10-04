@@ -2,6 +2,40 @@ default:
   golem_name: inputs
   golem_version: 0.0.0.9000
   app_prod: no
+  mitigators_config:
+    mitigators_admission_avoidance:
+      y_axis_title: "Directly Standardised Rate"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::comma_format(accuracy = 0.001)
+      trend_box_title: "Trend in Directly Standardised Activity Rates (DSR)"
+      funnel_box_title: "Funnel Plot of DSR for Peer Trusts"
+      funnel_x_title: "placeholder"
+      boxplot_title: "Boxplot of DSRs"
+      funnel_number_type: !expr scales::comma_format()
+    mitigators_mean_los_reduction:
+      y_axis_title: "Mean Length of Stay (days)"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::comma_format(accuracy = 0.1)
+      trend_box_title: "Trend in Mean LoS"
+      funnel_box_title: "Funnel Plot of Mean LoS for Peer Trusts"
+      funnel_x_title: ""
+      boxplot_title: "Boxplot of Mean LoS"
+    mitigators_aec_los_reduction:
+      y_axis_title: "Mean Length of Stay (days)"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::comma_format(accuracy = 0.1)
+      trend_box_title: "Trend in Mean LoS"
+      funnel_box_title: "Funnel Plot of Mean LoS for Peer Trusts"
+      funnel_x_title: ""
+      boxplot_title: "Boxplot of Mean LoS"
+    mitigators_preop_los_reduction:
+      y_axis_title: "Mean Length of Stay (days)"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::comma_format(accuracy = 0.1)
+      trend_box_title: "Trend in Mean LoS"
+      funnel_box_title: "Funnel Plot of Mean LoS for Peer Trusts"
+      funnel_x_title: ""
+      boxplot_title: "Boxplot of Mean LoS"
 production:
   app_prod: yes
 dev:
