@@ -9,7 +9,7 @@ default:
       number_type: !expr scales::comma_format(accuracy = 0.001)
       trend_box_title: "Trend in Directly Standardised Activity Rates (DSR)"
       funnel_box_title: "Funnel Plot of DSR for Peer Trusts"
-      funnel_x_title: "placeholder"
+      funnel_x_title: "Catchment Population of Trust"
       boxplot_title: "Boxplot of DSRs"
       funnel_number_type: !expr scales::comma_format()
     mitigators_mean_los_reduction:
@@ -18,24 +18,32 @@ default:
       number_type: !expr scales::comma_format(accuracy = 0.1)
       trend_box_title: "Trend in Mean LoS"
       funnel_box_title: "Funnel Plot of Mean LoS for Peer Trusts"
-      funnel_x_title: ""
+      funnel_x_title: "Number of Admissions"
       boxplot_title: "Boxplot of Mean LoS"
     mitigators_aec_los_reduction:
-      y_axis_title: "Mean Length of Stay (days)"
+      y_axis_title: "% 0-Day Admissions"
       x_axis_title: "Financial Year"
-      number_type: !expr scales::comma_format(accuracy = 0.1)
-      trend_box_title: "Trend in Mean LoS"
-      funnel_box_title: "Funnel Plot of Mean LoS for Peer Trusts"
-      funnel_x_title: ""
-      boxplot_title: "Boxplot of Mean LoS"
+      number_type: !expr scales::percent_format()
+      trend_box_title: "Trend in % 0-Day Admissions"
+      funnel_box_title: "Funnel Plot of % 0-Day Admissions for Peer Trusts"
+      funnel_x_title: "Number of Admissions"
+      boxplot_title: "Boxplot of % 0-Day Admissions"
     mitigators_preop_los_reduction:
-      y_axis_title: "Mean Length of Stay (days)"
+      y_axis_title: "Procedures with a Pre-op LoS (per 1000 operations)"
       x_axis_title: "Financial Year"
-      number_type: !expr scales::comma_format(accuracy = 0.1)
-      trend_box_title: "Trend in Mean LoS"
-      funnel_box_title: "Funnel Plot of Mean LoS for Peer Trusts"
-      funnel_x_title: ""
-      boxplot_title: "Boxplot of Mean LoS"
+      number_type: !expr scales::comma_format(accuracy = 0.1, scale = 1000)
+      trend_box_title: "Trend in Procedures with a Pre-op LoS of 1 or 2 days (per 1000 operations)"
+      funnel_box_title: "Funnel Plot of Pre-op LoS for Peer Trusts"
+      funnel_x_title: "Number of Procedures Performed"
+      boxplot_title: "Boxplot of Pre-op LoS"
+    mitigators_bads:
+      y_axis_title: "% of Procedures Performed in Target Setting"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::percent_format()
+      trend_box_title: "Trend in % of Procedures Performed in Target Setting"
+      funnel_box_title: "Funnel Plot of % of Procedures Performed in Target Setting for Peer Trusts"
+      funnel_x_title: "Number of Procedures Performed"
+      boxplot_title: "Boxplot of % of Procedures Performed in Target Setting"
 production:
   app_prod: yes
 dev:
