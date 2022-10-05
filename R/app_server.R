@@ -24,39 +24,8 @@ app_server <- function(input, output, session) {
   )
 
   mms("mitigators_admission_avoidance", strategies[["admission avoidance"]])
-
-  mms("mitigators_mean_los_reduction", c(
-    "emergency_elderly",
-    "enhanced_recovery_bladder",
-    "enhanced_recovery_breast",
-    "enhanced_recovery_colectomy",
-    "enhanced_recovery_hip",
-    "enhanced_recovery_hysterectomy",
-    "enhanced_recovery_knee",
-    "enhanced_recovery_prostate",
-    "enhanced_recovery_rectum",
-    "excess_beddays_elective",
-    "excess_beddays_emergency",
-    "raid_ip",
-    "stroke_early_supported_discharge"
-  ))
-
-  mms("mitigators_aec_los_reduction", c(
-    "ambulatory_emergency_care_low",
-    "ambulatory_emergency_care_moderate",
-    "ambulatory_emergency_care_high",
-    "ambulatory_emergency_care_very_high"
-  ))
-
-  mms("mitigators_preop_los_reduction", c(
-    "pre-op_los_1-day",
-    "pre-op_los_2-day"
-  ))
-
-  mms("mitigators_bads", c(
-    "bads_daycase_occasional",
-    "bads_daycase",
-    "bads_outpatients",
-    "bads_outpatients_or_daycase"
-  ))
+  mms("mitigators_mean_los_reduction", strategies[["los reduction"]])
+  mms("mitigators_aec_los_reduction", strategies[["los reduction"]])
+  mms("mitigators_preop_los_reduction", strategies[["los reduction"]])
+  mms("mitigators_bads", strategies[["los reduction"]])
 }

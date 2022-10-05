@@ -20,6 +20,20 @@ default:
       funnel_box_title: "Funnel Plot of Mean LoS for Peer Trusts"
       funnel_x_title: "Number of Admissions"
       boxplot_title: "Boxplot of Mean LoS"
+      strategy_subset:
+        - emergency_elderly
+        - enhanced_recovery_bladder
+        - enhanced_recovery_breast
+        - enhanced_recovery_colectomy
+        - enhanced_recovery_hip
+        - enhanced_recovery_hysterectomy
+        - enhanced_recovery_knee
+        - enhanced_recovery_prostate
+        - enhanced_recovery_rectum
+        - excess_beddays_elective
+        - excess_beddays_emergency
+        - raid_ip
+        - stroke_early_supported_discharge
     mitigators_aec_los_reduction:
       y_axis_title: "% 0-Day Admissions"
       x_axis_title: "Financial Year"
@@ -28,6 +42,11 @@ default:
       funnel_box_title: "Funnel Plot of % 0-Day Admissions for Peer Trusts"
       funnel_x_title: "Number of Admissions"
       boxplot_title: "Boxplot of % 0-Day Admissions"
+      strategy_subset:
+        - ambulatory_emergency_care_low
+        - ambulatory_emergency_care_moderate
+        - ambulatory_emergency_care_high
+        - ambulatory_emergency_care_very_high
     mitigators_preop_los_reduction:
       y_axis_title: "Procedures with a Pre-op LoS (per 1000 operations)"
       x_axis_title: "Financial Year"
@@ -36,6 +55,9 @@ default:
       funnel_box_title: "Funnel Plot of Pre-op LoS for Peer Trusts"
       funnel_x_title: "Number of Procedures Performed"
       boxplot_title: "Boxplot of Pre-op LoS"
+      strategy_subset:
+        - pre-op_los_1-day
+        - pre-op_los_2-day
     mitigators_bads:
       y_axis_title: "% of Procedures Performed in Target Setting"
       x_axis_title: "Financial Year"
@@ -44,6 +66,11 @@ default:
       funnel_box_title: "Funnel Plot of % of Procedures Performed in Target Setting for Peer Trusts"
       funnel_x_title: "Number of Procedures Performed"
       boxplot_title: "Boxplot of % of Procedures Performed in Target Setting"
+      strategy_subset:
+        - bads_daycase_occasional
+        - bads_daycase
+        - bads_outpatients
+        - bads_outpatients_or_daycase
 production:
   app_prod: yes
 dev:

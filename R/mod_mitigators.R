@@ -160,6 +160,10 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagn
             snakecase::to_title_case
           )
         )
+
+      if (!is.null(config$strategy_subset)) {
+        strategies <- strategies[strategies %in% config$strategy_subset]
+      }
       # update the drop down
       shiny::updateSelectInput(session, "strategy", choices = strategies)
     })
