@@ -37,12 +37,12 @@ generate_rates_funnel_data <- function(data) {
 
 #' @export
 plot.nhp_funnel_plot <- function(x, plot_range, x_axis_title, ...) {
+  lines_data <- x |>
+    dplyr::select(.data$n, tidyselect::matches("^(lower|upper)"), .data$mean) |>
+    tidyr::pivot_longer(-.data$n, values_to = "rate")
+
   ggplot2::ggplot(x, ggplot2::aes(.data$n, .data$rate)) +
-    ggplot2::geom_line(ggplot2::aes(y = .data$lower2), linetype = "dashed") +
-    ggplot2::geom_line(ggplot2::aes(y = .data$lower3), linetype = "dashed") +
-    ggplot2::geom_line(ggplot2::aes(y = .data$upper2), linetype = "dashed") +
-    ggplot2::geom_line(ggplot2::aes(y = .data$upper3), linetype = "dashed") +
-    ggplot2::geom_line(ggplot2::aes(y = .data$mean), linetype = "dashed") +
+    ggplot2::geom_line(data = lines_data, ggplot2::aes(group = .data$name), linetype = "dashed", na.rm = TRUE) +
     ggplot2::geom_point(ggplot2::aes(colour = .data$is_peer)) +
     ggrepel::geom_text_repel(ggplot2::aes(label = .data$peer, colour = .data$is_peer)) +
     ggplot2::scale_colour_manual(values = c("TRUE" = "black", "FALSE" = "red")) +

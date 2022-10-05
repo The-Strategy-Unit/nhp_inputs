@@ -227,7 +227,8 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagn
         trend_data()$rate,
         funnel_data()$lower3,
         funnel_data()$upper3
-      ))
+      )) |>
+        pmax(0)
     })
 
     output$funnel_plot <- shiny::renderPlot({
