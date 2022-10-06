@@ -61,7 +61,7 @@ default:
       funnel_box_title: "Funnel Plot of Pre-op LoS for Peer Trusts"
       funnel_x_title: "Number of Procedures Performed"
       boxplot_title: "Boxplot of Pre-op LoS"
-      slider_scale: 100
+      slider_scale: 1000
       slider_step: 0.1
       strategy_subset:
         - pre-op_los_1-day

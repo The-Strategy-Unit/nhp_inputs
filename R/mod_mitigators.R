@@ -194,9 +194,6 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, provi
         values <- values / 100
       }
       params[[strategy]] <- values
-      cat("current values:\n")
-      p <- shiny::reactiveValuesToList(params)
-      cat(paste("* ", names(p), ": ", p, collapse = "\n", sep = ""), "\n\n")
     }) |>
       shiny::bindEvent(input$slider)
 
