@@ -12,7 +12,7 @@ save_data <- function(...) {
     dplyr::group_nest(.data$procode) |>
     dplyr::mutate(dplyr::across(.data$data, purrr::map, tibble::deframe)) |>
     tibble::deframe() |>
-    saveRDS("providers_data.Rds")
+    saveRDS("provider_data.Rds")
 
   list("save_data", Sys.time())
 }
