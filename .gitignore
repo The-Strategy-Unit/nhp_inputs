@@ -8,3 +8,5 @@ _targets/
 inst/app/data/
 
 .Renviron
+
+rsconnect/
