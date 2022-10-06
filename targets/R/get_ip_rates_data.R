@@ -9,7 +9,7 @@ get_ip_dsr_data <- function(ip_age_sex, peers, catchments, lkp_euro_2013, strate
     dplyr::mutate(dplyr::across(.data$pop_catch, tidyr::replace_na, 0)) |>
     dplyr::inner_join(lkp_euro_2013, by = c("sex", "age_group"))
 
-  dplyr::bind_rows(
+  dsr <- dplyr::bind_rows(
     dsr,
     dsr |>
       dplyr::group_by(.data$procode, .data$strategy, .data$fyear) |>
@@ -28,6 +28,11 @@ get_ip_dsr_data <- function(ip_age_sex, peers, catchments, lkp_euro_2013, strate
       .groups = "drop"
     ) |>
     dplyr::arrange(.data$procode, .data$strategy, .data$fyear, .data$peer)
+
+  dsr |>
+    dplyr::group_by(.data$procode, .data$strategy, .data$fyear) |>
+    dplyr::mutate(dplyr::across(.data$rate, \(.x) .x / sum(.x * is.na(peer)))) |>
+    dplyr::ungroup()
 }
 
 add_mean_rows <- function(data) {
