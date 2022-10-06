@@ -15,11 +15,27 @@ mod_mitigators_ui <- function(id, title) {
     shiny::h1("Activity Mitigators"),
     shiny::h2(title),
     shiny::fluidRow(
-      bs4Dash::box(
-        title = "Activity Mitigator",
+      shiny::column(
         width = 3,
-        shiny::selectInput(ns("strategy"), "Selection", choices = NULL),
-        shiny::uiOutput(ns("strategy_text"))
+        shiny::fluidRow(
+          bs4Dash::box(
+            title = "Activity Mitigator",
+            width = 12,
+            shiny::selectInput(ns("strategy"), "Selection", choices = NULL),
+            shiny::uiOutput(ns("strategy_text"))
+          ),
+          bs4Dash::box(
+            title = "Params",
+            width = 12,
+            shiny::radioButtons(
+              ns("slider_type"),
+              "Slider Type",
+              c("rate", "% change"),
+              "rate"
+            ),
+            shiny::sliderInput(ns("slider"), "Slider", 0, 1, c(0, 1))
+          )
+        )
       ),
       shiny::column(
         width = 9,
@@ -72,6 +88,8 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, provi
   shiny::moduleServer(id, function(input, output, session) {
     config <- get_golem_config("mitigators_config")[[id]]
 
+    params <- shiny::reactiveValues()
+
     # on load, update the strategy drop down to include the strategies that are available
     shiny::observe({
       # find the strategies that are available for this provider
@@ -97,6 +115,10 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, provi
       }
       # update the drop down
       shiny::updateSelectInput(session, "strategy", choices = strategies)
+
+      for (i in strategies) {
+        params[[i]] <- c(0, 1)
+      }
     })
 
     # set the strategy text by loading the contents of the file for that strategy
@@ -123,6 +145,60 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, provi
         dplyr::filter(.data$fyear == baseline_year()) |>
         dplyr::mutate(is_peer = .data$peer != .env$provider())
     })
+
+    # params controls ----
+
+    provider_max_value <- shiny::reactive({
+      r <- dplyr::filter(rates_baseline_data(), !.data$is_peer)$rate
+      floor(r / config$slider_step) * config$slider_step
+    })
+
+    shiny::observe({
+      shiny::updateRadioButtons(session, "slider_type", selected = "rate")
+      update_slider("rate")
+    }) |>
+      shiny::bindEvent(input$strategy)
+
+    update_slider <- function(type) {
+      strategy <- shiny::req(input$strategy)
+      values <- params[[strategy]]
+      max_value <- provider_max_value()
+
+      if (type == "rate") {
+        new_max <- max_value
+        values <- values * max_value * config$slider_scale
+        step <- config$slider_step
+      } else {
+        new_max <- 100
+        values <- values * 100
+        step <- 0.1
+      }
+
+      shiny::updateSliderInput(session, "slider", value = values, min = 0, max = new_max, step = step)
+    }
+
+    shiny::observe({
+      update_slider(input$slider_type)
+    }) |>
+      shiny::bindEvent(input$slider_type)
+
+    shiny::observe({
+      values <- input$slider
+      type <- shiny::req(input$slider_type)
+      strategy <- shiny::req(input$strategy)
+      max_value <- provider_max_value()
+
+      if (type == "rate") {
+        values <- values / max_value / config$slider_scale
+      } else {
+        values <- values / 100
+      }
+      params[[strategy]] <- values
+      cat("current values:\n")
+      p <- shiny::reactiveValuesToList(params)
+      cat(paste("* ", names(p), ": ", p, collapse = "\n", sep = ""), "\n\n")
+    }) |>
+      shiny::bindEvent(input$slider)
 
     # trend plot ----
     # use the rates data, filtered to the provider that has been selected

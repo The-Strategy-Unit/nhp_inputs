@@ -12,6 +12,8 @@ default:
       funnel_x_title: "Catchment Population of Trust"
       boxplot_title: "Boxplot of DSRs"
       funnel_number_type: !expr scales::comma_format()
+      slider_scale: 1
+      slider_step: 0.001
     mitigators_mean_los_reduction:
       y_axis_title: "Mean Length of Stay (days)"
       x_axis_title: "Financial Year"
@@ -20,6 +22,8 @@ default:
       funnel_box_title: "Funnel Plot of Mean LoS for Peer Trusts"
       funnel_x_title: "Number of Admissions"
       boxplot_title: "Boxplot of Mean LoS"
+      slider_scale: 1
+      slider_step: 0.1
       strategy_subset:
         - emergency_elderly
         - enhanced_recovery_bladder
@@ -42,6 +46,8 @@ default:
       funnel_box_title: "Funnel Plot of % 0-Day Admissions for Peer Trusts"
       funnel_x_title: "Number of Admissions"
       boxplot_title: "Boxplot of % 0-Day Admissions"
+      slider_scale: 100
+      slider_step: 0.1
       strategy_subset:
         - ambulatory_emergency_care_low
         - ambulatory_emergency_care_moderate
@@ -55,6 +61,8 @@ default:
       funnel_box_title: "Funnel Plot of Pre-op LoS for Peer Trusts"
       funnel_x_title: "Number of Procedures Performed"
       boxplot_title: "Boxplot of Pre-op LoS"
+      slider_scale: 100
+      slider_step: 0.1
       strategy_subset:
         - pre-op_los_1-day
         - pre-op_los_2-day
@@ -66,6 +74,8 @@ default:
       funnel_box_title: "Funnel Plot of % of Procedures Performed in Target Setting for Peer Trusts"
       funnel_x_title: "Number of Procedures Performed"
       boxplot_title: "Boxplot of % of Procedures Performed in Target Setting"
+      slider_scale: 100
+      slider_step: 0.1
       strategy_subset:
         - bads_daycase_occasional
         - bads_daycase
