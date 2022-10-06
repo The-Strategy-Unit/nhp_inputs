@@ -8,6 +8,8 @@ Imports:
     bs4Dash,
     config (>= 0.3.1),
     dplyr,
+    ggbeeswarm,
+    ggrepel,
     golem (>= 0.3.3),
     gt,
     leaflet,
@@ -17,7 +19,9 @@ Imports:
     sf,
     shiny (>= 1.7.1),
     shinycssloaders,
-    shinyjs
+    shinyjs,
+    snakecase,
+    zeallot
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.1
