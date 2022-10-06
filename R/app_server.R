@@ -10,16 +10,19 @@ app_server <- function(input, output, session) {
   providers <- readRDS(app_sys("app", "data", "providers.Rds"))
   strategies <- readRDS(app_sys("app", "data", "strategies.Rds"))
   diagnoses_lkup <- readRDS(app_sys("app", "data", "diagnoses.Rds"))
+  all_data <- readRDS(app_sys("app", "data", "provider_data.Rds"))
 
   home_module <- mod_home_server("home", providers, peers)
   selected_provider <- shiny::reactive(shiny::req(home_module()$provider))
   selected_baseline_year <- shiny::reactive(shiny::req(home_module()$baseline))
+  provider_data <- shiny::reactive(all_data[[selected_provider()]])
 
   mms <- \(id, strats) mod_mitigators_server(
     id,
     selected_provider,
     selected_baseline_year,
     strats,
+    provider_data,
     diagnoses_lkup
   )
 

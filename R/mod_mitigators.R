@@ -137,7 +137,7 @@ age_pyramid <- function(age_data) {
 #' mitigators_admission_avoidance Server Functions
 #'
 #' @noRd
-mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagnoses_lkup) {
+mod_mitigators_server <- function(id, provider, baseline_year, strategies, provider_data, diagnoses_lkup) {
   shiny::moduleServer(id, function(input, output, session) {
     config <- get_golem_config("mitigators_config")[[id]]
 
@@ -145,7 +145,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagn
     shiny::observe({
       # find the strategies that are available for this provider
       p <- shiny::req(provider())
-      available_strategies <- dir(app_sys("app", "data", "providers", p))
+      available_strategies <- names(provider_data())
       # set the names of the strategies to title case, but fix up some of the replaced words to upper case
       strategies <- strategies |>
         intersect(available_strategies) |>
@@ -177,19 +177,13 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, diagn
     })
 
     # load data files ----
-    # create a reactive for the path to where our data files live
-    data_path <- shiny::reactive({
+    selected_data <- shiny::reactive({
       strategy <- shiny::req(input$strategy)
-      app_sys("app", "data", "providers", provider(), strategy)
+      provider_data()[[strategy]]
     })
-    # a helper function to create a reactive to load a specific file
-    read_data_file <- function(filename) {
-      shiny::reactive(readRDS(file.path(data_path(), filename)))
-    }
-    # create the reactives to load the files
-    rates_data <- read_data_file("rates.rds")
-    age_sex_data <- read_data_file("age_sex.rds")
-    diagnoses_data <- read_data_file("diagnoses.rds")
+    rates_data <- shiny::reactive(selected_data()$rates)
+    age_sex_data <- shiny::reactive(selected_data()$age_sex)
+    diagnoses_data <- shiny::reactive(selected_data()$diagnoses)
 
     # rates data baseline year ----
 

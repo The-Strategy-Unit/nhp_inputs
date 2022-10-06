@@ -6,20 +6,13 @@ save_data <- function(...) {
     purrr::reduce(dplyr::inner_join, by = c("procode", "strategy")) |>
     tidyr::pivot_longer(!where(rlang::is_atomic)) |>
     dplyr::filter(!purrr::map_lgl(.data$value, is.null)) |>
+    dplyr::mutate(dplyr::across(.data$value, purrr::map, janitor::remove_empty, "cols")) |>
+    dplyr::group_nest(.data$procode, .data$strategy) |>
+    dplyr::mutate(dplyr::across(.data$data, purrr::map, tibble::deframe)) |>
     dplyr::group_nest(.data$procode) |>
-    purrr::pwalk(
-      \(procode, data) {
-        purrr::pwalk(
-          data,
-          \(strategy, name, value) {
-            path <- paste("providers", procode, strategy, sep = "/")
-            dir.create(path, showWarnings = FALSE, recursive = TRUE)
+    dplyr::mutate(dplyr::across(.data$data, purrr::map, tibble::deframe)) |>
+    tibble::deframe() |>
+    saveRDS("providers_data.Rds")
 
-            value |>
-              janitor::remove_empty(which = "cols") |>
-              saveRDS(paste0(path, "/", name, ".rds"))
-          }
-        )
-      }
-    )
+  list("save_data", Sys.time())
 }
