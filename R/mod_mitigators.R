@@ -150,7 +150,8 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, provi
 
     provider_max_value <- shiny::reactive({
       r <- dplyr::filter(rates_baseline_data(), !.data$is_peer)$rate
-      floor(r / config$slider_step) * config$slider_step
+      m <- config$slider_scale / config$slider_step
+      floor(r * m) / m
     })
 
     shiny::observe({
@@ -165,7 +166,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, provi
       max_value <- provider_max_value()
 
       if (type == "rate") {
-        new_max <- max_value
+        new_max <- max_value * config$slider_scale
         values <- values * max_value * config$slider_scale
         step <- config$slider_step
       } else {
@@ -189,7 +190,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, provi
       max_value <- provider_max_value()
 
       if (type == "rate") {
-        values <- values / max_value / config$slider_scale
+        values <- values / (max_value * config$slider_scale)
       } else {
         values <- values / 100
       }
@@ -227,6 +228,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, provi
     plot_range <- shiny::reactive({
       range(c(
         trend_data()$rate,
+        funnel_data()$rate,
         funnel_data()$lower3,
         funnel_data()$upper3
       )) |>
