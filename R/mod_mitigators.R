@@ -48,7 +48,7 @@ mod_mitigators_ui <- function(id, title) {
           bs4Dash::box(
             title = "Top 6 Primary Diagnoses",
             shinycssloaders::withSpinner({
-              shiny::tableOutput(ns("diagnoses_table"))
+              gt::gt_output(ns("diagnoses_table"))
             }),
             width = 6
           ),
@@ -63,75 +63,6 @@ mod_mitigators_ui <- function(id, title) {
       )
     )
   )
-}
-
-rates_trend_plot <- function(trend_data, baseline_year, plot_range, y_axis_title, x_axis_title, number_format) {
-  ggplot2::ggplot(trend_data, ggplot2::aes(as.factor(.data$fyear), .data$rate, group = 1)) +
-    ggplot2::geom_line() +
-    ggplot2::geom_point(
-      data = \(.x) dplyr::filter(.x, .data$fyear == baseline_year),
-      colour = "red"
-    ) +
-    ggplot2::scale_y_continuous(
-      name = y_axis_title,
-      labels = number_format,
-      limits = plot_range
-    ) +
-    ggplot2::scale_x_discrete(
-      labels = \(.x) stringr::str_replace(.x, "^(\\d{4})(\\d{2})$", "\\1/\\2")
-    ) +
-    ggplot2::labs(x = x_axis_title) +
-    ggplot2::theme(
-      legend.position = "none",
-      panel.background = ggplot2::element_blank(),
-      panel.grid.major.y = ggplot2::element_line("#9d928a", linetype = "dotted")
-    )
-}
-
-rates_boxplot <- function(trend_data, plot_range) {
-  ggplot2::ggplot(trend_data, ggplot2::aes(x = "", y = .data$rate)) +
-    ggplot2::geom_boxplot(alpha = 0.2, outlier.shape = NA) +
-    ggbeeswarm::geom_quasirandom(ggplot2::aes(colour = .data$is_peer)) +
-    ggplot2::scale_y_continuous(limits = plot_range) +
-    ggplot2::scale_colour_manual(values = c("TRUE" = "black", "FALSE" = "red")) +
-    ggplot2::labs(x = "") +
-    ggplot2::theme(
-      axis.ticks.y = ggplot2::element_blank(),
-      axis.text.y = ggplot2::element_blank(),
-      axis.title.y = ggplot2::element_blank(),
-      legend.position = "none",
-      panel.background = ggplot2::element_blank(),
-      axis.ticks.x = ggplot2::element_blank(),
-      panel.grid.major.y = ggplot2::element_line("#9d928a", linetype = "dotted")
-    )
-}
-
-age_pyramid <- function(age_data) {
-  age_data |>
-    dplyr::mutate(
-      dplyr::across(.data$n, `*`, ifelse(.data$sex == 1, -1, 1)),
-      dplyr::across(.data$sex, ~ ifelse(.x == 1, "Males", "Females"))
-    ) |>
-    ggplot2::ggplot(
-      ggplot2::aes(
-        .data$n,
-        .data$age_group,
-        colour = .data$sex,
-        fill = ggplot2::after_scale(ggplot2::alpha(colour, 0.4))
-      )
-    ) +
-    ggplot2::geom_col(position = "stack", width = 1, na.rm = TRUE) +
-    ggplot2::scale_colour_manual(values = c("Males" = "#5881c1", "Females" = "#ec6555")) +
-    ggplot2::scale_x_continuous(labels = purrr::compose(scales::comma, abs)) +
-    ggplot2::scale_y_discrete(drop = FALSE) +
-    ggplot2::guides(
-      colour = ggplot2::guide_legend(NULL)
-    ) +
-    ggplot2::labs(x = NULL, y = NULL) +
-    ggplot2::theme(
-      legend.position = "bottom",
-      panel.background = ggplot2::element_blank()
-    )
 }
 
 #' mitigators_admission_avoidance Server Functions
@@ -244,16 +175,48 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, provi
 
     # diagnoses ----
 
-    output$diagnoses_table <- shiny::renderTable({
-      diagnoses_data() |>
-        dplyr::filter(fyear == baseline_year()) |>
-        dplyr::left_join(diagnoses_lkup, by = c(diagnosis = "diagnosis_code")) |>
-        dplyr::mutate(`%` = scales::percent(p, accuracy = 1)) |>
-        dplyr::mutate(n = scales::number(n, accuracy = 1)) |>
-        dplyr::select(
-          "Diagnosis Description" = .data$diagnosis_description,
-          "Count of Activity (spells)" = .data$n,
-          "% of Total Activity" = `%`
+    output$diagnoses_table <- gt::render_gt({
+      data <- diagnoses_data() |>
+        dplyr::filter(.data$fyear == baseline_year()) |>
+        dplyr::inner_join(diagnoses_lkup, by = c("diagnosis" = "diagnosis_code")) |>
+        dplyr::select(diagnosis_description, n, p)
+
+      data <- dplyr::bind_rows(
+        data,
+        dplyr::summarise(
+          data,
+          diagnosis_description = "Other",
+          p = 1 - sum(.data$p),
+          n = sum(.data$n) * .data$p
+        )
+      )
+
+      gt::gt(data) |>
+        gt::cols_label(
+          "diagnosis_description" = "Diagnosis",
+          "n" = "Count of Activity (spells)",
+          "p" = "% of Total Activity"
+        ) |>
+        gt::fmt_number(
+          c("n"),
+          decimals = 0,
+          use_seps = TRUE
+        ) |>
+        gt::fmt_percent(
+          c("p"),
+          decimals = 1
+        ) |>
+        gt::tab_style(
+          style = list(
+            gt::cell_fill(color = "#EFEFEF"),
+            gt::cell_text(weight = "bold")
+          ),
+          locations = list(
+            gt::cells_column_labels(),
+            gt::cells_body(
+              rows = .data$diagnosis_description == "Other"
+            )
+          )
         )
     })
 
