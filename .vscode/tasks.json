@@ -15,6 +15,17 @@
 		{
 			"type": "R",
 			"code": [
+				"browseURL('http://localhost:8080/')",
+				"source('dev/watch.R')"
+			],
+			"group": "none",
+			"isBackground": true,
+			"problemMatcher": [],
+			"label": "R: Run App (watch)"
+		},
+		{
+			"type": "R",
+			"code": [
 				"targets::tar_make()"
 			],
 			"group": "build",
