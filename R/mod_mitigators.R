@@ -124,7 +124,15 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, provi
     # set the strategy text by loading the contents of the file for that strategy
     output$strategy_text <- shiny::renderUI({
       strategy <- shiny::req(input$strategy)
-      file <- app_sys("app", "strategy_text", paste0(strategy, ".md"))
+
+      files <- dir(app_sys("app", "strategy_text"), ".md") |>
+        stringr::str_remove("\\.md$")
+
+      file <- app_sys(
+        "app", "strategy_text",
+        paste0(files[stringr::str_detect(strategy, files)], ".md")
+      )
+
       shiny::req(file.exists(file))
       shiny::htmlTemplate(text_ = markdown::renderMarkdown(file))
     })
@@ -303,5 +311,9 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, provi
         dplyr::count(.data$sex, .data$age_group, wt = .data$n) |>
         age_pyramid()
     })
+
+    # return ----
+
+    params
   })
 }
