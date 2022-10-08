@@ -15,7 +15,6 @@
 		{
 			"type": "R",
 			"code": [
-				"browseURL('http://localhost:8080/')",
 				"source('dev/watch.R')"
 			],
 			"group": "none",
