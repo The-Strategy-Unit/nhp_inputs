@@ -26,9 +26,35 @@ app_server <- function(input, output, session) {
     diagnoses_lkup
   )
 
-  mms("mitigators_admission_avoidance", strategies[["admission avoidance"]])
-  mms("mitigators_mean_los_reduction", strategies[["los reduction"]])
-  mms("mitigators_aec_los_reduction", strategies[["los reduction"]])
-  mms("mitigators_preop_los_reduction", strategies[["los reduction"]])
-  mms("mitigators_bads", strategies[["los reduction"]])
+  params <- list(
+    admission_avoidance = list(
+      mms(
+        "mitigators_admission_avoidance", strategies[["admission avoidance"]]
+      )
+    ),
+    los_reduction = list(
+      mean_los = mms(
+        "mitigators_mean_los_reduction", strategies[["los reduction"]]
+      ),
+      aec = mms(
+        "mitigators_aec_los_reduction", strategies[["los reduction"]]
+      ),
+      preop = mms(
+        "mitigators_preop_los_reduction", strategies[["los reduction"]]
+      ),
+      bads = mms(
+        "mitigators_bads", strategies[["los reduction"]]
+      )
+    )
+  )
+
+  shiny::observe({ # should be a reactive
+    p <- purrr::map(
+      params,
+      purrr::compose(purrr:::flatten, purrr::map),
+      shiny::reactiveValuesToList
+    )
+
+    jsonlite::toJSON(p, pretty = TRUE, auto_unbox = TRUE) |> cat("\n")
+  })
 }
