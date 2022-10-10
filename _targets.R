@@ -36,11 +36,12 @@ list(
   tar_target(provider_locations, get_provider_locations(providers)),
   tar_target(pop_year_long, get_pop_year_long(age_table)),
   tar_target(catchments, get_catchments(provider_successors_last_updated, pop_year_long)),
-  tar_target(strategies, get_strategies()),
   # ip data
-  tar_target(ip_age_sex_data, get_ip_age_sex_data(provider_successors_last_updated)),
-  tar_target(ip_diag_data, get_ip_diag_data(provider_successors_last_updated)),
-  tar_target(ip_los_data, get_ip_los_data(provider_successors_last_updated)),
+  tar_target(strategies_last_updated, Sys.Date()), # use tar_invalidate(strategies_last_updated)
+  tar_target(strategies, get_strategies(strategies_last_updated)),
+  tar_target(ip_age_sex_data, get_ip_age_sex_data(strategies_last_updated, provider_successors_last_updated)),
+  tar_target(ip_diag_data, get_ip_diag_data(strategies_last_updated, provider_successors_last_updated)),
+  tar_target(ip_los_data, get_ip_los_data(strategies_last_updated, provider_successors_last_updated)),
   # rates
   tar_target(ip_dsr_data, get_ip_dsr_data(ip_age_sex_data, lkp_peers, catchments, lkp_euro_2013, strategies)),
   tar_target(mean_los_data, get_mean_los_data(ip_los_data, lkp_peers)),
