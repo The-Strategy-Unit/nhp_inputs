@@ -42,13 +42,17 @@ list(
   tar_target(ip_age_sex_data, get_ip_age_sex_data(strategies_last_updated, provider_successors_last_updated)),
   tar_target(ip_diag_data, get_ip_diag_data(strategies_last_updated, provider_successors_last_updated)),
   tar_target(ip_los_data, get_ip_los_data(strategies_last_updated, provider_successors_last_updated)),
+  # op data
+  tar_target(op_data, get_op_data(provider_successors_last_updated)),
   # rates
   tar_target(ip_dsr_data, get_ip_dsr_data(ip_age_sex_data, lkp_peers, catchments, lkp_euro_2013, strategies)),
   tar_target(mean_los_data, get_mean_los_data(ip_los_data, lkp_peers)),
   tar_target(zero_los_data, get_zero_los_data(ip_los_data, lkp_peers)),
   tar_target(preop_los_data, get_preop_los_data(ip_los_data, lkp_peers)),
   tar_target(bads_data, get_bads_data(ip_los_data, lkp_peers)),
-  tar_target(op_rates_data, get_op_data(provider_successors_last_updated)),
+  tar_target(op_convert_to_tele_data, get_op_convert_to_tele_data(op_data, lkp_peers)),
+  tar_target(op_consultant_to_consultant_reduction, get_op_consultant_to_consultant_reduction(op_data, lkp_peers)),
+  tar_target(op_followup_reduction, get_op_followup_reduction(op_data, lkp_peers)),
   # save data
   tar_target(data_last_updated, {
     withr::with_dir("inst/app/data", {
@@ -61,7 +65,9 @@ list(
           zero_los_data,
           preop_los_data,
           bads_data,
-          op_rates_data
+          op_convert_to_tele_data,
+          op_consultant_to_consultant_reduction,
+          op_followup_reduction
         )
       )
     })
