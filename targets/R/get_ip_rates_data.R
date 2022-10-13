@@ -40,7 +40,7 @@ add_mean_rows <- function(data) {
     dplyr::group_by(.data$fyear, .data$procode, .data$strategy) |>
     dplyr::summarise(
       rate = sum(.data$rate * .data$n) / sum(.data$n),
-      dplyr::across(.data$n, sum),
+      dplyr::across("n", sum),
       .groups = "drop"
     )
   dplyr::bind_rows(data, mean)
