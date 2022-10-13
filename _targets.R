@@ -48,6 +48,7 @@ list(
   tar_target(zero_los_data, get_zero_los_data(ip_los_data, lkp_peers)),
   tar_target(preop_los_data, get_preop_los_data(ip_los_data, lkp_peers)),
   tar_target(bads_data, get_bads_data(ip_los_data, lkp_peers)),
+  tar_target(op_rates_data, get_op_data(provider_successors_last_updated)),
   # save data
   tar_target(data_last_updated, {
     withr::with_dir("inst/app/data", {
@@ -59,7 +60,8 @@ list(
           mean_los_data,
           zero_los_data,
           preop_los_data,
-          bads_data
+          bads_data,
+          op_rates_data
         )
       )
     })
