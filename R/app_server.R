@@ -48,13 +48,5 @@ app_server <- function(input, output, session) {
     )
   )
 
-  shiny::observe({ # should be a reactive
-    p <- purrr::map(
-      params,
-      purrr::compose(purrr:::flatten, purrr::map),
-      shiny::reactiveValuesToList
-    )
-
-    jsonlite::toJSON(p, pretty = TRUE, auto_unbox = TRUE) |> cat("\n")
-  })
+  mod_debug_params_server("debug_params", params)
 }

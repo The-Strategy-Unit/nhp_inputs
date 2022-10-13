@@ -12,6 +12,7 @@ Imports:
     ggrepel,
     golem (>= 0.3.3),
     gt,
+    jsonlite,
     leaflet,
     pkgload,
     plotly,

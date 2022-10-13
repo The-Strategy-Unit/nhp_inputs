@@ -39,6 +39,10 @@ app_ui <- function(request) {
           "Day Surgery Type Conversion",
           tabName = "am_bads"
         )
+      ),
+      bs4Dash::menuItem(
+        "Debug: params",
+        tabName = "debug_params"
       )
     )
   )
@@ -68,6 +72,10 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "am_bads",
         mod_mitigators_ui("mitigators_bads", "Day Surgery Type Conversion")
+      ),
+      bs4Dash::tabItem(
+        tabName = "debug_params",
+        mod_debug_params_ui("debug_params")
       )
     )
   )
