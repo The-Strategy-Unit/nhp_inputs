@@ -35,6 +35,17 @@ app_server <- function(input, output, session) {
         preop = mms("mitigators_preop_los_reduction"),
         bads = mms("mitigators_bads")
       )
+    ),
+    outpatient_factors = list(
+      consultant_to_consultant_reduction = list(
+        mms("mitigators_op_c2c_reduction")
+      ),
+      convert_to_tele = list(
+        mms("mitigators_op_convert_tele")
+      ),
+      followup_reduction = list(
+        mms("mitigators_op_fup_reduction")
+      )
     )
   )
 

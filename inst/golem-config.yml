@@ -123,6 +123,51 @@ default:
         type: "bads"
         baseline_target_rate: !expr \(r) r$rate
         op_dc_split: !expr \(r) r$split
+    mitigators_op_c2c_reduction:
+      y_axis_title: ""
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::percent_format()
+      trend_box_title: "Trend in "
+      funnel_box_title: "Funnel Plot of "
+      funnel_x_title: "Number of Appointments"
+      boxplot_title: "Boxplot of "
+      slider_scale: 100
+      slider_step: 0.1
+      strategy_subset:
+        - consultant_to_consultant_reduction_(adult_non-surgical)
+        - consultant_to_consultant_reduction_(adult_surgical)
+        - consultant_to_consultant_reduction_(child_non-surgical)
+        - consultant_to_consultant_reduction_(child_surgical)
+    mitigators_op_convert_tele:
+      y_axis_title: ""
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::percent_format()
+      trend_box_title: "Trend in "
+      funnel_box_title: "Funnel Plot of "
+      funnel_x_title: "Number of Appointments"
+      boxplot_title: "Boxplot of "
+      slider_scale: 100
+      slider_step: 0.1
+      strategy_subset:
+        - convert_to_tele_(adult_non-surgical)
+        - convert_to_tele_(adult_surgical)
+        - convert_to_tele_(child_non-surgical)
+        - convert_to_tele_(child_surgical)
+    mitigators_op_fup_reduction:
+      y_axis_title: ""
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::comma_format()
+      trend_box_title: "Trend in "
+      funnel_box_title: "Funnel Plot of "
+      funnel_x_title: "Number of Appointments"
+      boxplot_title: "Boxplot of "
+      slider_scale: 1
+      slider_step: 0.1
+      strategy_subset:
+        - followup_reduction_(adult_non-surgical)
+        - followup_reduction_(adult_surgical)
+        - followup_reduction_(child_non-surgical)
+        - followup_reduction_(child_surgical)
 production:
   app_prod: yes
 dev:
