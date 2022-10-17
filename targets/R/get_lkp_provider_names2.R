@@ -28,5 +28,5 @@ get_lkp_provider_names2 <- function() {
   }
 
   dplyr::bind_rows(results[1:page]) |>
-    dplyr::select(procode = .data$OrgId, trust_name = .data$Name)
+    dplyr::select(procode = "OrgId", trust_name = "Name")
 }

@@ -3,15 +3,15 @@
 age_pyramid <- function(age_data) {
   age_data |>
     dplyr::mutate(
-      dplyr::across(.data$n, `*`, ifelse(.data$sex == 1, -1, 1)),
-      dplyr::across(.data$sex, ~ ifelse(.x == 1, "Males", "Females"))
+      dplyr::across("n", `*`, ifelse(.data$sex == 1, -1, 1)),
+      dplyr::across("sex", ~ ifelse(.x == 1, "Males", "Females"))
     ) |>
     ggplot2::ggplot(
       ggplot2::aes(
         .data$n,
         .data$age_group,
         colour = .data$sex,
-        fill = ggplot2::after_scale(ggplot2::alpha(colour, 0.4))
+        fill = ggplot2::after_scale(ggplot2::alpha(.data$colour, 0.4))
       )
     ) +
     ggplot2::geom_col(position = "stack", width = 1, na.rm = TRUE) +

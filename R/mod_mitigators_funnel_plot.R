@@ -10,10 +10,7 @@
 generate_rates_funnel_data <- function(data) {
   peer_rates <- data |>
     dplyr::filter(is.na(.data$peer)) |>
-    dplyr::select(
-      .data$fyear,
-      mean = .data$rate
-    )
+    dplyr::select("fyear", mean = "rate")
 
   funnel_data <- data |>
     tidyr::drop_na(.data$peer) |>
@@ -38,7 +35,7 @@ generate_rates_funnel_data <- function(data) {
 #' @export
 plot.nhp_funnel_plot <- function(x, plot_range, x_axis_title, ...) {
   lines_data <- x |>
-    dplyr::select(.data$n, tidyselect::matches("^(lower|upper)"), .data$mean) |>
+    dplyr::select("n", tidyselect::matches("^(lower|upper)"), "mean") |>
     tidyr::pivot_longer(-.data$n, values_to = "rate")
 
   ggplot2::ggplot(x, ggplot2::aes(.data$n, .data$rate)) +

@@ -26,7 +26,7 @@ get_ip_age_sex_data <- function(strategies_last_updated, provider_successors_las
     dplyr::group_by(.data$fyear, .data$procode, .data$strategy) |>
     dplyr::filter(sum(.data$n) >= 5) |>
     dplyr::ungroup() |>
-    dplyr::mutate(dplyr::across(.data$age_group, forcats::fct_inorder)) |>
+    dplyr::mutate(dplyr::across("age_group", forcats::fct_inorder)) |>
     dplyr::arrange(.data$fyear, .data$procode, .data$strategy, .data$age_group, .data$sex)
 }
 
@@ -42,7 +42,7 @@ get_ip_diag_data <- function(strategies_last_updated, provider_successors_last_u
   tbl_inpatients_diagnoses <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients_diagnoses")) |>
     dplyr::filter(.data$DIAGORDER == 1) |>
     dplyr::mutate(
-      dplyr::across(.data$DIAGNOSIS, LEFT, 3)
+      dplyr::across("DIAGNOSIS", LEFT, 3)
     )
 
   tbl_inpatients |>
@@ -59,7 +59,7 @@ get_ip_diag_data <- function(strategies_last_updated, provider_successors_last_u
     dplyr::ungroup() |>
     dplyr::collect() |>
     janitor::clean_names() |>
-    dplyr::rename(procode = .data$procode3)
+    dplyr::rename(procode = "procode3")
 }
 
 get_ip_los_data <- function(strategies_last_updated, provider_successors_last_updated) {
