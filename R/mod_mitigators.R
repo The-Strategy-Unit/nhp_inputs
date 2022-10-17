@@ -84,19 +84,24 @@ mod_mitigators_ui <- function(id, title) {
 #' mitigators_admission_avoidance Server Functions
 #'
 #' @noRd
-mod_mitigators_server <- function(id, provider, baseline_year, strategies, provider_data, diagnoses_lkup) {
+mod_mitigators_server <- function(id, provider, baseline_year, provider_data, diagnoses_lkup) {
   shiny::moduleServer(id, function(input, output, session) {
     config <- get_golem_config("mitigators_config")[[id]]
 
-    params <- shiny::reactiveValues()
+    params <- purrr::lift_dl(shiny::reactiveValues)(
+      config$strategy_subset |>
+        purrr::set_names() |>
+        purrr::map(~NULL)
+    )
 
-    # on load, update the strategy drop down to include the strategies that are available
-    shiny::observe({
+    strategies <- shiny::reactive({
+      # make sure a provider is selected
+      shiny::req(provider())
+
       # find the strategies that are available for this provider
-      p <- shiny::req(provider())
       available_strategies <- names(provider_data())
       # set the names of the strategies to title case, but fix up some of the replaced words to upper case
-      strategies <- strategies |>
+      config$strategy_subset |>
         intersect(available_strategies) |>
         purrr::set_names(
           purrr::compose(
@@ -109,15 +114,17 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, provi
             snakecase::to_title_case
           )
         )
+    })
 
-      if (!is.null(config$strategy_subset)) {
-        strategies <- strategies[strategies %in% config$strategy_subset]
-      }
+    shiny::observe({
       # update the drop down
-      shiny::updateSelectInput(session, "strategy", choices = strategies)
+      shiny::updateSelectInput(session, "strategy", choices = strategies())
 
-      for (i in strategies) {
-        params[[i]] <- c(0, 1)
+      # reset the params reactiveValues
+      for (i in names(params)) {
+        params[[i]] <- if (i %in% strategies()) {
+          c(0.95, 1)
+        }
       }
     })
 
@@ -262,7 +269,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, strategies, provi
       data <- diagnoses_data() |>
         dplyr::filter(.data$fyear == baseline_year()) |>
         dplyr::inner_join(diagnoses_lkup, by = c("diagnosis" = "diagnosis_code")) |>
-        dplyr::select(diagnosis_description, n, p)
+        dplyr::select("diagnosis_description", "n", "p")
 
       data <- dplyr::bind_rows(
         data,

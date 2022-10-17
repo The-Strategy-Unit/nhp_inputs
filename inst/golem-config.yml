@@ -14,6 +14,38 @@ default:
       funnel_number_type: !expr scales::comma_format()
       slider_scale: 1
       slider_step: 0.001
+      strategy_subset:
+        - alcohol_partially_attributable_acute
+        - alcohol_partially_attributable_chronic
+        - alcohol_wholly_attributable
+        - ambulatory_care_conditions_acute
+        - ambulatory_care_conditions_chronic
+        - ambulatory_care_conditions_vaccine_preventable
+        - cancelled_operations
+        - eol_care_2_days
+        - eol_care_3_to_14_days
+        - evidence_based_interventions_ent
+        - evidence_based_interventions_general_surgery
+        - evidence_based_interventions_gi_surgical
+        - evidence_based_interventions_msk
+        - evidence_based_interventions_urology
+        - evidence_based_interventions_vascular_varicose_veins
+        - falls_related_admissions
+        - frail_elderly_high
+        - frail_elderly_intermediate
+        - intentional_self_harm
+        - medically_unexplained_related_admissions
+        - medicines_related_admissions_explicit
+        - medicines_related_admissions_implicit_anti-diabetics
+        - medicines_related_admissions_implicit_benzodiasepines
+        - medicines_related_admissions_implicit_diurectics
+        - medicines_related_admissions_implicit_nsaids
+        - obesity_related_admissions
+        - raid_ae
+        - readmission_within_28_days
+        - smoking
+        - zero_los_no_procedure_adult
+        - zero_los_no_procedure_child
     mitigators_mean_los_reduction:
       y_axis_title: "Mean Length of Stay (days)"
       x_axis_title: "Financial Year"
