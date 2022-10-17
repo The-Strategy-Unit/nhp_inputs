@@ -122,8 +122,21 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
 
       # reset the params reactiveValues
       for (i in names(params)) {
+        # if the strategy `i` is not valid for this provider, then params[[i]] == NULL
         params[[i]] <- if (i %in% strategies()) {
-          c(0.95, 1)
+          # get the rates data for this strategy (for the provider in the baseline year)
+          r <- provider_data()[[i]]$rates |>
+            dplyr::filter(
+              .data$peer == provider(),
+              .data$fyear == baseline_year()
+            )
+
+          c(
+            # add the additional param items if they exist.
+            # if the additional item is a function, evaluate it with the rates data
+            purrr::map_if(config$params_items, is.function, rlang::exec, r),
+            list(interval = c(0.95, 1))
+          )
         }
       }
     })
@@ -177,7 +190,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
 
     update_slider <- function(type) {
       strategy <- shiny::req(input$strategy)
-      values <- params[[strategy]]
+      values <- params[[strategy]]$interval
       max_value <- provider_max_value()
 
       if (type == "rate") {
@@ -209,7 +222,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
       } else {
         values <- values / 100
       }
-      params[[strategy]] <- values
+      params[[strategy]]$interval <- values
     }) |>
       shiny::bindEvent(input$slider)
 

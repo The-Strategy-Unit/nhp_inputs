@@ -70,6 +70,8 @@ default:
         - excess_beddays_emergency
         - raid_ip
         - stroke_early_supported_discharge
+      params_items:
+        type: "all"
     mitigators_aec_los_reduction:
       y_axis_title: "% 0-Day Admissions"
       x_axis_title: "Financial Year"
@@ -85,6 +87,8 @@ default:
         - ambulatory_emergency_care_moderate
         - ambulatory_emergency_care_high
         - ambulatory_emergency_care_very_high
+      params_items:
+        type: "aec"
     mitigators_preop_los_reduction:
       y_axis_title: "Procedures with a Pre-op LoS (per 1000 operations)"
       x_axis_title: "Financial Year"
@@ -98,6 +102,8 @@ default:
       strategy_subset:
         - pre-op_los_1-day
         - pre-op_los_2-day
+      params_items:
+        type: "pre-op"
     mitigators_bads:
       y_axis_title: "% of Procedures Performed in Target Setting"
       x_axis_title: "Financial Year"
@@ -113,6 +119,10 @@ default:
         - bads_daycase
         - bads_outpatients
         - bads_outpatients_or_daycase
+      params_items:
+        type: "bads"
+        baseline_target_rate: !expr \(r) r$rate
+        op_dc_split: !expr \(r) r$split
 production:
   app_prod: yes
 dev:
