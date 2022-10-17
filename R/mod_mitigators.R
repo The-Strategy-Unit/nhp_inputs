@@ -116,6 +116,14 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
         )
     })
 
+    get_default <- function(rate) {
+      if (config$inverted %||% FALSE) {
+        pmin(c(rate, rate * 1.05), 1)
+      } else {
+        c(0.95, 1)
+      }
+    }
+
     shiny::observe({
       # update the drop down
       shiny::updateSelectInput(session, "strategy", choices = strategies())
@@ -135,7 +143,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
             # add the additional param items if they exist.
             # if the additional item is a function, evaluate it with the rates data
             purrr::map_if(config$params_items, is.function, rlang::exec, r),
-            list(interval = c(0.95, 1))
+            list(interval = get_default(r$rate))
           )
         }
       }
@@ -194,16 +202,30 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
       max_value <- provider_max_value()
 
       if (type == "rate") {
-        new_max <- max_value * config$slider_scale
-        values <- values * max_value * config$slider_scale
+        if (config$inverted %||% FALSE) {
+          new_min <- max_value * config$slider_scale
+          new_max <- config$slider_scale
+          values <- values * config$slider_scale
+        } else {
+          new_min <- 0
+          new_max <- max_value * config$slider_scale
+          values <- values * max_value * config$slider_scale
+        }
         step <- config$slider_step
       } else {
-        new_max <- 100
+        if (config$inverted %||% FALSE) {
+          new_min <- max_value * 100
+          new_max <- 100
+        } else {
+          new_min <- 0
+          new_max <- 100
+        }
+
         values <- values * 100
         step <- 0.1
       }
 
-      shiny::updateSliderInput(session, "slider", value = values, min = 0, max = new_max, step = step)
+      shiny::updateSliderInput(session, "slider", value = values, min = new_min, max = new_max, step = step)
     }
 
     shiny::observe({
@@ -217,14 +239,33 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
       strategy <- shiny::req(input$strategy)
       max_value <- provider_max_value()
 
-      if (type == "rate") {
-        values <- values / (max_value * config$slider_scale)
+      values <- if (type == "rate") {
+        if (config$inverted %||% FALSE) {
+          values / config$slider_scale
+        } else {
+          values / (max_value * config$slider_scale)
+        }
       } else {
-        values <- values / 100
+        values / 100
       }
       params[[strategy]]$interval <- values
     }) |>
       shiny::bindEvent(input$slider)
+
+    plot_ribbon <- shiny::reactive({
+      interval <- params[[input$strategy]]$interval *
+        ifelse(config$inverted %||% FALSE, 1, provider_max_value())
+
+      ggplot2::annotate(
+        "rect",
+        xmin = -Inf,
+        xmax = Inf,
+        ymin = interval[[1]],
+        ymax = interval[[2]],
+        colour = "#f9bf07",
+        fill = ggplot2::alpha("#f9bf07", 0.2)
+      )
+    })
 
     # trend plot ----
     # use the rates data, filtered to the provider that has been selected
@@ -241,7 +282,8 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
         plot_range(),
         config$y_axis_title,
         config$x_axis_title,
-        config$number_type
+        config$number_type,
+        plot_ribbon()
       )
     })
 
@@ -264,7 +306,12 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
     })
 
     output$funnel_plot <- shiny::renderPlot({
-      plot(funnel_data(), plot_range(), config$funnel_x_title)
+      plot(
+        funnel_data(),
+        plot_range(),
+        plot_ribbon(),
+        config$funnel_x_title
+      )
     })
 
     # boxplot ----
@@ -272,7 +319,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
     output$boxplot <- shiny::renderPlot({
       rates_baseline_data() |>
         tidyr::drop_na(.data$is_peer) |>
-        rates_boxplot(plot_range())
+        rates_boxplot(plot_range(), plot_ribbon())
     })
 
 

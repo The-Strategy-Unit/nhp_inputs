@@ -33,19 +33,20 @@ generate_rates_funnel_data <- function(data) {
 }
 
 #' @export
-plot.nhp_funnel_plot <- function(x, plot_range, x_axis_title, ...) {
+plot.nhp_funnel_plot <- function(x, plot_range, interval, x_axis_title, ...) {
   lines_data <- x |>
     dplyr::select("n", tidyselect::matches("^(lower|upper)"), "mean") |>
     tidyr::pivot_longer(-.data$n, values_to = "rate")
 
   ggplot2::ggplot(x, ggplot2::aes(.data$n, .data$rate)) +
+    interval +
     ggplot2::geom_line(data = lines_data, ggplot2::aes(group = .data$name), linetype = "dashed", na.rm = TRUE) +
     ggplot2::geom_point(ggplot2::aes(colour = .data$is_peer)) +
     ggrepel::geom_text_repel(ggplot2::aes(label = .data$peer, colour = .data$is_peer)) +
     ggplot2::scale_colour_manual(values = c("TRUE" = "black", "FALSE" = "red")) +
     ggplot2::theme(legend.position = "none") +
-    ggplot2::scale_y_continuous(limits = plot_range) +
     ggplot2::scale_x_continuous(labels = scales::comma_format()) +
+    ggplot2::coord_cartesian(ylim = plot_range) +
     ggplot2::labs(x = x_axis_title) +
     ggplot2::theme(
       axis.ticks.y = ggplot2::element_blank(),

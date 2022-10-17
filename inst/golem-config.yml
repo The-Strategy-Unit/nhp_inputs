@@ -123,6 +123,7 @@ default:
         type: "bads"
         baseline_target_rate: !expr \(r) r$rate
         op_dc_split: !expr \(r) r$split
+      inverted: true
     mitigators_op_c2c_reduction:
       y_axis_title: ""
       x_axis_title: "Financial Year"
@@ -153,6 +154,7 @@ default:
         - convert_to_tele_(adult_surgical)
         - convert_to_tele_(child_non-surgical)
         - convert_to_tele_(child_surgical)
+      inverted: true
     mitigators_op_fup_reduction:
       y_axis_title: ""
       x_axis_title: "Financial Year"
