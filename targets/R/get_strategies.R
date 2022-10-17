@@ -8,6 +8,6 @@ get_strategies <- function(strategies_last_updated) {
     dplyr::arrange(.data$strategy_type, .data$strategy) |>
     dplyr::collect() |>
     dplyr::group_by(.data$strategy_type) |>
-    dplyr::summarise(dplyr::across(.data$strategy, list)) |>
+    dplyr::summarise(dplyr::across("strategy", list)) |>
     tibble::deframe()
 }
