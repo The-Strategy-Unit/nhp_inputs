@@ -21,12 +21,13 @@ mod_debug_params_ui <- function(id) {
 mod_debug_params_server <- function(id, params) {
   shiny::moduleServer(id, function(input, output, session) {
     output$params_json <- shiny::renderPrint({
-      p <- purrr::map_depth(
-        params,
-        2,
-        purrr::compose(\(.x) .x[sort(names(.x))], purrr::flatten, purrr::map),
-        shiny::reactiveValuesToList
+      f <- purrr::compose(
+        \(.x) .x[sort(names(.x))],
+        purrr::flatten,
+        purrr::map
       )
+
+      p <- purrr::map_depth(params, 2, f, shiny::reactiveValuesToList)
 
       jsonlite::toJSON(p, pretty = TRUE, auto_unbox = TRUE)
     })
