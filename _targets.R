@@ -44,6 +44,8 @@ list(
   tar_target(ip_los_data, get_ip_los_data(strategies_last_updated, provider_successors_last_updated)),
   # op data
   tar_target(op_data, get_op_data(provider_successors_last_updated)),
+  tar_target(op_diag_data, get_op_diag_data(provider_successors_last_updated)),
+  tar_target(op_age_sex_data, get_op_age_sex_data(op_data)),
   # aae data
   tar_target(aae_data, get_aae_data(provider_successors_last_updated)),
   # rates
@@ -60,8 +62,14 @@ list(
   tar_target(data_last_updated, {
     withr::with_dir("inst/app/data", {
       save_data(
-        age_sex = ip_age_sex_data,
-        diagnoses = ip_diag_data,
+        age_sex = dplyr::bind_rows(
+          ip_age_sex_data,
+          op_age_sex_data
+        ),
+        diagnoses = dplyr::bind_rows(
+          ip_diag_data,
+          op_diag_data
+        ),
         rates = dplyr::bind_rows(
           ip_dsr_data,
           mean_los_data,
@@ -83,7 +91,7 @@ list(
       saveRDS(lkp_diag, "diagnoses.Rds")
       saveRDS(lkp_peers, "peers.Rds")
       saveRDS(providers, "providers.Rds")
-      saveRDS(stratgies, "strategies.Rds")
+      saveRDS(strategies, "strategies.Rds")
       sf::write_sf(provider_locations, "provider_locations.geojson", delete_dsn = TRUE)
     })
 
