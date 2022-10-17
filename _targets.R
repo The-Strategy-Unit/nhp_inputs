@@ -44,6 +44,8 @@ list(
   tar_target(ip_los_data, get_ip_los_data(strategies_last_updated, provider_successors_last_updated)),
   # op data
   tar_target(op_data, get_op_data(provider_successors_last_updated)),
+  # aae data
+  tar_target(aae_data, get_aae_data(provider_successors_last_updated)),
   # rates
   tar_target(ip_dsr_data, get_ip_dsr_data(ip_age_sex_data, lkp_peers, catchments, lkp_euro_2013, strategies)),
   tar_target(mean_los_data, get_mean_los_data(ip_los_data, lkp_peers)),
@@ -53,6 +55,7 @@ list(
   tar_target(op_convert_to_tele_data, get_op_convert_to_tele_data(op_data, lkp_peers)),
   tar_target(op_consultant_to_consultant_reduction, get_op_consultant_to_consultant_reduction(op_data, lkp_peers)),
   tar_target(op_followup_reduction, get_op_followup_reduction(op_data, lkp_peers)),
+  tar_target(aae_rates, get_aae_rates(aae_data, lkp_peers)),
   # save data
   tar_target(data_last_updated, {
     withr::with_dir("inst/app/data", {
@@ -67,7 +70,8 @@ list(
           bads_data,
           op_convert_to_tele_data,
           op_consultant_to_consultant_reduction,
-          op_followup_reduction
+          op_followup_reduction,
+          aae_rates
         )
       )
     })
@@ -79,7 +83,7 @@ list(
       saveRDS(lkp_diag, "diagnoses.Rds")
       saveRDS(lkp_peers, "peers.Rds")
       saveRDS(providers, "providers.Rds")
-      saveRDS(strategies, "strategies.Rds")
+      saveRDS(stratgies, "strategies.Rds")
       sf::write_sf(provider_locations, "provider_locations.geojson", delete_dsn = TRUE)
     })
 
