@@ -48,6 +48,8 @@ list(
   tar_target(op_age_sex_data, get_op_age_sex_data(op_data)),
   # aae data
   tar_target(aae_data, get_aae_data(provider_successors_last_updated)),
+  tar_target(aae_diag_data, get_aae_diag_data(provider_successors_last_updated)),
+  tar_target(aae_age_sex_data, get_aae_age_sex_data(aae_data)),
   # rates
   tar_target(ip_dsr_data, get_ip_dsr_data(ip_age_sex_data, lkp_peers, catchments, lkp_euro_2013, strategies)),
   tar_target(mean_los_data, get_mean_los_data(ip_los_data, lkp_peers)),
@@ -64,11 +66,13 @@ list(
       save_data(
         age_sex = dplyr::bind_rows(
           ip_age_sex_data,
-          op_age_sex_data
+          op_age_sex_data,
+          aae_age_sex_data
         ),
         diagnoses = dplyr::bind_rows(
           ip_diag_data,
-          op_diag_data
+          op_diag_data,
+          aae_diag_data
         ),
         rates = dplyr::bind_rows(
           ip_dsr_data,

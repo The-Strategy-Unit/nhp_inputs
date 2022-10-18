@@ -57,6 +57,21 @@ app_ui <- function(request) {
         )
       ),
       bs4Dash::menuItem(
+        "A&E",
+        bs4Dash::menuSubItem(
+          "Frequent Attenders",
+          tabName = "aae_frequent_attenders"
+        ),
+        bs4Dash::menuSubItem(
+          "Left Before Seen",
+          tabName = "aae_left_before_seen"
+        ),
+        bs4Dash::menuSubItem(
+          "Low Cost Discharged",
+          tabName = "aae_low_cost_discharged"
+        )
+      ),
+      bs4Dash::menuItem(
         "Debug: params",
         tabName = "debug_params"
       )
@@ -100,6 +115,18 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "op_am_fup_reduction",
         mod_mitigators_ui("mitigators_op_fup_reduction", "Follow-Up Reduction")
+      ),
+      bs4Dash::tabItem(
+        tabName = "aae_frequent_attenders",
+        mod_mitigators_ui("mitigators_aae_frequent_attenders", "Frequent Attenders")
+      ),
+      bs4Dash::tabItem(
+        tabName = "aae_left_before_seen",
+        mod_mitigators_ui("mitigators_aae_left_before_seen", "Left Before Seen")
+      ),
+      bs4Dash::tabItem(
+        tabName = "aae_low_cost_discharged",
+        mod_mitigators_ui("mitigators_aae_low_cost_discharged", "Low Cost Discharged")
       ),
       bs4Dash::tabItem(
         tabName = "debug_params",

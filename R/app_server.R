@@ -46,6 +46,17 @@ app_server <- function(input, output, session) {
       followup_reduction = list(
         mms("mitigators_op_fup_reduction")
       )
+    ),
+    aae_factors = list(
+      frequent_attenders = list(
+        mms("mitigators_aae_frequent_attenders")
+      ),
+      left_before_seen = list(
+        mms("mitigators_aae_left_before_seen")
+      ),
+      low_cost_discharged = list(
+        mms("mitigators_aae_low_cost_discharged")
+      )
     )
   )
 

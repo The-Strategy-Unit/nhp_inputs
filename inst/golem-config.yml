@@ -170,6 +170,51 @@ default:
         - followup_reduction_(adult_surgical)
         - followup_reduction_(child_non-surgical)
         - followup_reduction_(child_surgical)
+    mitigators_aae_frequent_attenders:
+      y_axis_title: ""
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::percent_format()
+      trend_box_title: "Trend in "
+      funnel_box_title: "Funnel Plot of "
+      funnel_x_title: "Number of Appointments"
+      boxplot_title: "Boxplot of "
+      slider_scale: 100
+      slider_step: 0.1
+      strategy_subset:
+        - frequent_attenders_(adult_ambulance)
+        - frequent_attenders_(adult_walk-in)
+        - frequent_attenders_(child_ambulance)
+        - frequent_attenders_(child_walk-in)
+    mitigators_aae_left_before_seen:
+      y_axis_title: ""
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::percent_format()
+      trend_box_title: "Trend in "
+      funnel_box_title: "Funnel Plot of "
+      funnel_x_title: "Number of Appointments"
+      boxplot_title: "Boxplot of "
+      slider_scale: 100
+      slider_step: 0.1
+      strategy_subset:
+        - left_before_seen_(adult_ambulance)
+        - left_before_seen_(adult_walk-in)
+        - left_before_seen_(child_ambulance)
+        - left_before_seen_(child_walk-in)
+    mitigators_aae_low_cost_discharged:
+      y_axis_title: ""
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::percent_format()
+      trend_box_title: "Trend in "
+      funnel_box_title: "Funnel Plot of "
+      funnel_x_title: "Number of Appointments"
+      boxplot_title: "Boxplot of "
+      slider_scale: 100
+      slider_step: 0.1
+      strategy_subset:
+        - low_cost_discharged_(adult_ambulance)
+        - low_cost_discharged_(adult_walk-in)
+        - low_cost_discharged_(child_ambulance)
+        - low_cost_discharged_(child_walk-in)
 production:
   app_prod: yes
 dev:
