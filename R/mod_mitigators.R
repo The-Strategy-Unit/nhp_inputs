@@ -263,7 +263,8 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
         ymin = interval[[1]],
         ymax = interval[[2]],
         colour = "#f9bf07",
-        fill = ggplot2::alpha("#f9bf07", 0.2)
+        fill = ggplot2::alpha("#f9bf07", 0.2),
+        na.rm = TRUE
       )
     })
 
