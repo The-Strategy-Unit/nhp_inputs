@@ -1,5 +1,3 @@
-
-
 age_pyramid <- function(age_data) {
   age_data |>
     dplyr::mutate(

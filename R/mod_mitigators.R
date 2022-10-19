@@ -374,10 +374,11 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
     # age group ----
 
     output$age_grp_plot <- shiny::renderPlot({
-      age_sex_data() |>
-        dplyr::filter(.data$fyear == baseline_year()) |>
-        dplyr::count(.data$sex, .data$age_group, wt = .data$n) |>
-        age_pyramid()
+      age_data <- age_sex_data() |>
+        dplyr::filter(.data$fyear == baseline_year())
+
+      shiny::req(nrow(age_data) > 0)
+      age_pyramid(age_data)
     })
 
     # return ----
