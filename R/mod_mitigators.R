@@ -25,15 +25,15 @@ mod_mitigators_ui <- function(id, title) {
             shiny::uiOutput(ns("strategy_text"))
           ),
           bs4Dash::box(
-            title = "Params",
+            title = "Model Parameter",
             width = 12,
             shiny::radioButtons(
               ns("slider_type"),
-              "Slider Type",
-              c("rate", "% change"),
+              "Display Type",
+              c("Absolute", "Relative"),
               "rate"
             ),
-            shiny::sliderInput(ns("slider"), "Slider", 0, 1, c(0, 1))
+            shiny::sliderInput(ns("slider"), "90% Confidence Interval", 0, 1, c(0, 1))
           )
         )
       ),
@@ -41,21 +41,21 @@ mod_mitigators_ui <- function(id, title) {
         width = 9,
         shiny::fluidRow(
           bs4Dash::box(
-            title = config$trend_box_title,
+            title = "Trend",
             shinycssloaders::withSpinner({
               shiny::plotOutput(ns("trend_plot"))
             }),
             width = 5
           ),
           bs4Dash::box(
-            title = config$funnel_box_title,
+            title = "Funnel",
             shinycssloaders::withSpinner({
               shiny::plotOutput(ns("funnel_plot"))
             }),
             width = 5
           ),
           bs4Dash::box(
-            title = config$boxplot_title,
+            title = "Boxplot",
             shinycssloaders::withSpinner({
               shiny::plotOutput(ns("boxplot"))
             }),

@@ -4,13 +4,10 @@ default:
   app_prod: no
   mitigators_config:
     mitigators_admission_avoidance:
-      y_axis_title: "Directly Standardised Rate"
+      y_axis_title: "Indexed Directly Standardised Rate"
       x_axis_title: "Financial Year"
       number_type: !expr scales::comma_format(accuracy = 0.001)
-      trend_box_title: "Trend in Directly Standardised Activity Rates (DSR)"
-      funnel_box_title: "Funnel Plot of DSR for Peer Trusts"
       funnel_x_title: "Catchment Population of Trust"
-      boxplot_title: "Boxplot of DSRs"
       funnel_number_type: !expr scales::comma_format()
       slider_scale: 1
       slider_step: 0.001
@@ -50,10 +47,7 @@ default:
       y_axis_title: "Mean Length of Stay (days)"
       x_axis_title: "Financial Year"
       number_type: !expr scales::comma_format(accuracy = 0.1)
-      trend_box_title: "Trend in Mean LoS"
-      funnel_box_title: "Funnel Plot of Mean LoS for Peer Trusts"
       funnel_x_title: "Number of Admissions"
-      boxplot_title: "Boxplot of Mean LoS"
       slider_scale: 1
       slider_step: 0.1
       strategy_subset:
@@ -76,10 +70,7 @@ default:
       y_axis_title: "% 0-Day Admissions"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
-      trend_box_title: "Trend in % 0-Day Admissions"
-      funnel_box_title: "Funnel Plot of % 0-Day Admissions for Peer Trusts"
       funnel_x_title: "Number of Admissions"
-      boxplot_title: "Boxplot of % 0-Day Admissions"
       slider_scale: 100
       slider_step: 0.1
       strategy_subset:
@@ -94,10 +85,7 @@ default:
       y_axis_title: "Procedures with a Pre-op LoS (per 1000 operations)"
       x_axis_title: "Financial Year"
       number_type: !expr scales::comma_format(accuracy = 0.1, scale = 1000)
-      trend_box_title: "Trend in Procedures with a Pre-op LoS of 1 or 2 days (per 1000 operations)"
-      funnel_box_title: "Funnel Plot of Pre-op LoS for Peer Trusts"
       funnel_x_title: "Number of Procedures Performed"
-      boxplot_title: "Boxplot of Pre-op LoS"
       slider_scale: 1000
       slider_step: 0.1
       strategy_subset:
@@ -109,10 +97,7 @@ default:
       y_axis_title: "% of Procedures Performed in Target Setting"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
-      trend_box_title: "Trend in % of Procedures Performed in Target Setting"
-      funnel_box_title: "Funnel Plot of % of Procedures Performed in Target Setting for Peer Trusts"
       funnel_x_title: "Number of Procedures Performed"
-      boxplot_title: "Boxplot of % of Procedures Performed in Target Setting"
       slider_scale: 100
       slider_step: 0.1
       strategy_subset:
@@ -129,10 +114,7 @@ default:
       y_axis_title: "% of Appointments that are Consultant to Consultant Referrals"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
-      trend_box_title: "Trend"
-      funnel_box_title: "Funnel Plot"
       funnel_x_title: "Number of Appointments"
-      boxplot_title: "Boxplot"
       slider_scale: 100
       slider_step: 0.1
       strategy_subset:
@@ -144,10 +126,7 @@ default:
       y_axis_title: "% of Appointments that are Tele Appointments"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
-      trend_box_title: "Trend"
-      funnel_box_title: "Funnel Plot"
       funnel_x_title: "Number of Appointments"
-      boxplot_title: "Boxplot"
       slider_scale: 100
       slider_step: 0.1
       strategy_subset:
@@ -160,10 +139,7 @@ default:
       y_axis_title: "Followup to First Ratio"
       x_axis_title: "Financial Year"
       number_type: !expr scales::comma_format()
-      trend_box_title: "Trend"
-      funnel_box_title: "Funnel Plot"
       funnel_x_title: "Number of Appointments"
-      boxplot_title: "Boxplot"
       slider_scale: 1
       slider_step: 0.1
       strategy_subset:
@@ -175,10 +151,7 @@ default:
       y_axis_title: "% of Attendances that were Frequent Attenders"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
-      trend_box_title: "Trend"
-      funnel_box_title: "Funnel Plot"
       funnel_x_title: "Number of Attendances"
-      boxplot_title: "Boxplot"
       slider_scale: 100
       slider_step: 0.1
       strategy_subset:
@@ -190,10 +163,7 @@ default:
       y_axis_title: "% of Attendances Where the Patient Left Before Being Seen"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
-      trend_box_title: "Trend"
-      funnel_box_title: "Funnel Plot "
       funnel_x_title: "Number of Attendances"
-      boxplot_title: "Boxplot"
       slider_scale: 100
       slider_step: 0.1
       strategy_subset:
@@ -205,10 +175,7 @@ default:
       y_axis_title: "% of Attendances Which Were Low Cost and Patient Was Discharged Home"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
-      trend_box_title: "Trend"
-      funnel_box_title: "Funnel Plot"
       funnel_x_title: "Number of Attendances"
-      boxplot_title: "Boxplot"
       slider_scale: 100
       slider_step: 0.1
       strategy_subset:
