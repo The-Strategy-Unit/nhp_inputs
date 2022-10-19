@@ -89,6 +89,7 @@ default:
         - ambulatory_emergency_care_very_high
       params_items:
         type: "aec"
+      inverted: true
     mitigators_preop_los_reduction:
       y_axis_title: "Procedures with a Pre-op LoS (per 1000 operations)"
       x_axis_title: "Financial Year"
