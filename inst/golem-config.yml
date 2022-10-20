@@ -80,6 +80,13 @@ default:
         - ambulatory_emergency_care_very_high
       params_items:
         type: "aec"
+      param_conversion:
+        absolute:
+          - !expr \(r, p) rev(1 - p + r * p)
+          - !expr \(r, q) rev(1 - (q - r) / (1 - r))
+        relative:
+          - !expr \(r, p) rev(1 - p)
+          - !expr \(r, q) rev(1 - q)
       inverted: true
     mitigators_preop_los_reduction:
       y_axis_title: "Procedures with a Pre-op LoS (per 1000 operations)"
@@ -109,6 +116,13 @@ default:
         type: "bads"
         baseline_target_rate: !expr \(r) r$rate
         op_dc_split: !expr \(r) r$split
+      param_conversion:
+        absolute:
+          - !expr \(r, p) rev(1 - p + r * p)
+          - !expr \(r, q) rev(1 - (q - r) / (1 - r))
+        relative:
+          - !expr \(r, p) rev(1 - p)
+          - !expr \(r, q) rev(1 - q)
       inverted: true
     mitigators_op_c2c_reduction:
       y_axis_title: "% of Appointments that are Consultant to Consultant Referrals"
@@ -134,6 +148,13 @@ default:
         - convert_to_tele_(adult_surgical)
         - convert_to_tele_(child_non-surgical)
         - convert_to_tele_(child_surgical)
+      param_conversion:
+        absolute:
+          - !expr \(r, p) rev(1 - p + r * p)
+          - !expr \(r, q) rev(1 - (q - r) / (1 - r))
+        relative:
+          - !expr \(r, p) rev(1 - p)
+          - !expr \(r, q) rev(1 - q)
       inverted: true
     mitigators_op_fup_reduction:
       y_axis_title: "Followup to First Ratio"

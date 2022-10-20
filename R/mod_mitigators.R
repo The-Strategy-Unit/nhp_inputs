@@ -30,7 +30,7 @@ mod_mitigators_ui <- function(id, title) {
             shiny::radioButtons(
               ns("slider_type"),
               "Display Type",
-              c("Absolute", "Relative"),
+              c("Absolute" = "rate", "Relative" = "% change"),
               "rate"
             ),
             shiny::sliderInput(ns("slider"), "90% Confidence Interval", 0, 1, c(0, 1))
@@ -88,6 +88,11 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
   shiny::moduleServer(id, function(input, output, session) {
     config <- get_golem_config("mitigators_config")[[id]]
 
+    param_conversion <- config$param_conversion %||% list(
+      absolute = list(\(r, p) p * r, \(r, q) q / r),
+      relative = list(\(r, p) p, \(r, q) q)
+    )
+
     params <- purrr::lift_dl(shiny::reactiveValues)(
       config$strategy_subset |>
         purrr::set_names() |>
@@ -117,11 +122,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
     })
 
     get_default <- function(rate) {
-      if (config$inverted %||% FALSE) {
-        pmin(c(rate, rate * 1.05), 1)
-      } else {
-        c(0.95, 1)
-      }
+      c(0.95, 1)
     }
 
     shiny::observe({
@@ -183,6 +184,10 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
     })
 
     # params controls ----
+    get_range <- function(max_value, scale, inverted) {
+      range <- c(0, max_value, 1) * scale
+      range[1:2 + (inverted)]
+    }
 
     provider_max_value <- shiny::reactive({
       r <- dplyr::filter(rates_baseline_data(), !.data$is_peer)$rate
@@ -198,34 +203,22 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
 
     update_slider <- function(type) {
       strategy <- shiny::req(input$strategy)
-      values <- params[[strategy]]$interval
       max_value <- provider_max_value()
 
       if (type == "rate") {
-        if (config$inverted %||% FALSE) {
-          new_min <- max_value * config$slider_scale
-          new_max <- config$slider_scale
-          values <- values * config$slider_scale
-        } else {
-          new_min <- 0
-          new_max <- max_value * config$slider_scale
-          values <- values * max_value * config$slider_scale
-        }
+        scale <- config$slider_scale
+        range <- get_range(max_value, scale, config$inverted %||% FALSE)
         step <- config$slider_step
+        pc_fn <- param_conversion$absolute[[1]]
       } else {
-        if (config$inverted %||% FALSE) {
-          new_min <- max_value * 100
-          new_max <- 100
-        } else {
-          new_min <- 0
-          new_max <- 100
-        }
-
-        values <- values * 100
+        scale <- 100
+        range <- c(0, 100)
         step <- 0.1
+        pc_fn <- param_conversion$relative[[1]]
       }
 
-      shiny::updateSliderInput(session, "slider", value = values, min = new_min, max = new_max, step = step)
+      values <- pc_fn(max_value, params[[strategy]]$interval) * scale
+      shiny::updateSliderInput(session, "slider", value = values, min = range[[1]], max = range[[2]], step = step)
     }
 
     shiny::observe({
@@ -239,29 +232,30 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
       strategy <- shiny::req(input$strategy)
       max_value <- provider_max_value()
 
-      values <- if (type == "rate") {
-        if (config$inverted %||% FALSE) {
-          values / config$slider_scale
-        } else {
-          values / (max_value * config$slider_scale)
-        }
+      if (type == "rate") {
+        scale <- config$slider_scale
+        pc_fn <- param_conversion$absolute[[2]]
       } else {
-        values / 100
+        scale <- 100
+        pc_fn <- param_conversion$relative[[2]]
       }
-      params[[strategy]]$interval <- values
+
+      params[[strategy]]$interval <- pc_fn(max_value, values / scale)
     }) |>
       shiny::bindEvent(input$slider)
 
+    # plot ribbon to show selected params ----
+
     plot_ribbon <- shiny::reactive({
-      interval <- params[[input$strategy]]$interval *
-        ifelse(config$inverted %||% FALSE, 1, provider_max_value())
+      max_value <- provider_max_value()
+      values <- param_conversion$absolute[[1]](max_value, params[[input$strategy]]$interval)
 
       ggplot2::annotate(
         "rect",
         xmin = -Inf,
         xmax = Inf,
-        ymin = interval[[1]],
-        ymax = interval[[2]],
+        ymin = values[[1]],
+        ymax = values[[2]],
         colour = "#f9bf07",
         fill = ggplot2::alpha("#f9bf07", 0.2),
         na.rm = TRUE
