@@ -44,7 +44,7 @@ get_pop_year_long <- function(age_table) {
       stringr::str_subset("[Mm]ales$") |>
       purrr::set_names(\(.x) ifelse(stringr::str_detect(.x, "Females"), "2", "1")) |>
       purrr::map_dfr(readxl::read_excel, path = tf, skip = 4, .id = "sex") |>
-      dplyr::select(.data$sex, lsoa11 = 2, tidyselect::matches("^\\d{1,2}\\+?$")) |>
+      dplyr::select("sex", lsoa11 = 2, tidyselect::matches("^\\d{1,2}\\+?$")) |>
       dplyr::filter(stringr::str_starts(.data$lsoa11, "E")) |>
       tidyr::pivot_longer(tidyselect::matches("^\\d"), names_to = "age", values_to = "pop") |>
       dplyr::inner_join(age_table, by = "age") |>
@@ -53,5 +53,5 @@ get_pop_year_long <- function(age_table) {
 
   urls |>
     purrr::map_dfr(load_sape_file, .id = "fyear") |>
-    dplyr::mutate(dplyr::across(.data$fyear, as.numeric))
+    dplyr::mutate(dplyr::across("fyear", as.numeric))
 }

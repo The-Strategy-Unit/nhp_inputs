@@ -36,29 +36,54 @@ list(
   tar_target(provider_locations, get_provider_locations(providers)),
   tar_target(pop_year_long, get_pop_year_long(age_table)),
   tar_target(catchments, get_catchments(provider_successors_last_updated, pop_year_long)),
-  tar_target(strategies, get_strategies()),
   # ip data
-  tar_target(ip_age_sex_data, get_ip_age_sex_data(provider_successors_last_updated)),
-  tar_target(ip_diag_data, get_ip_diag_data(provider_successors_last_updated)),
-  tar_target(ip_los_data, get_ip_los_data(provider_successors_last_updated)),
+  tar_target(strategies_last_updated, Sys.Date()), # use tar_invalidate(strategies_last_updated)
+  tar_target(strategies, get_strategies(strategies_last_updated)),
+  tar_target(ip_age_sex_data, get_ip_age_sex_data(strategies_last_updated, provider_successors_last_updated)),
+  tar_target(ip_diag_data, get_ip_diag_data(strategies_last_updated, provider_successors_last_updated)),
+  tar_target(ip_los_data, get_ip_los_data(strategies_last_updated, provider_successors_last_updated)),
+  # op data
+  tar_target(op_data, get_op_data(provider_successors_last_updated)),
+  tar_target(op_diag_data, get_op_diag_data(provider_successors_last_updated)),
+  tar_target(op_age_sex_data, get_op_age_sex_data(op_data)),
+  # aae data
+  tar_target(aae_data, get_aae_data(provider_successors_last_updated)),
+  tar_target(aae_diag_data, get_aae_diag_data(provider_successors_last_updated)),
+  tar_target(aae_age_sex_data, get_aae_age_sex_data(aae_data)),
   # rates
   tar_target(ip_dsr_data, get_ip_dsr_data(ip_age_sex_data, lkp_peers, catchments, lkp_euro_2013, strategies)),
   tar_target(mean_los_data, get_mean_los_data(ip_los_data, lkp_peers)),
   tar_target(zero_los_data, get_zero_los_data(ip_los_data, lkp_peers)),
   tar_target(preop_los_data, get_preop_los_data(ip_los_data, lkp_peers)),
   tar_target(bads_data, get_bads_data(ip_los_data, lkp_peers)),
+  tar_target(op_convert_to_tele_data, get_op_convert_to_tele_data(op_data, lkp_peers)),
+  tar_target(op_consultant_to_consultant_reduction, get_op_consultant_to_consultant_reduction(op_data, lkp_peers)),
+  tar_target(op_followup_reduction, get_op_followup_reduction(op_data, lkp_peers)),
+  tar_target(aae_rates, get_aae_rates(aae_data, lkp_peers)),
   # save data
   tar_target(data_last_updated, {
     withr::with_dir("inst/app/data", {
       save_data(
-        age_sex = ip_age_sex_data,
-        diagnoses = ip_diag_data,
+        age_sex = dplyr::bind_rows(
+          ip_age_sex_data,
+          op_age_sex_data,
+          aae_age_sex_data
+        ),
+        diagnoses = dplyr::bind_rows(
+          ip_diag_data,
+          op_diag_data,
+          aae_diag_data
+        ),
         rates = dplyr::bind_rows(
           ip_dsr_data,
           mean_los_data,
           zero_los_data,
           preop_los_data,
-          bads_data
+          bads_data,
+          op_convert_to_tele_data,
+          op_consultant_to_consultant_reduction,
+          op_followup_reduction,
+          aae_rates
         )
       )
     })

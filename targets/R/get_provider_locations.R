@@ -1,7 +1,7 @@
 get_provider_locations <- function(providers) {
   trusts <- NHSRtools::ods_get_trusts() |>
     dplyr::filter(.data$org_id %in% providers) |>
-    dplyr::select(.data$org_id, .data$name, .data$post_code)
+    dplyr::select("org_id", "name", "post_code")
 
   postcodes <- unique(trusts$post_code)
   n_postcodes <- length(postcodes)
@@ -21,7 +21,7 @@ get_provider_locations <- function(providers) {
     purrr::map(\(.x) sf::st_point(c(.x$longitude, .x$latitude))) |>
     sf::st_as_sfc(crs = 4326) |>
     sf::st_as_sf() |>
-    dplyr::rename(geometry = .data$x) |>
-    dplyr::mutate(post_code = postcodes, .before = .data$geometry) |>
+    dplyr::rename(geometry = "x") |>
+    dplyr::mutate(post_code = postcodes, .before = "geometry") |>
     dplyr::inner_join(trusts, by = c("post_code"))
 }

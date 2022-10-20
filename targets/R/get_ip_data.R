@@ -1,10 +1,11 @@
-get_ip_age_sex_data <- function(provider_successors_last_updated) {
+get_ip_age_sex_data <- function(strategies_last_updated, provider_successors_last_updated) {
+  force(strategies_last_updated)
   force(provider_successors_last_updated)
 
   con <- get_con("HESData")
 
   tbl_age_table <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling_reference", "age_groups"))
-  tbl_ip_strategies <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "strategies_grouped"))
+  tbl_ip_strategies <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "strategies"))
 
   dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients")) |>
     dplyr::filter(.data$sex %in% c(1, 2)) |>
@@ -25,47 +26,55 @@ get_ip_age_sex_data <- function(provider_successors_last_updated) {
     dplyr::group_by(.data$fyear, .data$procode, .data$strategy) |>
     dplyr::filter(sum(.data$n) >= 5) |>
     dplyr::ungroup() |>
-    dplyr::mutate(dplyr::across(.data$age_group, forcats::fct_inorder)) |>
+    dplyr::mutate(dplyr::across("age_group", forcats::fct_inorder)) |>
     dplyr::arrange(.data$fyear, .data$procode, .data$strategy, .data$age_group, .data$sex)
 }
 
-get_ip_diag_data <- function(provider_successors_last_updated) {
+get_ip_diag_data <- function(strategies_last_updated, provider_successors_last_updated) {
+  force(strategies_last_updated)
   force(provider_successors_last_updated)
 
   con <- get_con("HESData")
 
   tbl_inpatients <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients"))
 
-  tbl_ip_strategies <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "strategies_grouped"))
+  tbl_ip_strategies <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "strategies"))
   tbl_inpatients_diagnoses <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients_diagnoses")) |>
     dplyr::filter(.data$DIAGORDER == 1) |>
     dplyr::mutate(
-      dplyr::across(.data$DIAGNOSIS, LEFT, 3)
+      dplyr::across("DIAGNOSIS", LEFT, 3)
     )
 
   tbl_inpatients |>
     dplyr::inner_join(tbl_inpatients_diagnoses, by = c("FYEAR", "EPIKEY")) |>
     dplyr::inner_join(tbl_ip_strategies, by = c("EPIKEY")) |>
     dplyr::group_by(.data$FYEAR, .data$PROCODE3, .data$strategy, .data$DIAGNOSIS) |>
-    dplyr::summarise(n = n(), .groups = "drop_last") |>
+    dplyr::summarise(n = sum(.data$sample_rate, na.rm = TRUE), .groups = "drop_last") |>
     dplyr::mutate(p = .data$n * 1.0 / sum(.data$n, na.rm = TRUE)) |>
     dbplyr::window_order(dplyr::desc(.data$n)) |>
-    dplyr::filter(dplyr::row_number() <= 6) |>
+    dplyr::filter(
+      dplyr::row_number() <= 6,
+      .data$n >= 5
+    ) |>
     dplyr::ungroup() |>
     dplyr::collect() |>
     janitor::clean_names() |>
-    dplyr::rename(procode = .data$procode3)
+    dplyr::rename(procode = "procode3")
 }
 
-get_ip_los_data <- function(provider_successors_last_updated) {
+get_ip_los_data <- function(strategies_last_updated, provider_successors_last_updated) {
+  force(strategies_last_updated)
   force(provider_successors_last_updated)
 
   con <- get_con("HESData")
 
   tbl_inpatients <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients"))
 
-  tbl_ip_strategies <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "strategies_grouped")) |>
+  tbl_strategy_lookups <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling_reference", "strategy_lookups")) |>
     dplyr::filter(.data$strategy_type == "los reduction")
+
+  tbl_ip_strategies <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "strategies")) |>
+    dplyr::semi_join(tbl_strategy_lookups, by = c("strategy"))
 
   tbl_inpatients |>
     dplyr::inner_join(tbl_ip_strategies, by = c("EPIKEY")) |>

@@ -13,6 +13,6 @@ get_ods_successors <- function(last_update_date) {
       col_names = c("org_code", "succ_org_code", "reason", "date", "indicator"),
       col_types = c("cc_c_")
     ) |>
-      dplyr::mutate(dplyr::across(.data$date, lubridate::as_date))
+      dplyr::mutate(dplyr::across("date", lubridate::as_date))
   })
 }

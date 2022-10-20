@@ -15,6 +15,16 @@
 		{
 			"type": "R",
 			"code": [
+				"source('dev/watch.R')"
+			],
+			"group": "none",
+			"isBackground": true,
+			"problemMatcher": [],
+			"label": "R: Run App (watch)"
+		},
+		{
+			"type": "R",
+			"code": [
 				"targets::tar_make()"
 			],
 			"group": "build",

@@ -8,55 +8,57 @@ app_server <- function(input, output, session) {
   # load the data
   peers <- readRDS(app_sys("app", "data", "peers.Rds"))
   providers <- readRDS(app_sys("app", "data", "providers.Rds"))
-  strategies <- readRDS(app_sys("app", "data", "strategies.Rds"))
   diagnoses_lkup <- readRDS(app_sys("app", "data", "diagnoses.Rds"))
+  all_data <- readRDS(app_sys("app", "data", "provider_data.Rds"))
 
   home_module <- mod_home_server("home", providers, peers)
   selected_provider <- shiny::reactive(shiny::req(home_module()$provider))
   selected_baseline_year <- shiny::reactive(shiny::req(home_module()$baseline))
+  provider_data <- shiny::reactive(all_data[[selected_provider()]])
 
-  mms <- \(id, strats) mod_mitigators_server(
+  mms <- \(id) mod_mitigators_server(
     id,
     selected_provider,
     selected_baseline_year,
-    strats,
+    provider_data,
     diagnoses_lkup
   )
 
-  mms("mitigators_admission_avoidance", strategies[["admission avoidance"]])
+  params <- list(
+    inpatient_factors = list(
+      admission_avoidance = list(
+        mms("mitigators_admission_avoidance")
+      ),
+      los_reduction = list(
+        mean_los = mms("mitigators_mean_los_reduction"),
+        aec = mms("mitigators_aec_los_reduction"),
+        preop = mms("mitigators_preop_los_reduction"),
+        bads = mms("mitigators_bads")
+      )
+    ),
+    outpatient_factors = list(
+      consultant_to_consultant_reduction = list(
+        mms("mitigators_op_c2c_reduction")
+      ),
+      convert_to_tele = list(
+        mms("mitigators_op_convert_tele")
+      ),
+      followup_reduction = list(
+        mms("mitigators_op_fup_reduction")
+      )
+    ),
+    aae_factors = list(
+      frequent_attenders = list(
+        mms("mitigators_aae_frequent_attenders")
+      ),
+      left_before_seen = list(
+        mms("mitigators_aae_left_before_seen")
+      ),
+      low_cost_discharged = list(
+        mms("mitigators_aae_low_cost_discharged")
+      )
+    )
+  )
 
-  mms("mitigators_mean_los_reduction", c(
-    "emergency_elderly",
-    "enhanced_recovery_bladder",
-    "enhanced_recovery_breast",
-    "enhanced_recovery_colectomy",
-    "enhanced_recovery_hip",
-    "enhanced_recovery_hysterectomy",
-    "enhanced_recovery_knee",
-    "enhanced_recovery_prostate",
-    "enhanced_recovery_rectum",
-    "excess_beddays_elective",
-    "excess_beddays_emergency",
-    "raid_ip",
-    "stroke_early_supported_discharge"
-  ))
-
-  mms("mitigators_aec_los_reduction", c(
-    "ambulatory_emergency_care_low",
-    "ambulatory_emergency_care_moderate",
-    "ambulatory_emergency_care_high",
-    "ambulatory_emergency_care_very_high"
-  ))
-
-  mms("mitigators_preop_los_reduction", c(
-    "pre-op_los_1-day",
-    "pre-op_los_2-day"
-  ))
-
-  mms("mitigators_bads", c(
-    "bads_daycase_occasional",
-    "bads_daycase",
-    "bads_outpatients",
-    "bads_outpatients_or_daycase"
-  ))
+  mod_debug_params_server("debug_params", params)
 }

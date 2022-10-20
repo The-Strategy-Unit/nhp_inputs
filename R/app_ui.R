@@ -17,28 +17,63 @@ app_ui <- function(request) {
         tabName = "tab_home",
         icon = shiny::icon("house")
       ),
+      bs4Dash::sidebarHeader("Activity Mitigators"),
       bs4Dash::menuItem(
-        "Activity Mitigators",
+        "Inpatients",
         bs4Dash::menuSubItem(
           "Admission Avoidance",
-          tabName = "am_admission_avoidance"
+          tabName = "ip_am_admission_avoidance"
         ),
         bs4Dash::menuSubItem(
           "Mean LoS Reduction",
-          tabName = "am_mean_los_reduction"
+          tabName = "ip_am_mean_los_reduction"
         ),
         bs4Dash::menuSubItem(
           "AEC LoS Reduction",
-          tabName = "am_aec_los_reduction"
+          tabName = "ip_am_aec_los_reduction"
         ),
         bs4Dash::menuSubItem(
           "Pre-op LoS Reduction",
-          tabName = "am_preop_los_reduction"
+          tabName = "ip_am_preop_los_reduction"
         ),
         bs4Dash::menuSubItem(
-          "Day Surgery Type Conversion",
-          tabName = "am_bads"
+          "Day Surgery",
+          tabName = "ip_am_bads"
         )
+      ),
+      bs4Dash::menuItem(
+        "Outpatients",
+        bs4Dash::menuSubItem(
+          "Consultant Referrals",
+          tabName = "op_am_c2c_referrals"
+        ),
+        bs4Dash::menuSubItem(
+          "Convert to Tele",
+          tabName = "op_am_convert_tele"
+        ),
+        bs4Dash::menuSubItem(
+          "Followup Reduction",
+          tabName = "op_am_fup_reduction"
+        )
+      ),
+      bs4Dash::menuItem(
+        "A&E",
+        bs4Dash::menuSubItem(
+          "Frequent Attenders",
+          tabName = "aae_frequent_attenders"
+        ),
+        bs4Dash::menuSubItem(
+          "Left Before Seen",
+          tabName = "aae_left_before_seen"
+        ),
+        bs4Dash::menuSubItem(
+          "Low Cost Discharged",
+          tabName = "aae_low_cost_discharged"
+        )
+      ),
+      bs4Dash::menuItem(
+        "Debug: params",
+        tabName = "debug_params"
       )
     )
   )
@@ -50,24 +85,52 @@ app_ui <- function(request) {
         mod_home_ui("home")
       ),
       bs4Dash::tabItem(
-        tabName = "am_admission_avoidance",
+        tabName = "ip_am_admission_avoidance",
         mod_mitigators_ui("mitigators_admission_avoidance", "Admission Avoidance")
       ),
       bs4Dash::tabItem(
-        tabName = "am_mean_los_reduction",
+        tabName = "ip_am_mean_los_reduction",
         mod_mitigators_ui("mitigators_mean_los_reduction", "Mean Length of Stay Reduction")
       ),
       bs4Dash::tabItem(
-        tabName = "am_aec_los_reduction",
+        tabName = "ip_am_aec_los_reduction",
         mod_mitigators_ui("mitigators_aec_los_reduction", "AEC Length of Stay Reduction")
       ),
       bs4Dash::tabItem(
-        tabName = "am_preop_los_reduction",
+        tabName = "ip_am_preop_los_reduction",
         mod_mitigators_ui("mitigators_preop_los_reduction", "Pre-op Length of Stay Reduction")
       ),
       bs4Dash::tabItem(
-        tabName = "am_bads",
+        tabName = "ip_am_bads",
         mod_mitigators_ui("mitigators_bads", "Day Surgery Type Conversion")
+      ),
+      bs4Dash::tabItem(
+        tabName = "op_am_c2c_referrals",
+        mod_mitigators_ui("mitigators_op_c2c_reduction", "Consultant to Consultant Reduction")
+      ),
+      bs4Dash::tabItem(
+        tabName = "op_am_convert_tele",
+        mod_mitigators_ui("mitigators_op_convert_tele", "Convert to Tele Appointment")
+      ),
+      bs4Dash::tabItem(
+        tabName = "op_am_fup_reduction",
+        mod_mitigators_ui("mitigators_op_fup_reduction", "Follow-Up Reduction")
+      ),
+      bs4Dash::tabItem(
+        tabName = "aae_frequent_attenders",
+        mod_mitigators_ui("mitigators_aae_frequent_attenders", "Frequent Attenders")
+      ),
+      bs4Dash::tabItem(
+        tabName = "aae_left_before_seen",
+        mod_mitigators_ui("mitigators_aae_left_before_seen", "Left Before Seen")
+      ),
+      bs4Dash::tabItem(
+        tabName = "aae_low_cost_discharged",
+        mod_mitigators_ui("mitigators_aae_low_cost_discharged", "Low Cost Discharged")
+      ),
+      bs4Dash::tabItem(
+        tabName = "debug_params",
+        mod_debug_params_ui("debug_params")
       )
     )
   )

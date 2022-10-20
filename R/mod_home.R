@@ -39,7 +39,7 @@ mod_home_peers_table <- function(selected_peers) {
   selected_peers |>
     sf::st_drop_geometry() |>
     dplyr::filter(.data$is_peer) |>
-    dplyr::select("ODS Code" = .data$org_id, "Trust" = .data$name) |>
+    dplyr::select("ODS Code" = "org_id", "Trust" = "name") |>
     gt::gt()
 }
 
