@@ -144,7 +144,11 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
             # add the additional param items if they exist.
             # if the additional item is a function, evaluate it with the rates data
             purrr::map_if(config$params_items, is.function, rlang::exec, r),
-            list(interval = get_default(r$rate))
+            list(
+              interval = get_default(r$rate),
+              param_output = config$param_output %||% \(r, q) q,
+              rate = r$rate
+            )
           )
         }
       }

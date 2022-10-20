@@ -27,7 +27,17 @@ mod_debug_params_server <- function(id, params) {
         purrr::map
       )
 
-      p <- purrr::map_depth(params, 2, f, shiny::reactiveValuesToList)
+      p <- params |>
+        purrr::map_depth(2, f, shiny::reactiveValuesToList) |>
+        purrr::map_depth(3, \(.x) {
+          if (is.null(.x)) {
+            return(.x)
+          }
+          .x$interval <- .x$param_output(.x$rate, .x$interval)
+          .x$param_output <- NULL
+          .x$rate <- NULL
+          .x
+        })
 
       jsonlite::toJSON(p, pretty = TRUE, auto_unbox = TRUE)
     })

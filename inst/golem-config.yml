@@ -123,6 +123,7 @@ default:
         relative:
           - !expr \(r, p) rev(1 - p)
           - !expr \(r, q) rev(1 - q)
+      param_output: !expr \(r, q) rev(1 - q) * (1 - r) + r
       inverted: true
     mitigators_op_c2c_reduction:
       y_axis_title: "% of Appointments that are Consultant to Consultant Referrals"
@@ -155,6 +156,7 @@ default:
         relative:
           - !expr \(r, p) rev(1 - p)
           - !expr \(r, q) rev(1 - q)
+      param_output: !expr \(r, q) rev(1 - (q - r) / (1 - r))
       inverted: true
     mitigators_op_fup_reduction:
       y_axis_title: "Followup to First Ratio"
