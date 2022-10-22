@@ -100,6 +100,9 @@ default:
         - pre-op_los_2-day
       params_items:
         type: "pre-op"
+        pre-op_days:
+          pre-op_los_1-day: 1
+          pre-op_los_2-day: 2
     mitigators_bads:
       y_axis_title: "% of Procedures Performed in Target Setting"
       x_axis_title: "Financial Year"
