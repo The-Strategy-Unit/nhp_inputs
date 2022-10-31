@@ -8,8 +8,6 @@
 #'
 #' @importFrom shiny NS tagList
 mod_mitigators_ui <- function(id, title) {
-  config <- get_golem_config("mitigators_config")[[id]]
-
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::h1("Activity Mitigators"),
@@ -104,7 +102,11 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
       shiny::req(provider())
 
       # find the strategies that are available for this provider
-      available_strategies <- names(provider_data())
+      available_strategies <- provider_data() |>
+        purrr::map("rates") |>
+        purrr::map(dplyr::filter, .data$peer == provider(), .data$fyear == baseline_year()) |>
+        purrr::discard(\(.x) nrow(.x) == 0) |>
+        names()
       # set the names of the strategies to title case, but fix up some of the replaced words to upper case
       config$strategy_subset |>
         intersect(available_strategies) |>
@@ -178,9 +180,18 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
       strategy <- shiny::req(input$strategy)
       provider_data()[[strategy]]
     })
-    rates_data <- shiny::reactive(selected_data()$rates)
-    age_sex_data <- shiny::reactive(selected_data()$age_sex)
-    diagnoses_data <- shiny::reactive(selected_data()$diagnoses)
+    rates_data <- shiny::reactive({
+      d <- shiny::req(selected_data())
+      d$rates
+    })
+    age_sex_data <- shiny::reactive({
+      d <- shiny::req(selected_data())
+      d$age_sex
+    })
+    diagnoses_data <- shiny::reactive({
+      d <- shiny::req(selected_data())
+      d$diagnoses
+    })
 
     # rates data baseline year ----
 
@@ -203,6 +214,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
     })
 
     shiny::observe({
+      shiny::req(input$strategy)
       shiny::updateRadioButtons(session, "slider_type", selected = "rate")
       update_slider("rate")
     }) |>
@@ -229,11 +241,13 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
     }
 
     shiny::observe({
+      shiny::req(input$strategy)
       update_slider(input$slider_type)
     }) |>
       shiny::bindEvent(input$slider_type)
 
     shiny::observe({
+      shiny::req(input$strategy)
       values <- input$slider
       type <- shiny::req(input$slider_type)
       strategy <- shiny::req(input$strategy)
