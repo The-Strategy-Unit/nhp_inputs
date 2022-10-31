@@ -124,8 +124,8 @@ named_to_li <- function(list, class = NULL) {
 #'
 #' @examples
 #' a <- shiny::tags$p(src = "plop", "pouet")
-#' tagRemoveAttributes(a, "src")
-tagRemoveAttributes <- function(tag, ...) {
+#' tag_remove_attributes(a, "src")
+tag_remove_attributes <- function(tag, ...) {
   attrs <- as.character(list(...))
   for (i in seq_along(attrs)) {
     tag$attribs[[attrs[i]]] <- NULL
@@ -305,7 +305,7 @@ col_1 <- function(...) {
 #' Only works with compatible tags like button or links
 #'
 #' @param tag Any compatible tag.
-#' @param inputId Unique id. This will host the input value to be used
+#' @param input_id Unique id. This will host the input value to be used
 #' on the server side.
 #'
 #' @return The modified tag with an extra id and the action button class.
@@ -318,7 +318,7 @@ col_1 <- function(...) {
 #'   link <- a(href = "#", "My super link", style = "color: lightblue;")
 #'
 #'   ui <- fluidPage(
-#'     make_action_button(link, inputId = "mylink")
+#'     make_action_button(link, input_id = "mylink")
 #'   )
 #'
 #'   server <- function(input, output, session) {
@@ -329,7 +329,7 @@ col_1 <- function(...) {
 #'
 #'   shinyApp(ui, server)
 #' }
-make_action_button <- function(tag, inputId = NULL) {
+make_action_button <- function(tag, input_id = NULL) {
   # some obvious checks
   if (!inherits(tag, "shiny.tag")) stop("Must provide a shiny tag.")
   if (!is.null(tag$attribs$class)) {
@@ -337,23 +337,23 @@ make_action_button <- function(tag, inputId = NULL) {
       stop("tag is already an action button")
     }
   }
-  if (is.null(inputId) && is.null(tag$attribs$id)) {
-    stop("tag does not have any id. Please use inputId to be able to
+  if (is.null(input_id) && is.null(tag$attribs$id)) {
+    stop("tag does not have any id. Please use input_id to be able to
            access it on the server side.")
   }
 
   # handle id
-  if (!is.null(inputId)) {
+  if (!is.null(input_id)) {
     if (!is.null(tag$attribs$id)) {
       warning(
         paste(
           "tag already has an id. Please use input$",
           tag$attribs$id,
-          "to access it from the server side. inputId will be ignored."
+          "to access it from the server side. input_id will be ignored."
         )
       )
     } else {
-      tag$attribs$id <- inputId
+      tag$attribs$id <- input_id
     }
   }
 
@@ -366,40 +366,3 @@ make_action_button <- function(tag, inputId = NULL) {
   # return tag
   tag
 }
-
-
-# UNCOMMENT AND USE
-#
-# attachment::att_amend_desc()
-#
-# To use this part of the UI
-#
-#' #' Include Content From a File
-#' #'
-#' #' Load rendered RMarkdown from a file and turn into HTML.
-#' #'
-#' #' @rdname includeRMarkdown
-#' #' @export
-#' #'
-#' #' @importFrom rmarkdown render
-#' #' @importFrom markdown markdownToHTML
-#' #' @importFrom shiny HTML
-#' includeRMarkdown <- function(path){
-#'
-#'   md <- tempfile(fileext = '.md')
-#'
-#'   on.exit(unlink(md),add = TRUE)
-#'
-#'   rmarkdown::render(
-#'     path,
-#'     output_format = 'md_document',
-#'     output_dir = tempdir(),
-#'     output_file = md,quiet = TRUE
-#'     )
-#'
-#'   html <- markdown::markdownToHTML(md, fragment.only = TRUE)
-#'
-#'   Encoding(html) <- "UTF-8"
-#'
-#'   return(HTML(html))
-#' }

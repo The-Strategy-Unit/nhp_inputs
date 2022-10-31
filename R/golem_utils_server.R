@@ -29,7 +29,7 @@ drop_nulls <- function(x) {
 #'
 #' @examples
 #' NULL %||% 1
-"%||%" <- function(x, y) {
+"%||%" <- function(x, y) { # nolint
   if (is.null(x)) {
     y
   } else {
@@ -45,7 +45,7 @@ drop_nulls <- function(x) {
 #'
 #' @examples
 #' NA %|NA|% 1
-"%|NA|%" <- function(x, y) {
+"%|NA|%" <- function(x, y) { # nolint
   if (is.na(x)) {
     y
   } else {
