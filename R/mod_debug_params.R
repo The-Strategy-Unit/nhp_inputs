@@ -18,7 +18,7 @@ mod_debug_params_ui <- function(id) {
 #' debug_params Server Functions
 #'
 #' @noRd
-mod_debug_params_server <- function(id, params) {
+mod_debug_params_server <- function(id, expat_repat, activity_mitigators) {
   shiny::moduleServer(id, function(input, output, session) {
     output$params_json <- shiny::renderPrint({
       f <- purrr::compose(
@@ -27,7 +27,7 @@ mod_debug_params_server <- function(id, params) {
         purrr::map
       )
 
-      p <- params |>
+      am <- activity_mitigators |>
         purrr::map_depth(2, f, shiny::reactiveValuesToList) |>
         purrr::map_depth(3, \(.x) {
           if (is.null(.x)) {
@@ -39,7 +39,11 @@ mod_debug_params_server <- function(id, params) {
           .x
         })
 
-      jsonlite::toJSON(p, pretty = TRUE, auto_unbox = TRUE)
+      c(
+        shiny::reactiveValuesToList(expat_repat),
+        am
+      ) |>
+        jsonlite::toJSON(pretty = TRUE, auto_unbox = TRUE)
     })
   })
 }

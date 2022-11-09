@@ -16,6 +16,8 @@ app_server <- function(input, output, session) {
   selected_baseline_year <- shiny::reactive(shiny::req(home_module()$baseline))
   provider_data <- shiny::reactive(all_data[[selected_provider()]])
 
+  expat_repat <- mod_expat_repat_server("expat_repat")
+
   mms <- \(id) mod_mitigators_server(
     id,
     selected_provider,
@@ -24,7 +26,7 @@ app_server <- function(input, output, session) {
     diagnoses_lkup
   )
 
-  params <- list(
+  activity_mitigators <- list(
     inpatient_factors = list(
       admission_avoidance = list(
         mms("mitigators_admission_avoidance")
@@ -60,5 +62,9 @@ app_server <- function(input, output, session) {
     )
   )
 
-  mod_debug_params_server("debug_params", params)
+  mod_debug_params_server(
+    "debug_params",
+    expat_repat,
+    activity_mitigators
+  )
 }
