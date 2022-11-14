@@ -71,10 +71,15 @@ mod_home_providers_map <- function(selected_peers) {
 #' @noRd
 mod_home_server <- function(id, providers, peers) {
   shiny::moduleServer(id, function(input, output, session) {
+    peers <- readRDS(app_sys("app", "data", "peers.Rds"))
+    providers <- readRDS(app_sys("app", "data", "providers.Rds"))
+    nhp_current_cohort <- readRDS(app_sys("app", "data", "nhp_current_cohort.Rds"))
+
     provider_locations <- sf::read_sf(app_sys("app", "data", "provider_locations.geojson"))
 
     shiny::observe({
-      shiny::updateSelectInput(session, "provider", choices = shiny::req(providers))
+      choices <- providers[providers %in% nhp_current_cohort]
+      shiny::updateSelectInput(session, "provider", choices = choices)
     })
 
     selected_peers <- shiny::reactive({
