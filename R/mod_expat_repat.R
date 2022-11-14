@@ -82,7 +82,7 @@ mod_expat_repat_ui <- function(id) {
 #' @noRd
 mod_expat_repat_server <- function(id) {
   shiny::moduleServer(id, function(input, output, session) {
-    rtt_specialties <- readRDS(app_sys("app", "rtt_specialties.rds"))
+    rtt_specialties <- readRDS(app_sys("app", "data", "rtt_specialties.rds"))
 
     # helper method to construct the initial values for our params
     init_params <- function(values) {

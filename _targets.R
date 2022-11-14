@@ -19,6 +19,32 @@ tar_option_set(packages = "dplyr")
 
 # End this file with a list of target objects.
 list(
+  tar_target(
+    rtt_specialties,
+    c(
+      `General Surgery` = "100",
+      `Urology` = "101",
+      `Trauma and Orthopaedics` = "110",
+      `Ear Nose and Throat` = "120",
+      `Ophthalmology` = "130",
+      `Oral Surgery` = "140",
+      `Neurosurgery` = "150",
+      `Plastic Surgery` = "160",
+      `Cardiothoracic Surgery` = "170",
+      `General Internal Medicine` = "300",
+      `Gastroenterology` = "301",
+      `Cardiology` = "320",
+      `Dermatology` = "330",
+      `Respiratory Medicine` = "340",
+      `Neurology Service` = "400",
+      `Rheumatology Service` = "410",
+      `Elderly Medicine Service` = "430",
+      `Gynaecology Service` = "502",
+      `Other (Medical)` = "Other (Medical)",
+      `Other (Surgical)` = "Other (Surgical)",
+      `Other` = "Other"
+    )
+  ),
   tar_target(age_table, get_age_table()),
   tar_target(lkp_diag, get_lkp_diag()),
   tar_target(lkp_provider_names, get_lkp_provider_names()),
@@ -95,6 +121,7 @@ list(
   }),
   tar_target(reference_data_last_updated, {
     withr::with_dir("inst/app/data", {
+      saveRDS(rtt_specialties, "rtt_specialties.Rds")
       saveRDS(lkp_diag, "diagnoses.Rds")
       saveRDS(lkp_peers, "peers.Rds")
       saveRDS(providers, "providers.Rds")
