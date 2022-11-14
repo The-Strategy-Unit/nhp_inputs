@@ -82,10 +82,18 @@ mod_mitigators_ui <- function(id, title) {
 #' mitigators_admission_avoidance Server Functions
 #'
 #' @noRd
-mod_mitigators_server <- function(id, params, activity_type, mitigators_type,
-                                  provider, baseline_year, provider_data, available_strategies, diagnoses_lkup) {
+mod_mitigators_server <- function(id,
+                                  params,
+                                  provider,
+                                  baseline_year,
+                                  provider_data,
+                                  available_strategies,
+                                  diagnoses_lkup) {
   shiny::moduleServer(id, function(input, output, session) {
     config <- get_golem_config("mitigators_config")[[id]]
+
+    activity_type <- paste0(config$activity_type, "_factors")
+    mitigators_type <- config$mitigators_type
 
     param_conversion <- config$param_conversion %||% list(
       absolute = list(\(r, p) p * r, \(r, q) q / r),

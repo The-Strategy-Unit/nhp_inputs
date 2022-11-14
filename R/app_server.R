@@ -25,29 +25,28 @@ app_server <- function(input, output, session) {
 
   mod_expat_repat_server("expat_repat", params, provider, baseline_year)
 
-  mms <- \(id, activity_type, mitigators_type) mod_mitigators_server(
-    id,
+  purrr::walk(
+    c(
+      "mitigators_admission_avoidance",
+      "mitigators_mean_los_reduction",
+      "mitigators_aec_los_reduction",
+      "mitigators_preop_los_reduction",
+      "mitigators_bads",
+      "mitigators_op_c2c_reduction",
+      "mitigators_op_convert_tele",
+      "mitigators_op_fup_reduction",
+      "mitigators_aae_frequent_attenders",
+      "mitigators_aae_left_before_seen",
+      "mitigators_aae_low_cost_discharged"
+    ),
+    mod_mitigators_server,
     params,
-    activity_type,
-    mitigators_type,
     provider,
     baseline_year,
     provider_data,
     available_strategies,
     diagnoses_lkup
   )
-
-  mms("mitigators_admission_avoidance", "inpatient_factors", "admission_avoidance")
-  mms("mitigators_mean_los_reduction", "inpatient_factors", "los_reduction|mean_los")
-  mms("mitigators_aec_los_reduction", "inpatient_factors", "los_reduction|aec")
-  mms("mitigators_preop_los_reduction", "inpatient_factors", "los_reduction|preop")
-  mms("mitigators_bads", "inpatient_factors", "los_reducition|bads")
-  mms("mitigators_op_c2c_reduction", "outpatient_factors", "consultant_to_consultant_reduction")
-  mms("mitigators_op_convert_tele", "outpatient_factors", "convert_to_tele")
-  mms("mitigators_op_fup_reduction", "outpatient_factors", "followup_reduction")
-  mms("mitigators_aae_frequent_attenders", "aae_factors", "frequent_attenders")
-  mms("mitigators_aae_left_before_seen", "aae_factors", "left_before_seen")
-  mms("mitigators_aae_low_cost_discharged", "aae_factors", "low_cost_discharged")
 
   mod_debug_params_server(
     "debug_params",
