@@ -17,9 +17,9 @@ save_data <- function(nhp_current_cohort, ...) {
   available_strategies <- provider_data |>
     purrr::imap(\(.x, .i) {
       .x |>
-        purrr::map("rates") |>
-        purrr::map(dplyr::filter, .data$peer == .i) |>
-        purrr::map_dfr(dplyr::select, "fyear", .id = "strategy") |>
+        purrr::map_dfr("rates", .id = "strategy") |>
+        dplyr::filter(.data$peer == .i) |>
+        tidyr::drop_na("rate") |>
         dplyr::group_by(dplyr::across("fyear", as.character)) |>
         dplyr::summarise(dplyr::across("strategy", list), .groups = "drop") |>
         tibble::deframe()
