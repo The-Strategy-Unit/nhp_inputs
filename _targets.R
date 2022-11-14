@@ -71,14 +71,37 @@ list(
   tar_target(ip_age_sex_data, get_ip_age_sex_data(strategies_last_updated, provider_successors_last_updated)),
   tar_target(ip_diag_data, get_ip_diag_data(strategies_last_updated, provider_successors_last_updated)),
   tar_target(ip_los_data, get_ip_los_data(strategies_last_updated, provider_successors_last_updated)),
+  tar_target(
+    repat_local_ip_data,
+    get_repat_local_ip_data(
+      rtt_specialties,
+      provider_successors_last_updated,
+      ccg_to_icb_last_updated
+    )
+  ),
   # op data
   tar_target(op_data, get_op_data(provider_successors_last_updated)),
   tar_target(op_diag_data, get_op_diag_data(provider_successors_last_updated)),
   tar_target(op_age_sex_data, get_op_age_sex_data(op_data)),
+  tar_target(
+    repat_local_op_data,
+    get_repat_local_op_data(
+      rtt_specialties,
+      provider_successors_last_updated,
+      ccg_to_icb_last_updated
+    )
+  ),
   # aae data
   tar_target(aae_data, get_aae_data(provider_successors_last_updated)),
   tar_target(aae_diag_data, get_aae_diag_data(provider_successors_last_updated)),
   tar_target(aae_age_sex_data, get_aae_age_sex_data(aae_data)),
+  tar_target(
+    repat_local_aae_data,
+    get_repat_local_aae_data(
+      provider_successors_last_updated,
+      ccg_to_icb_last_updated
+    )
+  ),
   # rates
   tar_target(ip_dsr_data, get_ip_dsr_data(ip_age_sex_data, lkp_peers, catchments, lkp_euro_2013, strategies)),
   tar_target(mean_los_data, get_mean_los_data(ip_los_data, lkp_peers)),
@@ -89,6 +112,17 @@ list(
   tar_target(op_consultant_to_consultant_reduction, get_op_consultant_to_consultant_reduction(op_data, lkp_peers)),
   tar_target(op_followup_reduction, get_op_followup_reduction(op_data, lkp_peers)),
   tar_target(aae_rates, get_aae_rates(aae_data, lkp_peers)),
+  # repat/expat data
+  tar_target(
+    expat_repat_data,
+    list(
+      repat_local = list(
+        ip = repat_local_ip_data,
+        op = repat_local_op_data,
+        aae = repat_local_aae_data
+      )
+    )
+  ),
   # save data
   tar_target(data_last_updated, {
     withr::with_dir("inst/app/data", {
@@ -116,6 +150,11 @@ list(
         )
       )
     })
+
+    Sys.time()
+  }),
+  tar_target(expat_repat_data_last_updated, {
+    saveRDS(expat_repat_data, "inst/app/data/expat_repat_data.Rds")
 
     Sys.time()
   }),
