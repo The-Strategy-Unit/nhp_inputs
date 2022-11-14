@@ -81,7 +81,7 @@ mod_expat_repat_ui <- function(id) {
 #' expat_repat Server Functions
 #'
 #' @noRd
-mod_expat_repat_server <- function(id, provider, baseline_year) {
+mod_expat_repat_server <- function(id, params, provider, baseline_year) {
   shiny::moduleServer(id, function(input, output, session) {
     rtt_specialties <- readRDS(app_sys("app", "data", "rtt_specialties.Rds"))
     expat_repat_data <- readRDS(app_sys("app", "data", "expat_repat_data.Rds"))
@@ -119,13 +119,9 @@ mod_expat_repat_server <- function(id, provider, baseline_year) {
         "repat_nonlocal" = init_params(c(1.0, 1.05))
       )
     )
-    params <- purrr::lift_dl(shiny::reactiveValues)(
-      list(
-        "expat" = init_params(),
-        "repat_local" = init_params(),
-        "repat_nonlocal" = init_params()
-      )
-    )
+    params$expat <- init_params()
+    params$repat_local <- init_params()
+    params$repat_nonlocal <- init_params()
 
     # update the options in the type drop down based on the activity type dropdown
     # also, toggle whether the ip_subgroup is visible or not
@@ -277,7 +273,5 @@ mod_expat_repat_server <- function(id, provider, baseline_year) {
           panel.grid.major.y = ggplot2::element_line("#9d928a", linetype = "dotted")
         )
     })
-
-    params
   })
 }

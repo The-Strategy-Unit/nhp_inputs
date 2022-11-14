@@ -18,32 +18,41 @@ mod_debug_params_ui <- function(id) {
 #' debug_params Server Functions
 #'
 #' @noRd
-mod_debug_params_server <- function(id, expat_repat, activity_mitigators) {
+mod_debug_params_server <- function(id, params) {
   shiny::moduleServer(id, function(input, output, session) {
     output$params_json <- shiny::renderPrint({
-      f <- purrr::compose(
-        \(.x) .x[sort(names(.x))],
-        purrr::flatten,
-        purrr::map
+      p <- shiny::reactiveValuesToList(params)
+
+      run_param_output <- function(.x) {
+        if (is.null(.x)) {
+          return(.x)
+        }
+        .x$interval <- .x$param_output(.x$rate, .x$interval)
+        .x$param_output <- NULL
+        .x$rate <- NULL
+        .x
+      }
+
+      p$inpatient_factors <- purrr::map_depth(p$inpatient_factors, 2, run_param_output)
+      p$outpatient_factors <- purrr::map_depth(p$outpatient_factors, 2, run_param_output)
+      p$aae_factors <- purrr::map_depth(p$aae_factors, 2, run_param_output)
+
+      p$inpatient_factors$los_reduction <- list(
+        p$inpatient_factors[c(
+          "los_reduction|mean_los",
+          "los_reduction|aec",
+          "los_reduction|preop",
+          "los_reducition|bads"
+        )]
       )
+      p$inpatient_factors[c(
+        "los_reduction|mean_los",
+        "los_reduction|aec",
+        "los_reduction|preop",
+        "los_reducition|bads"
+      )] <- NULL
 
-      am <- activity_mitigators |>
-        purrr::map_depth(2, f, shiny::reactiveValuesToList) |>
-        purrr::map_depth(3, \(.x) {
-          if (is.null(.x)) {
-            return(.x)
-          }
-          .x$interval <- .x$param_output(.x$rate, .x$interval)
-          .x$param_output <- NULL
-          .x$rate <- NULL
-          .x
-        })
-
-      c(
-        shiny::reactiveValuesToList(expat_repat),
-        am
-      ) |>
-        jsonlite::toJSON(pretty = TRUE, auto_unbox = TRUE)
+      jsonlite::toJSON(p, pretty = TRUE, auto_unbox = TRUE)
     })
   })
 }
