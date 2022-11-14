@@ -33,23 +33,25 @@ mod_debug_params_server <- function(id, params) {
         .x
       }
 
+      # the activity mitigators all need to have their data cleaned up ready for use by the model
       p$inpatient_factors <- purrr::map_depth(p$inpatient_factors, 2, run_param_output)
       p$outpatient_factors <- purrr::map_depth(p$outpatient_factors, 2, run_param_output)
       p$aae_factors <- purrr::map_depth(p$aae_factors, 2, run_param_output)
 
-      p$inpatient_factors$los_reduction <- list(
+      # combine results together
+      p$inpatient_factors$los_reduction <- purrr::flatten(
         p$inpatient_factors[c(
           "los_reduction|mean_los",
           "los_reduction|aec",
           "los_reduction|preop",
-          "los_reducition|bads"
+          "los_reduction|bads"
         )]
       )
       p$inpatient_factors[c(
         "los_reduction|mean_los",
         "los_reduction|aec",
         "los_reduction|preop",
-        "los_reducition|bads"
+        "los_reduction|bads"
       )] <- NULL
 
       jsonlite::toJSON(p, pretty = TRUE, auto_unbox = TRUE)
