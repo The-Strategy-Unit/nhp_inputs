@@ -124,9 +124,28 @@ list(
     )
   ),
   # save data
+  tar_target(
+    nhp_current_cohort,
+    c(
+      "RA9",
+      "RD8",
+      "RGP",
+      "RGR",
+      "RH5", # "RBA" is merged in with this activity
+      "RH8", # was "RBZ",
+      "RHW",
+      "RN5",
+      "RNQ",
+      "RX1",
+      "RXC",
+      "RXN", # need to merge in "RTX"
+      "RYJ"
+    )
+  ),
   tar_target(data_last_updated, {
     withr::with_dir("inst/app/data", {
       save_data(
+        nhp_current_cohort,
         age_sex = dplyr::bind_rows(
           ip_age_sex_data,
           op_age_sex_data,
@@ -165,6 +184,7 @@ list(
       saveRDS(lkp_peers, "peers.Rds")
       saveRDS(providers, "providers.Rds")
       saveRDS(strategies, "strategies.Rds")
+      saveRDS(nhp_current_cohort, "nhp_current_cohort.Rds")
       sf::write_sf(provider_locations, "provider_locations.geojson", delete_dsn = TRUE)
     })
 
