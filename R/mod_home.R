@@ -22,13 +22,17 @@ mod_home_ui <- function(id) {
         bs4Dash::box(
           title = "Peers (from NHS Trust Peer Finder Tool)",
           width = 12,
-          gt::gt_output(ns("peers_list"))
+          shinycssloaders::withSpinner(
+            gt::gt_output(ns("peers_list"))
+          )
         )
       ),
       bs4Dash::box(
         title = "Map of Selected Provider and Peers",
         width = 6,
-        leaflet::leafletOutput(ns("providers_map"), height = "730px")
+        shinycssloaders::withSpinner(
+          leaflet::leafletOutput(ns("providers_map"), height = "730px")
+        )
       )
     )
   )
