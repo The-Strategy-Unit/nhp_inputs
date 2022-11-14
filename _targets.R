@@ -36,6 +36,9 @@ list(
   tar_target(provider_locations, get_provider_locations(providers)),
   tar_target(pop_year_long, get_pop_year_long(age_table)),
   tar_target(catchments, get_catchments(provider_successors_last_updated, pop_year_long)),
+  tar_target(icb_lu_path, "targets/data/LOC22_ICB22_NHSER22_EN_LU.xlsx", format = "file"),
+  tar_target(ccg_to_icb_lu, get_ccg_to_icb_lu(ods_successors, icb_lu_path)),
+  tar_target(ccg_to_icb_last_updated, upload_ccg_to_icb_lu(ccg_to_icb_lu)),
   # ip data
   tar_target(strategies_last_updated, Sys.Date()), # use tar_invalidate(strategies_last_updated)
   tar_target(strategies, get_strategies(strategies_last_updated)),
