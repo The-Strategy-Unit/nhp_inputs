@@ -16,7 +16,7 @@ app_server <- function(input, output, session) {
   selected_baseline_year <- shiny::reactive(shiny::req(home_module()$baseline))
   provider_data <- shiny::reactive(all_data[[selected_provider()]])
 
-  expat_repat <- mod_expat_repat_server("expat_repat")
+  expat_repat <- mod_expat_repat_server("expat_repat", selected_provider, selected_baseline_year)
 
   mms <- \(id) mod_mitigators_server(
     id,

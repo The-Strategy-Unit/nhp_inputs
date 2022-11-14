@@ -62,12 +62,13 @@ mod_expat_repat_ui <- function(id) {
               ),
               shinyjs::disabled(
                 shiny::sliderInput(
-                  ns(glue::glue("{type}")),
+                  ns(type),
                   "Confidence Interval",
                   min, max, values, 0.1,
                   post = "%"
                 )
-              )
+              ),
+              shiny::plotOutput(ns(glue::glue("{type}_plot")))
             )
           }
         ) |>
@@ -80,9 +81,10 @@ mod_expat_repat_ui <- function(id) {
 #' expat_repat Server Functions
 #'
 #' @noRd
-mod_expat_repat_server <- function(id) {
+mod_expat_repat_server <- function(id, provider, baseline_year) {
   shiny::moduleServer(id, function(input, output, session) {
-    rtt_specialties <- readRDS(app_sys("app", "data", "rtt_specialties.rds"))
+    rtt_specialties <- readRDS(app_sys("app", "data", "rtt_specialties.Rds"))
+    expat_repat_data <- readRDS(app_sys("app", "data", "expat_repat_data.Rds"))
 
     # helper method to construct the initial values for our params
     init_params <- function(values) {
@@ -207,6 +209,74 @@ mod_expat_repat_server <- function(id) {
           shiny::bindEvent(input[[include_type]])
       }
     )
+
+    # data for charts
+    repat_local <- shiny::reactive({
+      at <- shiny::req(input$activity_type)
+      st <- shiny::req(input$ip_subgroup)
+      t <- shiny::req(input$type)
+
+      expat_repat_data$repat_local[[at]] |>
+        dplyr::filter(
+          .data$procode == provider(),
+          if (at == "ip") .data$admigroup == st else TRUE,
+          if (at == "aae") .data$is_ambulance == (t == "ambulance") else .data$specialty == t
+        ) |>
+        dplyr::select(
+          .data$fyear,
+          .data$provider_n,
+          .data$icb_n,
+          .data$pcnt
+        )
+    })
+
+    output$repat_local_plot <- shiny::renderPlot({
+      df <- repat_local()
+      shiny::req(nrow(df) > 0)
+
+      v <- dplyr::filter(df, .data$fyear == baseline_year())$pcnt
+
+      include <- input$include_repat_local
+      values <- input$repat_local * v / 100
+
+      interval <- if (include) {
+        ggplot2::annotate(
+          "rect",
+          xmin = -Inf,
+          xmax = Inf,
+          ymin = values[[1]],
+          ymax = values[[2]],
+          colour = "#f9bf07",
+          fill = ggplot2::alpha("#f9bf07", 0.2),
+          na.rm = TRUE
+        )
+      }
+
+      df |>
+        ggplot2::ggplot(ggplot2::aes(as.factor(.data$fyear), .data$pcnt, group = 1)) +
+        interval +
+        ggplot2::geom_line() +
+        ggplot2::geom_point(
+          data = \(.x) dplyr::filter(.x, .data$fyear == baseline_year()),
+          colour = "red"
+        ) +
+        ggplot2::scale_x_discrete(
+          labels = \(.x) stringr::str_replace(.x, "^(\\d{4})(\\d{2})$", "\\1/\\2")
+        ) +
+        ggplot2::scale_y_continuous(
+          labels = scales::percent,
+          limits = c(floor(min(df$pcnt * 10)), ceiling(v * 20)) / 10
+        ) +
+        ggplot2::labs(
+          x = "Financial Year",
+          y = "Percentange of ICB's activity Delivered by this Provider"
+        ) +
+        ggplot2::theme(
+          legend.position = "none",
+          panel.background = ggplot2::element_blank(),
+          panel.grid.major.y = ggplot2::element_line("#9d928a", linetype = "dotted")
+        )
+    })
 
     params
   })
