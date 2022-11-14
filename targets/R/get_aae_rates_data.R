@@ -57,7 +57,7 @@ get_aae_data <- function(provider_successors_last_updated) {
     dplyr::transmute(
       .data$fyear,
       .data$procode3,
-      dplyr::across(.data$age_group, forcats::fct_inorder),
+      dplyr::across("age_group", forcats::fct_inorder),
       .data$sex,
       strategy = glue::glue("{.data$name}_({.data$subgroup})"),
       .data$value,
