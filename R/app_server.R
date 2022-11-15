@@ -7,8 +7,9 @@
 app_server <- function(input, output, session) {
   # load the data
   diagnoses_lkup <- readRDS(app_sys("app", "data", "diagnoses.Rds"))
+  providers <- readRDS(app_sys("app", "data", "providers.Rds"))
 
-  home_module <- mod_home_server("home", providers, peers)
+  home_module <- mod_home_server("home", providers)
   provider <- shiny::reactive(shiny::req(home_module()$provider))
   baseline_year <- shiny::reactive(shiny::req(home_module()$baseline))
   provider_data <- shiny::reactive({
@@ -23,7 +24,7 @@ app_server <- function(input, output, session) {
 
   params <- shiny::reactiveValues()
 
-  mod_expat_repat_server("expat_repat", params, provider, baseline_year)
+  mod_expat_repat_server("expat_repat", params, provider, baseline_year, providers)
 
   purrr::walk(
     c(

@@ -69,10 +69,9 @@ mod_home_providers_map <- function(selected_peers) {
 #' home Server Functions
 #'
 #' @noRd
-mod_home_server <- function(id, providers, peers) {
+mod_home_server <- function(id, providers) {
   shiny::moduleServer(id, function(input, output, session) {
     peers <- readRDS(app_sys("app", "data", "peers.Rds"))
-    providers <- readRDS(app_sys("app", "data", "providers.Rds"))
     nhp_current_cohort <- readRDS(app_sys("app", "data", "nhp_current_cohort.Rds"))
 
     provider_locations <- sf::read_sf(app_sys("app", "data", "provider_locations.geojson"))
