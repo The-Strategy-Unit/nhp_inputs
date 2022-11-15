@@ -68,7 +68,18 @@ mod_expat_repat_ui <- function(id) {
                   post = "%"
                 )
               ),
-              shiny::plotOutput(ns(glue::glue("{type}_plot")))
+              shiny::fluidRow(
+                col_6(
+                  shiny::plotOutput(
+                    ns(glue::glue("{type}_plot")),
+                  )
+                ),
+                col_6(
+                  shiny::plotOutput(
+                    ns(glue::glue("{type}_split_plot"))
+                  )
+                )
+              )
             )
           }
         ) |>
@@ -81,7 +92,7 @@ mod_expat_repat_ui <- function(id) {
 #' expat_repat Server Functions
 #'
 #' @noRd
-mod_expat_repat_server <- function(id, params, provider, baseline_year) {
+mod_expat_repat_server <- function(id, params, provider, baseline_year, providers) {
   shiny::moduleServer(id, function(input, output, session) {
     rtt_specialties <- readRDS(app_sys("app", "data", "rtt_specialties.Rds"))
 
@@ -218,18 +229,16 @@ mod_expat_repat_server <- function(id, params, provider, baseline_year) {
 
       expat_repat_data()$repat_local[[at]] |>
         dplyr::filter(
-          .data$provider == provider(),
           if (at == "ip") .data$admigroup == st else TRUE,
           if (at == "aae") .data$is_ambulance == (t == "ambulance") else .data$specialty == t
         ) |>
-        dplyr::select(
-          .data$fyear,
-          .data$pcnt
-        )
+        dplyr::select("fyear", "provider", "n", "pcnt")
     })
 
     output$repat_local_plot <- shiny::renderPlot({
-      df <- repat_local()
+      df <- repat_local() |>
+        dplyr::filter(.data$provider == provider())
+
       shiny::req(nrow(df) > 0)
 
       v <- dplyr::filter(df, .data$fyear == baseline_year())$pcnt
@@ -274,6 +283,56 @@ mod_expat_repat_server <- function(id, params, provider, baseline_year) {
           panel.background = ggplot2::element_blank(),
           panel.grid.major.y = ggplot2::element_line("#9d928a", linetype = "dotted")
         )
+    })
+
+    output$repat_local_split_plot <- shiny::renderPlot({
+      providers_df <- tibble::enframe(
+        providers,
+        value = "provider",
+        name = "provider_name"
+      )
+
+      this_provider_name <- providers_df |>
+        dplyr::filter(provider == provider()) |>
+        dplyr::pull(provider_name)
+
+      df <- repat_local() |>
+        dplyr::filter(.data$fyear == baseline_year())
+
+      shiny::req(nrow(df) > 0)
+
+      df |>
+        dplyr::left_join(providers_df, by = c("provider")) |>
+        dplyr::arrange(.data$provider_name) |>
+        dplyr::mutate(
+          dplyr::across("provider_name", forcats::fct_explicit_na, "Other"),
+          dplyr::across("provider_name", forcats::fct_relevel, this_provider_name),
+          dplyr::across("provider_name", forcats::fct_relevel, "Other", after = Inf),
+          label = glue::glue(
+            .sep = "\n",
+            "{.data$provider_name}",
+            "{scales::comma(.data$n)} ({scales::percent(.data$pcnt)})"
+          ),
+        ) |>
+        dplyr::arrange(dplyr::desc(.data$provider_name)) |>
+        dplyr::mutate(
+          label_pos = cumsum(.data$n) - .data$n / 2
+        ) |>
+        ggplot2::ggplot(ggplot2::aes(1, .data$n)) +
+        ggplot2::geom_col(
+          ggplot2::aes(
+            colour = .data$provider_name,
+            fill = ggplot2::after_scale(ggplot2::alpha(colour, 0.4))
+          ),
+          position = "stack"
+        ) +
+        ggplot2::geom_label(
+          ggplot2::aes(y = .data$label_pos, label = .data$label),
+          fill = "#ffffff"
+        ) +
+        ggplot2::scale_fill_viridis_d() +
+        ggplot2::theme_void() +
+        ggplot2::theme(legend.position = "none")
     })
   })
 }
