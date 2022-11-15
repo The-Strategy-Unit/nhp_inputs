@@ -115,12 +115,10 @@ list(
   # repat/expat data
   tar_target(
     expat_repat_data,
-    list(
-      repat_local = list(
-        ip = repat_local_ip_data,
-        op = repat_local_op_data,
-        aae = repat_local_aae_data
-      )
+    get_expat_repat_data(
+      repat_local_ip_data,
+      repat_local_op_data,
+      repat_local_aae_data
     )
   ),
   # save data

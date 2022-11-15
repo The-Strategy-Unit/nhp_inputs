@@ -84,7 +84,11 @@ mod_expat_repat_ui <- function(id) {
 mod_expat_repat_server <- function(id, params, provider, baseline_year) {
   shiny::moduleServer(id, function(input, output, session) {
     rtt_specialties <- readRDS(app_sys("app", "data", "rtt_specialties.Rds"))
-    expat_repat_data <- readRDS(app_sys("app", "data", "expat_repat_data.Rds"))
+
+    expat_repat_data <- shiny::reactive({
+      p <- shiny::req(provider())
+      readRDS(app_sys("app", "data", "expat_repat_data.Rds"))[[p]]
+    })
 
     # helper method to construct the initial values for our params
     init_params <- function(values) {
@@ -212,16 +216,14 @@ mod_expat_repat_server <- function(id, params, provider, baseline_year) {
       st <- shiny::req(input$ip_subgroup)
       t <- shiny::req(input$type)
 
-      expat_repat_data$repat_local[[at]] |>
+      expat_repat_data()$repat_local[[at]] |>
         dplyr::filter(
-          .data$procode == provider(),
+          .data$provider == provider(),
           if (at == "ip") .data$admigroup == st else TRUE,
           if (at == "aae") .data$is_ambulance == (t == "ambulance") else .data$specialty == t
         ) |>
         dplyr::select(
           .data$fyear,
-          .data$provider_n,
-          .data$icb_n,
           .data$pcnt
         )
     })
