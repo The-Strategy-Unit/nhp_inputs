@@ -63,6 +63,8 @@ list(
   tar_target(pop_year_long, get_pop_year_long(age_table)),
   tar_target(catchments, get_catchments(provider_successors_last_updated, pop_year_long)),
   tar_target(icb_lu_path, "targets/data/LOC22_ICB22_NHSER22_EN_LU.xlsx", format = "file"),
+  tar_target(icb_code_lu_path, "targets/data/icb22cdh_to_icb22cd.csv", format = "file"),
+  tar_target(icb_boundaries, get_icb_boundaries(icb_code_lu_path)),
   tar_target(ccg_to_icb_lu, get_ccg_to_icb_lu(ods_successors, icb_lu_path)),
   tar_target(ccg_to_icb_last_updated, upload_ccg_to_icb_lu(ccg_to_icb_lu)),
   # ip data
@@ -72,8 +74,24 @@ list(
   tar_target(ip_diag_data, get_ip_diag_data(strategies_last_updated, provider_successors_last_updated)),
   tar_target(ip_los_data, get_ip_los_data(strategies_last_updated, provider_successors_last_updated)),
   tar_target(
+    expat_ip_data,
+    get_expat_ip_data(
+      rtt_specialties,
+      provider_successors_last_updated,
+      ccg_to_icb_last_updated
+    )
+  ),
+  tar_target(
     repat_local_ip_data,
     get_repat_local_ip_data(
+      rtt_specialties,
+      provider_successors_last_updated,
+      ccg_to_icb_last_updated
+    )
+  ),
+  tar_target(
+    repat_nonlocal_ip_data,
+    get_repat_nonlocal_ip_data(
       rtt_specialties,
       provider_successors_last_updated,
       ccg_to_icb_last_updated
@@ -84,8 +102,24 @@ list(
   tar_target(op_diag_data, get_op_diag_data(provider_successors_last_updated)),
   tar_target(op_age_sex_data, get_op_age_sex_data(op_data)),
   tar_target(
+    expat_op_data,
+    get_expat_op_data(
+      rtt_specialties,
+      provider_successors_last_updated,
+      ccg_to_icb_last_updated
+    )
+  ),
+  tar_target(
     repat_local_op_data,
     get_repat_local_op_data(
+      rtt_specialties,
+      provider_successors_last_updated,
+      ccg_to_icb_last_updated
+    )
+  ),
+  tar_target(
+    repat_nonlocal_op_data,
+    get_repat_nonlocal_op_data(
       rtt_specialties,
       provider_successors_last_updated,
       ccg_to_icb_last_updated
@@ -96,8 +130,22 @@ list(
   tar_target(aae_diag_data, get_aae_diag_data(provider_successors_last_updated)),
   tar_target(aae_age_sex_data, get_aae_age_sex_data(aae_data)),
   tar_target(
+    expat_aae_data,
+    get_expat_aae_data(
+      provider_successors_last_updated,
+      ccg_to_icb_last_updated
+    )
+  ),
+  tar_target(
     repat_local_aae_data,
     get_repat_local_aae_data(
+      provider_successors_last_updated,
+      ccg_to_icb_last_updated
+    )
+  ),
+  tar_target(
+    repat_nonlocal_aae_data,
+    get_repat_nonlocal_aae_data(
       provider_successors_last_updated,
       ccg_to_icb_last_updated
     )
@@ -116,9 +164,15 @@ list(
   tar_target(
     expat_repat_data,
     get_expat_repat_data(
+      expat_ip_data,
+      expat_op_data,
+      expat_aae_data,
       repat_local_ip_data,
       repat_local_op_data,
-      repat_local_aae_data
+      repat_local_aae_data,
+      repat_nonlocal_ip_data,
+      repat_nonlocal_op_data,
+      repat_nonlocal_aae_data
     )
   ),
   # save data
@@ -184,6 +238,7 @@ list(
       saveRDS(strategies, "strategies.Rds")
       saveRDS(nhp_current_cohort, "nhp_current_cohort.Rds")
       sf::write_sf(provider_locations, "provider_locations.geojson", delete_dsn = TRUE)
+      sf::write_sf(icb_boundaries, "icb_boundaries.geojson", delete_dsn = TRUE)
     })
 
     Sys.time()

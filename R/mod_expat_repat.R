@@ -10,6 +10,24 @@
 mod_expat_repat_ui <- function(id) {
   ns <- shiny::NS(id)
 
+  generate_param_controls <- function(type, min, max, values) {
+    shiny::fluidRow(
+      col_3(
+        shiny::checkboxInput(ns(glue::glue("include_{type}")), "Include?")
+      ),
+      col_9(
+        shinyjs::disabled(
+          shiny::sliderInput(
+            ns(type),
+            "Confidence Interval",
+            min, max, values, 0.1,
+            post = "%"
+          )
+        )
+      )
+    )
+  }
+
   shiny::tagList(
     shiny::tags$h1("Expatriation/Repatriation"),
     shiny::fluidRow(
@@ -42,48 +60,51 @@ mod_expat_repat_ui <- function(id) {
           NULL
         )
       ),
-      bs4Dash::box(
-        title = "Model Parameter",
-        width = 10,
-        purrr::pmap(
-          list(
-            title = c("Expat", "Repat (Local)", "Repat (Non-Local)"),
-            type = c("expat", "repat_local", "repat_nonlocal"),
-            min = c(0, 100, 100),
-            max = c(100, 200, 200),
-            values = list(c(95, 100), c(100, 105), c(100, 105))
-          ),
-          \(title, type, min, max, values) {
-            shiny::tagList(
-              shiny::tags$h3(title),
-              shiny::checkboxInput(
-                ns(glue::glue("include_{type}")),
-                label = "Include?"
-              ),
-              shinyjs::disabled(
-                shiny::sliderInput(
-                  ns(type),
-                  "Confidence Interval",
-                  min, max, values, 0.1,
-                  post = "%"
-                )
-              ),
-              shiny::fluidRow(
-                col_6(
-                  shiny::plotOutput(
-                    ns(glue::glue("{type}_plot")),
-                  )
-                ),
-                col_6(
-                  shiny::plotOutput(
-                    ns(glue::glue("{type}_split_plot"))
-                  )
-                )
+      col_10(
+        bs4Dash::box(
+          title = "Expatriation Model Parameter",
+          width = 12,
+          generate_param_controls("expat", 0, 100, c(95, 100))
+        ),
+        bs4Dash::box(
+          title = "Repatriation (Local) Model Parameter",
+          width = 12,
+          generate_param_controls("repat_local", 100, 200, c(100, 105)),
+          shiny::fluidRow(
+            col_6(
+              shiny::plotOutput(
+                ns("repat_local_plot"),
+              )
+            ),
+            col_6(
+              shiny::plotOutput(
+                ns("repat_local_split_plot")
               )
             )
-          }
-        ) |>
-          shiny::tagList()
+          )
+        ),
+        bs4Dash::box(
+          title = "Repatriation (Non-Local) Model Parameter",
+          width = 12,
+          generate_param_controls("repat_nonlocal", 100, 200, c(100, 105)),
+          shiny::fluidRow(
+            col_4(
+              shiny::plotOutput(
+                ns("repat_nonlocal_pcnt_plot")
+              )
+            ),
+            col_4(
+              shiny::plotOutput(
+                ns("repat_nonlocal_n")
+              )
+            ),
+            col_4(
+              leaflet::leafletOutput(
+                ns("repat_nonlocal_icb_map")
+              )
+            )
+          )
+        )
       )
     )
   )
@@ -95,6 +116,7 @@ mod_expat_repat_ui <- function(id) {
 mod_expat_repat_server <- function(id, params, provider, baseline_year, providers) {
   shiny::moduleServer(id, function(input, output, session) {
     rtt_specialties <- readRDS(app_sys("app", "data", "rtt_specialties.Rds"))
+    icb_boundaries <- sf::read_sf(app_sys("app", "data", "icb_boundaries.geojson"))
 
     expat_repat_data <- shiny::reactive({
       p <- shiny::req(provider())
@@ -222,6 +244,19 @@ mod_expat_repat_server <- function(id, params, provider, baseline_year, provider
     )
 
     # data for charts
+    expat <- shiny::reactive({
+      at <- shiny::req(input$activity_type)
+      st <- shiny::req(input$ip_subgroup)
+      t <- shiny::req(input$type)
+
+      expat_repat_data()$expat[[at]] |>
+        dplyr::filter(
+          if (at == "ip") .data$admigroup == st else TRUE,
+          if (at == "aae") .data$is_ambulance == (t == "ambulance") else .data$specialty == t
+        ) |>
+        dplyr::select("fyear", "n")
+    })
+
     repat_local <- shiny::reactive({
       at <- shiny::req(input$activity_type)
       st <- shiny::req(input$ip_subgroup)
@@ -233,6 +268,35 @@ mod_expat_repat_server <- function(id, params, provider, baseline_year, provider
           if (at == "aae") .data$is_ambulance == (t == "ambulance") else .data$specialty == t
         ) |>
         dplyr::select("fyear", "provider", "n", "pcnt")
+    })
+
+    repat_nonlocal <- shiny::reactive({
+      at <- shiny::req(input$activity_type)
+      st <- shiny::req(input$ip_subgroup)
+      t <- shiny::req(input$type)
+
+      expat_repat_data()$repat_nonlocal[[at]] |>
+        dplyr::filter(
+          .data$fyear > 201415, # DQ issue: no rows prior to 15/16 have CCG
+          if (at == "ip") .data$admigroup == st else TRUE,
+          if (at == "aae") .data$is_ambulance == (t == "ambulance") else .data$specialty == t
+        ) |>
+        dplyr::group_by(dplyr::across(-c("n", "icb22cdh"))) |>
+        dplyr::mutate(pcnt = .data$n / sum(.data$n)) |>
+        dplyr::ungroup() |>
+        dplyr::select("fyear", "icb22cdh", "n", "pcnt")
+    })
+
+    repat_local_nonlocal_split <- shiny::reactive({
+      repat_local() |>
+        dplyr::filter(.data$provider == provider()) |>
+        dplyr::count(.data$fyear, wt = .data$n, name = "d") |>
+        dplyr::inner_join(expat(), by = "fyear") |>
+        dplyr::transmute(
+          .data$fyear,
+          local = .data$d / .data$n,
+          nonlocal = 1 - .data$local
+        )
     })
 
     output$repat_local_plot <- shiny::renderPlot({
@@ -333,6 +397,93 @@ mod_expat_repat_server <- function(id, params, provider, baseline_year, provider
         ggplot2::scale_fill_viridis_d() +
         ggplot2::theme_void() +
         ggplot2::theme(legend.position = "none")
+    })
+
+    output$repat_nonlocal_pcnt_plot <- shiny::renderPlot({
+      df <- repat_local_nonlocal_split()
+
+      shiny::req(nrow(df) > 0)
+
+      df |>
+        ggplot2::ggplot(ggplot2::aes(as.factor(.data$fyear), .data$nonlocal, group = 1)) +
+        ggplot2::geom_line() +
+        ggplot2::geom_point(
+          data = \(.x) dplyr::filter(.x, .data$fyear == baseline_year()),
+          colour = "red"
+        ) +
+        ggplot2::scale_x_discrete(
+          labels = \(.x) stringr::str_replace(.x, "^(\\d{4})(\\d{2})$", "\\1/\\2")
+        ) +
+        ggplot2::scale_y_continuous(
+          labels = scales::percent
+        ) +
+        ggplot2::labs(
+          x = "Financial Year",
+          y = "Percentange of Non-Local ICBs Activity"
+        ) +
+        ggplot2::theme(
+          legend.position = "none",
+          panel.background = ggplot2::element_blank(),
+          panel.grid.major.y = ggplot2::element_line("#9d928a", linetype = "dotted")
+        )
+    })
+
+    output$repat_nonlocal_n <- shiny::renderPlot({
+      df <- repat_nonlocal()
+
+      shiny::req(nrow(df) > 0)
+
+      df |>
+        ggplot2::ggplot(
+          ggplot2::aes(
+            as.factor(.data$fyear),
+            .data$n,
+            color = .data$icb22cdh,
+            fill = ggplot2::after_scale(ggplot2::alpha(colour, 0.4))
+          )
+        ) +
+        ggplot2::geom_col(position = "stack") +
+        ggplot2::scale_x_discrete(
+          labels = \(.x) stringr::str_replace(.x, "^(\\d{4})(\\d{2})$", "\\1/\\2")
+        ) +
+        ggplot2::scale_y_continuous(
+          labels = scales::comma
+        ) +
+        ggplot2::labs(
+          x = "Financial Year",
+          y = "Number of spells delivered to non-local ICB residents"
+        ) +
+        ggplot2::theme(
+          legend.position = "none",
+          panel.background = ggplot2::element_blank(),
+          panel.grid.major.y = ggplot2::element_line("#9d928a", linetype = "dotted")
+        )
+    })
+
+    output$repat_nonlocal_icb_map <- leaflet::renderLeaflet({
+      df <- icb_boundaries |>
+        dplyr::inner_join(
+          repat_nonlocal() |>
+            dplyr::filter(.data$fyear == baseline_year()),
+          by = "icb22cdh"
+        )
+
+      shiny::req(nrow(df) > 0)
+
+      pal <- leaflet::colorNumeric(
+        viridis::viridis_pal()(3),
+        df$pcnt
+      )
+
+      leaflet::leaflet(df) |>
+        leaflet::addProviderTiles("Stamen.TonerLite") |>
+        leaflet::addPolygons(
+          color = "#000000",
+          weight = 1,
+          opacity = 1,
+          fillColor = ~ pal(pcnt),
+          popup = ~ glue::glue("{icb22nm}: {n} ({scales::percent(pcnt)})")
+        )
     })
   })
 }
