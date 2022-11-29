@@ -8,6 +8,7 @@ Imports:
     bs4Dash,
     config (>= 0.3.1),
     dplyr,
+    forcats,
     ggbeeswarm,
     ggrepel,
     golem (>= 0.3.3),
