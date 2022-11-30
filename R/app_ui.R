@@ -17,6 +17,10 @@ app_ui <- function(request) {
         tabName = "tab_home",
         icon = shiny::icon("house")
       ),
+      bs4Dash::menuItem(
+        "Expat/Repat",
+        tabName = "tab_er"
+      ),
       bs4Dash::sidebarHeader("Activity Mitigators"),
       bs4Dash::menuItem(
         "Inpatients",
@@ -71,8 +75,9 @@ app_ui <- function(request) {
           tabName = "aae_low_cost_discharged"
         )
       ),
+      bs4Dash::sidebarHeader("Debug"),
       bs4Dash::menuItem(
-        "Debug: params",
+        "Show Params",
         tabName = "debug_params"
       )
     )
@@ -83,6 +88,10 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "tab_home",
         mod_home_ui("home")
+      ),
+      bs4Dash::tabItem(
+        tabName = "tab_er",
+        mod_expat_repat_ui("expat_repat")
       ),
       bs4Dash::tabItem(
         tabName = "ip_am_admission_avoidance",

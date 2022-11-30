@@ -1,7 +1,7 @@
-save_data <- function(...) {
+save_data <- function(nhp_current_cohort, ...) {
   unlink("providers", TRUE, TRUE)
 
-  list(...) |>
+  provider_data <- list(...) |>
     purrr::imap(\(data, key) dplyr::group_nest(data, .data$procode, .data$strategy, .key = key)) |>
     purrr::reduce(dplyr::inner_join, by = c("procode", "strategy")) |>
     tidyr::pivot_longer(!where(rlang::is_atomic)) |>
@@ -11,8 +11,22 @@ save_data <- function(...) {
     dplyr::mutate(dplyr::across("data", purrr::map, tibble::deframe)) |>
     dplyr::group_nest(.data$procode) |>
     dplyr::mutate(dplyr::across("data", purrr::map, tibble::deframe)) |>
-    tibble::deframe() |>
-    saveRDS("provider_data.Rds")
+    dplyr::filter(.data$procode %in% nhp_current_cohort) |>
+    tibble::deframe()
+
+  available_strategies <- provider_data |>
+    purrr::imap(\(.x, .i) {
+      .x |>
+        purrr::map_dfr("rates", .id = "strategy") |>
+        dplyr::filter(.data$peer == .i) |>
+        tidyr::drop_na("rate") |>
+        dplyr::group_by(dplyr::across("fyear", as.character)) |>
+        dplyr::summarise(dplyr::across("strategy", list), .groups = "drop") |>
+        tibble::deframe()
+    })
+
+  saveRDS(provider_data, "provider_data.Rds")
+  saveRDS(available_strategies, "available_strategies.Rds")
 
   list("save_data", Sys.time())
 }

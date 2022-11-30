@@ -82,34 +82,31 @@ mod_mitigators_ui <- function(id, title) {
 #' mitigators_admission_avoidance Server Functions
 #'
 #' @noRd
-mod_mitigators_server <- function(id, provider, baseline_year, provider_data, diagnoses_lkup) {
+mod_mitigators_server <- function(id,
+                                  params,
+                                  provider,
+                                  baseline_year,
+                                  provider_data,
+                                  available_strategies,
+                                  diagnoses_lkup) {
   shiny::moduleServer(id, function(input, output, session) {
     config <- get_golem_config("mitigators_config")[[id]]
+
+    activity_type <- paste0(config$activity_type, "_factors")
+    mitigators_type <- config$mitigators_type
 
     param_conversion <- config$param_conversion %||% list(
       absolute = list(\(r, p) p * r, \(r, q) q / r),
       relative = list(\(r, p) p, \(r, q) q)
     )
 
-    params <- purrr::lift_dl(shiny::reactiveValues)(
-      config$strategy_subset |>
-        purrr::set_names() |>
-        purrr::map(~NULL)
-    )
-
     strategies <- shiny::reactive({
       # make sure a provider is selected
       shiny::req(provider())
 
-      # find the strategies that are available for this provider
-      available_strategies <- provider_data() |>
-        purrr::map("rates") |>
-        purrr::map(dplyr::filter, .data$peer == provider(), .data$fyear == baseline_year()) |>
-        purrr::discard(\(.x) nrow(.x) == 0) |>
-        names()
       # set the names of the strategies to title case, but fix up some of the replaced words to upper case
       config$strategy_subset |>
-        intersect(available_strategies) |>
+        intersect(available_strategies()) |>
         purrr::set_names(
           purrr::compose(
             purrr::partial(
@@ -132,9 +129,10 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
       shiny::updateSelectInput(session, "strategy", choices = strategies())
 
       # reset the params reactiveValues
-      for (i in names(params)) {
-        # if the strategy `i` is not valid for this provider, then params[[i]] == NULL
-        params[[i]] <- if (i %in% strategies()) {
+      params[[activity_type]][[mitigators_type]] <- strategies() |>
+        # remove the friendly name for the strategy, replace with itself
+        purrr::set_names() |>
+        purrr::map(\(i) {
           # get the rates data for this strategy (for the provider in the baseline year)
           r <- provider_data()[[i]]$rates |>
             dplyr::filter(
@@ -155,9 +153,9 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
               rate = r$rate
             )
           )
-        }
-      }
-    })
+        })
+    }) |>
+      shiny::bindEvent(strategies())
 
     # set the strategy text by loading the contents of the file for that strategy
     output$strategy_text <- shiny::renderUI({
@@ -236,7 +234,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
         pc_fn <- param_conversion$relative[[1]]
       }
 
-      values <- pc_fn(max_value, params[[strategy]]$interval) * scale
+      values <- pc_fn(max_value, params[[activity_type]][[mitigators_type]][[strategy]]$interval) * scale
       shiny::updateSliderInput(session, "slider", value = values, min = range[[1]], max = range[[2]], step = step)
     }
 
@@ -261,7 +259,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
         pc_fn <- param_conversion$relative[[2]]
       }
 
-      params[[strategy]]$interval <- pc_fn(max_value, values / scale)
+      params[[activity_type]][[mitigators_type]][[strategy]]$interval <- pc_fn(max_value, values / scale)
     }) |>
       shiny::bindEvent(input$slider)
 
@@ -269,7 +267,7 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
 
     plot_ribbon <- shiny::reactive({
       max_value <- provider_max_value()
-      values <- param_conversion$absolute[[1]](max_value, params[[input$strategy]]$interval)
+      values <- param_conversion$absolute[[1]](max_value, params[[activity_type]][[mitigators_type]][[input$strategy]]$interval)
 
       ggplot2::annotate(
         "rect",
@@ -395,9 +393,5 @@ mod_mitigators_server <- function(id, provider, baseline_year, provider_data, di
       shiny::req(nrow(age_data) > 0)
       age_pyramid(age_data)
     })
-
-    # return ----
-
-    params
   })
 }

@@ -94,7 +94,7 @@ get_zero_los_data <- function(ip_los_data, peers) {
 
   ip_los_data |>
     dplyr::filter(.data$strategy %in% zero_los_strategies) |>
-    tidyr::drop_na(.data$speldur) |>
+    tidyr::drop_na("speldur") |>
     dplyr::group_by(.data$fyear, peer = .data$procode, .data$strategy) |>
     dplyr::summarise(
       rate = sum((.data$speldur == 0) * .data$n) / sum(.data$n),
