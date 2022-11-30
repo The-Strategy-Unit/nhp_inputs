@@ -18,6 +18,13 @@ app_ui <- function(request) {
         icon = shiny::icon("house")
       ),
       bs4Dash::menuItem(
+        'Inputs?',
+        bs4Dash::menuSubItem(
+          'Health Status Adjustment',
+          tabName = 'hsa'
+        )
+        ),
+      bs4Dash::menuItem(
         "Activity Mitigators",
         bs4Dash::menuSubItem(
           "Admission Avoidance",
@@ -48,6 +55,10 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "tab_home",
         mod_home_ui("home")
+      ),
+      bs4Dash::tabItem(
+        tabName = 'hsa',
+        mod_hsa_ui('hsa_input')
       ),
       bs4Dash::tabItem(
         tabName = "am_admission_avoidance",

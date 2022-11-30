@@ -15,6 +15,8 @@ app_server <- function(input, output, session) {
   selected_provider <- shiny::reactive(shiny::req(home_module()$provider))
   selected_baseline_year <- shiny::reactive(shiny::req(home_module()$baseline))
 
+  hsa_module <- mod_hsa_server("hsa_input")
+
   mms <- \(id, strats) mod_mitigators_server(
     id,
     selected_provider,
