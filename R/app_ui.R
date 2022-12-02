@@ -18,6 +18,10 @@ app_ui <- function(request) {
         icon = shiny::icon("house")
       ),
       bs4Dash::menuItem(
+        "Health Status Adjustment",
+        tabName = "tab_hsa"
+      ),
+      bs4Dash::menuItem(
         "Expat/Repat",
         tabName = "tab_er"
       ),
@@ -88,6 +92,10 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "tab_home",
         mod_home_ui("home")
+      ),
+      bs4Dash::tabItem(
+        tabName = "tab_hsa",
+        mod_hsa_ui("hsa")
       ),
       bs4Dash::tabItem(
         tabName = "tab_er",
