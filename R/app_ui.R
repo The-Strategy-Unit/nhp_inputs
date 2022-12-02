@@ -19,7 +19,7 @@ app_ui <- function(request) {
       ),
       bs4Dash::menuItem(
         "Health Status Adjustment",
-        tabName = "hsa_tab"
+        tabName = "tab_hsa"
       ),
       bs4Dash::menuItem(
         "Expat/Repat",

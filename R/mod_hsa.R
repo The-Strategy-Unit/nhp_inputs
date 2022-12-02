@@ -29,7 +29,7 @@ mod_hsa_ui <- function(id){
 #' hsa Server Functions
 #'
 #' @noRd
-mod_hsa_server <- function(id){
+mod_hsa_server <- function(id, params){
   shiny::moduleServer( id, function(input, output, session){
     ns <- session$ns
 
@@ -40,7 +40,7 @@ mod_hsa_server <- function(id){
     })
 
     shiny::observe({
-      print(req(slider_val()))
+      params$health_status_adjustment <- shiny::req(input$slider) / 100
     })
 
     output$tmp <- shiny::renderPrint({
@@ -50,8 +50,6 @@ mod_hsa_server <- function(id){
         "]"
       )
     })
-
-    return(slider_val)
   })
 }
 
