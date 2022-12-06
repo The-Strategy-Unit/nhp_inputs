@@ -1,12 +1,12 @@
 age_bands <- function() {
   c(
-    '00-04',
-    '05-14',
-    '15-34',
-    '35-49',
-    '50-64',
-    '65-84',
-    '85+'
+    "00-04",
+    "05-14",
+    "15-34",
+    "35-49",
+    "50-64",
+    "65-84",
+    "85+"
   )
 }
 
@@ -19,7 +19,7 @@ age_bands <- function() {
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_nda_ui <- function(id){
+mod_nda_ui <- function(id) {
   ns <- NS(id)
   shiny::tagList(
     tags$style(HTML(
@@ -43,50 +43,47 @@ mod_nda_ui <- function(id){
     }
     "
     )),
-    shiny::selectInput(ns('activity_type'),
-                       label = 'Activity Type',
-                       choices = c('Non-Elective',
-                                   'Elective',
-                                   'Maternity') |>
-                         purrr::set_names() |>
-                         purrr::map_chr(stringr::str_to_lower)),
-
+    shiny::selectInput(ns("activity_type"),
+      label = "Activity Type",
+      choices = c(
+        "Non-Elective",
+        "Elective",
+        "Maternity"
+      ) |>
+        purrr::set_names() |>
+        purrr::map_chr(stringr::str_to_lower)
+    ),
     purrr::map(
       age_bands(),
       \(.x) {
-        div(class = 'label-left',
-            shiny::sliderInput(
-              inputId = ns(.x),
-              label = .x,
-              min = 0,
-              max = 200,
-              post = '%',
-              value = c(50,150)
-              )
+        div(
+          class = "label-left",
+          shiny::sliderInput(
+            inputId = ns(.x),
+            label = .x,
+            min = 0,
+            max = 200,
+            post = "%",
+            value = c(50, 150)
+          )
         )
-        }
-      ),
-
+      }
+    ),
     bs4Dash::box(
       title = "debug",
-      shiny::verbatimTextOutput(ns('tmp'), placeholder = TRUE)
+      shiny::verbatimTextOutput(ns("tmp"), placeholder = TRUE)
     )
-
   )
 }
 
 #' nda Server Functions
 #'
 #' @noRd
-mod_nda_server <- function(id, params){
-  moduleServer( id, function(input, output, session){
-    ns <- session$ns
-
-
+mod_nda_server <- function(id, params) {
+  shiny::moduleServer(id, function(input, output, session) {
     shiny::observe({
-      cat("initiaslising\n")
       params[["non-demographic_adjustment"]] <- purrr::map(
-        purrr::set_names(c('non-elective', 'elective', 'maternity')),
+        purrr::set_names(c("non-elective", "elective", "maternity")),
         \(...) {
           purrr::map(
             purrr::set_names(age_bands()),
@@ -99,19 +96,15 @@ mod_nda_server <- function(id, params){
     # when the activity_type input changes, update all of the sliders
     # to use the values stored in params
     shiny::observe({
-      cat("I'm at observer: ")
       at <- shiny::req(input$activity_type)
-      cat(at, "\n")
 
       purrr::walk(
         age_bands(),
         \(.x) {
-          cat("*", .x, "to", params[[at]][[.x]], "\n")
-
           shiny::updateSliderInput(
             session,
             .x,
-            value = params[[at]][[.x]] * 100
+            value = params[["non-demographic_adjustment"]][[at]][[.x]] * 100
           )
         }
       )
@@ -123,14 +116,11 @@ mod_nda_server <- function(id, params){
       age_bands(),
       \(.x) {
         shiny::observe({
-          cat(">> ")
           at <- shiny::req(input$activity_type)
-          cat(at, .x, "changed to", input[[.x]], "\n")
 
-          params[[at]][[.x]] <- shiny::req(input[[.x]]) / 100
+          params[["non-demographic_adjustment"]][[at]][[.x]] <- shiny::req(input[[.x]]) / 100
         }) |>
           shiny::bindEvent(input[[.x]])
-
       }
     )
 
