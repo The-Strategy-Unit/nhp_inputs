@@ -84,8 +84,6 @@ mod_mitigators_ui <- function(id, title) {
 #' @noRd
 mod_mitigators_server <- function(id,
                                   params,
-                                  provider,
-                                  baseline_year,
                                   provider_data,
                                   available_strategies,
                                   diagnoses_lkup) {
@@ -102,7 +100,7 @@ mod_mitigators_server <- function(id,
 
     strategies <- shiny::reactive({
       # make sure a provider is selected
-      shiny::req(provider())
+      shiny::req(params$dataset)
 
       # set the names of the strategies to title case, but fix up some of the replaced words to upper case
       config$strategy_subset |>
@@ -136,8 +134,8 @@ mod_mitigators_server <- function(id,
           # get the rates data for this strategy (for the provider in the baseline year)
           r <- provider_data()[[i]]$rates |>
             dplyr::filter(
-              .data$peer == provider(),
-              .data$fyear == baseline_year()
+              .data$peer == params$dataset,
+              .data$fyear == params$start_year
             )
 
           c(
@@ -195,8 +193,8 @@ mod_mitigators_server <- function(id,
 
     rates_baseline_data <- shiny::reactive({
       rates_data() |>
-        dplyr::filter(.data$fyear == baseline_year()) |>
-        dplyr::mutate(is_peer = .data$peer != .env$provider())
+        dplyr::filter(.data$fyear == params$start_year) |>
+        dplyr::mutate(is_peer = .data$peer != .env$params$dataset)
     })
 
     # params controls ----
@@ -289,13 +287,13 @@ mod_mitigators_server <- function(id,
 
     trend_data <- shiny::reactive({
       rates_data() |>
-        dplyr::filter(.data$peer == provider())
+        dplyr::filter(.data$peer == params$dataset)
     })
 
     output$trend_plot <- shiny::renderPlot({
       rates_trend_plot(
         trend_data(),
-        baseline_year(),
+        params$start_year,
         plot_range(),
         config$y_axis_title,
         config$x_axis_title,
@@ -344,7 +342,7 @@ mod_mitigators_server <- function(id,
 
     output$diagnoses_table <- gt::render_gt({
       data <- diagnoses_data() |>
-        dplyr::filter(.data$fyear == baseline_year()) |>
+        dplyr::filter(.data$fyear == params$start_year) |>
         dplyr::inner_join(diagnoses_lkup, by = c("diagnosis" = "diagnosis_code")) |>
         dplyr::select("diagnosis_description", "n", "p")
 
@@ -391,7 +389,7 @@ mod_mitigators_server <- function(id,
 
     output$age_grp_plot <- shiny::renderPlot({
       age_data <- age_sex_data() |>
-        dplyr::filter(.data$fyear == baseline_year())
+        dplyr::filter(.data$fyear == params$start_year)
 
       shiny::req(nrow(age_data) > 0)
       age_pyramid(age_data)
