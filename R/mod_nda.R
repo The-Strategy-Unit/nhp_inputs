@@ -1,3 +1,15 @@
+age_bands <- function() {
+  c(
+    '00-04',
+    '05-14',
+    '15-34',
+    '35-49',
+    '50-64',
+    '65-84',
+    '85+'
+  )
+}
+
 #' nda UI Function
 #'
 #' @description A shiny Module.
@@ -31,7 +43,7 @@ mod_nda_ui <- function(id){
     }
     "
     )),
-    shiny::selectInput(ns('dropdown'),
+    shiny::selectInput(ns('activity_type'),
                        label = 'Activity Type',
                        choices = c('Non-Elective',
                                    'Elective',
@@ -40,18 +52,12 @@ mod_nda_ui <- function(id){
                          purrr::map_chr(stringr::str_to_lower)),
 
     purrr::map(
-      c(' 0- 4',
-        ' 5-14',
-        '15-34',
-        '35-49',
-        '50-64',
-        '65-84',
-        '85+'),
-      function(x) {
+      age_bands(),
+      \(.x) {
         div(class = 'label-left',
             shiny::sliderInput(
-              inputId = ns(paste('slider', x)),
-              label = (x),
+              inputId = ns(.x),
+              label = .x,
               min = 0,
               max = 200,
               post = '%',
@@ -77,12 +83,60 @@ mod_nda_server <- function(id, params){
     ns <- session$ns
 
 
-    output$tmp <- shiny::renderPrint({
-      paste0(
-        "Our values are [",
-        paste(input$dropdown, collapse = ", "),
-        "]"
+    shiny::observe({
+      cat("initiaslising\n")
+      params[["non-demographic_adjustment"]] <- purrr::map(
+        purrr::set_names(c('non-elective', 'elective', 'maternity')),
+        \(...) {
+          purrr::map(
+            purrr::set_names(age_bands()),
+            \(...) c(1, 1.2)
+          )
+        }
       )
+    })
+
+    # when the activity_type input changes, update all of the sliders
+    # to use the values stored in params
+    shiny::observe({
+      cat("I'm at observer: ")
+      at <- shiny::req(input$activity_type)
+      cat(at, "\n")
+
+      purrr::walk(
+        age_bands(),
+        \(.x) {
+          cat("*", .x, "to", params[[at]][[.x]], "\n")
+
+          shiny::updateSliderInput(
+            session,
+            .x,
+            value = params[[at]][[.x]] * 100
+          )
+        }
+      )
+    }) |>
+      shiny::bindEvent(input$activity_type)
+
+    # when a slider changes, update the values in params
+    purrr::walk(
+      age_bands(),
+      \(.x) {
+        shiny::observe({
+          cat(">> ")
+          at <- shiny::req(input$activity_type)
+          cat(at, .x, "changed to", input[[.x]], "\n")
+
+          params[[at]][[.x]] <- shiny::req(input[[.x]]) / 100
+        }) |>
+          shiny::bindEvent(input[[.x]])
+
+      }
+    )
+
+    output$tmp <- shiny::renderPrint({
+      params[["non-demographic_adjustment"]] |>
+        jsonlite::toJSON(pretty = TRUE, auto_unbox = TRUE)
     })
   })
 }
