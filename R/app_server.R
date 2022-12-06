@@ -27,6 +27,7 @@ app_server <- function(input, output, session) {
   mod_expat_repat_server("expat_repat", params, provider, baseline_year, providers)
 
   mod_hsa_server("hsa", params)
+  mod_nda_server('nda', params)
 
   purrr::walk(
     c(

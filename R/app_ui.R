@@ -22,6 +22,10 @@ app_ui <- function(request) {
         tabName = "tab_hsa"
       ),
       bs4Dash::menuItem(
+        "Non-demographic Adjustment",
+        tabName = "tab_nda"
+      ),
+      bs4Dash::menuItem(
         "Expat/Repat",
         tabName = "tab_er"
       ),
@@ -96,6 +100,10 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "tab_hsa",
         mod_hsa_ui("hsa")
+      ),
+      bs4Dash::tabItem(
+        tabName = "tab_nda",
+        mod_nda_ui('nda')
       ),
       bs4Dash::tabItem(
         tabName = "tab_er",
