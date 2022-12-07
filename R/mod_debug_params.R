@@ -23,16 +23,6 @@ mod_debug_params_server <- function(id, params) {
     fixed_params <- shiny::reactive({
       p <- shiny::reactiveValuesToList(params)
 
-      run_param_output <- function(.x) {
-        if (is.null(.x)) {
-          return(.x)
-        }
-        .x$interval <- .x$param_output(.x$rate, .x$interval)
-        .x$param_output <- NULL
-        .x$rate <- NULL
-        .x
-      }
-
       # combine efficiences/activity avoidance items
       p[["efficiencies"]] <- list(
         ip = c(
@@ -69,10 +59,6 @@ mod_debug_params_server <- function(id, params) {
       p[["activity_avoidance|lbs"]] <- NULL
       p[["activity_avoidance|lcd"]] <- NULL
 
-      # fix the values
-      p$activity_avoidance <- purrr::map_depth(p$activity_avoidance, 2, run_param_output)
-      p$efficiencies <- purrr::map_depth(p$efficiencies, 2, run_param_output)
-
       # convert financial year to calendar year
       p$start_year <- as.integer(stringr::str_sub(p$start_year, 1, 4))
 
@@ -82,7 +68,34 @@ mod_debug_params_server <- function(id, params) {
     output$params_json <- shiny::renderPrint({
       p <- fixed_params()
 
-      jsonlite::toJSON(p, pretty = TRUE, auto_unbox = TRUE)
+      p_order <- c(
+        "scenario",
+        "dataset",
+        "seed",
+        "model_runs",
+        "start_year",
+        "end_year",
+        "app_version",
+        "create_datetime",
+        "demographic_factors",
+        "health_status_adjustment",
+        "life_expectancy",
+        "expat",
+        "repat_local",
+        "repat_nonlocal",
+        "baseline_adjustment",
+        "waiting_list_adjustment",
+        "non-demographic_adjustment",
+        "activity_avoidance",
+        "efficiencies",
+        "bed_occupancy",
+        "theatres"
+      )
+
+      p_order <- p_order[p_order %in% names(p)]
+
+      p[c(p_order, setdiff(names(p), p_order))] |>
+        jsonlite::toJSON(pretty = TRUE, auto_unbox = TRUE)
     })
   })
 }

@@ -157,7 +157,7 @@ default:
         relative:
           - !expr \(r, p) rev(1 - p)
           - !expr \(r, q) rev(1 - q)
-      param_output: !expr \(r, q) rev(1 - q) * (1 - r) + r
+      param_output: !expr \(r) \(q) rev(1 - q) * (1 - r) + r
       inverted: true
     mitigators_op_c2c_reduction:
       activity_type: op
@@ -194,7 +194,7 @@ default:
         relative:
           - !expr \(r, p) rev(1 - p)
           - !expr \(r, q) rev(1 - q)
-      param_output: !expr \(r, q) rev(1 - (q - r) / (1 - r))
+      param_output: !expr \(r) \(q) rev(1 - (q - r) / (1 - r))
       inverted: true
     mitigators_op_fup_reduction:
       activity_type: op

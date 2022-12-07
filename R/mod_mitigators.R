@@ -93,6 +93,9 @@ mod_mitigators_server <- function(id,
     activity_type <- config$activity_type
     mitigators_type <- config$mitigators_type
 
+    slider_values <- shiny::reactiveValues()
+    output_conversions <- shiny::reactiveValues()
+
     param_conversion <- config$param_conversion %||% list(
       absolute = list(\(r, p) p * r, \(r, q) q / r),
       relative = list(\(r, p) p, \(r, q) q)
@@ -138,7 +141,7 @@ mod_mitigators_server <- function(id,
               .data$fyear == params$start_year
             )
 
-          c(
+          v <- c(
             # add the additional param items if they exist.
             config$params_items |>
               # if the additional item is a list, chose the value for the current strategy
@@ -146,11 +149,22 @@ mod_mitigators_server <- function(id,
               # if the additional item is a function, evaluate it with the rates data
               purrr::map_if(is.function, rlang::exec, r),
             list(
-              interval = get_default(r$rate),
-              param_output = config$param_output %||% \(r, q) q,
-              rate = r$rate
+              interval = get_default(r$rate)
             )
           )
+
+          at <- activity_type
+          mt <- mitigators_type
+          fn <- output_conversions[[mt]][[i]] <- (config$param_output %||% \(r) identity)(r$rate)
+
+          params[[mt]][[at]][[i]] <- slider_values[[mt]][[i]] <- v
+
+          params[[mt]][[at]][[i]]$interval <- fn(params[[mt]][[at]][[i]]$interval)
+
+          # TODO: we assign the params item to "clean" it after data changes, so this return is needed
+          # but, the slider values aren't being cleared, and we are assigning into the list we are updating
+          # this seems to be working currently, but bad code smell
+          params[[mt]][[at]][[i]]
         })
     }) |>
       shiny::bindEvent(strategies())
@@ -232,7 +246,7 @@ mod_mitigators_server <- function(id,
         pc_fn <- param_conversion$relative[[1]]
       }
 
-      values <- pc_fn(max_value, params[[mitigators_type]][[activity_type]][[strategy]]$interval) * scale
+      values <- pc_fn(max_value, slider_values[[mitigators_type]][[strategy]]$interval) * scale
       shiny::updateSliderInput(session, "slider", value = values, min = range[[1]], max = range[[2]], step = step)
     }
 
@@ -257,7 +271,13 @@ mod_mitigators_server <- function(id,
         pc_fn <- param_conversion$relative[[2]]
       }
 
-      params[[mitigators_type]][[activity_type]][[strategy]]$interval <- pc_fn(max_value, values / scale)
+      v <- pc_fn(max_value, values / scale)
+
+      at <- activity_type
+      mt <- mitigators_type
+      slider_values[[mt]][[strategy]]$interval <- v
+
+      params[[mt]][[at]][[strategy]]$interval <- output_conversions[[mt]][[strategy]](v)
     }) |>
       shiny::bindEvent(input$slider)
 
@@ -265,10 +285,7 @@ mod_mitigators_server <- function(id,
 
     plot_ribbon <- shiny::reactive({
       max_value <- provider_max_value()
-      values <- param_conversion$absolute[[1]](
-        max_value,
-        params[[mitigators_type]][[activity_type]][[input$strategy]]$interval
-      )
+      values <- param_conversion$absolute[[1]](max_value, slider_values[[mitigators_type]][[input$strategy]]$interval)
 
       ggplot2::annotate(
         "rect",
