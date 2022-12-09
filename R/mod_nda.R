@@ -1,12 +1,12 @@
 age_bands <- function() {
   c(
-    " 0- 4",
-    " 5-14",
+    "0-4",
+    "5-14",
     "15-34",
     "35-49",
     "50-64",
     "65-84",
-    "85+"
+    "85andOver"
   )
 }
 
@@ -54,28 +54,41 @@ mod_nda_ui <- function(id) {
         purrr::set_names() |>
         purrr::map_chr(stringr::str_to_lower)
     ),
-    purrr::map(
-      age_bands(),
-      \(.x) {
-        shiny::tags$div(
-          class = "label-left",
-          shiny::sliderInput(
-            inputId = ns(stringr::str_remove_all(.x, " ")),
-            label = .x,
-            min = 0,
-            max = 200,
-            post = "%",
-            value = c(50, 150)
+    bs4Dash::box(
+      title = 'Age Adjustment',
+      width = 6,
+      purrr::map(
+        age_bands(),
+        \(.x) {
+          shiny::fluidRow(
+            col_9(
+              shiny::tags$div(
+                class = "label-left",
+                shinyjs::disabled(
+                  shiny::sliderInput(
+                  inputId = ns(stringr::str_remove_all(.x, " ")),
+                  label = .x,
+                  min = 0,
+                  max = 200,
+                  post = "%",
+                  value = c(50, 150)
+                  )
+                  )
+                )
+              ),
+            col_3(shiny::checkboxInput(ns(glue::glue("include_{.x}")),
+                                       "Include?"))
           )
+
+          }
         )
-      }
-    ),
+      ),
     bs4Dash::box(
       title = "debug",
       shiny::verbatimTextOutput(ns("tmp"), placeholder = TRUE)
-    )
+      )
   )
-}
+  }
 
 #' nda Server Functions
 #'
@@ -123,16 +136,31 @@ mod_nda_server <- function(id, params) {
     purrr::walk(
       age_bands(),
       \(.x) {
+
+        include_type <- glue::glue("include_{.x}")
+
         i <- stringr::str_remove_all(.x, " ")
         shiny::observe({
           at <- shiny::req(input$activity_type)
 
+          include <- input[[include_type]]
+
+
+
           slider_values[[at]][[.x]] <- shiny::req(input[[i]])
-          params[["non-demographic_adjustment"]][[at]][[.x]] <- slider_values[[at]][[.x]] / 100
+          params[["non-demographic_adjustment"]][[at]][[.x]] <- if (include) slider_values[[at]][[.x]] / 100
         }) |>
           shiny::bindEvent(input[[i]])
+
+        shiny::observe({
+          shinyjs::toggleState(.x, condition = input[[include_type]])
+        })|>
+          shiny::bindEvent(input[[include_type]])
       }
     )
+
+
+
 
     output$tmp <- shiny::renderPrint({
       slider_values |>
