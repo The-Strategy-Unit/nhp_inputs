@@ -22,8 +22,16 @@ app_ui <- function(request) {
         tabName = "tab_hsa"
       ),
       bs4Dash::menuItem(
+        "Population Growth",
+        tabName = "tab_popg"
+      ),
+      bs4Dash::menuItem(
         "Non-demographic Adjustment",
         tabName = "tab_nda"
+      ),
+      bs4Dash::menuItem(
+        "Waiting List Imbalances",
+        tabName = "tab_wli"
       ),
       bs4Dash::menuItem(
         "Expat/Repat",
@@ -102,8 +110,16 @@ app_ui <- function(request) {
         mod_hsa_ui("hsa")
       ),
       bs4Dash::tabItem(
+        tabName = "tab_popg",
+        mod_popg_ui('popg')
+      ),
+      bs4Dash::tabItem(
         tabName = "tab_nda",
         mod_nda_ui('nda')
+      ),
+      bs4Dash::tabItem(
+        tabName = "tab_wli",
+        mod_wli_ui('wli')
       ),
       bs4Dash::tabItem(
         tabName = "tab_er",

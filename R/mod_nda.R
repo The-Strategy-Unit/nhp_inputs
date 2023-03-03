@@ -1,7 +1,7 @@
 age_bands <- function() {
   c(
-    "0-4",
-    "5-14",
+    " 0- 4",
+    " 5-14",
     "15-34",
     "35-49",
     "50-64",
@@ -144,7 +144,6 @@ mod_nda_server <- function(id, params) {
           at <- shiny::req(input$activity_type)
 
           include <- input[[include_type]]
-
 
 
           slider_values[[at]][[.x]] <- shiny::req(input[[i]])
