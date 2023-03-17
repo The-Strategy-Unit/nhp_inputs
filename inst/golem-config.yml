@@ -2,6 +2,27 @@ default:
   golem_name: inputs
   golem_version: 0.0.0.9000
   app_prod: no
+  population_projections:
+    principal_proj: "Principal projection"
+    var_proj_10_year_migration: "10 year migration trends"
+    var_proj_alt_internal_migration: "5 year internal migration trend"
+    var_proj_high_intl_migration: "High migration"
+    var_proj_low_intl_migration: "Low migration"
+    const_fertility_no_mortality_improvement: "Constant fertility = no mortality improvement"
+    const_fertility: "Constant fertility"
+    high_population: "High population"
+    young_age_structure: "Young age structure"
+    high_fertility: "High fertility"
+    old_age_structure: "Old age structure"
+    low_population: "Low population"
+    low_fertility: "Low fertility"
+    high_life_expectancy: "High life expectancy"
+    low_life_expectancy: "Low life expectancy"
+    no_mortality_improvement: "No mortality improvement"
+    zero_eu_migration: "0% Future EU migration (Not National Statistics)"
+    half_eu_migration: "50% Future EU migration (Not National Statistics)"
+    zero_net_migration: "Zero net migration (natural change only)"
+    replacement_fertility: "Replacement fertility"
   mitigators_config:
     mitigators_admission_avoidance:
       activity_type: inpatient
