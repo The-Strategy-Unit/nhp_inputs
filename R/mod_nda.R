@@ -1,12 +1,12 @@
 age_bands <- function() {
   c(
-    " 0- 4",
-    " 5-14",
-    "15-34",
-    "35-49",
-    "50-64",
-    "65-84",
-    "85andOver"
+    "00-04" = "0 - 4",
+    "05-14" = "5 - 14",
+    "15-34" = "15 - 34",
+    "35-49" = "35 - 49",
+    "50-64" = "50 - 64",
+    "65-84" = "65 - 84",
+    "85plus" = "85+"
   )
 }
 
@@ -55,40 +55,37 @@ mod_nda_ui <- function(id) {
         purrr::map_chr(stringr::str_to_lower)
     ),
     bs4Dash::box(
-      title = 'Age Adjustment',
+      title = "Age Adjustment",
       width = 6,
-      purrr::map(
+      purrr::imap(
         age_bands(),
-        \(.x) {
+        \(.x, .i) {
           shiny::fluidRow(
             col_9(
               shiny::tags$div(
                 class = "label-left",
                 shinyjs::disabled(
                   shiny::sliderInput(
-                  inputId = ns(stringr::str_remove_all(.x, " ")),
-                  label = .x,
-                  min = 0,
-                  max = 200,
-                  post = "%",
-                  value = c(50, 150)
-                  )
+                    inputId = ns(.i),
+                    label = .x,
+                    min = 0,
+                    max = 200,
+                    post = "%",
+                    value = c(100, 120)
                   )
                 )
-              ),
-            col_3(shiny::checkboxInput(ns(glue::glue("include_{.x}")),
-                                       "Include?"))
+              )
+            ),
+            col_3(shiny::checkboxInput(
+              ns(glue::glue("include_{.i}")),
+              "Include?"
+            ))
           )
-
-          }
-        )
-      ),
-    bs4Dash::box(
-      title = "debug",
-      shiny::verbatimTextOutput(ns("tmp"), placeholder = TRUE)
+        }
       )
+    )
   )
-  }
+}
 
 #' nda Server Functions
 #'
@@ -99,20 +96,15 @@ mod_nda_server <- function(id, params) {
       purrr::set_names() |>
       purrr::map(
         \(...) {
-          purrr::map(
-            purrr::set_names(age_bands()),
-            \(...) c(100, 120)
+          n <- names(age_bands())
+
+          purrr::set_names(
+            rep(list(c(100, 120)), length(n)),
+            n
           )
         }
       ) |>
       (purrr::lift_dl(shiny::reactiveValues))()
-
-
-    shiny::observe({
-      params[["non-demographic_adjustment"]] <- slider_values |>
-        shiny::reactiveValuesToList() |>
-        purrr::map_depth(2, `/`, 100)
-    })
 
     # when the activity_type input changes, update all of the sliders
     # to use the values stored in params
@@ -120,12 +112,18 @@ mod_nda_server <- function(id, params) {
       at <- shiny::req(input$activity_type)
 
       purrr::walk(
-        age_bands(),
+        names(age_bands()),
         \(.x) {
           shiny::updateSliderInput(
             session,
-            stringr::str_remove_all(.x, " "),
+            .x,
             value = slider_values[[at]][[.x]]
+          )
+
+          shiny::updateCheckboxInput(
+            session,
+            glue::glue("include_{.x}"),
+            value = !is.null(params[["non-demographic_adjustment"]][[at]][[.x]])
           )
         }
       )
@@ -134,37 +132,25 @@ mod_nda_server <- function(id, params) {
 
     # when a slider changes, update the values in params
     purrr::walk(
-      age_bands(),
+      names(age_bands()),
       \(.x) {
-
         include_type <- glue::glue("include_{.x}")
 
-        i <- stringr::str_remove_all(.x, " ")
         shiny::observe({
           at <- shiny::req(input$activity_type)
 
           include <- input[[include_type]]
 
-
-          slider_values[[at]][[.x]] <- shiny::req(input[[i]])
+          slider_values[[at]][[.x]] <- shiny::req(input[[.x]])
           params[["non-demographic_adjustment"]][[at]][[.x]] <- if (include) slider_values[[at]][[.x]] / 100
         }) |>
-          shiny::bindEvent(input[[i]])
+          shiny::bindEvent(input[[.x]], input[[include_type]])
 
         shiny::observe({
           shinyjs::toggleState(.x, condition = input[[include_type]])
-        })|>
+        }) |>
           shiny::bindEvent(input[[include_type]])
       }
     )
-
-
-
-
-    output$tmp <- shiny::renderPrint({
-      slider_values |>
-        shiny::reactiveValuesToList() |>
-        jsonlite::toJSON(pretty = TRUE, auto_unbox = TRUE)
-    })
   })
 }
