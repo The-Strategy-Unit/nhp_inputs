@@ -23,7 +23,9 @@ app_server <- function(input, output, session) {
   })
 
   params <- shiny::reactiveValues()
-  params[["demographic_factors"]] <- list()
+  params[["demographic_factors"]] <- list(
+    file = "demographic_factors.csv"
+  )
 
   mod_expat_repat_server("expat_repat", params, provider, baseline_year, providers)
 
