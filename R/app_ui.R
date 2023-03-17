@@ -18,6 +18,22 @@ app_ui <- function(request) {
         icon = shiny::icon("house")
       ),
       bs4Dash::menuItem(
+        "Health Status Adjustment",
+        tabName = "tab_hsa"
+      ),
+      bs4Dash::menuItem(
+        "Population Growth",
+        tabName = "tab_population_growth"
+      ),
+      bs4Dash::menuItem(
+        "Non-demographic Adjustment",
+        tabName = "tab_nda"
+      ),
+      bs4Dash::menuItem(
+        "Waiting List Imbalances",
+        tabName = "tab_wli"
+      ),
+      bs4Dash::menuItem(
         "Expat/Repat",
         tabName = "tab_er"
       ),
@@ -88,6 +104,22 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "tab_home",
         mod_home_ui("home")
+      ),
+      bs4Dash::tabItem(
+        tabName = "tab_hsa",
+        mod_hsa_ui("hsa")
+      ),
+      bs4Dash::tabItem(
+        tabName = "tab_population_growth",
+        mod_population_growth_ui("population_growth")
+      ),
+      bs4Dash::tabItem(
+        tabName = "tab_nda",
+        mod_nda_ui("nda")
+      ),
+      bs4Dash::tabItem(
+        tabName = "tab_wli",
+        mod_wli_ui("wli")
       ),
       bs4Dash::tabItem(
         tabName = "tab_er",

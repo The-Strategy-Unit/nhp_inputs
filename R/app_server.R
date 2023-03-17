@@ -23,8 +23,16 @@ app_server <- function(input, output, session) {
   })
 
   params <- shiny::reactiveValues()
+  params[["demographic_factors"]] <- list(
+    file = "demographic_factors.csv"
+  )
 
   mod_expat_repat_server("expat_repat", params, provider, baseline_year, providers)
+
+  mod_population_growth_server("population_growth", params)
+  mod_hsa_server("hsa", params)
+  mod_nda_server("nda", params)
+  mod_wli_server("wli", params)
 
   purrr::walk(
     c(

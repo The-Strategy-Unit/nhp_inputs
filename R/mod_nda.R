@@ -1,0 +1,156 @@
+age_bands <- function() {
+  c(
+    "00-04" = "0 - 4",
+    "05-14" = "5 - 14",
+    "15-34" = "15 - 34",
+    "35-49" = "35 - 49",
+    "50-64" = "50 - 64",
+    "65-84" = "65 - 84",
+    "85plus" = "85+"
+  )
+}
+
+#' nda UI Function
+#'
+#' @description A shiny Module.
+#'
+#' @param id,input,output,session Internal parameters for {shiny}.
+#'
+#' @noRd
+#'
+#' @importFrom shiny NS tagList
+mod_nda_ui <- function(id) {
+  ns <- shiny::NS(id)
+  shiny::tagList(
+    shiny::tags$style(
+      shiny::HTML("
+        .label-left .form-group {
+          display: flex;              /* Use flexbox for positioning children */
+          flex-direction: row;        /* Place children on a row (default) */
+          width: 100%;                /* Set width for container */
+          max-width: 400px;
+        }
+
+        .label-left label {
+          margin-right: 2rem;         /* Add spacing between label and slider */
+          align-self: center;         /* Vertical align in center of row */
+          text-align: right;
+          flex-basis: 100px;          /* Target width for label */
+        }
+
+        .label-left .irs {
+          flex-basis: 300px;          /* Target width for slider */
+        }
+      ")
+    ),
+    shiny::selectInput(
+      ns("activity_type"),
+      label = "Activity Type",
+      choices = c(
+        "Non-Elective",
+        "Elective",
+        "Maternity"
+      ) |>
+        purrr::set_names() |>
+        purrr::map_chr(stringr::str_to_lower)
+    ),
+    bs4Dash::box(
+      title = "Age Adjustment",
+      width = 6,
+      purrr::imap(
+        age_bands(),
+        \(.x, .i) {
+          shiny::fluidRow(
+            col_9(
+              shiny::tags$div(
+                class = "label-left",
+                shinyjs::disabled(
+                  shiny::sliderInput(
+                    inputId = ns(.i),
+                    label = .x,
+                    min = 0,
+                    max = 200,
+                    post = "%",
+                    value = c(100, 120)
+                  )
+                )
+              )
+            ),
+            col_3(shiny::checkboxInput(
+              ns(glue::glue("include_{.i}")),
+              "Include?"
+            ))
+          )
+        }
+      )
+    )
+  )
+}
+
+#' nda Server Functions
+#'
+#' @noRd
+mod_nda_server <- function(id, params) {
+  shiny::moduleServer(id, function(input, output, session) {
+    slider_values <- c("non-elective", "elective", "maternity") |>
+      purrr::set_names() |>
+      purrr::map(
+        \(...) {
+          n <- names(age_bands())
+
+          purrr::set_names(
+            rep(list(c(100, 120)), length(n)),
+            n
+          )
+        }
+      ) |>
+      (purrr::lift_dl(shiny::reactiveValues))()
+
+    # when the activity_type input changes, update all of the sliders
+    # to use the values stored in params
+    shiny::observe({
+      at <- shiny::req(input$activity_type)
+
+      purrr::walk(
+        names(age_bands()),
+        \(.x) {
+          shiny::updateSliderInput(
+            session,
+            .x,
+            value = slider_values[[at]][[.x]]
+          )
+
+          shiny::updateCheckboxInput(
+            session,
+            glue::glue("include_{.x}"),
+            value = !is.null(params[["non-demographic_adjustment"]][[at]][[.x]])
+          )
+        }
+      )
+    }) |>
+      shiny::bindEvent(input$activity_type)
+
+    # when a slider changes, update the values in params
+    purrr::walk(
+      names(age_bands()),
+      \(.x) {
+        include_type <- glue::glue("include_{.x}")
+
+        shiny::observe({
+          at <- shiny::req(input$activity_type)
+
+          include <- input[[include_type]]
+
+          slider_values[[at]][[.x]] <- shiny::req(input[[.x]])
+          params[["non-demographic_adjustment"]][[at]][[.x]] <- if (include) slider_values[[at]][[.x]] / 100
+        }) |>
+          shiny::bindEvent(input[[.x]], input[[include_type]])
+
+        shiny::observe({
+          shinyjs::toggleState(.x, condition = input[[include_type]])
+        }) |>
+          shiny::bindEvent(input[[include_type]])
+      }
+    )
+  })
+}
