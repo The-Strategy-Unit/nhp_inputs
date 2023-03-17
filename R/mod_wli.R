@@ -59,13 +59,13 @@ mod_wli_server <- function(id, params) {
         ip <- glue::glue("wli_ip_{.x}")
         shiny::observe({
           v <- shiny::req(input[[ip]])
-          params[["waiting_list_imbalance"]][["ip"]][[.x]] <- if (v > 0) v
+          params[["waiting_list_adjustment"]][["ip"]][[.x]] <- if (v > 0) v
         })
 
         op <- glue::glue("wli_op_{.x}")
         shiny::observe({
           v <- shiny::req(input[[op]])
-          params[["waiting_list_imbalance"]][["op"]][[.x]] <- if (v > 0) v
+          params[["waiting_list_adjustment"]][["op"]][[.x]] <- if (v > 0) v
         })
       }
     )

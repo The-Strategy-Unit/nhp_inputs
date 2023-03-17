@@ -59,7 +59,7 @@ get_aae_data <- function(provider_successors_last_updated) {
       .data$procode3,
       dplyr::across("age_group", forcats::fct_inorder),
       .data$sex,
-      strategy = glue::glue("{.data$name}_({.data$subgroup})"),
+      strategy = glue::glue("{.data$name}_{.data$subgroup}"),
       .data$value,
       .data$n
     )
@@ -132,7 +132,7 @@ get_aae_diag_data <- function(provider_successors_last_updated) {
     dplyr::group_by(
       .data$fyear,
       .data$procode3,
-      strategy = glue::glue("{.data$name}_({.data$subgroup})")
+      strategy = glue::glue("{.data$name}_{.data$subgroup}")
     ) |>
     dplyr::select(-"name", -"n", -"subgroup") |>
     dplyr::rename("n" = "value", "procode" = "procode3") |>

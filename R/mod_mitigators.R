@@ -92,7 +92,7 @@ mod_mitigators_server <- function(id,
   shiny::moduleServer(id, function(input, output, session) {
     config <- get_golem_config("mitigators_config")[[id]]
 
-    activity_type <- paste0(config$activity_type, "_factors")
+    activity_type <- config$activity_type
     mitigators_type <- config$mitigators_type
 
     param_conversion <- config$param_conversion %||% list(
@@ -129,7 +129,7 @@ mod_mitigators_server <- function(id,
       shiny::updateSelectInput(session, "strategy", choices = strategies())
 
       # reset the params reactiveValues
-      params[[activity_type]][[mitigators_type]] <- strategies() |>
+      params[[mitigators_type]][[activity_type]] <- strategies() |>
         # remove the friendly name for the strategy, replace with itself
         purrr::set_names() |>
         purrr::map(\(i) {
@@ -234,7 +234,7 @@ mod_mitigators_server <- function(id,
         pc_fn <- param_conversion$relative[[1]]
       }
 
-      values <- pc_fn(max_value, params[[activity_type]][[mitigators_type]][[strategy]]$interval) * scale
+      values <- pc_fn(max_value, params[[mitigators_type]][[activity_type]][[strategy]]$interval) * scale
       shiny::updateSliderInput(session, "slider", value = values, min = range[[1]], max = range[[2]], step = step)
     }
 
@@ -259,7 +259,7 @@ mod_mitigators_server <- function(id,
         pc_fn <- param_conversion$relative[[2]]
       }
 
-      params[[activity_type]][[mitigators_type]][[strategy]]$interval <- pc_fn(max_value, values / scale)
+      params[[mitigators_type]][[activity_type]][[strategy]]$interval <- pc_fn(max_value, values / scale)
     }) |>
       shiny::bindEvent(input$slider)
 
@@ -267,7 +267,10 @@ mod_mitigators_server <- function(id,
 
     plot_ribbon <- shiny::reactive({
       max_value <- provider_max_value()
-      values <- param_conversion$absolute[[1]](max_value, params[[activity_type]][[mitigators_type]][[input$strategy]]$interval)
+      values <- param_conversion$absolute[[1]](
+        max_value,
+        params[[mitigators_type]][[activity_type]][[input$strategy]]$interval
+      )
 
       ggplot2::annotate(
         "rect",
