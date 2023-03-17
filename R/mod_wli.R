@@ -1,18 +1,15 @@
 
-rtt_specialties <- function(){
-  readRDS(app_sys("app", "data", "rtt_specialties.Rds"))|>
-    as.list()|>
-    tibble::as_tibble()|>
-    tidyr::pivot_longer(cols = everything(),
-                        names_to = 'Specialty',
-                        values_to = 'Code')|>
-    dplyr::select(Code, Specialty)
+rtt_specialties <- function() {
+  readRDS(app_sys("app", "data", "rtt_specialties.Rds")) |>
+    as.list() |>
+    tibble::as_tibble() |>
+    tidyr::pivot_longer(
+      cols = tidyselect::everything(),
+      names_to = "specialty",
+      values_to = "code"
+    ) |>
+    dplyr::select("code", "specialty")
 }
-
-
-
-
-
 
 #' wli UI Function
 #'
@@ -23,39 +20,19 @@ rtt_specialties <- function(){
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_wli_ui <- function(id){
-  ns <- NS(id)
-  gt::gt_output(ns('rttTable'))
-    #shiny::tableOutput(ns('rttTable')),
-    # purrr::map(
-    #   rtt_specialties(),
-    #   \(.x) {
-    #     shiny::fluidRow(
-    #       col_6(
-    #         HTML(.x)
-    #       ),
-    #       col_3(shiny::numericInput(ns(glue::glue('wli_ip_{.x}')),
-    #                                 label = NULL,
-    #                                 value = 0,
-    #                                 min = 0)),
-    #       col_3(shiny::numericInput(ns(glue::glue('wli_op_{.x}')),
-    #                                 label = NULL,
-    #                                 value = 0,
-    #                                 min = 0))
-    #       )
-    #     }
-    #   )
-
-  }
+mod_wli_ui <- function(id) {
+  ns <- shiny::NS(id)
+  gt::gt_output(ns("rtt_table"))
+}
 
 #' wli Server Functions
 #'
 #' @noRd
-mod_wli_server <- function(id, params){
-  shiny::moduleServer( id, function(input, output, session){
+mod_wli_server <- function(id, params) {
+  shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-    numericInput_gt <- function(x, inputid, ...){
+    numeric_input_gt <- function(x, inputid, ...) {
       as.character(
         shiny::numericInput(
           ns(paste0(inputid, x)),
@@ -68,47 +45,29 @@ mod_wli_server <- function(id, params){
         gt::html()
     }
 
-
-
-
     table <- rtt_specialties() |>
       dplyr::mutate(
-        Inpatients = purrr::map(Code, .f = ~req(numericInput_gt(.x, 'wli_ip_'))),
-        Outpatients = purrr::map(Code, .f = ~req(numericInput_gt(.x, 'wli_op_'))))
+        Inpatients = purrr::map(code, .f = ~ req(numeric_input_gt(.x, "wli_ip_"))),
+        Outpatients = purrr::map(code, .f = ~ req(numeric_input_gt(.x, "wli_op_")))
+      )
 
+    output$rtt_table <- gt::render_gt(table)
 
+    purrr::walk(
+      table$code,
+      \(.x) {
+        ip <- glue::glue("wli_ip_{.x}")
+        shiny::observe({
+          v <- shiny::req(input[[ip]])
+          params[["waiting_list_imbalance"]][["ip"]][[.x]] <- if (v > 0) v
+        })
 
-    output$rttTable <- gt::render_gt(table)
-
-
-
-      purrr::walk(table$Code,
-                  \(.x) {
-
-                    ip_at <- glue::glue('inpatients_{.x}')
-                    op_at <- glue::glue('outpatients_{.x}')
-
-                    ip_id <- glue::glue('wli_ip_{.x}')
-                    op_id <- glue::glue('wli_op_{.x}')
-
-                    shiny::observe({
-                      params[["waiting_list_imbalance"]][[ip_at]][[.x]] <- input[[ip_id]]
-                      })
-
-                    shiny::observe({
-                      params[["waiting_list_imbalance"]][[op_at]][[.x]] <- input[[op_id]]
-                    })
-                    }
-                  )
-
-
-
-
+        op <- glue::glue("wli_op_{.x}")
+        shiny::observe({
+          v <- shiny::req(input[[op]])
+          params[["waiting_list_imbalance"]][["op"]][[.x]] <- if (v > 0) v
+        })
+      }
+    )
   })
 }
-
-## To be copied in the UI
-# mod_wli_ui("wli_1")
-
-## To be copied in the server
-# mod_wli_server("wli_1")
