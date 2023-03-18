@@ -9,9 +9,15 @@ app_server <- function(input, output, session) {
   diagnoses_lkup <- readRDS(app_sys("app", "data", "diagnoses.Rds"))
   providers <- readRDS(app_sys("app", "data", "providers.Rds"))
 
-  home_module <- mod_home_server("home", providers)
-  provider <- shiny::reactive(shiny::req(home_module()$provider))
-  baseline_year <- shiny::reactive(shiny::req(home_module()$baseline))
+  params <- shiny::reactiveValues()
+  params[["demographic_factors"]] <- list(
+    file = "demographic_factors.csv"
+  )
+
+  mod_home_server("home", providers, params)
+
+  provider <- shiny::reactive(shiny::req(params$dataset))
+  baseline_year <- shiny::reactive(shiny::req(params$start_year))
   provider_data <- shiny::reactive({
     readRDS(app_sys("app", "data", "provider_data.Rds"))[[provider()]]
   })
@@ -21,11 +27,6 @@ app_server <- function(input, output, session) {
 
     s[[provider()]][[as.character(baseline_year())]]
   })
-
-  params <- shiny::reactiveValues()
-  params[["demographic_factors"]] <- list(
-    file = "demographic_factors.csv"
-  )
 
   mod_expat_repat_server("expat_repat", params, provider, baseline_year, providers)
 

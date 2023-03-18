@@ -69,7 +69,7 @@ mod_home_providers_map <- function(selected_peers) {
 #' home Server Functions
 #'
 #' @noRd
-mod_home_server <- function(id, providers) {
+mod_home_server <- function(id, providers, params) {
   shiny::moduleServer(id, function(input, output, session) {
     peers <- readRDS(app_sys("app", "data", "peers.Rds"))
     nhp_current_cohort <- readRDS(app_sys("app", "data", "nhp_current_cohort.Rds"))
@@ -101,12 +101,9 @@ mod_home_server <- function(id, providers) {
       mod_home_providers_map(selected_peers())
     })
 
-    # return reactive
-    shiny::reactive({
-      list(
-        provider = input$provider,
-        baseline = input$baseline
-      )
+    shiny::observe({
+      params$dataset <- input$provider
+      params$start_year <- input$baseline
     })
   })
 }
