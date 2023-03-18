@@ -16,19 +16,20 @@ app_server <- function(input, output, session) {
 
   mod_home_server("home", providers, params)
 
-  provider <- shiny::reactive(shiny::req(params$dataset))
-  baseline_year <- shiny::reactive(shiny::req(params$start_year))
   provider_data <- shiny::reactive({
-    readRDS(app_sys("app", "data", "provider_data.Rds"))[[provider()]]
+    provider <- shiny::req(params$dataset)
+    readRDS(app_sys("app", "data", "provider_data.Rds"))[[provider]]
   })
 
   available_strategies <- shiny::reactive({
     s <- readRDS(app_sys("app", "data", "available_strategies.Rds"))
+    provider <- shiny::req(params$dataset)
+    year <- as.character(shiny::req(params$start_year))
 
-    s[[provider()]][[as.character(baseline_year())]]
+    s[[provider]][[year]]
   })
 
-  mod_expat_repat_server("expat_repat", params, provider, baseline_year, providers)
+  mod_expat_repat_server("expat_repat", params, providers)
 
   mod_population_growth_server("population_growth", params)
   mod_hsa_server("hsa", params)
@@ -51,8 +52,6 @@ app_server <- function(input, output, session) {
     ),
     mod_mitigators_server,
     params,
-    provider,
-    baseline_year,
     provider_data,
     available_strategies,
     diagnoses_lkup

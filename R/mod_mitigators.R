@@ -84,8 +84,6 @@ mod_mitigators_ui <- function(id, title) {
 #' @noRd
 mod_mitigators_server <- function(id,
                                   params,
-                                  provider,
-                                  baseline_year,
                                   provider_data,
                                   available_strategies,
                                   diagnoses_lkup) {
@@ -95,6 +93,9 @@ mod_mitigators_server <- function(id,
     activity_type <- config$activity_type
     mitigators_type <- config$mitigators_type
 
+    slider_values <- shiny::reactiveValues()
+    output_conversions <- shiny::reactiveValues()
+
     param_conversion <- config$param_conversion %||% list(
       absolute = list(\(r, p) p * r, \(r, q) q / r),
       relative = list(\(r, p) p, \(r, q) q)
@@ -102,7 +103,7 @@ mod_mitigators_server <- function(id,
 
     strategies <- shiny::reactive({
       # make sure a provider is selected
-      shiny::req(provider())
+      shiny::req(params$dataset)
 
       # set the names of the strategies to title case, but fix up some of the replaced words to upper case
       config$strategy_subset |>
@@ -136,11 +137,11 @@ mod_mitigators_server <- function(id,
           # get the rates data for this strategy (for the provider in the baseline year)
           r <- provider_data()[[i]]$rates |>
             dplyr::filter(
-              .data$peer == provider(),
-              .data$fyear == baseline_year()
+              .data$peer == params$dataset,
+              .data$fyear == params$start_year
             )
 
-          c(
+          v <- c(
             # add the additional param items if they exist.
             config$params_items |>
               # if the additional item is a list, chose the value for the current strategy
@@ -148,11 +149,22 @@ mod_mitigators_server <- function(id,
               # if the additional item is a function, evaluate it with the rates data
               purrr::map_if(is.function, rlang::exec, r),
             list(
-              interval = get_default(r$rate),
-              param_output = config$param_output %||% \(r, q) q,
-              rate = r$rate
+              interval = get_default(r$rate)
             )
           )
+
+          at <- activity_type
+          mt <- mitigators_type
+          fn <- output_conversions[[mt]][[i]] <- (config$param_output %||% \(r) identity)(r$rate)
+
+          params[[mt]][[at]][[i]] <- slider_values[[mt]][[i]] <- v
+
+          params[[mt]][[at]][[i]]$interval <- fn(params[[mt]][[at]][[i]]$interval)
+
+          # TODO: we assign the params item to "clean" it after data changes, so this return is needed
+          # but, the slider values aren't being cleared, and we are assigning into the list we are updating
+          # this seems to be working currently, but bad code smell
+          params[[mt]][[at]][[i]]
         })
     }) |>
       shiny::bindEvent(strategies())
@@ -195,8 +207,8 @@ mod_mitigators_server <- function(id,
 
     rates_baseline_data <- shiny::reactive({
       rates_data() |>
-        dplyr::filter(.data$fyear == baseline_year()) |>
-        dplyr::mutate(is_peer = .data$peer != .env$provider())
+        dplyr::filter(.data$fyear == params$start_year) |>
+        dplyr::mutate(is_peer = .data$peer != .env$params$dataset)
     })
 
     # params controls ----
@@ -234,7 +246,7 @@ mod_mitigators_server <- function(id,
         pc_fn <- param_conversion$relative[[1]]
       }
 
-      values <- pc_fn(max_value, params[[mitigators_type]][[activity_type]][[strategy]]$interval) * scale
+      values <- pc_fn(max_value, slider_values[[mitigators_type]][[strategy]]$interval) * scale
       shiny::updateSliderInput(session, "slider", value = values, min = range[[1]], max = range[[2]], step = step)
     }
 
@@ -259,7 +271,13 @@ mod_mitigators_server <- function(id,
         pc_fn <- param_conversion$relative[[2]]
       }
 
-      params[[mitigators_type]][[activity_type]][[strategy]]$interval <- pc_fn(max_value, values / scale)
+      v <- pc_fn(max_value, values / scale)
+
+      at <- activity_type
+      mt <- mitigators_type
+      slider_values[[mt]][[strategy]]$interval <- v
+
+      params[[mt]][[at]][[strategy]]$interval <- output_conversions[[mt]][[strategy]](v)
     }) |>
       shiny::bindEvent(input$slider)
 
@@ -267,10 +285,7 @@ mod_mitigators_server <- function(id,
 
     plot_ribbon <- shiny::reactive({
       max_value <- provider_max_value()
-      values <- param_conversion$absolute[[1]](
-        max_value,
-        params[[mitigators_type]][[activity_type]][[input$strategy]]$interval
-      )
+      values <- param_conversion$absolute[[1]](max_value, slider_values[[mitigators_type]][[input$strategy]]$interval)
 
       ggplot2::annotate(
         "rect",
@@ -289,13 +304,13 @@ mod_mitigators_server <- function(id,
 
     trend_data <- shiny::reactive({
       rates_data() |>
-        dplyr::filter(.data$peer == provider())
+        dplyr::filter(.data$peer == params$dataset)
     })
 
     output$trend_plot <- shiny::renderPlot({
       rates_trend_plot(
         trend_data(),
-        baseline_year(),
+        params$start_year,
         plot_range(),
         config$y_axis_title,
         config$x_axis_title,
@@ -344,7 +359,7 @@ mod_mitigators_server <- function(id,
 
     output$diagnoses_table <- gt::render_gt({
       data <- diagnoses_data() |>
-        dplyr::filter(.data$fyear == baseline_year()) |>
+        dplyr::filter(.data$fyear == params$start_year) |>
         dplyr::inner_join(diagnoses_lkup, by = c("diagnosis" = "diagnosis_code")) |>
         dplyr::select("diagnosis_description", "n", "p")
 
@@ -391,7 +406,7 @@ mod_mitigators_server <- function(id,
 
     output$age_grp_plot <- shiny::renderPlot({
       age_data <- age_sex_data() |>
-        dplyr::filter(.data$fyear == baseline_year())
+        dplyr::filter(.data$fyear == params$start_year)
 
       shiny::req(nrow(age_data) > 0)
       age_pyramid(age_data)

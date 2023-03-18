@@ -113,13 +113,13 @@ mod_expat_repat_ui <- function(id) {
 #' expat_repat Server Functions
 #'
 #' @noRd
-mod_expat_repat_server <- function(id, params, provider, baseline_year, providers) {
+mod_expat_repat_server <- function(id, params, providers) {
   shiny::moduleServer(id, function(input, output, session) {
     rtt_specialties <- readRDS(app_sys("app", "data", "rtt_specialties.Rds"))
     icb_boundaries <- sf::read_sf(app_sys("app", "data", "icb_boundaries.geojson"))
 
     expat_repat_data <- shiny::reactive({
-      p <- shiny::req(provider())
+      p <- shiny::req(params$dataset)
       readRDS(app_sys("app", "data", "expat_repat_data.Rds"))[[p]]
     })
 
@@ -289,7 +289,7 @@ mod_expat_repat_server <- function(id, params, provider, baseline_year, provider
 
     repat_local_nonlocal_split <- shiny::reactive({
       repat_local() |>
-        dplyr::filter(.data$provider == provider()) |>
+        dplyr::filter(.data$provider == params$dataset) |>
         dplyr::count(.data$fyear, wt = .data$n, name = "d") |>
         dplyr::inner_join(expat(), by = "fyear") |>
         dplyr::transmute(
@@ -301,11 +301,11 @@ mod_expat_repat_server <- function(id, params, provider, baseline_year, provider
 
     output$repat_local_plot <- shiny::renderPlot({
       df <- repat_local() |>
-        dplyr::filter(.data$provider == provider())
+        dplyr::filter(.data$provider == params$dataset)
 
       shiny::req(nrow(df) > 0)
 
-      v <- dplyr::filter(df, .data$fyear == baseline_year())$pcnt
+      v <- dplyr::filter(df, .data$fyear == params$start_year)$pcnt
 
       include <- input$include_repat_local
       values <- input$repat_local * v / 100
@@ -328,7 +328,7 @@ mod_expat_repat_server <- function(id, params, provider, baseline_year, provider
         interval +
         ggplot2::geom_line() +
         ggplot2::geom_point(
-          data = \(.x) dplyr::filter(.x, .data$fyear == baseline_year()),
+          data = \(.x) dplyr::filter(.x, .data$fyear == params$start_year),
           colour = "red"
         ) +
         ggplot2::scale_x_discrete(
@@ -357,11 +357,11 @@ mod_expat_repat_server <- function(id, params, provider, baseline_year, provider
       )
 
       this_provider_name <- providers_df |>
-        dplyr::filter(provider == provider()) |>
-        dplyr::pull(provider_name)
+        dplyr::filter(provider == params$dataset) |>
+        dplyr::pull(.data$provider_name)
 
       df <- repat_local() |>
-        dplyr::filter(.data$fyear == baseline_year())
+        dplyr::filter(.data$fyear == params$start_year)
 
       shiny::req(nrow(df) > 0)
 
@@ -408,7 +408,7 @@ mod_expat_repat_server <- function(id, params, provider, baseline_year, provider
         ggplot2::ggplot(ggplot2::aes(as.factor(.data$fyear), .data$nonlocal, group = 1)) +
         ggplot2::geom_line() +
         ggplot2::geom_point(
-          data = \(.x) dplyr::filter(.x, .data$fyear == baseline_year()),
+          data = \(.x) dplyr::filter(.x, .data$fyear == params$start_year),
           colour = "red"
         ) +
         ggplot2::scale_x_discrete(
@@ -464,7 +464,7 @@ mod_expat_repat_server <- function(id, params, provider, baseline_year, provider
       df <- icb_boundaries |>
         dplyr::inner_join(
           repat_nonlocal() |>
-            dplyr::filter(.data$fyear == baseline_year()),
+            dplyr::filter(.data$fyear == params$start_year),
           by = "icb22cdh"
         )
 
