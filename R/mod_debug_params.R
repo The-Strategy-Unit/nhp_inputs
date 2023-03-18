@@ -11,26 +11,6 @@ mod_debug_params_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::h1("DEBUG: selected parameter values"),
-    shiny::selectInput(
-      ns("param_item"),
-      "parameter",
-      choices = NULL
-      #   c(
-      #     "demographic_factors",
-      #     "health_status_adjustment",
-      #     "life_expectancy",
-      #     "expat",
-      #     "repat_local",
-      #     "repat_nonlocal",
-      #     "baseline_adjustment",
-      #     "waiting_list_adjustment",
-      #     "non-demographic_adjustment",
-      #     "activity_avoidance",
-      #     "efficiencies",
-      #     "bed_occupancy",
-      #     "theatres"
-      #   )
-    ),
     shiny::verbatimTextOutput(ns("params_json"))
   )
 }
@@ -40,11 +20,6 @@ mod_debug_params_ui <- function(id) {
 #' @noRd
 mod_debug_params_server <- function(id, params) {
   shiny::moduleServer(id, function(input, output, session) {
-    shiny::observe({
-      p <- fixed_params()
-      shiny::updateSelectInput(session, "param_item", choices = names(p))
-    })
-
     fixed_params <- shiny::reactive({
       p <- shiny::reactiveValuesToList(params)
 
@@ -98,12 +73,14 @@ mod_debug_params_server <- function(id, params) {
       p$activity_avoidance <- purrr::map_depth(p$activity_avoidance, 2, run_param_output)
       p$efficiencies <- purrr::map_depth(p$efficiencies, 2, run_param_output)
 
+      # convert financial year to calendar year
+      p$start_year <- as.integer(stringr::str_sub(p$start_year, 1, 4))
+
       p
     })
 
     output$params_json <- shiny::renderPrint({
-      i <- shiny::req(input$param_item)
-      p <- fixed_params()[[i]]
+      p <- fixed_params()
 
       jsonlite::toJSON(p, pretty = TRUE, auto_unbox = TRUE)
     })
