@@ -102,8 +102,14 @@ mod_home_server <- function(id, providers, params) {
     })
 
     shiny::observe({
+      # TODO: need to provide inputs for all of the items below
       params$dataset <- input$provider
+      params$scenario <- "scenario"
+      params$seed <- sample(1:100000, 1)
+      params$model_runs <- 256
       params$start_year <- input$baseline
+      params$end_year <- 2038
+      params$create_datetime <- format(Sys.time(), "%Y%m%d_%H%M%S")
     })
   })
 }
