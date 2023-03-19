@@ -25,6 +25,10 @@ mod_mitigators_ui <- function(id, title) {
           bs4Dash::box(
             title = "Model Parameter",
             width = 12,
+            shiny::checkboxInput(
+              ns("include"),
+              "Include?"
+            ),
             shiny::radioButtons(
               ns("slider_type"),
               "Display Type",
@@ -130,7 +134,9 @@ mod_mitigators_server <- function(id,
       shiny::updateSelectInput(session, "strategy", choices = strategies())
 
       # reset the params reactiveValues
-      params[[mitigators_type]][[activity_type]] <- strategies() |>
+      params[[mitigators_type]][[activity_type]] <- list()
+
+      slider_values[[mitigators_type]] <- strategies() |>
         # remove the friendly name for the strategy, replace with itself
         purrr::set_names() |>
         purrr::map(\(i) {
@@ -141,7 +147,7 @@ mod_mitigators_server <- function(id,
               .data$fyear == params$start_year
             )
 
-          v <- c(
+          c(
             # add the additional param items if they exist.
             config$params_items |>
               # if the additional item is a list, chose the value for the current strategy
@@ -152,19 +158,6 @@ mod_mitigators_server <- function(id,
               interval = get_default(r$rate)
             )
           )
-
-          at <- activity_type
-          mt <- mitigators_type
-          fn <- output_conversions[[mt]][[i]] <- (config$param_output %||% \(r) identity)(r$rate)
-
-          params[[mt]][[at]][[i]] <- slider_values[[mt]][[i]] <- v
-
-          params[[mt]][[at]][[i]]$interval <- fn(params[[mt]][[at]][[i]]$interval)
-
-          # TODO: we assign the params item to "clean" it after data changes, so this return is needed
-          # but, the slider values aren't being cleared, and we are assigning into the list we are updating
-          # this seems to be working currently, but bad code smell
-          params[[mt]][[at]][[i]]
         })
     }) |>
       shiny::bindEvent(strategies())
@@ -225,6 +218,9 @@ mod_mitigators_server <- function(id,
 
     shiny::observe({
       shiny::req(input$strategy)
+      include <- !is.null(params[[mitigators_type]][[activity_type]][[input$strategy]])
+
+      shiny::updateCheckboxInput(session, "include", value = include)
       shiny::updateRadioButtons(session, "slider_type", selected = "rate")
       update_slider("rate")
     }) |>
@@ -277,9 +273,23 @@ mod_mitigators_server <- function(id,
       mt <- mitigators_type
       slider_values[[mt]][[strategy]]$interval <- v
 
-      params[[mt]][[at]][[strategy]]$interval <- output_conversions[[mt]][[strategy]](v)
+
+      params[[mt]][[at]][[strategy]] <- if (input$include) {
+        fn <- output_conversions[[mitigators_type]][[strategy]] <- (config$param_output %||% \(r) identity)(r$rate)
+
+        v <- slider_values[[mitigators_type]][[strategy]]
+        v$interval <- fn(v$interval)
+
+        v
+      }
     }) |>
-      shiny::bindEvent(input$slider)
+      shiny::bindEvent(input$slider, input$include)
+
+    shiny::observe({
+      shinyjs::toggleState("slider", condition = input$include)
+      shinyjs::toggleState("slider_type", condition = input$include)
+    }) |>
+      shiny::bindEvent(input$include)
 
     # plot ribbon to show selected params ----
 
