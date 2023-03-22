@@ -70,10 +70,6 @@ mod_bed_occupancy_ui <- function(id) {
     ),
     col_6(
       shiny::uiOutput(ns("specialty_mapping"))
-    ),
-    bs4Dash::box(
-      title = "debug",
-      shiny::verbatimTextOutput(ns("debug"))
     )
   )
 }
@@ -293,12 +289,6 @@ mod_bed_occupancy_server <- function(id, params) {
         " to ",
         "{scales::percent(v[[2]], accuracy = 0.01)}"
       )
-    })
-
-    # debug
-    output$debug <- shiny::renderPrint({
-      params[["bed_occupancy"]] |>
-        jsonlite::toJSON(pretty = TRUE, auto_unbox = TRUE)
     })
   })
 }
