@@ -36,6 +36,8 @@ app_server <- function(input, output, session) {
   mod_nda_server("nda", params)
   mod_wli_server("wli", params)
 
+  mod_bed_occupancy_server("bed_occupancy", params)
+
   purrr::walk(
     c(
       "mitigators_admission_avoidance",
