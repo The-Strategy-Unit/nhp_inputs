@@ -136,10 +136,10 @@ mod_mitigators_server <- function(id,
       # reset the params reactiveValues
       params[[mitigators_type]][[activity_type]] <- list()
 
-      slider_values[[mitigators_type]] <- strategies() |>
+      strategies() |>
         # remove the friendly name for the strategy, replace with itself
         purrr::set_names() |>
-        purrr::map(\(i) {
+        purrr::walk(\(i) {
           # get the rates data for this strategy (for the provider in the baseline year)
           r <- provider_data()[[i]]$rates |>
             dplyr::filter(
@@ -147,7 +147,7 @@ mod_mitigators_server <- function(id,
               .data$fyear == params$start_year
             )
 
-          c(
+          slider_values[[mitigators_type]][[i]] <- c(
             # add the additional param items if they exist.
             config$params_items |>
               # if the additional item is a list, chose the value for the current strategy
@@ -158,6 +158,8 @@ mod_mitigators_server <- function(id,
               interval = get_default(r$rate)
             )
           )
+
+          output_conversions[[mitigators_type]][[i]] <- (config$param_output %||% \(...) identity)(r$rate)
         })
     }) |>
       shiny::bindEvent(strategies())
@@ -275,7 +277,7 @@ mod_mitigators_server <- function(id,
 
 
       params[[mt]][[at]][[strategy]] <- if (input$include) {
-        fn <- output_conversions[[mitigators_type]][[strategy]] <- (config$param_output %||% \(r) identity)(r$rate)
+        fn <- output_conversions[[mitigators_type]][[strategy]]
 
         v <- slider_values[[mitigators_type]][[strategy]]
         v$interval <- fn(v$interval)

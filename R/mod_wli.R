@@ -1,4 +1,3 @@
-
 rtt_specialties <- function() {
   readRDS(app_sys("app", "data", "rtt_specialties.Rds")) |>
     as.list() |>
@@ -47,8 +46,8 @@ mod_wli_server <- function(id, params) {
 
     table <- rtt_specialties() |>
       dplyr::mutate(
-        Inpatients = purrr::map(code, .f = ~ req(numeric_input_gt(.x, "wli_ip_"))),
-        Outpatients = purrr::map(code, .f = ~ req(numeric_input_gt(.x, "wli_op_")))
+        Inpatients = purrr::map(.data$code, numeric_input_gt, "wli_ip_"),
+        Outpatients = purrr::map(.data$code, numeric_input_gt, "wli_op_")
       )
 
     output$rtt_table <- gt::render_gt(table)

@@ -17,6 +17,7 @@ Imports:
     leaflet,
     pkgload,
     plotly,
+    readr,
     scales,
     sf,
     shiny (>= 1.7.1),

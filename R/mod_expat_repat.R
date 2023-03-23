@@ -357,7 +357,7 @@ mod_expat_repat_server <- function(id, params, providers) {
       )
 
       this_provider_name <- providers_df |>
-        dplyr::filter(provider == params$dataset) |>
+        dplyr::filter(.data$provider == params$dataset) |>
         dplyr::pull(.data$provider_name)
 
       df <- repat_local() |>
@@ -386,7 +386,7 @@ mod_expat_repat_server <- function(id, params, providers) {
         ggplot2::geom_col(
           ggplot2::aes(
             colour = .data$provider_name,
-            fill = ggplot2::after_scale(ggplot2::alpha(colour, 0.4))
+            fill = ggplot2::after_scale(ggplot2::alpha(colour, 0.4)) # nolint
           ),
           position = "stack"
         ) +
@@ -439,7 +439,7 @@ mod_expat_repat_server <- function(id, params, providers) {
             as.factor(.data$fyear),
             .data$n,
             color = .data$icb22cdh,
-            fill = ggplot2::after_scale(ggplot2::alpha(colour, 0.4))
+            fill = ggplot2::after_scale(ggplot2::alpha(colour, 0.4)) # nolint
           )
         ) +
         ggplot2::geom_col(position = "stack") +
@@ -470,7 +470,7 @@ mod_expat_repat_server <- function(id, params, providers) {
 
       shiny::req(nrow(df) > 0)
 
-      pal <- leaflet::colorNumeric(
+      pal <- leaflet::colorNumeric( # nolint
         viridis::viridis_pal()(3),
         df$pcnt
       )
