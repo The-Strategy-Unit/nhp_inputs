@@ -63,4 +63,9 @@ app_server <- function(input, output, session) {
     "debug_params",
     params
   )
+
+  if (!getOption("golem.app.prod", FALSE)) {
+    cat("auto reconnect enabled\n")
+    session$allowReconnect("force")
+  }
 }
