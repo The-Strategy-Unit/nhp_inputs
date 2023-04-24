@@ -1,6 +1,6 @@
 {
   "R": {
-    "Version": "4.2.3",
+    "Version": "4.3.0",
     "Repositories": [
       {
         "Name": "CRAN",
@@ -35,7 +35,7 @@
       "Package": "MASS",
       "Version": "7.3-58.3",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "Requirements": [
         "R",
         "grDevices",
@@ -206,7 +206,7 @@
       "Package": "beeswarm",
       "Version": "0.4.0",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "Requirements": [
         "grDevices",
         "graphics",
@@ -219,7 +219,7 @@
       "Package": "bigD",
       "Version": "0.2.0",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "Requirements": [
         "R"
       ],
@@ -253,7 +253,7 @@
       "Package": "bitops",
       "Version": "1.0-7",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "Hash": "b7d8d8ee39869c18d8846a184dd8a1af"
     },
     "blob": {
@@ -830,7 +830,7 @@
       "Package": "ggbeeswarm",
       "Version": "0.7.1",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "Requirements": [
         "R",
         "beeswarm",
@@ -1207,7 +1207,7 @@
       "Package": "juicyjuice",
       "Version": "0.1.0",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "Requirements": [
         "V8"
       ],
@@ -1476,7 +1476,7 @@
       "Package": "packrat",
       "Version": "0.9.1",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "Requirements": [
         "R",
         "tools",
@@ -1584,7 +1584,7 @@
       "Package": "plotly",
       "Version": "4.10.1",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "Requirements": [
         "R",
         "RColorBrewer",
@@ -1973,7 +1973,7 @@
       "Package": "rsconnect",
       "Version": "0.8.29",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "Requirements": [
         "R",
         "curl",
@@ -2310,7 +2310,7 @@
     },
     "terra": {
       "Package": "terra",
-      "Version": "1.7-23",
+      "Version": "1.7-29",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -2318,7 +2318,7 @@
         "Rcpp",
         "methods"
       ],
-      "Hash": "19502c7522254190a8a93e6dffa59ed7"
+      "Hash": "89c24bf35c961e047df79dde2eb69224"
     },
     "testthat": {
       "Package": "testthat",
@@ -2366,7 +2366,7 @@
       "Package": "tibble",
       "Version": "3.2.1",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "Requirements": [
         "R",
         "fansi",
@@ -2558,7 +2558,7 @@
       "Package": "vipor",
       "Version": "0.4.5",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "Requirements": [
         "R",
         "graphics",
@@ -2748,7 +2748,7 @@
       "Package": "zeallot",
       "Version": "0.1.0",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "Hash": "ee9b643aa8331c45d8d82eb3a137c9bc"
     },
     "zip": {
