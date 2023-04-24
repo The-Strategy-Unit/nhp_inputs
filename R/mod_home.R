@@ -17,7 +17,7 @@ mod_home_ui <- function(id) {
           title = "Select Provider and Baseline",
           width = 12,
           shiny::selectInput(ns("provider"), "Provider", choices = NULL),
-          shiny::selectInput(ns("baseline"), "Baseline Year", choices = c("2018/19" = 201819))
+          shiny::selectInput(ns("baseline"), "Baseline Year", choices = c("2019/20" = 201920, "2018/19" = 201819))
         ),
         bs4Dash::box(
           title = "Peers (from NHS Trust Peer Finder Tool)",
