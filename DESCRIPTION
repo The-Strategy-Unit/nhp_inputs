@@ -34,6 +34,7 @@ Suggests:
     httpgd,
     languageserver,
     mockery,
+    NHSRtools,
     rsconnect,
     spelling,
     targets,
@@ -45,4 +46,5 @@ Config/testthat/edition: 3
 Language: en-US
 Remotes:  
     github::tomjemmett/watchr,
+    github::NHS-R-Community/NHSRtools,
     github::ManuelHentschel/vscDebugger
