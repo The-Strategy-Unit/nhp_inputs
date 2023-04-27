@@ -1,0 +1,31 @@
+name: connect-publish
+on:
+  push:
+    branches: [main]
+
+jobs:
+  connect-publish:
+    name: connect-publish
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-renv@v2
+
+      - name: Generate manifest.json
+        run: rsconnect::writeManifest()
+        shell: Rscript {0}
+
+      - name: Publish Connect content
+        uses: rstudio/actions/connect-publish@main
+        with:
+          url: ${{ secrets.RSCONNECT_URL }}
+          api-key: ${{ secrets.RSCONNECT_API_KEY }}
+          access-type: acl
+          force: true
+          dir: .:inputs
+          namespace: nhp_dev
