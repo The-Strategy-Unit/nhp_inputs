@@ -365,6 +365,10 @@ mod_expat_repat_server <- function(id, params, providers) {
 
       shiny::req(nrow(df) > 0)
 
+      # in the call to ggplot2::after_scale we will always get a check warning for no visible binding for colour:
+      # create a value temporarily to hide this
+      colour <- NULL
+
       df |>
         dplyr::left_join(providers_df, by = c("provider")) |>
         dplyr::arrange(.data$provider_name) |>

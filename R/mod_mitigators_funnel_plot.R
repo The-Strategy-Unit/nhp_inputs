@@ -19,7 +19,7 @@ generate_rates_funnel_data <- function(data) {
     dplyr::mutate(
       sdev_pop_i = sqrt(abs(.data$mean) / .data$n),
       z = (.data$rate - .data$mean) / .data$sdev_pop_i,
-      sigz = sd(.data$z, na.rm = TRUE),
+      sigz = stats::sd(.data$z, na.rm = TRUE),
       cl2 = 2 * .data$sdev_pop_i * .data$sigz,
       cl3 = 3 * .data$sdev_pop_i * .data$sigz,
       lower2 = .data$mean - .data$cl2,

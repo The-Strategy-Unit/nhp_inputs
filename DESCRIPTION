@@ -10,20 +10,29 @@ Imports:
     dplyr,
     forcats,
     ggbeeswarm,
+    ggplot2,
     ggrepel,
+    glue,
     golem (>= 0.3.3),
     gt,
+    htmltools,
     jsonlite,
     leaflet,
-    pkgload,
-    plotly,
+    markdown,
+    purrr,
     readr,
+    rlang,
     scales,
     sf,
     shiny (>= 1.7.1),
     shinycssloaders,
     shinyjs,
     snakecase,
+    stringr,
+    tibble,
+    tidyr,
+    tidyselect,
+    viridis,
     zeallot
 Encoding: UTF-8
 LazyData: true
@@ -44,7 +53,7 @@ Suggests:
     watchr (>= 0.0.0.9000)
 Config/testthat/edition: 3
 Language: en-US
-Remotes:  
+Remotes:
     github::tomjemmett/watchr,
     github::NHS-R-Community/NHSRtools,
     github::ManuelHentschel/vscDebugger
