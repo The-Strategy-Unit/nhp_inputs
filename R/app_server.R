@@ -18,15 +18,16 @@ app_server <- function(input, output, session) {
 
   provider_data <- shiny::reactive({
     provider <- shiny::req(params$dataset)
-    readRDS(app_sys("app", "data", "provider_data.Rds"))[[provider]]
+    file <- glue::glue("{provider}/data.rds")
+
+    load_rds_from_azure(file)
   })
 
   available_strategies <- shiny::reactive({
-    s <- readRDS(app_sys("app", "data", "available_strategies.Rds"))
     provider <- shiny::req(params$dataset)
     year <- as.character(shiny::req(params$start_year))
 
-    s[[provider]][[year]]
+    load_rds_from_azure(glue::glue("{provider}/available_strategies.rds"))[[year]]
   })
 
   mod_expat_repat_server("expat_repat", params, providers)

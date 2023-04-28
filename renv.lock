@@ -4,7 +4,7 @@
     "Repositories": [
       {
         "Name": "CRAN",
-        "URL": "https://packagemanager.rstudio.com/all/latest"
+        "URL": "https://cran.rstudio.com/"
       }
     ]
   },
@@ -346,13 +346,8 @@
     "bs4Dash": {
       "Package": "bs4Dash",
       "Version": "2.2.1",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteUsername": "RinteRface",
-      "RemoteRepo": "bs4Dash",
-      "RemoteRef": "master",
-      "RemoteSha": "0ed581214609f7a972cf3558117c47aaf77a9bcb",
-      "RemoteHost": "api.github.com",
+      "Source": "Repository",
+      "Repository": "CRAN",
       "Requirements": [
         "bslib",
         "fresh",
@@ -364,7 +359,7 @@
         "shiny",
         "waiter"
       ],
-      "Hash": "6e0b66c1719e28c0523dca96a7cf3cac"
+      "Hash": "5bdfebde67149093342161c6e748ca0d"
     },
     "bslib": {
       "Package": "bslib",
@@ -2784,16 +2779,16 @@
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteUsername": "ManuelHentschel",
       "RemoteRepo": "vscDebugger",
-      "RemoteRef": "master",
+      "RemoteUsername": "ManuelHentschel",
+      "RemoteRef": "HEAD",
       "RemoteSha": "22397c3b5e9be6f2acbcc07e1ce86a740355bdd8",
       "Requirements": [
         "R6",
         "jsonlite",
         "tcltk"
       ],
-      "Hash": "957fada54817108f9e5c42691ccb346d"
+      "Hash": "a1f1472ee716bc9c8d27ecc452548685"
     },
     "waiter": {
       "Package": "waiter",

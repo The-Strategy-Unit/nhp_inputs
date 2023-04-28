@@ -120,7 +120,7 @@ mod_expat_repat_server <- function(id, params, providers) {
 
     expat_repat_data <- shiny::reactive({
       p <- shiny::req(params$dataset)
-      readRDS(app_sys("app", "data", "expat_repat_data.Rds"))[[p]]
+      load_rds_from_azure(glue::glue("{p}/expat_repat.rds"))
     })
 
     # helper method to construct the initial values for our params
@@ -365,13 +365,23 @@ mod_expat_repat_server <- function(id, params, providers) {
 
       shiny::req(nrow(df) > 0)
 
+      # in the call to ggplot2::after_scale we will always get a check warning for no visible binding for colour:
+      # create a value temporarily to hide this
+      colour <- NULL
+
       df |>
         dplyr::left_join(providers_df, by = c("provider")) |>
         dplyr::arrange(.data$provider_name) |>
         dplyr::mutate(
-          dplyr::across("provider_name", forcats::fct_explicit_na, "Other"),
-          dplyr::across("provider_name", forcats::fct_relevel, this_provider_name),
-          dplyr::across("provider_name", forcats::fct_relevel, "Other", after = Inf),
+          dplyr::across(
+            "provider_name",
+            \(.x) {
+              .x |>
+                forcats::fct_na_value_to_level("Other") |>
+                forcats::fct_relevel(this_provider_name) |
+                forcats::fct_relevel("Other", after = Inf)
+            }
+          ),
           label = glue::glue(
             .sep = "\n",
             "{.data$provider_name}",

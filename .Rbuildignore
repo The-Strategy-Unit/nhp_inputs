@@ -11,6 +11,11 @@ $run_dev.*
 ^app\.R$
 ^rsconnect$
 
+.lintr
+.github
+.vscode
+
 ^_targets$
 ^targets$
 ^_targets.R$
+^\.github$

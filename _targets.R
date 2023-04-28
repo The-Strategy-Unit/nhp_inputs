@@ -194,49 +194,57 @@ list(
       "RYJ"
     )
   ),
-  tar_target(data_last_updated, {
-    withr::with_dir("inst/app/data", {
-      save_data(
-        nhp_current_cohort,
-        age_sex = dplyr::bind_rows(
-          ip_age_sex_data,
-          op_age_sex_data,
-          aae_age_sex_data
-        ),
-        diagnoses = dplyr::bind_rows(
-          ip_diag_data,
-          op_diag_data,
-          aae_diag_data
-        ),
-        rates = dplyr::bind_rows(
-          ip_dsr_data,
-          mean_los_data,
-          zero_los_data,
-          preop_los_data,
-          bads_data,
-          op_convert_to_tele_data,
-          op_consultant_to_consultant_reduction,
-          op_followup_reduction,
-          aae_rates
-        )
-      )
-    })
-
-    Sys.time()
-  }),
-  tar_target(expat_repat_data_last_updated, {
-    saveRDS(expat_repat_data, "inst/app/data/expat_repat_data.Rds")
-
-    Sys.time()
-  }),
+  # combined data into single items
+  tar_target(
+    age_sex_data,
+    dplyr::bind_rows(
+      ip_age_sex_data,
+      op_age_sex_data,
+      aae_age_sex_data
+    )
+  ),
+  tar_target(
+    diagnoses_data,
+    dplyr::bind_rows(
+      ip_diag_data,
+      op_diag_data,
+      aae_diag_data
+    )
+  ),
+  tar_target(
+    rates_data,
+    dplyr::bind_rows(
+      ip_dsr_data,
+      mean_los_data,
+      zero_los_data,
+      preop_los_data,
+      bads_data,
+      op_convert_to_tele_data,
+      op_consultant_to_consultant_reduction,
+      op_followup_reduction,
+      aae_rates
+    )
+  ),
+  tar_target(
+    provider_data,
+    get_provider_data(age_sex_data, diagnoses_data, rates_data)
+  ),
+  tar_target(
+    uploaded_data,
+    upload_data_to_azure(nhp_current_cohort, provider_data, expat_repat_data),
+    pattern = map(nhp_current_cohort)
+  ),
+  tar_target(
+    uploaded_reference_data,
+    upload_reference_data_to_azure(nhp_current_cohort, lkp_peers)
+  ),
   tar_target(reference_data_last_updated, {
+    dir.create("inst/app/data", FALSE)
+
     withr::with_dir("inst/app/data", {
       saveRDS(rtt_specialties, "rtt_specialties.Rds")
       saveRDS(lkp_diag, "diagnoses.Rds")
-      saveRDS(lkp_peers, "peers.Rds")
       saveRDS(providers, "providers.Rds")
-      saveRDS(strategies, "strategies.Rds")
-      saveRDS(nhp_current_cohort, "nhp_current_cohort.Rds")
       sf::write_sf(provider_locations, "provider_locations.geojson", delete_dsn = TRUE)
       sf::write_sf(icb_boundaries, "icb_boundaries.geojson", delete_dsn = TRUE)
     })
