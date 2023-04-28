@@ -18,3 +18,4 @@ $run_dev.*
 ^_targets$
 ^targets$
 ^_targets.R$
+^\.github$
