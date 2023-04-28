@@ -5,6 +5,7 @@ Authors@R: person('Tom', 'Jemmett', email = 'thomas.jemmett@nhs.net', role = c('
 Description: A shiny app for getting model input parameters.
 License: MIT + file LICENSE
 Imports: 
+    AzureStor,
     bs4Dash,
     config (>= 0.3.1),
     dplyr,
@@ -33,6 +34,7 @@ Imports:
     tidyr,
     tidyselect,
     viridis,
+    withr,
     zeallot
 Encoding: UTF-8
 LazyData: true
