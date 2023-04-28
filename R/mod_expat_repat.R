@@ -120,7 +120,7 @@ mod_expat_repat_server <- function(id, params, providers) {
 
     expat_repat_data <- shiny::reactive({
       p <- shiny::req(params$dataset)
-      readRDS(app_sys("app", "data", "expat_repat_data.Rds"))[[p]]
+      load_rds_from_azure(glue::glue("{p}/expat_repat.rds"))
     })
 
     # helper method to construct the initial values for our params
