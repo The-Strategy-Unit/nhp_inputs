@@ -1,11 +1,11 @@
-name: connect-publish
+name: connect-publish-dev
 on:
   push:
     branches: [main]
 
 jobs:
   connect-publish:
-    name: connect-publish
+    name: "connect publish: dev"
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}

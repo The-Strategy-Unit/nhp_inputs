@@ -1,11 +1,11 @@
-name: connect-publish
+name: connect-publish-prod
 on:
   release:
     types: [published]
 
 jobs:
   connect-publish:
-    name: connect-publish
+    name: "connect publish: prod"
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
