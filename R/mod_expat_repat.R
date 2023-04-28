@@ -373,9 +373,15 @@ mod_expat_repat_server <- function(id, params, providers) {
         dplyr::left_join(providers_df, by = c("provider")) |>
         dplyr::arrange(.data$provider_name) |>
         dplyr::mutate(
-          dplyr::across("provider_name", forcats::fct_explicit_na, "Other"),
-          dplyr::across("provider_name", forcats::fct_relevel, this_provider_name),
-          dplyr::across("provider_name", forcats::fct_relevel, "Other", after = Inf),
+          dplyr::across(
+            "provider_name",
+            \(.x) {
+              .x |>
+                forcats::fct_na_value_to_level("Other") |>
+                forcats::fct_relevel(this_provider_name) |
+                forcats::fct_relevel("Other", after = Inf)
+            }
+          ),
           label = glue::glue(
             .sep = "\n",
             "{.data$provider_name}",
