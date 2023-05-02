@@ -30,6 +30,7 @@ app_server <- function(input, output, session) {
   mod_hsa_server("hsa", params)
   mod_nda_server('nda', params)
   mod_wli_server('wli', params)
+  mod_theatres_server('theatres', params)
 
   purrr::walk(
     c(
