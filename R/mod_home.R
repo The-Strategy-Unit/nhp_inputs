@@ -71,8 +71,8 @@ mod_home_providers_map <- function(selected_peers) {
 #' @noRd
 mod_home_server <- function(id, providers, params) {
   shiny::moduleServer(id, function(input, output, session) {
-    peers <- load_rds_from_azure("peers.rds")
-    nhp_current_cohort <- load_rds_from_azure("nhp_current_cohort.rds")
+    peers <- load_rds_from_adls("peers.rds")
+    nhp_current_cohort <- load_rds_from_adls("nhp_current_cohort.rds")
 
     provider_locations <- sf::read_sf(app_sys("app", "data", "provider_locations.geojson"))
 
