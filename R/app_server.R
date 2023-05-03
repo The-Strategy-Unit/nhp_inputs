@@ -35,10 +35,10 @@ app_server <- function(input, output, session) {
   mod_population_growth_server("population_growth", params)
   mod_hsa_server("hsa", params)
 
-  mod_nda_server('nda', params)
-  mod_wli_server('wli', params)
-  
-  mod_theatres_server('theatres', params)
+  mod_nda_server("nda", params)
+  mod_wli_server("wli", params)
+
+  mod_theatres_server("theatres", params)
   mod_bed_occupancy_server("bed_occupancy", params)
 
   purrr::walk(

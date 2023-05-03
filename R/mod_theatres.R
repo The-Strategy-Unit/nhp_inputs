@@ -24,7 +24,7 @@ mod_theatres_ui <- function(id){
     bs4Dash::box(
       title = "debug",
       shiny::tableOutput(ns('debug'))),
-    gt::gt_output(ns('theatresTable'))
+    gt::gt_output(ns('theatres_table'))
   )
 
 
@@ -39,7 +39,7 @@ mod_theatres_server <- function(id, params){
   shiny::moduleServer(id, function(input, output, session){
     ns <- session$ns
 
-    sliderInput_gt <- function(x, inputid, baseline,...){
+    slider_input_gt <- function(x, inputid, baseline,...){
       as.character(
         shiny::sliderInput(
           ns(paste0(inputid, x)),
@@ -59,14 +59,14 @@ mod_theatres_server <- function(id, params){
         `Theatre spells per case (elective)` =
           purrr::map2(Code,
                       baseline_spells,
-                      .f = ~req(sliderInput_gt(.x, 'theatres_spellPerCase_', .y))),
+                      .f = ~req(slider_input_gt(.x, 'theatres_spellPerCase_', .y))),
         `Theatre cases per 4hr session (elective)` =
           purrr::map2(Code,
                       baseline_cases,
-                      .f = ~req(sliderInput_gt(.x, 'theatres_casePer4hr_', .y))))|>
+                      .f = ~req(slider_input_gt(.x, 'theatres_casePer4hr_', .y))))|>
       dplyr::select(-c(baseline_spells, baseline_cases))
 
-    output$theatresTable <- gt::render_gt(table2)
+    output$theatres_table <- gt::render_gt(table2)
 
 
 
@@ -105,8 +105,3 @@ mod_theatres_server <- function(id, params){
   })
 }
 
-## To be copied in the UI
-# mod_theatres_ui("theatres_1")
-
-## To be copied in the server
-# mod_theatres_server("theatres_1")

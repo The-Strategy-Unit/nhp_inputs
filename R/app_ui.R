@@ -132,7 +132,7 @@ app_ui <- function(request) {
       ),
       bs4Dash::tabItem(
         tabName = "tab_theatres",
-        mod_theatres_ui('theatres')
+        mod_theatres_ui("theatres")
       ),
       bs4Dash::tabItem(
         tabName = "tab_er",
