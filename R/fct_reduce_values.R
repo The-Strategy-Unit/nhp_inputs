@@ -5,7 +5,8 @@ reduce_values <- function(values, target) {
   )
 
   # start of including all of the non-target items which are greater than 0
-  include <- names(values > 0) |>
+  include <- values[values > 0] |>
+    names() |>
     stringr::str_subset(stringr::fixed(target), TRUE)
 
   # create a recursive function to reduce the values until sum(values) <= 1

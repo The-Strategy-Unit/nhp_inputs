@@ -9,28 +9,37 @@ app_server <- function(input, output, session) {
   diagnoses_lkup <- readRDS(app_sys("app", "data", "diagnoses.Rds"))
   providers <- readRDS(app_sys("app", "data", "providers.Rds"))
 
-  home_module <- mod_home_server("home", providers)
-  provider <- shiny::reactive(shiny::req(home_module()$provider))
-  baseline_year <- shiny::reactive(shiny::req(home_module()$baseline))
+  params <- shiny::reactiveValues()
+  params[["demographic_factors"]] <- list(
+    file = "demographic_factors.csv"
+  )
+
+  mod_home_server("home", providers, params)
+
   provider_data <- shiny::reactive({
-    readRDS(app_sys("app", "data", "provider_data.Rds"))[[provider()]]
+    provider <- shiny::req(params$dataset)
+    file <- glue::glue("{provider}/data.rds")
+
+    load_rds_from_azure(file)
   })
 
   available_strategies <- shiny::reactive({
-    s <- readRDS(app_sys("app", "data", "available_strategies.Rds"))
+    provider <- shiny::req(params$dataset)
+    year <- as.character(shiny::req(params$start_year))
 
-    s[[provider()]][[as.character(baseline_year())]]
+    load_rds_from_azure(glue::glue("{provider}/available_strategies.rds"))[[year]]
   })
 
-  params <- shiny::reactiveValues()
+  mod_expat_repat_server("expat_repat", params, providers)
 
-  mod_expat_repat_server("expat_repat", params, provider, baseline_year, providers)
-
-  mod_popg_server('popg', params)
+  mod_population_growth_server("population_growth", params)
   mod_hsa_server("hsa", params)
+
   mod_nda_server('nda', params)
   mod_wli_server('wli', params)
+  
   mod_theatres_server('theatres', params)
+  mod_bed_occupancy_server("bed_occupancy", params)
 
   purrr::walk(
     c(
@@ -48,8 +57,6 @@ app_server <- function(input, output, session) {
     ),
     mod_mitigators_server,
     params,
-    provider,
-    baseline_year,
     provider_data,
     available_strategies,
     diagnoses_lkup
@@ -59,4 +66,9 @@ app_server <- function(input, output, session) {
     "debug_params",
     params
   )
+
+  if (!getOption("golem.app.prod", FALSE)) {
+    cat("auto reconnect enabled\n")
+    session$allowReconnect("force")
+  }
 }

@@ -1,39 +1,61 @@
 Package: inputs
 Title: NHP Model Inputs
-Version: 0.0.0.9000
+Version: 0.2.1.9000
 Authors@R: person('Tom', 'Jemmett', email = 'thomas.jemmett@nhs.net', role = c('cre', 'aut'))
 Description: A shiny app for getting model input parameters.
 License: MIT + file LICENSE
 Imports: 
+    AzureStor,
     bs4Dash,
     config (>= 0.3.1),
     dplyr,
     forcats,
     ggbeeswarm,
+    ggplot2,
     ggrepel,
+    glue,
     golem (>= 0.3.3),
     gt,
+    htmltools,
     jsonlite,
     leaflet,
-    pkgload,
-    plotly,
+    markdown,
+    purrr,
+    readr,
+    rlang,
     scales,
     sf,
     shiny (>= 1.7.1),
     shinycssloaders,
     shinyjs,
     snakecase,
+    stringr,
+    tibble,
+    tidyr,
+    tidyselect,
+    viridis,
+    withr,
     zeallot
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3
 Suggests: 
     covr,
     devtools,
+    httpgd,
+    languageserver,
     mockery,
+    NHSRtools,
+    rsconnect,
     spelling,
     targets,
     testthat (>= 3.0.0),
-    usethis
+    usethis,
+    vscDebugger,
+    watchr (>= 0.0.0.9000)
 Config/testthat/edition: 3
 Language: en-US
+Remotes:
+    github::tomjemmett/watchr,
+    github::NHS-R-Community/NHSRtools,
+    github::ManuelHentschel/vscDebugger

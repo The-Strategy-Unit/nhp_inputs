@@ -17,7 +17,7 @@ mod_home_ui <- function(id) {
           title = "Select Provider and Baseline",
           width = 12,
           shiny::selectInput(ns("provider"), "Provider", choices = NULL),
-          shiny::selectInput(ns("baseline"), "Baseline Year", choices = c("2018/19" = 201819))
+          shiny::selectInput(ns("baseline"), "Baseline Year", choices = c("2019/20" = 201920, "2018/19" = 201819))
         ),
         bs4Dash::box(
           title = "Peers (from NHS Trust Peer Finder Tool)",
@@ -69,10 +69,10 @@ mod_home_providers_map <- function(selected_peers) {
 #' home Server Functions
 #'
 #' @noRd
-mod_home_server <- function(id, providers) {
+mod_home_server <- function(id, providers, params) {
   shiny::moduleServer(id, function(input, output, session) {
-    peers <- readRDS(app_sys("app", "data", "peers.Rds"))
-    nhp_current_cohort <- readRDS(app_sys("app", "data", "nhp_current_cohort.Rds"))
+    peers <- load_rds_from_azure("peers.rds")
+    nhp_current_cohort <- load_rds_from_azure("nhp_current_cohort.rds")
 
     provider_locations <- sf::read_sf(app_sys("app", "data", "provider_locations.geojson"))
 
@@ -101,12 +101,15 @@ mod_home_server <- function(id, providers) {
       mod_home_providers_map(selected_peers())
     })
 
-    # return reactive
-    shiny::reactive({
-      list(
-        provider = input$provider,
-        baseline = input$baseline
-      )
+    shiny::observe({
+      # TODO: need to provide inputs for all of the items below
+      params$dataset <- input$provider
+      params$scenario <- "scenario"
+      params$seed <- sample(1:100000, 1)
+      params$model_runs <- 256
+      params$start_year <- input$baseline
+      params$end_year <- 2038
+      params$create_datetime <- format(Sys.time(), "%Y%m%d_%H%M%S")
     })
   })
 }

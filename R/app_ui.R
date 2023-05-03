@@ -23,7 +23,7 @@ app_ui <- function(request) {
       ),
       bs4Dash::menuItem(
         "Population Growth",
-        tabName = "tab_popg"
+        tabName = "tab_population_growth"
       ),
       bs4Dash::menuItem(
         "Non-demographic Adjustment",
@@ -95,6 +95,11 @@ app_ui <- function(request) {
           tabName = "aae_low_cost_discharged"
         )
       ),
+      bs4Dash::sidebarHeader("Capacity Conversion"),
+      bs4Dash::menuItem(
+        "Bed Occupancy",
+        tabName = "tab_bed_occ"
+      ),
       bs4Dash::sidebarHeader("Debug"),
       bs4Dash::menuItem(
         "Show Params",
@@ -114,16 +119,16 @@ app_ui <- function(request) {
         mod_hsa_ui("hsa")
       ),
       bs4Dash::tabItem(
-        tabName = "tab_popg",
-        mod_popg_ui('popg')
+        tabName = "tab_population_growth",
+        mod_population_growth_ui("population_growth")
       ),
       bs4Dash::tabItem(
         tabName = "tab_nda",
-        mod_nda_ui('nda')
+        mod_nda_ui("nda")
       ),
       bs4Dash::tabItem(
         tabName = "tab_wli",
-        mod_wli_ui('wli')
+        mod_wli_ui("wli")
       ),
       bs4Dash::tabItem(
         tabName = "tab_theatres",
@@ -176,6 +181,10 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "aae_low_cost_discharged",
         mod_mitigators_ui("mitigators_aae_low_cost_discharged", "Low Cost Discharged")
+      ),
+      bs4Dash::tabItem(
+        tabName = "tab_bed_occ",
+        mod_bed_occupancy_ui("bed_occupancy")
       ),
       bs4Dash::tabItem(
         tabName = "debug_params",

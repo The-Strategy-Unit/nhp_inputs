@@ -115,7 +115,7 @@ get_op_diag_data <- function(provider_successors_last_updated) {
       .data$fyear,
       .data$procode,
       .data$diagnosis,
-      strategy = glue::glue("{strategy}_({subgroup})"),
+      strategy = glue::glue("{strategy}_{subgroup}"),
       .data$n,
       .data$p
     )
@@ -152,7 +152,7 @@ get_op_age_sex_data <- function(op_data) {
     dplyr::transmute(
       .data$fyear,
       procode = .data$procode3,
-      strategy = glue::glue("{strategy}_({subgroup})"),
+      strategy = glue::glue("{strategy}_{subgroup}"),
       dplyr::across("age_group", forcats::fct_inorder),
       .data$sex,
       .data$n
@@ -168,7 +168,7 @@ get_op_convert_to_tele_data <- function(op_data, peers) {
       .data$fyear,
       .data$procode,
       .data$peer,
-      strategy = glue::glue("convert_to_tele_({.data$subgroup})")
+      strategy = glue::glue("convert_to_tele_{.data$subgroup}")
     ) |>
     dplyr::summarise(
       rate = sum(.data$n * .data$is_tele_appointment) / sum(.data$n),
@@ -191,7 +191,7 @@ get_op_consultant_to_consultant_reduction <- function(op_data, peers) {
       .data$fyear,
       .data$procode,
       .data$peer,
-      strategy = glue::glue("consultant_to_consultant_reduction_({.data$subgroup})"),
+      strategy = glue::glue("consultant_to_consultant_reduction_{.data$subgroup}"),
       rate = .data$is_cons_cons_ref / .data$n,
       .data$n
     ) |>
@@ -211,7 +211,7 @@ get_op_followup_reduction <- function(op_data, peers) {
       .data$fyear,
       .data$procode,
       .data$peer,
-      strategy = glue::glue("followup_reduction_({.data$subgroup})"),
+      strategy = glue::glue("followup_reduction_{.data$subgroup}"),
       rate = .data$is_first / .data$n,
       .data$n
     ) |>
