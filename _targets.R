@@ -175,6 +175,27 @@ list(
       repat_nonlocal_aae_data
     )
   ),
+  # covid adjustments
+  tar_target(
+    covid_adjustment_data_ip,
+    get_covid_adjustment_data_ip(strategies_last_updated, provider_successors_last_updated)
+  ),
+  tar_target(
+    covid_adjustment_data_op,
+    get_covid_adjustment_data_op(strategies_last_updated, provider_successors_last_updated)
+  ),
+  tar_target(
+    covid_adjustment_data_aae,
+    get_covid_adjustment_data_aae(strategies_last_updated, provider_successors_last_updated)
+  ),
+  tar_target(
+    covid_adjustment,
+    get_covid_adjustment(
+      covid_adjustment_data_ip,
+      covid_adjustment_data_op,
+      covid_adjustment_data_aae
+    )
+  ),
   # save data
   tar_target(
     nhp_current_cohort,
@@ -231,7 +252,7 @@ list(
   ),
   tar_target(
     uploaded_data,
-    upload_data_to_azure(nhp_current_cohort, provider_data, expat_repat_data),
+    upload_data_to_azure(nhp_current_cohort, provider_data, expat_repat_data, covid_adjustment),
     pattern = map(nhp_current_cohort)
   ),
   tar_target(
