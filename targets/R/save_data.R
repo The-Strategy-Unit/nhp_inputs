@@ -67,7 +67,7 @@ get_provider_data <- function(age_sex_data, diagnoses_data, rates_data) {
     tibble::deframe()
 }
 
-upload_data_to_azure <- function(provider, provider_data, expat_repat_data) {
+upload_data_to_azure <- function(provider, provider_data, expat_repat_data, covid_adjustment) {
   ep <- AzureStor::adls_endpoint(
     endpoint = Sys.getenv("TARGETS_AZURE_SA_EP"),
     key = Sys.getenv("TARGETS_AZURE_SA_key")
@@ -86,7 +86,8 @@ upload_data_to_azure <- function(provider, provider_data, expat_repat_data) {
     files = c(
       upload_fn(provider_data[[provider]]$data, "data"),
       upload_fn(provider_data[[provider]]$available_strategies, "available_strategies"),
-      upload_fn(expat_repat_data[[provider]], "expat_repat")
+      upload_fn(expat_repat_data[[provider]], "expat_repat"),
+      upload_fn(covid_adjustment[[provider]], "covid_adjustment")
     ),
     time = Sys.time()
   )
