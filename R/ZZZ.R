@@ -7,6 +7,10 @@ utils::globalVariables(c(
   ".data", ".env"
 ))
 
+rtt_specialties <- function() {
+  readRDS(app_sys("app", "data", "rtt_specialties.Rds")) |>
+    tibble::enframe("specialty", "code")
+}
 
 sanitize_input_name <- \(.x) .x |>
   stringr::str_to_lower() |>
