@@ -6,46 +6,38 @@ mod_theatres_load_specialties <- function() {
     )
 }
 
-#' theatres UI Function
-#'
-#' @description A shiny Module.
-#'
-#' @param id,input,output,session Internal parameters for {shiny}.
-#'
-#' @noRd
-#'
-#' @importFrom shiny NS tagList
-mod_theatres_ui <- function(id) {
-  ns <- shiny::NS(id)
+mod_theatres_ui_table <- function(ns = identity) {
+  input_fn <- function(type, code, value, fn, desc) {
+    purrr::map(
+      code,
+      ~ fn(
+        ns(glue::glue("{type}_{desc}_{.x}")),
+        label = NULL,
+        value = value,
+        min = 0,
+        max = 10,
+        step = 0.1
+      ) |>
+        as.character() |>
+        gt::html()
+    )
+  }
 
-  baseline_fn <- \(type) \(code) shiny::numericInput(
-    ns(glue::glue("{type}_baseline_{code}")),
-    label = NULL,
-    value = 1,
-    min = 0,
-    max = 10,
-    step = 0.1
-  ) |>
-    as.character() |>
-    gt::html()
+  baseline_fn <- \(type) \(code) input_fn(type, code, 1, shiny::numericInput, "baseline")
+  slider_fn <- \(type) \(code) input_fn(type, code, c(1, 2), shiny::sliderInput, "param")
 
-  slider_fn <- \(type) \(code) shiny::sliderInput(
-    ns(glue::glue("{type}_param_{code}")),
-    label = NULL,
-    value = c(1, 2),
-    min = 0,
-    max = 10,
-    step = 0.1
-  ) |>
-    as.character() |>
-    gt::html()
-
-  table <- mod_theatres_load_specialties() |>
+  mod_theatres_load_specialties() |>
     dplyr::mutate(
-      spells_baseline = purrr::map(.data$sanitized_code, baseline_fn("spells")),
-      spells_param = purrr::map(.data$sanitized_code, slider_fn("spells")),
-      cases_baseline = purrr::map(.data$sanitized_code, baseline_fn("cases")),
-      cases_param = purrr::map(.data$sanitized_code, slider_fn("cases"))
+      dplyr::across(
+        "sanitized_code",
+        .names = "{.fn}",
+        c(
+          spells_baseline = baseline_fn("spells"),
+          spells_param = slider_fn("spells"),
+          cases_baseline = baseline_fn("cases"),
+          cases_param = slider_fn("params")
+        )
+      )
     ) |>
     dplyr::select(-tidyselect::ends_with("code")) |>
     gt::gt(rowname_col = "specialty") |>
@@ -69,11 +61,24 @@ mod_theatres_ui <- function(id) {
       tidyselect::ends_with("param") ~ gt::pct(25)
     ) |>
     gt::tab_options(table.width = gt::pct(100))
+}
+
+#' theatres UI Function
+#'
+#' @description A shiny Module.
+#'
+#' @param id,input,output,session Internal parameters for {shiny}.
+#'
+#' @noRd
+#'
+#' @importFrom shiny NS tagList
+mod_theatres_ui <- function(id) {
+  ns <- shiny::NS(id)
 
   bs4Dash::box(
     title = "Theatres Utilisation",
     width = 12,
-    gt::as_raw_html(table, FALSE)
+    gt::as_raw_html(mod_theatres_ui_table(ns), FALSE)
   )
 }
 
