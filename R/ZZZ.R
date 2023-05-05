@@ -12,3 +12,8 @@ sanitize_input_name <- \(.x) .x |>
   stringr::str_to_lower() |>
   stringr::str_replace_all("(\\s|\\_|-)+", "-") |>
   stringr::str_remove_all("[^a-z0-9-]+")
+
+# suppress vs code / languageserver "no visible binding" warnings
+if (FALSE) {
+  .data <- NULL
+}
