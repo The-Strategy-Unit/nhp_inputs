@@ -35,7 +35,7 @@ mod_theatres_ui_table <- function(ns = identity) {
           spells_baseline = baseline_fn("spells"),
           spells_param = slider_fn("spells"),
           cases_baseline = baseline_fn("cases"),
-          cases_param = slider_fn("params")
+          cases_param = slider_fn("cases")
         )
       )
     ) |>
