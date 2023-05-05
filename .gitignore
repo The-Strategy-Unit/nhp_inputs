@@ -5,7 +5,6 @@
 .DS_Store
 
 _targets/
-inst/app/data/
 
 .Renviron
 

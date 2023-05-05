@@ -34,10 +34,6 @@ app_ui <- function(request) {
         tabName = "tab_wli"
       ),
       bs4Dash::menuItem(
-        "Theatres",
-        tabName = "tab_theatres"
-      ),
-      bs4Dash::menuItem(
         "Expat/Repat",
         tabName = "tab_er"
       ),
@@ -100,6 +96,10 @@ app_ui <- function(request) {
         "Bed Occupancy",
         tabName = "tab_bed_occ"
       ),
+      bs4Dash::menuItem(
+        "Theatres",
+        tabName = "tab_theatres"
+      ),
       bs4Dash::sidebarHeader("Debug"),
       bs4Dash::menuItem(
         "Show Params",
@@ -129,10 +129,6 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "tab_wli",
         mod_wli_ui("wli")
-      ),
-      bs4Dash::tabItem(
-        tabName = "tab_theatres",
-        mod_theatres_ui("theatres")
       ),
       bs4Dash::tabItem(
         tabName = "tab_er",
@@ -185,6 +181,10 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "tab_bed_occ",
         mod_bed_occupancy_ui("bed_occupancy")
+      ),
+      bs4Dash::tabItem(
+        tabName = "tab_theatres",
+        mod_theatres_ui("theatres")
       ),
       bs4Dash::tabItem(
         tabName = "debug_params",
