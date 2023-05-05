@@ -41,22 +41,26 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
 Suggests: 
+    mockery,
+    rcmdcheck,
+    rsconnect,
+    spelling,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Language: en-US
+Config/renv/profiles/dev/dependencies:
     covr,
     devtools,
     httpgd,
-    languageserver,
-    mockery,
-    NHSRtools,
     rsconnect,
-    spelling,
-    targets,
+    languageserver,
+    NHSRtools,
     testthat (>= 3.0.0),
+    targets,
     usethis,
     vscDebugger,
     watchr (>= 0.0.0.9000)
-Config/testthat/edition: 3
-Language: en-US
-Remotes:
+Config/renv/profiles/dev/remotes:
     github::tomjemmett/watchr,
     github::NHS-R-Community/NHSRtools,
     github::ManuelHentschel/vscDebugger

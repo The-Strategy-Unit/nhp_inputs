@@ -1,0 +1,4 @@
+app.R
+tests/testthat.R
+_scratch/*.R
+dev/*.R
