@@ -34,7 +34,7 @@ mod_baseline_adjustment_ui <- function(id) {
         include = purrr::map(
           .data[["sanitized_code"]],
           ~ shiny::checkboxInput(
-            ns(glue::glue("param_{at}_{g}_{.x}")),
+            ns(glue::glue("include_{at}_{g}_{.x}")),
             label = NULL
           ) |>
             as.character() |>
@@ -115,5 +115,50 @@ mod_baseline_adjustment_ui <- function(id) {
 #' @noRd
 mod_baseline_adjustment_server <- function(id, params) {
   shiny::moduleServer(id, function(input, output, session) {
+    specs <- rtt_specialties() |>
+      dplyr::mutate(sanitized_code = sanitize_input_name(.data[["code"]])) |>
+      dplyr::cross_join(
+        dplyr::bind_rows(
+          ip = tibble::tibble(g = c("elective", "non-elective", "maternity")),
+          op = tibble::tibble(g = c("first", "followup", "procedure")),
+          .id = "at"
+        )
+      ) |>
+      dplyr::bind_rows(
+        tibble::tibble(
+          at = "aae",
+          g = "-",
+          code = c("ambulance", "walk-in")
+        ) |>
+          dplyr::mutate(
+            dplyr::across(
+              "code",
+              .fns = c(
+                specialty = snakecase::to_title_case,
+                sanitized_code = sanitize_input_name
+              ),
+              .names = "{.fn}"
+            )
+          )
+      ) |>
+      dplyr::mutate(id = glue::glue("{at}_{g}_{sanitized_code}"))
+
+    specs |>
+      purrr::pwalk(\(code, at, g, id, ...) {
+        include_id <- glue::glue("include_{id}")
+        param_id <- glue::glue("param_{id}")
+
+        shiny::observe({
+          i <- input[[include_id]]
+          shinyjs::toggleState(param_id, i)
+
+          if (at == "aae") {
+            params[["baseline_adjustment"]][[at]][[code]] <- if (i) input[[param_id]]
+          } else {
+            params[["baseline_adjustment"]][[at]][[g]][[code]] <- if (i) input[[param_id]]
+          }
+        }) |>
+          shiny::bindEvent(input[[include_id]], input[[param_id]])
+      })
   })
 }
