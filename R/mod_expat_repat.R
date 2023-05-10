@@ -378,7 +378,7 @@ mod_expat_repat_server <- function(id, params, providers) {
             \(.x) {
               .x |>
                 forcats::fct_na_value_to_level("Other") |>
-                forcats::fct_relevel(this_provider_name) |
+                forcats::fct_relevel(this_provider_name) |>
                 forcats::fct_relevel("Other", after = Inf)
             }
           ),
