@@ -128,6 +128,8 @@ mod_run_model_server <- function(id, params) {
     status <- shiny::reactiveVal("Waiting")
 
     fixed_params <- shiny::reactive({
+      shiny::req(params$scenario != "")
+
       params |>
         shiny::reactiveValuesToList() |>
         mod_run_model_fix_params(session$user)
