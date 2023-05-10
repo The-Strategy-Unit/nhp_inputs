@@ -8,7 +8,10 @@
 #' @importFrom shiny shinyApp
 #' @importFrom golem with_golem_options
 run_app <- function(onStart = NULL, # nolint
-                    options = list(port = 8080),
+                    options = list(
+                      port = as.numeric(Sys.getenv("GOLEM_PORT", 8080)),
+                      host = Sys.getenv("GOLEM_HOST", "127.0.0.1")
+                    ),
                     enableBookmarking = NULL, # nolint
                     uiPattern = "/", # nolint
                     ...) {

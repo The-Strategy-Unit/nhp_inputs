@@ -1,15 +1,3 @@
-rtt_specialties <- function() {
-  readRDS(app_sys("app", "data", "rtt_specialties.Rds")) |>
-    as.list() |>
-    tibble::as_tibble() |>
-    tidyr::pivot_longer(
-      cols = tidyselect::everything(),
-      names_to = "specialty",
-      values_to = "code"
-    ) |>
-    dplyr::select("code", "specialty")
-}
-
 #' wli UI Function
 #'
 #' @description A shiny Module.

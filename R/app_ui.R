@@ -26,6 +26,10 @@ app_ui <- function(request) {
         tabName = "tab_population_growth"
       ),
       bs4Dash::menuItem(
+        "Baseline Adjustment",
+        tabName = "tab_baseline_adjustment"
+      ),
+      bs4Dash::menuItem(
         "Non-demographic Adjustment",
         tabName = "tab_nda"
       ),
@@ -121,6 +125,10 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "tab_population_growth",
         mod_population_growth_ui("population_growth")
+      ),
+      bs4Dash::tabItem(
+        tabName = "tab_baseline_adjustment",
+        mod_baseline_adjustment_ui("baseline_adjustment")
       ),
       bs4Dash::tabItem(
         tabName = "tab_nda",

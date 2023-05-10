@@ -18,23 +18,16 @@ load_rds_from_adls <- function(file) {
 #' @return the adls filesystem
 get_adls_fs <- function() {
   sa_name <- Sys.getenv("AZ_STORAGE_ACCOUNT")
+  ep_uri <- glue::glue("https://{sa_name}.dfs.core.windows.net/")
 
-  ep <- tryCatch(
-    {
-      token <- AzureAuth::get_managed_token("https://storage.azure.com/") |>
-        AzureAuth::extract_jwt()
+  sa_key <- Sys.getenv("AZ_STORAGE_KEY")
+  ep <- if (sa_key != "") {
+    AzureStor::adls_endpoint(ep_uri, key = sa_key)
+  } else {
+    token <- AzureAuth::get_managed_token("https://storage.azure.com/") |>
+      AzureAuth::extract_jwt()
 
-      AzureStor::adls_endpoint(
-        glue::glue("https://{sa_name}.dfs.core.windows.net/"),
-        token = token
-      )
-    },
-    error = \(...) {
-      AzureStor::adls_endpoint(
-        endpoint = Sys.getenv("TARGETS_AZURE_SA_EP"),
-        key = Sys.getenv("TARGETS_AZURE_SA_key")
-      )
-    }
-  )
+    AzureStor::adls_endpoint(ep_uri, token = token)
+  }
   AzureStor::adls_filesystem(ep, Sys.getenv("AZ_STORAGE_CONTAINER"))
 }
