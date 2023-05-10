@@ -20,7 +20,9 @@ mod_mod_covid_adjustment_server <- function(id, params) {
     shiny::observe({
       ds <- shiny::req(params$dataset)
 
-      params$covid_adjustment <- load_rds_from_adls(glue::glue("{ds}/covid_adjustment.rds"))
+      params$covid_adjustment <- glue::glue("{ds}/covid_adjustment.rds") |>
+        load_rds_from_adls() |>
+        purrr::map_depth(2, `*`, c(0.975, 1.025))
     })
   })
 }
