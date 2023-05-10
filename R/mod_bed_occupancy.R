@@ -17,24 +17,6 @@ mod_bed_occupancy_ui <- function(id) {
         "Ward Group",
         choices = "Other"
       ),
-      shiny::fluidRow(
-        col_6(
-          shiny::numericInput(
-            ns("baseline_hours"),
-            "Baseline Hours",
-            value = 365 * 24,
-            min = 0
-          )
-        ),
-        col_6(
-          shiny::numericInput(
-            ns("future_hours"),
-            "Future Hours",
-            value = 365 * 24,
-            min = 0
-          )
-        )
-      ),
       shiny::sliderInput(
         ns("occupancy"),
         "Future Bed Occupancy",
@@ -45,7 +27,6 @@ mod_bed_occupancy_ui <- function(id) {
         round = TRUE,
         post = "%"
       ),
-      shiny::textOutput(ns("parameter_value")),
       shiny::tags$hr(),
       shiny::fluidRow(
         col_6(
@@ -101,8 +82,6 @@ mod_bed_occupancy_specialty_table <- function(specialties, ns = identity) {
 mod_bed_occupancy_server <- function(id, params) {
   shiny::moduleServer(id, function(input, output, session) {
     default_param_values <- list(
-      baseline_hours = 365 * 24,
-      future_hours = 365 * 24,
       occupancy = c(85, 95)
     )
 
@@ -158,8 +137,6 @@ mod_bed_occupancy_server <- function(id, params) {
       v <- default_param_values
 
       ward_groups$groups[[wg]] <- v
-      shiny::updateNumericInput(session, "baseline_hours", value = v$baseline_hours)
-      shiny::updateNumericInput(session, "future_hours", value = v$future_hours)
       shiny::updateSliderInput(session, "occupancy", value = v$occupancy)
 
       shiny::updateSelectInput(
@@ -194,8 +171,6 @@ mod_bed_occupancy_server <- function(id, params) {
       wg <- input$ward_group
       v <- ward_groups$groups[[wg]]
 
-      shiny::updateNumericInput(session, "baseline_hours", value = v$baseline_hours)
-      shiny::updateNumericInput(session, "future_hours", value = v$future_hours)
       shiny::updateSliderInput(session, "occupancy", value = v$occupancy)
     }) |>
       shiny::bindEvent(input$ward_group)
@@ -266,29 +241,12 @@ mod_bed_occupancy_server <- function(id, params) {
     shiny::observe({
       wg <- input$ward_group
       occ_pcnt <- input$occupancy / 100
-      hours <- input$future_hours / input$baseline_hours
 
       ward_groups$groups[[wg]] <- list(
-        baseline_hours = input$baseline_hours,
-        future_hours = input$future_hours,
         occupancy = input$occupancy
       )
-      params[["bed_occupancy"]][["day+night"]][[wg]] <- occ_pcnt / hours
+      params[["bed_occupancy"]][["day+night"]][[wg]] <- occ_pcnt
     }) |>
-      shiny::bindEvent(input$baseline_hours, input$future_hours, input$occupancy)
-
-
-    #
-    output$parameter_value <- shiny::renderText({
-      wg <- input$ward_group
-      v <- params[["bed_occupancy"]][["day+night"]][[wg]]
-
-      glue::glue(
-        "Parameter Value: ",
-        "{scales::percent(v[[1]], accuracy = 0.01)}",
-        " to ",
-        "{scales::percent(v[[2]], accuracy = 0.01)}"
-      )
-    })
+      shiny::bindEvent(input$occupancy)
   })
 }
