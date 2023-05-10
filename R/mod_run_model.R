@@ -136,6 +136,7 @@ mod_run_model_server <- function(id, params) {
     output$status <- shiny::renderText(status())
 
     shiny::observe({
+      shiny::req(input$submit)
       shinyjs::disable("submit")
       results <- mod_run_model_submit(fixed_params())
 
