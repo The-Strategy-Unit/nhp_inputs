@@ -35,7 +35,8 @@ mod_run_model_fix_params <- function(p, user) {
   p[["activity_avoidance|lbs"]] <- NULL
   p[["activity_avoidance|lcd"]] <- NULL
 
-  p$start_year <- as.integer(p$start_year)
+  # need to convert financial year to calendar year
+  p$start_year <- as.integer(stringr::str_sub(p$start_year, 1, 4))
 
   # generate an id based on the dataset, scenario, and a hash of the params
   # make sure to add the user after creating the hash
