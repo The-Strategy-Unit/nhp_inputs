@@ -32,4 +32,6 @@ Once you have done this you can run `targets::tar_make()`. Note, this can take 2
 
 ## Deployment
 
-Deployment is controlled by GitHub Actions. On pushes to the `main` branch the app is redeployed to `nhp_dev/inputs`, and on tagged releases it is redeployed to `nhp/inputs`.
+Deployment is controlled by GitHub Actions:
+* On pushes to the `main` branch the app is redeployed to `nhp_dev/inputs`
+* On tagged releases it is redeployed to `nhp/inputs`.
