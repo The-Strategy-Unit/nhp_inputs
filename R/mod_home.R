@@ -116,7 +116,7 @@ mod_home_server <- function(id, providers, params) {
       params$dataset <- input$dataset_input
       params$scenario <- input$scenario_input
       params$seed <- input$seed_input
-      params$model_runs <- input$model_runs_input
+      params$model_runs <- as.numeric(input$model_runs_input)
       params$start_year <- input$start_year_input
       params$end_year <- input$end_year_input
       params$create_datetime <- format(Sys.time(), "%Y%m%d_%H%M%S")
