@@ -82,17 +82,17 @@ mod_home_server <- function(id, providers, params) {
 
     shiny::observe({
       choices <- providers[providers %in% nhp_current_cohort]
-      shiny::updateSelectInput(session, "provider", choices = choices)
+      shiny::updateSelectInput(session, "dataset_input", choices = choices)
     })
 
     shiny::observe({
-      x <- as.numeric(stringr::str_sub(input$baseline, 1, 4))
+      x <- as.numeric(stringr::str_sub(input$start_year_input, 1, 4))
 
-      shiny::updateSliderInput(session, "model_year", min = x + 1, max = x + 20)
+      shiny::updateSliderInput(session, "end_year_input", min = x + 1, max = x + 20)
     })
 
     selected_peers <- shiny::reactive({
-      p <- shiny::req(input$provider)
+      p <- shiny::req(input$dataset_input)
 
       provider_locations |>
         dplyr::semi_join(
