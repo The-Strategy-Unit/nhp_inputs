@@ -35,6 +35,107 @@ mod_run_model_fix_params <- function(p, user) {
   p[["activity_avoidance|lbs"]] <- NULL
   p[["activity_avoidance|lcd"]] <- NULL
 
+
+  # if items are empty, then remove them
+  rfn <- function(.x) {
+    if (length(.x) == 0) {
+      NULL
+    } else if (is.list(.x)) {
+      .y <- purrr::map(.x, rfn) |>
+        purrr::discard(is.null)
+      if (length(.y) == 0) {
+        NULL
+      } else {
+        .y
+      }
+    } else {
+      .x
+    }
+  }
+  p <- rfn(p)
+
+  # for now, hard coding in life expectancy
+  p$life_expectancy <- list(
+    "f" = c(
+      1.8,
+      1.8,
+      1.8,
+      1.8,
+      1.8,
+      1.7,
+      1.8,
+      1.8,
+      1.7,
+      1.7,
+      1.7,
+      1.7,
+      1.6,
+      1.6,
+      1.5,
+      1.5,
+      1.5,
+      1.4,
+      1.4,
+      1.3,
+      1.3,
+      1.2,
+      1.1,
+      1.1,
+      1.1,
+      1,
+      0.9,
+      0.9,
+      0.8,
+      0.8,
+      0.8,
+      0.7,
+      0.6,
+      0.6,
+      0.5,
+      0.1545
+    ),
+    "m" = c(
+      2.1,
+      2.1,
+      2.1,
+      2,
+      1.9,
+      2,
+      1.9,
+      1.9,
+      1.9,
+      1.9,
+      1.8,
+      1.8,
+      1.7,
+      1.7,
+      1.6,
+      1.6,
+      1.6,
+      1.5,
+      1.5,
+      1.4,
+      1.4,
+      1.3,
+      1.3,
+      1.3,
+      1.2,
+      1.1,
+      1,
+      0.9,
+      0.9,
+      0.8,
+      0.8,
+      0.8,
+      0.7,
+      0.6,
+      0.6,
+      0.2364
+    ),
+    "min_age" = 55,
+    "max_age" = 90
+  )
+
   # need to convert financial year to calendar year
   p$start_year <- as.integer(stringr::str_sub(p$start_year, 1, 4))
 
@@ -68,6 +169,7 @@ mod_run_model_fix_params <- function(p, user) {
     "demographic_factors",
     "health_status_adjustment",
     "life_expectancy",
+    "covid_adjustment",
     "expat",
     "repat_local",
     "repat_nonlocal",
