@@ -67,7 +67,7 @@ mod_baseline_adjustment_ui <- function(id) {
           ),
           shiny::tabPanel(
             "Maternity",
-            create_table("ip", "maternity")
+            create_table("ip", "maternity", specs |> dplyr::filter(.data[["code"]] == "Other (Medical)"))
           )
         )
       ),
@@ -124,6 +124,7 @@ mod_baseline_adjustment_server <- function(id, params) {
           .id = "at"
         )
       ) |>
+      dplyr::filter(.data[["g"]] != "maternity" | .data[["code"]] == "Other (Medical)") |>
       dplyr::bind_rows(
         tibble::tibble(
           at = "aae",
