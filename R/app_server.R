@@ -63,10 +63,7 @@ app_server <- function(input, output, session) {
     diagnoses_lkup
   )
 
-  mod_debug_params_server(
-    "debug_params",
-    params
-  )
+  mod_run_model_server("run_model", params)
 
   if (!getOption("golem.app.prod", FALSE)) {
     cat("auto reconnect enabled\n")
