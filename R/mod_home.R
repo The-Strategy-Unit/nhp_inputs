@@ -16,8 +16,12 @@ mod_home_ui <- function(id) {
         bs4Dash::box(
           title = "Select Provider and Baseline",
           width = 12,
-          shiny::selectInput(ns("provider"), "Provider", choices = NULL),
-          shiny::selectInput(ns("baseline"), "Baseline Year", choices = c("2019/20" = 201920, "2018/19" = 201819))
+          shiny::selectInput(ns("dataset_input"), "Provider", choices = NULL),
+          shiny::selectInput(ns("start_year_input"), "Baseline Year", choices = c("2019" = 201920, "2018" = 201819)),
+          shiny::sliderInput(ns("end_year_input"), "Model Year", min = 0, max = 19, value = 0, sep = ""),
+          shiny::textInput(ns("scenario_input"), "Scenario Name"),
+          shiny::numericInput(ns("seed_input"), "Seed", sample(1:100000, 1)),
+          shiny::selectInput(ns("model_runs_input"), "Model Runs", choices = c(256, 512, 1024), selected = 256)
         ),
         bs4Dash::box(
           title = "Peers (from NHS Trust Peer Finder Tool)",
@@ -78,11 +82,17 @@ mod_home_server <- function(id, providers, params) {
 
     shiny::observe({
       choices <- providers[providers %in% nhp_current_cohort]
-      shiny::updateSelectInput(session, "provider", choices = choices)
+      shiny::updateSelectInput(session, "dataset_input", choices = choices)
+    })
+
+    shiny::observe({
+      x <- as.numeric(stringr::str_sub(input$start_year_input, 1, 4))
+
+      shiny::updateSliderInput(session, "end_year_input", min = x + 1, max = x + 20)
     })
 
     selected_peers <- shiny::reactive({
-      p <- shiny::req(input$provider)
+      p <- shiny::req(input$dataset_input)
 
       provider_locations |>
         dplyr::semi_join(
@@ -103,12 +113,12 @@ mod_home_server <- function(id, providers, params) {
 
     shiny::observe({
       # TODO: need to provide inputs for all of the items below
-      params$dataset <- input$provider
-      params$scenario <- "scenario"
-      params$seed <- sample(1:100000, 1)
-      params$model_runs <- 256
-      params$start_year <- input$baseline
-      params$end_year <- 2038
+      params$dataset <- input$dataset_input
+      params$scenario <- input$scenario_input
+      params$seed <- input$seed_input
+      params$model_runs <- input$model_runs_input
+      params$start_year <- input$start_year_input
+      params$end_year <- input$end_year_input
       params$create_datetime <- format(Sys.time(), "%Y%m%d_%H%M%S")
     })
   })
