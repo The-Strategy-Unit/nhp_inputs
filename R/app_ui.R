@@ -104,10 +104,10 @@ app_ui <- function(request) {
         "Theatres",
         tabName = "tab_theatres"
       ),
-      bs4Dash::sidebarHeader("Debug"),
+      bs4Dash::sidebarHeader("Run Model"),
       bs4Dash::menuItem(
-        "Show Params",
-        tabName = "debug_params"
+        "Run Model",
+        tabName = "tab_run_model"
       )
     )
   )
@@ -195,8 +195,8 @@ app_ui <- function(request) {
         mod_theatres_ui("theatres")
       ),
       bs4Dash::tabItem(
-        tabName = "debug_params",
-        mod_debug_params_ui("debug_params")
+        tabName = "tab_run_model",
+        mod_run_model_ui("run_model")
       )
     )
   )
