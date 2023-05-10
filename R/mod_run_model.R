@@ -35,6 +35,25 @@ mod_run_model_fix_params <- function(p, user) {
   p[["activity_avoidance|lbs"]] <- NULL
   p[["activity_avoidance|lcd"]] <- NULL
 
+
+  # if items are empty, then remove them
+  rfn <- function(.x) {
+    if (length(.x) == 0) {
+      NULL
+    } else if (is.list(.x)) {
+      .y <- purrr::map(.x, rfn) |>
+        purrr::discard(is.null)
+      if (length(.y) == 0) {
+        NULL
+      } else {
+        .y
+      }
+    } else {
+      .x
+    }
+  }
+  p <- rfn(p)
+
   # for now, hard coding in life expectancy
   p$life_expectancy <- list(
     "f" = c(
@@ -150,6 +169,7 @@ mod_run_model_fix_params <- function(p, user) {
     "demographic_factors",
     "health_status_adjustment",
     "life_expectancy",
+    "covid_adjustment",
     "expat",
     "repat_local",
     "repat_nonlocal",
