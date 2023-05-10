@@ -68,9 +68,10 @@ get_provider_data <- function(age_sex_data, diagnoses_data, rates_data) {
 }
 
 upload_data_to_azure <- function(provider, provider_data, expat_repat_data, covid_adjustment) {
+  sa <- Sys.getenv("AZ_STORAGE_ACCOUNT")
   ep <- AzureStor::adls_endpoint(
-    endpoint = Sys.getenv("TARGETS_AZURE_SA_EP"),
-    key = Sys.getenv("TARGETS_AZURE_SA_key")
+    endpoint = glue::glue("https://{sa}.dfs.core.windows.net/"),
+    key = Sys.getenv("AZ_STORAGE_KEY")
   )
   fs <- AzureStor::adls_filesystem(ep, "inputs-data")
 
