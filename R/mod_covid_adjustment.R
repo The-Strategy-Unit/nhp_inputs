@@ -1,4 +1,4 @@
-#' mod_covid_adjustment UI Function
+#' covid_adjustment UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -7,15 +7,15 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_mod_covid_adjustment_ui <- function(id) {
+mod_covid_adjustment_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList()
 }
 
-#' mod_covid_adjustment Server Functions
+#' covid_adjustment Server Functions
 #'
 #' @noRd
-mod_mod_covid_adjustment_server <- function(id, params) {
+mod_covid_adjustment_server <- function(id, params) {
   shiny::moduleServer(id, function(input, output, session) {
     covid_adjustment <- shiny::reactive({
       ds <- shiny::req(params$dataset)

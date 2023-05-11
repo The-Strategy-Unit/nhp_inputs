@@ -42,7 +42,7 @@ app_server <- function(input, output, session) {
   mod_wli_server("wli", params)
 
   # currently, there is no corresponding UI for this
-  mod_mod_covid_adjustment_server("mod_covid_adjustment", params)
+  mod_covid_adjustment_server("covid_adjustment", params)
 
   mod_theatres_server("theatres", params)
   mod_bed_occupancy_server("bed_occupancy", params)
