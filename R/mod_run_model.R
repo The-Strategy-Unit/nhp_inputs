@@ -35,24 +35,23 @@ mod_run_model_fix_params <- function(p, user) {
   p[["activity_avoidance|lbs"]] <- NULL
   p[["activity_avoidance|lcd"]] <- NULL
 
-
-  # if items are empty, then remove them
-  rfn <- function(.x) {
-    if (length(.x) == 0) {
-      NULL
-    } else if (is.list(.x)) {
-      .y <- purrr::map(.x, rfn) |>
-        purrr::discard(is.null)
-      if (length(.y) == 0) {
-        NULL
+  # some of the items in our params will be lists of length 0.
+  # jsonlite will serialize these as empty arrays
+  #   toJSON(list()) == "[]"
+  # we need to have these serialize as empty objects, so we need to replace
+  # these with NULL's as
+  #   toJSON(NULL) == "{}"
+  recursive_nullify <- function(.x) {
+    for (i in names(.x)) {
+      if (length(.x[[i]]) == 0) {
+        .x[i] <- list(NULL)
       } else {
-        .y
+        .x[[i]] <- recursive_nullify(.x[[i]])
       }
-    } else {
-      .x
     }
+    .x
   }
-  p <- rfn(p)
+  p <- recursive_nullify(p)
 
   # for now, hard coding in life expectancy
   p$life_expectancy <- list(
@@ -252,7 +251,7 @@ mod_run_model_server <- function(id, params) {
     }) |>
       shiny::bindEvent(input$submit)
 
-    output$params_json <- shiny::renderPrint({
+    output$params_json <- shiny::renderText({
       jsonlite::toJSON(fixed_params(), pretty = TRUE, auto_unbox = TRUE)
     })
   })
