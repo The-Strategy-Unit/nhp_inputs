@@ -38,6 +38,14 @@ mod_wli_server <- function(id, params) {
         Outpatients = purrr::map(.data$code, numeric_input_gt, "wli_op_")
       )
 
+    shiny::observe({
+      # initialise the params
+      params[["waiting_list_adjustment"]] <- list(
+        ip = list(),
+        op = list()
+      )
+    })
+
     output$rtt_table <- gt::render_gt(table)
 
     purrr::walk(

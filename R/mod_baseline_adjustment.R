@@ -144,6 +144,15 @@ mod_baseline_adjustment_server <- function(id, params) {
       ) |>
       dplyr::mutate(id = glue::glue("{at}_{g}_{sanitized_code}"))
 
+    shiny::observe({
+      # initialise the baseline adjustment
+      params[["baseline_adjustment"]] <- list(
+        ip = list(),
+        op = list(),
+        aae = list()
+      )
+    })
+
     specs |>
       purrr::pwalk(\(code, at, g, id, ...) {
         include_id <- glue::glue("include_{id}")
