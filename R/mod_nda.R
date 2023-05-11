@@ -130,6 +130,15 @@ mod_nda_server <- function(id, params) {
     }) |>
       shiny::bindEvent(input$activity_type)
 
+    init <- shiny::observe({
+      params[["non-demographic_adjustment"]] <- list(
+        "non-elective" = list(),
+        "elective" = list(),
+        "maternity" = list()
+      )
+      init$destroy()
+    })
+
     # when a slider changes, update the values in params
     purrr::walk(
       names(age_bands()),
