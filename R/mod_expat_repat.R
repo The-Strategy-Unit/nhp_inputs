@@ -119,9 +119,10 @@ mod_expat_repat_server <- function(id, params, providers) {
     icb_boundaries <- sf::read_sf(app_sys("app", "data", "icb_boundaries.geojson"))
 
     expat_repat_data <- shiny::reactive({
-      p <- shiny::req(params$dataset)
-      load_rds_from_adls(glue::glue("{p}/expat_repat.rds"))
-    })
+      ds <- shiny::req(params$dataset)
+      load_rds_from_adls(glue::glue("{ds}/expat_repat.rds"))
+    }) |>
+      shiny::bindCache(params$dataset)
 
     # helper method to construct the initial values for our params
     init_params <- function(values) {

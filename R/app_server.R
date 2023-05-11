@@ -17,18 +17,20 @@ app_server <- function(input, output, session) {
   mod_home_server("home", providers, params)
 
   provider_data <- shiny::reactive({
-    provider <- shiny::req(params$dataset)
-    file <- glue::glue("{provider}/data.rds")
+    dataset <- shiny::req(params$dataset)
+    file <- glue::glue("{dataset}/data.rds")
 
     load_rds_from_adls(file)
-  })
+  }) |>
+    shiny::bindCache(params$dataset)
 
   available_strategies <- shiny::reactive({
-    provider <- shiny::req(params$dataset)
+    dataset <- shiny::req(params$dataset)
     year <- as.character(shiny::req(params$start_year))
 
-    load_rds_from_adls(glue::glue("{provider}/available_strategies.rds"))[[year]]
-  })
+    load_rds_from_adls(glue::glue("{dataset}/available_strategies.rds"))[[year]]
+  }) |>
+    shiny::bindCache(params$dataset)
 
   mod_expat_repat_server("expat_repat", params, providers)
 

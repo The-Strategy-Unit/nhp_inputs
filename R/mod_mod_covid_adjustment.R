@@ -17,12 +17,17 @@ mod_mod_covid_adjustment_ui <- function(id) {
 #' @noRd
 mod_mod_covid_adjustment_server <- function(id, params) {
   shiny::moduleServer(id, function(input, output, session) {
-    shiny::observe({
+    covid_adjustment <- shiny::reactive({
       ds <- shiny::req(params$dataset)
 
-      params$covid_adjustment <- glue::glue("{ds}/covid_adjustment.rds") |>
+      glue::glue("{ds}/covid_adjustment.rds") |>
         load_rds_from_adls() |>
         purrr::map_depth(2, `*`, c(0.975, 1.025))
+    }) |>
+      shiny::bindCache(params$dataset)
+
+    shiny::observe({
+      params$covid_adjustment <- covid_adjustment()
     })
   })
 }
