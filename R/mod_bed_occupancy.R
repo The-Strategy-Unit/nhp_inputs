@@ -137,6 +137,8 @@ mod_bed_occupancy_server <- function(id, params) {
       v <- default_param_values
 
       ward_groups$groups[[wg]] <- v
+      # force the value to be inserted into the params, don't rely on observer
+      # params[["bed_occupancy"]][["day+night"]][[wg]] <- v$occupancy
       shiny::updateSliderInput(session, "occupancy", value = v$occupancy)
 
       shiny::updateSelectInput(
@@ -223,19 +225,26 @@ mod_bed_occupancy_server <- function(id, params) {
       shiny::bindEvent(ward_group_names())
 
     # add observers for the specialty dropdowns
-    purrr::walk(
-      specialties |>
-        purrr::map("code") |>
-        purrr::flatten_chr(),
-      \(.x) {
+    purrr::pwalk(
+      rlang::exec(dplyr::bind_rows, !!!specialties, .id = "specialty_group"),
+      \(specialty_group, code, ...) {
         shiny::observe({
-          value <- input[[glue::glue("specialty_{.x}")]]
+          value <- input[[glue::glue("specialty_{code}")]]
 
-          params[["bed_occupancy"]][["specialty_mapping"]][["General and Acute"]][[.x]] <- value
+          params[["bed_occupancy"]][["specialty_mapping"]][[specialty_group]][[code]] <- value
         }) |>
-          shiny::bindEvent(input[[glue::glue("specialty_{.x}")]])
+          shiny::bindEvent(input[[glue::glue("specialty_{code}")]])
       }
     )
+
+    # the specialty mappings only initialise if you visit the tab without this
+    init <- shiny::observe({
+      params[["bed_occupancy"]][["specialty_mapping"]] <- specialties |>
+        purrr::map("code") |>
+        purrr::map(\(.x) purrr::set_names(rep("Other", length(.x)), .x) |> as.list())
+      # destroy this observer immediately
+      init$destroy()
+    })
 
     # update the params
     shiny::observe({
@@ -247,6 +256,6 @@ mod_bed_occupancy_server <- function(id, params) {
       )
       params[["bed_occupancy"]][["day+night"]][[wg]] <- occ_pcnt
     }) |>
-      shiny::bindEvent(input$occupancy)
+      shiny::bindEvent(input$ward_group, input$occupancy)
   })
 }
