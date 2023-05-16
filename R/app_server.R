@@ -14,6 +14,8 @@ app_server <- function(input, output, session) {
     file = "demographic_factors.csv"
   )
 
+  session$userData$data_loaded <- shiny::reactiveVal()
+
   mod_home_server("home", providers, params)
 
   provider_data <- shiny::reactive({

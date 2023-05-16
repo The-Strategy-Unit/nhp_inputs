@@ -19,23 +19,37 @@ mod_home_ui <- function(id) {
           shiny::selectInput(ns("dataset_input"), "Provider", choices = NULL),
           shiny::selectInput(ns("start_year_input"), "Baseline Year", choices = c("2019" = 201920, "2018" = 201819)),
           shiny::sliderInput(ns("end_year_input"), "Model Year", min = 0, max = 19, value = 0, sep = ""),
-          shiny::textInput(ns("scenario_input"), "Scenario Name"),
+          shiny::textInput(ns("scenario_input"), "Scenario Name")
+        ),
+        bs4Dash::box(
+          title = "Advanced Options",
+          width = 12,
+          collapsed = TRUE,
           shiny::numericInput(ns("seed_input"), "Seed", sample(1:100000, 1)),
           shiny::selectInput(ns("model_runs_input"), "Model Runs", choices = c(256, 512, 1024), selected = 256)
         ),
         bs4Dash::box(
+          title = "Upload Previous Set of Parameters",
+          width = 12,
+          collapsed = TRUE,
+          shiny::fileInput(ns("param_upload"), "Upload")
+        )
+      ),
+      col_6(
+        bs4Dash::box(
+          title = "Map of Selected Provider and Peers",
+          width = 12,
+          shinycssloaders::withSpinner(
+            leaflet::leafletOutput(ns("providers_map"), height = "730px")
+          )
+        ),
+        bs4Dash::box(
           title = "Peers (from NHS Trust Peer Finder Tool)",
           width = 12,
+          collapsed = TRUE,
           shinycssloaders::withSpinner(
             gt::gt_output(ns("peers_list"))
           )
-        )
-      ),
-      bs4Dash::box(
-        title = "Map of Selected Provider and Peers",
-        width = 6,
-        shinycssloaders::withSpinner(
-          leaflet::leafletOutput(ns("providers_map"), height = "730px")
         )
       )
     )
@@ -112,7 +126,30 @@ mod_home_server <- function(id, providers, params) {
     })
 
     shiny::observe({
-      # TODO: need to provide inputs for all of the items below
+      # TODO: need to validate that the file uploaded is valid
+      cat("loading params\n")
+      p <- jsonlite::read_json(input$param_upload$datapath, simplifyVector = TRUE)
+
+      session$userData$params <- p
+      session$userData$data_loaded(Sys.time())
+
+      if (p$dataset == "synthetic") {
+        cat("skipping changing the dataset\n")
+      } else {
+        shiny::updateSelectInput(session, "dataset_input", selected = p$dataset)
+      }
+
+      shiny::updateTextInput(session, "scenario_input", value = p$scenario)
+
+      y <- p$start_year * 100 + p$start_year %% 100 + 1
+      shiny::updateSelectInput(session, "start_year_input", selected = y)
+      shiny::updateNumericInput(session, "end_year_input", value = p$end_year)
+      shiny::updateNumericInput(session, "seed_input", value = p$seed)
+      shiny::updateSelectInput(session, "model_runs_input", selected = p$model_runs)
+    }) |>
+      shiny::bindEvent(input$param_upload)
+
+    shiny::observe({
       params$dataset <- input$dataset_input
       params$scenario <- input$scenario_input
       params$seed <- input$seed_input

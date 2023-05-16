@@ -13,9 +13,17 @@ mod_population_growth_ui <- function(id) {
 
   projections <- get_golem_config("population_projections")
 
-  purrr::imap(
-    projections,
-    \(.x, .i) shiny::sliderInput(ns(.i), .x, min = 0, max = 100, value = (.i == "principal_proj") * 100)
+  slider <- \(name, id, value = 0) shiny::sliderInput(
+    ns(id),
+    name,
+    min = 0,
+    max = 100,
+    value = value
+  )
+
+  shiny::tagList(
+    shinyjs::disabled(slider(projections[[1]], names(projections)[[1]], 100)),
+    purrr::imap(projections[-1], slider)
   )
 }
 
@@ -31,8 +39,16 @@ mod_population_growth_server <- function(id, params) {
       "Principal Projection should be the base case" = names(projections)[[1]] == "principal_proj"
     )
 
-    # the principal projection is the base case, and is set to be the complement of the sum ofth e other sliders
-    shinyjs::disable("principal_proj")
+    shiny::observe({
+      shiny::req(session$userData$data_loaded())
+      vp <- shiny::req(session$userData$params$demographic_factors$variant_probabilities)
+
+      vp |>
+        purrr::imap(\(.x, .i) {
+          shiny::updateSliderInput(session, .i, value = .x * 100)
+        })
+    }) |>
+      shiny::bindEvent(session$userData$data_loaded())
 
     purrr::map(
       changeable_projections,

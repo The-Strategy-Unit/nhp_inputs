@@ -129,12 +129,25 @@ mod_mitigators_server <- function(id,
       c(0.95, 1)
     }
 
+    # update the param values when either:
+    #   * the strategies() change (triggered by the dataset changing)
+    #   * data_loaded() is triggered (params uploaded)
     shiny::observe({
       # update the drop down
       shiny::updateSelectInput(session, "strategy", choices = strategies())
 
       # reset the params reactiveValues
       params[[mitigators_type]][[activity_type]] <- list()
+
+      loaded_values <- if (!is.null(session$userData$params)) {
+        session$userData$params[c("activity_avoidance", "efficiencies")] |>
+          purrr::flatten() |>
+          purrr::flatten() |>
+          _[strategies()] |>
+          purrr::map("interval")
+      } else {
+        list()
+      }
 
       strategies() |>
         # remove the friendly name for the strategy, replace with itself
@@ -155,14 +168,29 @@ mod_mitigators_server <- function(id,
               # if the additional item is a function, evaluate it with the rates data
               purrr::map_if(is.function, rlang::exec, r),
             list(
-              interval = get_default(r$rate)
+              interval = loaded_values[[i]] %||% get_default(r$rate)
             )
           )
 
           output_conversions[[mitigators_type]][[i]] <- (config$param_output %||% \(...) identity)(r$rate)
+
+          params[[mitigators_type]][[activity_type]][[i]] <- if (!is.null(loaded_values[[i]])) {
+            fn <- output_conversions[[mitigators_type]][[i]]
+
+            v <- slider_values[[mitigators_type]][[i]]
+            v$interval <- fn(v$interval)
+
+            v
+          }
         })
+
+      shiny::updateCheckboxInput(
+        session,
+        "include",
+        value = !is.null(params[[mitigators_type]][[activity_type]][[strategies()[[1]]]])
+      )
     }) |>
-      shiny::bindEvent(strategies())
+      shiny::bindEvent(strategies(), session$userData$data_loaded())
 
     # set the strategy text by loading the contents of the file for that strategy
     output$strategy_text <- shiny::renderUI({

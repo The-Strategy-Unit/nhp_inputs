@@ -139,6 +139,32 @@ mod_nda_server <- function(id, params) {
       init$destroy()
     })
 
+    shiny::observe({
+      shiny::req(session$userData$data_loaded())
+      p <- shiny::req(session$userData$params[["non-demographic_adjustment"]])
+
+      shiny::updateSelectInput(session, "activity_type", selected = "non-elective")
+
+      tidyr::expand_grid(
+        activity_type = c("non-elective", "elective", "maternity"),
+        age_band = names(age_bands())
+      ) |>
+        purrr::pwalk(\(activity_type, age_band) {
+          v <- p[[activity_type]][[age_band]]
+          params[["non-demographic_adjustment"]][[activity_type]][[age_band]] <- v
+
+          vv <- (v * 100) %||% c(100, 120)
+
+          slider_values[[activity_type]][[age_band]] <- vv
+
+          if (activity_type == "non-elective") {
+            shiny::updateSliderInput(session, age_band, value = vv)
+            shiny::updateCheckboxInput(session, glue::glue("include_{age_band}"), value = !is.null(v))
+          }
+        })
+    }) |>
+      shiny::bindEvent(session$userData$data_loaded())
+
     # when a slider changes, update the values in params
     purrr::walk(
       names(age_bands()),
