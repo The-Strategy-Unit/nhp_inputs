@@ -17,10 +17,9 @@ load_rds_from_adls <- function(file) {
 #'
 #' @return the adls filesystem
 get_adls_fs <- function() {
-  sa_name <- Sys.getenv("AZ_STORAGE_ACCOUNT")
-  ep_uri <- glue::glue("https://{sa_name}.dfs.core.windows.net/")
+  ep_uri <- Sys.getenv("LOCAL_STORAGE_EP")
+  sa_key <- Sys.getenv("LOCAL_STORAGE_KEY")
 
-  sa_key <- Sys.getenv("AZ_STORAGE_KEY")
   ep <- if (sa_key != "") {
     AzureStor::adls_endpoint(ep_uri, key = sa_key)
   } else {

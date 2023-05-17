@@ -67,19 +67,21 @@ get_provider_data <- function(age_sex_data, diagnoses_data, rates_data) {
     tibble::deframe()
 }
 
-upload_data_to_azure <- function(provider, provider_data, expat_repat_data, covid_adjustment) {
-  sa <- Sys.getenv("AZ_STORAGE_ACCOUNT")
-  ep <- AzureStor::adls_endpoint(
-    endpoint = glue::glue("https://{sa}.dfs.core.windows.net/"),
-    key = Sys.getenv("AZ_STORAGE_KEY")
+upload_data_to_azure <- function(provider,
+                                 provider_data,
+                                 expat_repat_data,
+                                 covid_adjustment,
+                                 azure_storage_endpoint,
+                                 azure_storage_key) {
+  ep <- AzureStor::blob_endpoint(
+    endpoint = azure_storage_endpoint,
+    key = azure_storage_key
   )
-  fs <- AzureStor::adls_filesystem(ep, "inputs-data")
+  cont <- AzureStor::blob_container(ep, "inputs-data")
 
   upload_fn <- \(.x, name) {
     fn <- glue::glue("{provider}/{name}.rds")
-    tf <- withr::local_tempfile()
-    saveRDS(.x, tf)
-    AzureStor::upload_adls_file(fs, tf, fn)
+    AzureStor::storage_save_rds(.x, cont, fn)
     fn
   }
 
@@ -94,18 +96,19 @@ upload_data_to_azure <- function(provider, provider_data, expat_repat_data, covi
   )
 }
 
-upload_reference_data_to_azure <- function(nhp_current_cohort, lkp_peers) {
-  ep <- AzureStor::adls_endpoint(
-    endpoint = Sys.getenv("TARGETS_AZURE_SA_EP"),
-    key = Sys.getenv("TARGETS_AZURE_SA_key")
+upload_reference_data_to_azure <- function(nhp_current_cohort,
+                                           lkp_peers,
+                                           azure_storage_endpoint,
+                                           azure_storage_key) {
+  ep <- AzureStor::blob_endpoint(
+    endpoint = azure_storage_endpoint,
+    key = azure_storage_key
   )
-  fs <- AzureStor::adls_filesystem(ep, "inputs-data")
+  cont <- AzureStor::blob_container(ep, "inputs-data")
 
   upload_fn <- \(.x, name) {
     fn <- glue::glue("{name}.rds")
-    tf <- withr::local_tempfile()
-    saveRDS(.x, tf)
-    AzureStor::upload_adls_file(fs, tf, fn)
+    AzureStor::storage_save_rds(.x, cont, fn)
     fn
   }
 

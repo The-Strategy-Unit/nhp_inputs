@@ -251,13 +251,46 @@ list(
     get_provider_data(age_sex_data, diagnoses_data, rates_data)
   ),
   tar_target(
-    uploaded_data,
-    upload_data_to_azure(nhp_current_cohort, provider_data, expat_repat_data, covid_adjustment),
+    uploaded_data_azure,
+    upload_data_to_azure(
+      nhp_current_cohort,
+      provider_data,
+      expat_repat_data,
+      covid_adjustment,
+      Sys.getenv("AZ_STORAGE_EP"),
+      Sys.getenv("AZ_STORAGE_KEY")
+    ),
     pattern = map(nhp_current_cohort)
   ),
   tar_target(
-    uploaded_reference_data,
-    upload_reference_data_to_azure(nhp_current_cohort, lkp_peers)
+    uploaded_data_local,
+    upload_data_to_azure(
+      nhp_current_cohort,
+      provider_data,
+      expat_repat_data,
+      covid_adjustment,
+      Sys.getenv("LOCAL_STORAGE_EP"),
+      Sys.getenv("LOCAL_STORAGE_KEY")
+    ),
+    pattern = map(nhp_current_cohort)
+  ),
+  tar_target(
+    uploaded_reference_data_azure,
+    upload_reference_data_to_azure(
+      nhp_current_cohort,
+      lkp_peers,
+      Sys.getenv("AZ_STORAGE_EP"),
+      Sys.getenv("AZ_STORAGE_KEY")
+    )
+  ),
+  tar_target(
+    uploaded_reference_data_local,
+    upload_reference_data_to_azure(
+      nhp_current_cohort,
+      lkp_peers,
+      Sys.getenv("LOCAL_STORAGE_EP"),
+      Sys.getenv("LOCAL_STORAGE_KEY")
+    )
   ),
   tar_target(reference_data_last_updated, {
     dir.create("inst/app/data", FALSE)
