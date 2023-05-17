@@ -17,97 +17,101 @@ app_ui <- function(request) {
         tabName = "tab_home",
         icon = shiny::icon("house")
       ),
-      bs4Dash::menuItem(
-        "Health Status Adjustment",
-        tabName = "tab_hsa"
-      ),
-      bs4Dash::menuItem(
-        "Population Growth",
-        tabName = "tab_population_growth"
-      ),
-      bs4Dash::menuItem(
-        "Baseline Adjustment",
-        tabName = "tab_baseline_adjustment"
-      ),
-      bs4Dash::menuItem(
-        "Non-demographic Adjustment",
-        tabName = "tab_nda"
-      ),
-      bs4Dash::menuItem(
-        "Waiting List Imbalances",
-        tabName = "tab_wli"
-      ),
-      bs4Dash::menuItem(
-        "Expat/Repat",
-        tabName = "tab_er"
-      ),
-      bs4Dash::sidebarHeader("Activity Mitigators"),
-      bs4Dash::menuItem(
-        "Inpatients",
-        bs4Dash::menuSubItem(
-          "Admission Avoidance",
-          tabName = "ip_am_admission_avoidance"
+      shiny::conditionalPanel(
+        condition = "input.scenario_input !== ''",
+        ns = shiny::NS("home"),
+        bs4Dash::menuItem(
+          "Health Status Adjustment",
+          tabName = "tab_hsa"
         ),
-        bs4Dash::menuSubItem(
-          "Mean LoS Reduction",
-          tabName = "ip_am_mean_los_reduction"
+        bs4Dash::menuItem(
+          "Population Growth",
+          tabName = "tab_population_growth"
         ),
-        bs4Dash::menuSubItem(
-          "AEC LoS Reduction",
-          tabName = "ip_am_aec_los_reduction"
+        bs4Dash::menuItem(
+          "Baseline Adjustment",
+          tabName = "tab_baseline_adjustment"
         ),
-        bs4Dash::menuSubItem(
-          "Pre-op LoS Reduction",
-          tabName = "ip_am_preop_los_reduction"
+        bs4Dash::menuItem(
+          "Non-demographic Adjustment",
+          tabName = "tab_nda"
         ),
-        bs4Dash::menuSubItem(
-          "Day Surgery",
-          tabName = "ip_am_bads"
+        bs4Dash::menuItem(
+          "Waiting List Imbalances",
+          tabName = "tab_wli"
+        ),
+        bs4Dash::menuItem(
+          "Expat/Repat",
+          tabName = "tab_er"
+        ),
+        bs4Dash::sidebarHeader("Activity Mitigators"),
+        bs4Dash::menuItem(
+          "Inpatients",
+          bs4Dash::menuSubItem(
+            "Admission Avoidance",
+            tabName = "ip_am_admission_avoidance"
+          ),
+          bs4Dash::menuSubItem(
+            "Mean LoS Reduction",
+            tabName = "ip_am_mean_los_reduction"
+          ),
+          bs4Dash::menuSubItem(
+            "AEC LoS Reduction",
+            tabName = "ip_am_aec_los_reduction"
+          ),
+          bs4Dash::menuSubItem(
+            "Pre-op LoS Reduction",
+            tabName = "ip_am_preop_los_reduction"
+          ),
+          bs4Dash::menuSubItem(
+            "Day Surgery",
+            tabName = "ip_am_bads"
+          )
+        ),
+        bs4Dash::menuItem(
+          "Outpatients",
+          bs4Dash::menuSubItem(
+            "Consultant Referrals",
+            tabName = "op_am_c2c_referrals"
+          ),
+          bs4Dash::menuSubItem(
+            "Convert to Tele",
+            tabName = "op_am_convert_tele"
+          ),
+          bs4Dash::menuSubItem(
+            "Followup Reduction",
+            tabName = "op_am_fup_reduction"
+          )
+        ),
+        bs4Dash::menuItem(
+          "A&E",
+          bs4Dash::menuSubItem(
+            "Frequent Attenders",
+            tabName = "aae_frequent_attenders"
+          ),
+          bs4Dash::menuSubItem(
+            "Left Before Seen",
+            tabName = "aae_left_before_seen"
+          ),
+          bs4Dash::menuSubItem(
+            "Low Cost Discharged",
+            tabName = "aae_low_cost_discharged"
+          )
+        ),
+        bs4Dash::sidebarHeader("Capacity Conversion"),
+        bs4Dash::menuItem(
+          "Bed Occupancy",
+          tabName = "tab_bed_occ"
+        ),
+        bs4Dash::menuItem(
+          "Theatres",
+          tabName = "tab_theatres"
+        ),
+        bs4Dash::sidebarHeader("Run Model"),
+        bs4Dash::menuItem(
+          "Run Model",
+          tabName = "tab_run_model"
         )
-      ),
-      bs4Dash::menuItem(
-        "Outpatients",
-        bs4Dash::menuSubItem(
-          "Consultant Referrals",
-          tabName = "op_am_c2c_referrals"
-        ),
-        bs4Dash::menuSubItem(
-          "Convert to Tele",
-          tabName = "op_am_convert_tele"
-        ),
-        bs4Dash::menuSubItem(
-          "Followup Reduction",
-          tabName = "op_am_fup_reduction"
-        )
-      ),
-      bs4Dash::menuItem(
-        "A&E",
-        bs4Dash::menuSubItem(
-          "Frequent Attenders",
-          tabName = "aae_frequent_attenders"
-        ),
-        bs4Dash::menuSubItem(
-          "Left Before Seen",
-          tabName = "aae_left_before_seen"
-        ),
-        bs4Dash::menuSubItem(
-          "Low Cost Discharged",
-          tabName = "aae_low_cost_discharged"
-        )
-      ),
-      bs4Dash::sidebarHeader("Capacity Conversion"),
-      bs4Dash::menuItem(
-        "Bed Occupancy",
-        tabName = "tab_bed_occ"
-      ),
-      bs4Dash::menuItem(
-        "Theatres",
-        tabName = "tab_theatres"
-      ),
-      bs4Dash::sidebarHeader("Run Model"),
-      bs4Dash::menuItem(
-        "Run Model",
-        tabName = "tab_run_model"
       )
     )
   )
