@@ -72,7 +72,7 @@ app_server <- function(input, output, session) {
 
   mod_run_model_server("run_model", params)
 
-  if (!getOption("golem.app.prod", FALSE)) {
+  if (as.logical(Sys.getenv("ENABLE_AUTO_RECONNECT", FALSE))) {
     cat("auto reconnect enabled\n")
     session$allowReconnect("force")
   }
