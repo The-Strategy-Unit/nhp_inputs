@@ -21,13 +21,11 @@ app_server <- function(input, output, session) {
   # load all other modules once the home module has finished loading
   init_timeout <- TRUE
   init <- shiny::observe({
-    cat("triggered init\n")
     shiny::req(params$dataset)
     if (init_timeout) {
       shiny::invalidateLater(50)
       shiny::req((init_timeout <<- FALSE))
     }
-    cat("loading modules\n")
 
     shiny::isolate({
       provider_data <- shiny::reactive({
