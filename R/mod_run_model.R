@@ -209,13 +209,22 @@ mod_run_model_submit <- function(params) {
 mod_run_model_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::fluidRow(
-    bs4Dash::box(
-      title = "Run Model",
-      shiny::actionButton(ns("submit"), "Submit Model Run"),
-      shiny::textOutput(ns("status"))
+    col_6(
+      bs4Dash::box(
+        title = "Run Model",
+        width = 12,
+        shiny::actionButton(ns("submit"), "Submit Model Run"),
+        shiny::textOutput(ns("status"))
+      ),
+      bs4Dash::box(
+        title = "Download Params",
+        width = 12,
+        shiny::downloadButton(ns("download_params"), "Download params")
+      )
     ),
     bs4Dash::box(
-      title = "Params",
+      title = "View Params",
+      collapsed = TRUE,
       shiny::verbatimTextOutput(ns("params_json"))
     )
   )
@@ -254,5 +263,10 @@ mod_run_model_server <- function(id, params) {
     output$params_json <- shiny::renderText({
       jsonlite::toJSON(fixed_params(), pretty = TRUE, auto_unbox = TRUE)
     })
+
+    output$download_params <- shiny::downloadHandler(
+      filename = \() paste0(fixed_params()$id, ".json"),
+      content = \(file) jsonlite::write_json(fixed_params(), file, pretty = TRUE, auto_unbox = TRUE)
+    )
   })
 }
