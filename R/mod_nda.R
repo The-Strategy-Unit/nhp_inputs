@@ -1,12 +1,16 @@
 age_bands <- function() {
-  c(
-    "00-04" = "0 - 4",
-    "05-14" = "5 - 14",
-    "15-34" = "15 - 34",
-    "35-49" = "35 - 49",
-    "50-64" = "50 - 64",
-    "65-84" = "65 - 84",
-    "85plus" = "85+"
+  bands <- c(
+    " 0- 4",
+    " 5-14",
+    "15-34",
+    "35-49",
+    "50-64",
+    "65-84",
+    "85+"
+  )
+  purrr::set_names(
+    bands,
+    paste0("ageband_", seq_along(bands))
   )
 }
 
@@ -111,18 +115,18 @@ mod_nda_server <- function(id, params) {
     shiny::observe({
       at <- shiny::req(input$activity_type)
 
-      purrr::walk(
-        names(age_bands()),
-        \(.x) {
+      purrr::iwalk(
+        age_bands(),
+        \(.x, .i) {
           shiny::updateSliderInput(
             session,
-            .x,
+            .i,
             value = slider_values[[at]][[.x]]
           )
 
           shiny::updateCheckboxInput(
             session,
-            glue::glue("include_{.x}"),
+            glue::glue("include_{.i}"),
             value = !is.null(params[["non-demographic_adjustment"]][[at]][[.x]])
           )
         }
@@ -147,9 +151,10 @@ mod_nda_server <- function(id, params) {
 
       tidyr::expand_grid(
         activity_type = c("non-elective", "elective", "maternity"),
-        age_band = names(age_bands())
+        age_band = tibble::enframe(age_bands(), "id", "age_band")
       ) |>
-        purrr::pwalk(\(activity_type, age_band) {
+        tidyr::unnest_wider("age_band") |>
+        purrr::pwalk(\(activity_type, id, age_band) {
           v <- p[[activity_type]][[age_band]]
           params[["non-demographic_adjustment"]][[activity_type]][[age_band]] <- v
 
@@ -158,31 +163,31 @@ mod_nda_server <- function(id, params) {
           slider_values[[activity_type]][[age_band]] <- vv
 
           if (activity_type == "non-elective") {
-            shiny::updateSliderInput(session, age_band, value = vv)
-            shiny::updateCheckboxInput(session, glue::glue("include_{age_band}"), value = !is.null(v))
+            shiny::updateSliderInput(session, id, value = vv)
+            shiny::updateCheckboxInput(session, glue::glue("include_{id}"), value = !is.null(v))
           }
         })
     }) |>
       shiny::bindEvent(session$userData$data_loaded())
 
     # when a slider changes, update the values in params
-    purrr::walk(
-      names(age_bands()),
-      \(.x) {
-        include_type <- glue::glue("include_{.x}")
+    purrr::iwalk(
+      age_bands(),
+      \(.x, .i) {
+        include_type <- glue::glue("include_{.i}")
 
         shiny::observe({
           at <- shiny::req(input$activity_type)
 
           include <- input[[include_type]]
 
-          slider_values[[at]][[.x]] <- shiny::req(input[[.x]])
+          slider_values[[at]][[.x]] <- shiny::req(input[[.i]])
           params[["non-demographic_adjustment"]][[at]][[.x]] <- if (include) slider_values[[at]][[.x]] / 100
         }) |>
-          shiny::bindEvent(input[[.x]], input[[include_type]])
+          shiny::bindEvent(input[[.i]], input[[include_type]])
 
         shiny::observe({
-          shinyjs::toggleState(.x, condition = input[[include_type]])
+          shinyjs::toggleState(.i, condition = input[[include_type]])
         }) |>
           shiny::bindEvent(input[[include_type]])
       }
