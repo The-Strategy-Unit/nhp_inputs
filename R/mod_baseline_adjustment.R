@@ -1,3 +1,4 @@
+mod_baseline_adjustment_default_slider_values <- c(0.95, 1.05)
 #' baseline_adjustment UI Function
 #'
 #' @description A shiny Module.
@@ -24,7 +25,7 @@ mod_baseline_adjustment_ui <- function(id) {
               label = NULL,
               min = 0,
               max = 2,
-              value = c(0.95, 1.05),
+              value = mod_baseline_adjustment_default_slider_values,
               step = 0.001
             )
           ) |>
@@ -143,6 +144,27 @@ mod_baseline_adjustment_server <- function(id, params) {
           )
       ) |>
       dplyr::mutate(id = glue::glue("{at}_{g}_{sanitized_code}"))
+
+    shiny::observe({
+      shiny::req(session$userData$data_loaded())
+      p <- shiny::req(session$userData$params$baseline_adjustment)
+
+      purrr::pwalk(specs, \(at, g, code, id, ...) {
+        include_id <- glue::glue("include_{id}")
+        param_id <- glue::glue("param_{id}")
+
+        # get the new param value
+        v <- if (at == "aae") {
+          p[[at]][[code]]
+        } else {
+          p[[at]][[g]][[code]]
+        }
+
+        shiny::updateCheckboxInput(session, include_id, value = !is.null(v))
+        shiny::updateSliderInput(session, param_id, value = v %||% mod_baseline_adjustment_default_slider_values)
+      })
+    }) |>
+      shiny::bindEvent(session$userData$data_loaded())
 
     shiny::observe({
       # initialise the baseline adjustment

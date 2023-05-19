@@ -161,6 +161,46 @@ mod_expat_repat_server <- function(id, params, providers) {
     params$repat_local <- init_params()
     params$repat_nonlocal <- init_params()
 
+    # update values when a file is uploaded
+    shiny::observe(
+      {
+        shiny::req(session$userData$data_loaded())
+        p <- shiny::req(session$userData$params)
+
+        tidyr::expand_grid(
+          type = names(shadow_params),
+          specialty = rtt_specialties
+        ) |>
+          purrr::pwalk(\(type, specialty) {
+            purrr::walk(c("elective", "non-elective", "maternity"), \(.y) {
+              v <- p[[type]]$ip[[.y]][[specialty]]
+              shadow_params[[type]]$ip[[.y]][[specialty]] <- v %||% c(0.95, 1.0)
+              params[[type]]$ip[[.y]][[specialty]] <- v
+            })
+            v <- p[[type]]$op[[specialty]]
+            shadow_params[[type]]$op[[specialty]] <- v %||% c(0.95, 1.0)
+            params[[type]]$op[[specialty]] <- v
+          })
+
+        tidyr::expand_grid(
+          type = names(shadow_params),
+          arrival_mode = names(shadow_params$expat$aae)
+        ) |>
+          purrr::pwalk(\(type, arrival_mode) {
+            v <- p[[type]]$aae[[arrival_mode]]
+            shadow_params[[type]]$aae[[arrival_mode]] <- v %||% c(0.95, 1.0)
+            params[[type]]$aae[[arrival_mode]] <- v
+          })
+
+        default_spec <- rtt_specialties[[1]]
+        shiny::updateSelectInput(session, "activity_type", selected = "ip")
+        shiny::updateSelectInput(session, "ip_subgroup", selected = "elective")
+        shiny::updateSelectInput(session, "type", selected = default_spec)
+      },
+      priority = 10 # this observer needs to trigger before the dropdown change observer
+    ) |>
+      shiny::bindEvent(session$userData$data_loaded())
+
     # update the options in the type drop down based on the activity type dropdown
     # also, toggle whether the ip_subgroup is visible or not
     shiny::observe({
@@ -207,7 +247,7 @@ mod_expat_repat_server <- function(id, params, providers) {
         }
       )
     }) |>
-      shiny::bindEvent(input$activity_type, input$ip_subgroup, input$type)
+      shiny::bindEvent(input$activity_type, input$ip_subgroup, input$type, session$userData$data_loaded())
 
     purrr::walk(
       c("expat", "repat_local", "repat_nonlocal"),
