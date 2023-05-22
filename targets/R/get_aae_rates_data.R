@@ -154,7 +154,11 @@ get_aae_rates <- function(aae_data, peers) {
       dplyr::across(c("value", "n"), sum),
       .groups = "drop"
     ) |>
-    dplyr::inner_join(peers, by = c("peer")) |>
+    dplyr::inner_join(
+      peers,
+      by = c("peer"),
+      relationship = "many-to-many"
+    ) |>
     dplyr::transmute(
       .data$fyear,
       .data$procode,

@@ -7,7 +7,6 @@ get_op_data <- function(provider_successors_last_updated) {
 
   dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "outpatients")) |>
     dplyr::inner_join(tbl_age_table, c("apptage" = "age")) |>
-    dplyr::filter(.data$has_procedures == 0) |>
     dplyr::group_by(
       .data$fyear,
       .data$age_group,
@@ -19,12 +18,8 @@ get_op_data <- function(provider_successors_last_updated) {
     ) |>
     dplyr::summarise(
       dplyr::across(
-        c(
-          "is_first",
-          "is_cons_cons_ref"
-        ),
-        sum,
-        na.rm = TRUE
+        c("is_first", "is_cons_cons_ref"),
+        \(.x) sum(.x, na.rm = TRUE)
       ),
       n = dplyr::n(),
       .groups = "drop"
@@ -163,7 +158,11 @@ get_op_age_sex_data <- function(op_data) {
 get_op_convert_to_tele_data <- function(op_data, peers) {
   op_data |>
     dplyr::rename(peer = "procode3") |>
-    dplyr::inner_join(peers, by = c("peer")) |>
+    dplyr::inner_join(
+      peers,
+      by = c("peer"),
+      relationship = "many-to-many"
+    ) |>
     dplyr::group_by(
       .data$fyear,
       .data$procode,
@@ -186,7 +185,11 @@ get_op_consultant_to_consultant_reduction <- function(op_data, peers) {
       dplyr::across(c("is_cons_cons_ref", "n"), sum),
       .groups = "drop"
     ) |>
-    dplyr::inner_join(peers, by = c("peer")) |>
+    dplyr::inner_join(
+      peers,
+      by = c("peer"),
+      relationship = "many-to-many"
+    ) |>
     dplyr::transmute(
       .data$fyear,
       .data$procode,
@@ -206,7 +209,11 @@ get_op_followup_reduction <- function(op_data, peers) {
       dplyr::across(c("is_first", "n"), sum),
       .groups = "drop"
     ) |>
-    dplyr::inner_join(peers, by = c("peer")) |>
+    dplyr::inner_join(
+      peers,
+      by = c("peer"),
+      relationship = "many-to-many"
+    ) |>
     dplyr::transmute(
       .data$fyear,
       .data$procode,

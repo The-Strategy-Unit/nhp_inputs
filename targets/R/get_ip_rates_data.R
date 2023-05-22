@@ -1,13 +1,24 @@
-
 get_ip_dsr_data <- function(ip_age_sex, peers, catchments, lkp_euro_2013, strategies) {
   ip_age_sex <- ip_age_sex |>
     dplyr::filter(.data$strategy %in% strategies[["admission avoidance"]])
 
   dsr <- peers |>
-    dplyr::inner_join(ip_age_sex, by = c("peer" = "procode")) |>
-    dplyr::left_join(catchments, by = c("fyear", "sex", "age_group", "peer" = "provider")) |>
-    dplyr::mutate(dplyr::across("pop_catch", tidyr::replace_na, 0)) |>
-    dplyr::inner_join(lkp_euro_2013, by = c("sex", "age_group"))
+    dplyr::inner_join(
+      ip_age_sex,
+      by = c("peer" = "procode"),
+      relationship = "many-to-many"
+    ) |>
+    dplyr::left_join(
+      catchments,
+      by = c("fyear", "sex", "age_group", "peer" = "provider"),
+      relationship = "many-to-one"
+    ) |>
+    dplyr::mutate(dplyr::across("pop_catch", ~ tidyr::replace_na(.x, 0))) |>
+    dplyr::inner_join(
+      lkp_euro_2013,
+      by = c("sex", "age_group"),
+      relationship = "many-to-one"
+    )
 
   dsr <- dplyr::bind_rows(
     dsr,
@@ -72,7 +83,7 @@ get_mean_los_data <- function(ip_los_data, peers) {
       dplyr::across("n", sum),
       .groups = "drop"
     ) |>
-    dplyr::inner_join(peers, by = c("peer")) |>
+    dplyr::inner_join(peers, by = c("peer"), relationship = "many-to-many") |>
     dplyr::select(
       "fyear",
       "procode",
@@ -103,7 +114,7 @@ get_zero_los_data <- function(ip_los_data, peers) {
     ) |>
     # ensure there is no statistical disclosure
     dplyr::filter(.data$n >= 5, .data$rate * .data$n >= 5, (1 - .data$rate) * .data$n >= 5) |>
-    dplyr::inner_join(peers, by = c("peer")) |>
+    dplyr::inner_join(peers, by = c("peer"), relationship = "many-to-many") |>
     dplyr::select(
       "fyear",
       "procode",
@@ -145,15 +156,22 @@ get_preop_los_data <- function(ip_los_data, peers) {
   n_procedures |>
     dplyr::mutate(strategy = list(preop_los_strategies), .before = "n") |>
     tidyr::unnest("strategy") |>
-    dplyr::left_join(n_preops, by = c("fyear", "procode", "strategy")) |>
+    dplyr::left_join(
+      n_preops,
+      by = c("fyear", "procode", "strategy")
+    ) |>
     dplyr::mutate(
-      dplyr::across("preops", tidyr::replace_na, 0),
+      dplyr::across("preops", ~ tidyr::replace_na(.x, 0)),
       rate = .data$preops / .data$n
     ) |>
     dplyr::rename(peer = "procode") |>
     # ensure there is no statistical disclosure
     dplyr::filter(.data$n >= 5, .data$rate * .data$n >= 5, (1 - .data$rate) * .data$n >= 5) |>
-    dplyr::inner_join(peers, by = c("peer")) |>
+    dplyr::inner_join(
+      peers,
+      by = c("peer"),
+      relationship = "many-to-many"
+    ) |>
     dplyr::select(
       "fyear",
       "procode",
@@ -195,7 +213,11 @@ get_bads_data <- function(ip_los_data, peers) {
     ) |>
     # ensure there is no statistical disclosure
     dplyr::filter(.data$n >= 5, .data$rate * .data$n >= 5, (1 - .data$rate) * .data$n >= 5) |>
-    dplyr::inner_join(peers, by = c("peer")) |>
+    dplyr::inner_join(
+      peers,
+      by = c("peer"),
+      relationship = "many-to-many"
+    ) |>
     dplyr::select(
       "fyear",
       "procode",

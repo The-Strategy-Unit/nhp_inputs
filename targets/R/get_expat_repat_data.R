@@ -87,7 +87,8 @@ get_repat_local_ip_data <- function(rtt_specialties, provider_successors_last_up
     dplyr::inner_join(
       df |>
         dplyr::rename(provider = "procode"),
-      by = c("icb22cdh")
+      by = c("icb22cdh"),
+      relationship = "many-to-many"
     ) |>
     dplyr::mutate(
       admigroup = dplyr::case_when(
@@ -132,7 +133,8 @@ get_repat_local_op_data <- function(rtt_specialties, provider_successors_last_up
     dplyr::inner_join(
       df |>
         dplyr::rename(provider = "procode"),
-      by = c("icb22cdh")
+      by = c("icb22cdh"),
+      relationship = "many-to-many"
     ) |>
     dplyr::mutate(
       specialty = dplyr::case_when(
@@ -173,7 +175,8 @@ get_repat_local_aae_data <- function(provider_successors_last_updated, ccg_to_ic
     dplyr::inner_join(
       df |>
         dplyr::rename(provider = "procode"),
-      by = c("icb22cdh")
+      by = c("icb22cdh"),
+      relationship = "many-to-many"
     ) |>
     dplyr::group_by(.data$procode, .data$icb22cdh, .data$fyear, .data$is_ambulance) |>
     dplyr::mutate(pcnt = .data$n / sum(.data$n)) |>
