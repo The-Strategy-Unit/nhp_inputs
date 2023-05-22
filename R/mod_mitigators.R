@@ -133,8 +133,10 @@ mod_mitigators_server <- function(id,
     #   * the strategies() change (triggered by the dataset changing)
     #   * data_loaded() is triggered (params uploaded)
     shiny::observe({
+      strategies <- shiny::req(strategies())
+
       # update the drop down
-      shiny::updateSelectInput(session, "strategy", choices = strategies())
+      shiny::updateSelectInput(session, "strategy", choices = strategies)
 
       # reset the params reactiveValues
       params[[mitigators_type]][[activity_type]] <- list()
@@ -143,13 +145,13 @@ mod_mitigators_server <- function(id,
         session$userData$params[c("activity_avoidance", "efficiencies")] |>
           purrr::flatten() |>
           purrr::flatten() |>
-          _[strategies()] |>
+          _[strategies] |>
           purrr::map("interval")
       } else {
         list()
       }
 
-      strategies() |>
+      strategies |>
         # remove the friendly name for the strategy, replace with itself
         purrr::set_names() |>
         purrr::walk(\(i) {
@@ -187,7 +189,7 @@ mod_mitigators_server <- function(id,
       shiny::updateCheckboxInput(
         session,
         "include",
-        value = !is.null(params[[mitigators_type]][[activity_type]][[strategies()[[1]]]])
+        value = !is.null(params[[mitigators_type]][[activity_type]][[strategies[[1]]]])
       )
     }) |>
       shiny::bindEvent(strategies(), session$userData$data_loaded())
