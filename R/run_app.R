@@ -15,8 +15,12 @@ run_app <- function(onStart = NULL, # nolint
                     enableBookmarking = NULL, # nolint
                     uiPattern = "/", # nolint
                     ...) {
-  with_golem_options(
-    app = shinyApp(
+  if (getOption("golem.app.prod", FALSE)) {
+    create_data_cache()
+  }
+
+  golem::with_golem_options(
+    app = shiny::shinyApp(
       ui = app_ui,
       server = app_server,
       onStart = onStart,

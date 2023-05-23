@@ -5,9 +5,17 @@
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
-  # load the data
-  diagnoses_lkup <- readRDS(app_sys("app", "data", "diagnoses.Rds"))
-  providers <- readRDS(app_sys("app", "data", "providers.Rds"))
+  # load reference data - make sure to cache these, but they need a dummy cache
+  # key, so we use a scalar value.
+  diagnoses_lkup <- shiny::reactive({
+    readRDS(app_sys("app", "data", "diagnoses.Rds"))
+  }) |>
+    shiny::bindCache(1)
+
+  providers <- shiny::reactive({
+    readRDS(app_sys("app", "data", "providers.Rds"))
+  }) |>
+    shiny::bindCache(1)
 
   params <- shiny::reactiveValues()
   params[["demographic_factors"]] <- list(
@@ -16,7 +24,7 @@ app_server <- function(input, output, session) {
 
   session$userData$data_loaded <- shiny::reactiveVal()
 
-  mod_home_server("home", providers, params)
+  mod_home_server("home", providers(), params)
 
   # load all other modules once the home module has finished loading
   init_timeout <- TRUE
@@ -44,7 +52,7 @@ app_server <- function(input, output, session) {
       }) |>
         shiny::bindCache(params$dataset)
 
-      mod_expat_repat_server("expat_repat", params, providers)
+      mod_expat_repat_server("expat_repat", params, providers())
 
       mod_population_growth_server("population_growth", params)
       mod_hsa_server("hsa", params)
@@ -77,7 +85,7 @@ app_server <- function(input, output, session) {
         params,
         provider_data,
         available_strategies,
-        diagnoses_lkup
+        diagnoses_lkup()
       )
 
       mod_run_model_server("run_model", params)
