@@ -156,7 +156,6 @@ mod_home_server <- function(id, providers, params) {
       params$model_runs <- as.numeric(input$model_runs_input)
       params$start_year <- input$start_year_input
       params$end_year <- input$end_year_input
-      params$create_datetime <- format(Sys.time(), "%Y%m%d_%H%M%S")
     })
   })
 }

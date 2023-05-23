@@ -250,7 +250,11 @@ mod_run_model_server <- function(id, params) {
     shiny::observe({
       shiny::req(input$submit)
       shinyjs::disable("submit")
-      results <- mod_run_model_submit(fixed_params())
+
+      p <- shiny::req(fixed_params())
+      p$create_datetime <- format(Sys.time(), "%Y%m%d_%H%M%S")
+
+      results <- mod_run_model_submit(p)
 
       if (results == 200) {
         status("Success")
