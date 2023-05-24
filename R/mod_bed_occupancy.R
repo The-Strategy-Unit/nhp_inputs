@@ -154,8 +154,8 @@ mod_bed_occupancy_server <- function(id, params) {
 
       ward_groups$groups[[wg]] <- v
       # force the value to be inserted into the params, don't rely on observer
-      params[["bed_occupancy"]][["day+night"]][[wg]] <- v$occupancy
-      shiny::updateSliderInput(session, "occupancy", value = v$occupancy)
+      params[["bed_occupancy"]][["day+night"]][[wg]] <- v
+      shiny::updateSliderInput(session, "occupancy", value = v)
 
       shiny::updateSelectInput(
         session,
