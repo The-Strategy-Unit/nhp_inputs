@@ -16,17 +16,18 @@ mod_home_ui <- function(id) {
         bs4Dash::box(
           title = "Select Provider and Baseline",
           width = 12,
-          shiny::selectInput(ns("dataset_input"), "Provider", choices = NULL),
-          shiny::selectInput(ns("start_year_input"), "Baseline Year", choices = c("2019" = 201920, "2018" = 201819)),
-          shiny::sliderInput(ns("end_year_input"), "Model Year", min = 0, max = 19, value = 0, sep = ""),
-          shiny::textInput(ns("scenario_input"), "Scenario Name")
+          shiny::selectInput(ns("dataset"), "Provider", choices = NULL),
+          shiny::selectInput(ns("start_year"), "Baseline Year", choices = c("2019" = 201920, "2018" = 201819)),
+          shiny::sliderInput(ns("end_year"), "Model Year", min = 0, max = 19, value = 0, sep = ""),
+          shiny::textInput(ns("scenario"), "Scenario Name"),
+          shiny::textOutput(ns("status"))
         ),
         bs4Dash::box(
           title = "Advanced Options",
           width = 12,
           collapsed = TRUE,
-          shiny::numericInput(ns("seed_input"), "Seed", sample(1:100000, 1)),
-          shiny::selectInput(ns("model_runs_input"), "Model Runs", choices = c(256, 512, 1024), selected = 256)
+          shiny::numericInput(ns("seed"), "Seed", sample(1:100000, 1)),
+          shiny::selectInput(ns("model_runs"), "Model Runs", choices = c(256, 512, 1024), selected = 256)
         ),
         bs4Dash::box(
           title = "Upload Previous Set of Parameters",
@@ -96,17 +97,17 @@ mod_home_server <- function(id, providers, params) {
 
     shiny::observe({
       choices <- providers[providers %in% nhp_current_cohort]
-      shiny::updateSelectInput(session, "dataset_input", choices = choices)
+      shiny::updateSelectInput(session, "dataset", choices = choices)
     })
 
     shiny::observe({
-      x <- as.numeric(stringr::str_sub(input$start_year_input, 1, 4))
+      x <- as.numeric(stringr::str_sub(input$start_year, 1, 4))
 
-      shiny::updateSliderInput(session, "end_year_input", min = x + 1, max = x + 20)
+      shiny::updateSliderInput(session, "end_year", min = x + 1, max = x + 20, value = x + 15)
     })
 
     selected_peers <- shiny::reactive({
-      p <- shiny::req(input$dataset_input)
+      p <- shiny::req(input$dataset)
 
       provider_locations |>
         dplyr::semi_join(
@@ -136,26 +137,58 @@ mod_home_server <- function(id, providers, params) {
       if (p$dataset == "synthetic") {
         cat("skipping changing the dataset\n")
       } else {
-        shiny::updateSelectInput(session, "dataset_input", selected = p$dataset)
+        shiny::updateSelectInput(session, "dataset", selected = p$dataset)
       }
 
-      shiny::updateTextInput(session, "scenario_input", value = p$scenario)
+      shiny::updateTextInput(session, "scenario", value = p$scenario)
 
       y <- p$start_year * 100 + p$start_year %% 100 + 1
-      shiny::updateSelectInput(session, "start_year_input", selected = y)
-      shiny::updateNumericInput(session, "end_year_input", value = p$end_year)
-      shiny::updateNumericInput(session, "seed_input", value = p$seed)
-      shiny::updateSelectInput(session, "model_runs_input", selected = p$model_runs)
+      shiny::updateSelectInput(session, "start_year", selected = y)
+      shiny::updateNumericInput(session, "end_year", value = p$end_year)
+      shiny::updateNumericInput(session, "seed", value = p$seed)
+      shiny::updateSelectInput(session, "model_runs", selected = p$model_runs)
     }) |>
       shiny::bindEvent(input$param_upload)
 
+    # the scenario must have some validation applied to it - the next few chunks handle this
+    # we use the status output to be the placeholder for the validation text, this is used in the
+    # main UI to control the visibility of the items in the panel (`output.status === 'TRUE'`)
+    # we observe the validation to make sure that we have TRUE returned, and then hide the output
+    # (we only want to show the status output if there are validation errors)
+    scenario_validation <- shiny::reactive({
+      s <- input$scenario
+
+      shiny::validate(
+        shiny::need(
+          s != "",
+          "Scenario must be completed in order to proceed",
+          "Scenario"
+        ),
+        shiny::need(
+          !stringr::str_detect(s, "[^a-zA-Z0-9\\-]"),
+          "Scenario can only container letters, numbers, and - characters",
+          "Scenario"
+        )
+      )
+
+      TRUE
+    })
+
+    output$status <- shiny::renderText(scenario_validation())
+
     shiny::observe({
-      params$dataset <- input$dataset_input
-      params$scenario <- input$scenario_input
-      params$seed <- input$seed_input
-      params$model_runs <- as.numeric(input$model_runs_input)
-      params$start_year <- input$start_year_input
-      params$end_year <- input$end_year_input
+      x <- tryCatch(scenario_validation(), error = \(...) FALSE)
+      shinyjs::toggle("status", condition = !x)
+    })
+
+    # update the params items with the selections
+    shiny::observe({
+      params$dataset <- input$dataset
+      params$scenario <- input$scenario
+      params$seed <- input$seed
+      params$model_runs <- as.numeric(input$model_runs)
+      params$start_year <- input$start_year
+      params$end_year <- input$end_year
     })
   })
 }
