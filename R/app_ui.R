@@ -18,7 +18,7 @@ app_ui <- function(request) {
         icon = shiny::icon("house")
       ),
       shiny::conditionalPanel(
-        condition = "input.scenario_input !== ''",
+        condition = "output.status === 'TRUE'",
         ns = shiny::NS("home"),
         bs4Dash::menuItem(
           "Health Status Adjustment",
