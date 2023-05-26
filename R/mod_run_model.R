@@ -269,6 +269,13 @@ mod_run_model_server <- function(id, params) {
       jsonlite::toJSON(fixed_params(), pretty = TRUE, auto_unbox = TRUE)
     })
 
+    shiny::observe({
+      p <- !is.null(tryCatch(fixed_params(), error = \(...) NULL))
+
+      shinyjs::toggleState("submit", condition = p && status() == "Waiting")
+      shinyjs::toggleState("download_params", condition = p)
+    })
+
     output$download_params <- shiny::downloadHandler(
       filename = \() paste0(fixed_params()$id, ".json"),
       content = \(file) jsonlite::write_json(fixed_params(), file, pretty = TRUE, auto_unbox = TRUE)
