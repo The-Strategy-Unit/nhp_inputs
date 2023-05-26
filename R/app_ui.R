@@ -20,6 +20,7 @@ app_ui <- function(request) {
       shiny::conditionalPanel(
         condition = "output.status === 'TRUE'",
         ns = shiny::NS("home"),
+        shiny::tags$hr(),
         bs4Dash::menuItem(
           "Health Status Adjustment",
           tabName = "tab_hsa"
@@ -107,6 +108,7 @@ app_ui <- function(request) {
           "Theatres",
           tabName = "tab_theatres"
         ),
+        shiny::tags$hr(),
         bs4Dash::sidebarHeader("Run Model"),
         bs4Dash::menuItem(
           "Run Model",

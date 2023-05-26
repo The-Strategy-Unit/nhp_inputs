@@ -250,6 +250,7 @@ mod_run_model_server <- function(id, params) {
     shiny::observe({
       shiny::req(input$submit)
       shinyjs::disable("submit")
+      shinyjs::hide(selector = "#sidebarItemExpanded")
 
       p <- shiny::req(fixed_params())
       p$create_datetime <- format(Sys.time(), "%Y%m%d_%H%M%S")
@@ -266,6 +267,13 @@ mod_run_model_server <- function(id, params) {
 
     output$params_json <- shiny::renderText({
       jsonlite::toJSON(fixed_params(), pretty = TRUE, auto_unbox = TRUE)
+    })
+
+    shiny::observe({
+      p <- !is.null(tryCatch(fixed_params(), error = \(...) NULL))
+
+      shinyjs::toggleState("submit", condition = p && status() == "Waiting")
+      shinyjs::toggleState("download_params", condition = p)
     })
 
     output$download_params <- shiny::downloadHandler(
