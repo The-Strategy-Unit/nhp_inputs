@@ -250,6 +250,7 @@ mod_run_model_server <- function(id, params) {
     shiny::observe({
       shiny::req(input$submit)
       shinyjs::disable("submit")
+      shinyjs::hide(selector = "#sidebarItemExpanded")
 
       p <- shiny::req(fixed_params())
       p$create_datetime <- format(Sys.time(), "%Y%m%d_%H%M%S")
