@@ -74,6 +74,14 @@ list(
   tar_target(ip_diag_data, get_ip_diag_data(strategies_last_updated, provider_successors_last_updated)),
   tar_target(ip_los_data, get_ip_los_data(strategies_last_updated, provider_successors_last_updated)),
   tar_target(
+    ip_wli_data,
+    get_ip_wli_data(
+      strategies_last_updated,
+      provider_successors_last_updated,
+      rtt_specialties
+    )
+  ),
+  tar_target(
     expat_ip_data,
     get_expat_ip_data(
       rtt_specialties,
@@ -101,6 +109,13 @@ list(
   tar_target(op_data, get_op_data(provider_successors_last_updated)),
   tar_target(op_diag_data, get_op_diag_data(provider_successors_last_updated)),
   tar_target(op_age_sex_data, get_op_age_sex_data(op_data)),
+  tar_target(
+    op_wli_data,
+    get_op_wli_data(
+      provider_successors_last_updated,
+      rtt_specialties
+    )
+  ),
   tar_target(
     expat_op_data,
     get_expat_op_data(
@@ -196,6 +211,11 @@ list(
       covid_adjustment_data_aae
     )
   ),
+  # wli data
+  tar_target(
+    wli_data,
+    get_wli_data(ip_wli_data, op_wli_data)
+  ),
   # save data
   tar_target(
     nhp_current_cohort,
@@ -257,6 +277,7 @@ list(
       provider_data,
       expat_repat_data,
       covid_adjustment,
+      wli_data,
       Sys.getenv("AZ_STORAGE_EP"),
       Sys.getenv("AZ_STORAGE_KEY")
     ),
@@ -269,6 +290,7 @@ list(
       provider_data,
       expat_repat_data,
       covid_adjustment,
+      wli_data,
       Sys.getenv("LOCAL_STORAGE_EP"),
       Sys.getenv("LOCAL_STORAGE_KEY")
     ),

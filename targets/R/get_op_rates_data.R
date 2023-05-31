@@ -36,6 +36,36 @@ get_op_data <- function(provider_successors_last_updated) {
     dplyr::select(-"is_surgical_specialty", -"is_adult")
 }
 
+get_op_wli_data <- function(provider_successors_last_updated, rtt_specialties) {
+  force(provider_successors_last_updated)
+
+  con <- get_con("HESData")
+
+  dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "outpatients")) |>
+    dplyr::filter(.data[["fyear"]] >= 201819) |>
+    dplyr::group_by(.data[["fyear"]], .data[["procode3"]]) |>
+    dplyr::count(.data[["tretspef"]]) |>
+    dplyr::collect() |>
+    janitor::clean_names() |>
+    dplyr::mutate(
+      dplyr::across(
+        "tretspef",
+        ~dplyr::case_when(
+          .x %in% rtt_specialties ~ .x,
+          stringr::str_detect(.x, "^1(?!80|9[02])") ~
+            "Other (Surgical)",
+          stringr::str_detect(.x, "^(1(80|9[02])|[2346]|5(?!60)|83[134])") ~
+            "Other (Medical)",
+          TRUE ~ "Other"
+        )
+      )
+    ) |>
+    dplyr::count(.data[["tretspef"]], wt = .data[["n"]], name = "op") |>
+    dplyr::ungroup() |>
+    dplyr::mutate(
+      dplyr::across("op", ~ifelse(.x < 5, 0, .x))
+    )
+}
 
 get_op_diag_data <- function(provider_successors_last_updated) {
   force(provider_successors_last_updated)
