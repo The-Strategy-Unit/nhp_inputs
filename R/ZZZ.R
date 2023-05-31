@@ -22,3 +22,9 @@ sanitize_input_name <- \(.x) .x |>
 if (FALSE) {
   .data <- NULL
 }
+
+md_file_to_html <- function(...) {
+  file <- shiny::req(app_sys(...))
+
+  shiny::HTML(markdown::mark_html(file, output = FALSE, template = FALSE))
+}
