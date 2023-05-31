@@ -201,13 +201,10 @@ mod_mitigators_server <- function(id,
       files <- dir(app_sys("app", "strategy_text"), ".md") |>
         stringr::str_remove("\\.md$")
 
-      file <- app_sys(
+      md_file_to_html(
         "app", "strategy_text",
         paste0(files[stringr::str_detect(strategy, files)], ".md")
       )
-
-      shiny::req(file.exists(file))
-      shiny::htmlTemplate(text_ = markdown::renderMarkdown(file))
     })
 
     # load data files ----
