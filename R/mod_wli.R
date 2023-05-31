@@ -42,8 +42,21 @@ mod_wli_ui <- function(id) {
       op_input = "Outpatients"
     )
 
-  table |>
-    gt::as_raw_html()
+  shiny::fluidRow(
+    bs4Dash::box(
+      collapsible = FALSE,
+      headerBorder = FALSE,
+      width = 4,
+      md_file_to_html("app", "text", "wli.md")
+    ),
+    bs4Dash::box(
+      collapsible = FALSE,
+      headerBorder = FALSE,
+      width = 8,
+      table |>
+        gt::as_raw_html()
+    )
+  )
 }
 
 #' wli Server Functions
