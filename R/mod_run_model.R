@@ -190,11 +190,40 @@ mod_run_model_fix_params <- function(p, user) {
 }
 
 mod_run_model_submit <- function(params) {
-  api_uri <- Sys.getenv("NHP_RUN_MODEL_API_URI")
+  api_uri <- Sys.getenv("NHP_API_URI")
+  api_key <- Sys.getenv("NHP_API_KEY")
 
-  req <- httr::POST(api_uri, body = params, encode = "json")
+  req <- httr::POST(
+    api_uri,
+    path = c("api", "run_model"),
+    query = list(
+      app_version = Sys.getenv("NHP_APP_VERSION", "dev"),
+      code = api_key
+    ),
+    body = params,
+    encode = "json"
+  )
 
   httr::status_code(req)
+}
+
+mod_run_model_status <- function(id) {
+  api_uri <- Sys.getenv("NHP_API_URI")
+  api_key <- Sys.getenv("NHP_API_KEY")
+
+  req <- httr::GET(
+    api_uri,
+    path = c("api", "model_run_status", id),
+    query = list(
+      code = api_key
+    )
+  )
+
+  if (httr::status_code(req) != 200) {
+    return(NULL)
+  }
+
+  httr::content(req)
 }
 
 #' run_model UI Function
@@ -214,7 +243,7 @@ mod_run_model_ui <- function(id) {
         title = "Run Model",
         width = 12,
         shiny::actionButton(ns("submit"), "Submit Model Run"),
-        shiny::textOutput(ns("status"))
+        shiny::uiOutput(ns("status"))
       ),
       bs4Dash::box(
         title = "Download Params",
@@ -235,7 +264,8 @@ mod_run_model_ui <- function(id) {
 #' @noRd
 mod_run_model_server <- function(id, params) {
   shiny::moduleServer(id, function(input, output, session) {
-    status <- shiny::reactiveVal("Waiting")
+    status <- shiny::reactiveVal()
+    results_url <- shiny::reactiveVal()
 
     fixed_params <- shiny::reactive({
       shiny::req(params$scenario != "")
@@ -245,25 +275,75 @@ mod_run_model_server <- function(id, params) {
         mod_run_model_fix_params(session$user)
     })
 
-    output$status <- shiny::renderText(status())
+    output$status <- shiny::renderUI({
+      s <- status()
+
+      if (s == "Success") {
+        shiny::tags$p(
+          "Completed: ",
+          shiny::tags$a(href = results_url(), "View Outputs")
+        )
+      } else {
+        s
+      }
+    })
 
     shiny::observe({
       shiny::req(input$submit)
       shinyjs::disable("submit")
       shinyjs::hide(selector = "#sidebarItemExpanded")
+      status("Please Wait...")
 
       p <- shiny::req(fixed_params())
-      p$create_datetime <- format(Sys.time(), "%Y%m%d_%H%M%S")
 
-      results <- mod_run_model_submit(p)
+      promises::future_promise({
+        p$create_datetime <- format(Sys.time(), "%Y%m%d_%H%M%S")
 
-      if (results == 200) {
-        status("Success")
-      } else {
-        status(paste("Error:", results))
-      }
+        # generate the url
+        ds <- p$dataset
+        sc <- utils::URLencode(p$scenario)
+        cd <- p$create_datetime
+        uri <- Sys.getenv("NHP_OUTPUTS_URI")
+        results_url(glue::glue("{uri}#/{ds}/{sc}/{cd}"))
+
+        mod_run_model_submit(p)
+      }) %...>% (\(results) {
+        if (results == 200) {
+          status("Submitted Model Run")
+        } else {
+          status(paste("Error:", results))
+        }
+      })()
     }) |>
       shiny::bindEvent(input$submit)
+
+    model_run_status_refresh <- shiny::reactiveTimer(10000)
+    shiny::observe({
+      # ensure the button has been pressed
+      shiny::req(input$submit)
+      # stop once the model run has finished
+      shiny::req(status() %in% c("Modelling running", "Submitted Model Run"))
+
+      p <- shiny::req(fixed_params())
+
+      promises::future_promise({
+        mod_run_model_status(p$id)
+      }) %...>% (\(res) {
+        # will get a 500 error before the container is actually created
+        shiny::req("Error getting status" = !is.null(res))
+
+        if (res$state == "Terminated") {
+          if (res$detail_status == "Completed") {
+            status("Success")
+          } else {
+            status("Error")
+          }
+        } else {
+          status("Modelling running")
+        }
+      })()
+    }) |>
+      shiny::bindEvent(model_run_status_refresh())
 
     output$params_json <- shiny::renderText({
       jsonlite::toJSON(fixed_params(), pretty = TRUE, auto_unbox = TRUE)
@@ -272,7 +352,7 @@ mod_run_model_server <- function(id, params) {
     shiny::observe({
       p <- !is.null(tryCatch(fixed_params(), error = \(...) NULL))
 
-      shinyjs::toggleState("submit", condition = p && status() == "Waiting")
+      shinyjs::toggleState("submit", condition = p && !input$submit)
       shinyjs::toggleState("download_params", condition = p)
     })
 
