@@ -1,8 +1,8 @@
 mod_wli_table <- function() {
   rtt_specialties() |>
     dplyr::mutate(
-      ip_id = paste0("wli_ip_", .data$code),
-      op_id = paste0("wli_op_", .data$code)
+      ip_id = paste0("wli_ip_", sanitize_input_name(.data$code)),
+      op_id = paste0("wli_op_", sanitize_input_name(.data$code))
     )
 }
 #' wli UI Function
@@ -17,10 +17,10 @@ mod_wli_table <- function() {
 mod_wli_ui <- function(id) {
   ns <- shiny::NS(id)
 
-  numeric_input_gt <- function(x, inputid, ...) {
+  numeric_input_gt <- function(id, ...) {
     as.character(
       shiny::numericInput(
-        ns(inputid),
+        ns(id),
         label = NULL,
         value = 0,
         min = 0,
@@ -30,17 +30,39 @@ mod_wli_ui <- function(id) {
       gt::html()
   }
 
+  text_output_gt <- function(id, ...) {
+    as.character(
+      shinyjs::disabled(
+        shiny::textInput(ns(paste0(id, "_output")), NULL, "0")
+      )
+    ) |>
+      gt::html()
+  }
+
   table <- mod_wli_table() |>
     dplyr::mutate(
-      ip_input = purrr::map2(.data$code, .data$ip_id, numeric_input_gt),
-      op_input = purrr::map2(.data$code, .data$op_id, numeric_input_gt)
+      ip_input = purrr::map(.data[["ip_id"]], numeric_input_gt),
+      ip_output = purrr::map(.data[["ip_id"]], text_output_gt),
+      op_input = purrr::map(.data[["op_id"]], numeric_input_gt),
+      op_output = purrr::map(.data[["op_id"]], text_output_gt)
     ) |>
-    dplyr::select("specialty", tidyselect::ends_with("input")) |>
+    dplyr::select(-"code", -"ip_id", -"op_id") |>
     gt::gt(rowname_col = "specialty") |>
+    gt::tab_spanner(
+      label = "Inpatients",
+      columns = tidyselect::starts_with("ip")
+    ) |>
+    gt::tab_spanner(
+      label = "Outpatients",
+      columns = tidyselect::starts_with("op")
+    ) |>
     gt::cols_label(
-      ip_input = "Inpatients",
-      op_input = "Outpatients"
-    )
+      ip_input = "Additional",
+      ip_output = "Reduction",
+      op_input = "Additional",
+      op_output = "Reduction"
+    ) |>
+    gt::tab_options(table.width = gt::pct(100))
 
   shiny::fluidRow(
     bs4Dash::box(
@@ -64,16 +86,6 @@ mod_wli_ui <- function(id) {
 #' @noRd
 mod_wli_server <- function(id, params) {
   shiny::moduleServer(id, function(input, output, session) {
-    init <- shiny::observe({
-      # initialise the params
-      params[["waiting_list_adjustment"]] <- list(
-        ip = list(),
-        op = list()
-      )
-
-      init$destroy()
-    })
-
     table <- mod_wli_table() |>
       tidyr::pivot_longer(
         tidyselect::ends_with("id"),
@@ -84,13 +96,49 @@ mod_wli_server <- function(id, params) {
         dplyr::across("activity_type", ~ stringr::str_sub(.x, 1, 2))
       )
 
+    init <- shiny::observe({
+      # initialise the params
+      params[["waiting_list_adjustment"]] <- list(
+        ip = list(),
+        op = list()
+      )
+
+      init$destroy()
+    })
+
+    baseline_data <- shiny::reactive({
+      dataset <- shiny::req(params$dataset)
+      year <- as.character(shiny::req(params$start_year))
+
+      df <- load_rds_from_adls(glue::glue("{dataset}/waiting_list_adjustment.rds"))[[year]]
+
+      tretspef <- df[["tretspef"]]
+      list("ip", "op") |>
+        purrr::set_names() |>
+        purrr::map(\(.x) purrr::set_names(as.list(df[[.x]]), tretspef))
+    })
+
+    shiny::observe({
+      bd <- shiny::req(baseline_data())
+
+      table |>
+        purrr::pwalk(\(activity_type, id, code, ...) {
+          max_v <- bd[[activity_type]][[code]] %||% 0
+          shiny::updateNumericInput(session, id, max = max_v)
+        })
+    }) |>
+      shiny::bindEvent(baseline_data())
+
     shiny::observe({
       shiny::req(session$userData$data_loaded())
       p <- shiny::req(session$userData$params$waiting_list_adjustment)
 
+      bd <- shiny::req(baseline_data())
+
       table |>
         purrr::pwalk(\(activity_type, id, code, ...) {
           v <- p[[activity_type]][[code]] %||% 0
+
           shiny::updateNumericInput(session, id, value = v)
         })
     }) |>
@@ -101,6 +149,14 @@ mod_wli_server <- function(id, params) {
         \(activity_type, id, code, ...) {
           shiny::observe({
             v <- shiny::req(input[[id]])
+            bd <- shiny::req(baseline_data())[[activity_type]][[code]] %||% 0
+
+            reduction <- v / bd
+
+            reduction_string <- scales::percent(reduction, 0.01)
+
+            shiny::updateTextInput(session, paste0(id, "_output"), value = reduction_string)
+
             params[["waiting_list_adjustment"]][[activity_type]][[code]] <- if (v > 0) v
           })
         }
