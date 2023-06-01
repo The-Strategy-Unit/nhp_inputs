@@ -189,43 +189,6 @@ mod_run_model_fix_params <- function(p, user) {
   p[p_order]
 }
 
-mod_run_model_submit <- function(params) {
-  api_uri <- Sys.getenv("NHP_API_URI")
-  api_key <- Sys.getenv("NHP_API_KEY")
-
-  req <- httr::POST(
-    api_uri,
-    path = c("api", "run_model"),
-    query = list(
-      app_version = Sys.getenv("NHP_APP_VERSION", "dev"),
-      code = api_key
-    ),
-    body = params,
-    encode = "json"
-  )
-
-  httr::status_code(req)
-}
-
-mod_run_model_status <- function(id) {
-  api_uri <- Sys.getenv("NHP_API_URI")
-  api_key <- Sys.getenv("NHP_API_KEY")
-
-  req <- httr::GET(
-    api_uri,
-    path = c("api", "model_run_status", id),
-    query = list(
-      code = api_key
-    )
-  )
-
-  if (httr::status_code(req) != 200) {
-    return(NULL)
-  }
-
-  httr::content(req)
-}
-
 #' run_model UI Function
 #'
 #' @description A shiny Module.
@@ -276,7 +239,7 @@ mod_run_model_server <- function(id, params) {
     })
 
     output$status <- shiny::renderUI({
-      s <- status()
+      s <- shiny::req(status())
 
       if (s == "Success") {
         shiny::tags$p(
@@ -295,25 +258,41 @@ mod_run_model_server <- function(id, params) {
       status("Please Wait...")
 
       p <- shiny::req(fixed_params())
+      p$create_datetime <- format(Sys.time(), "%Y%m%d_%H%M%S")
 
-      promises::future_promise({
-        p$create_datetime <- format(Sys.time(), "%Y%m%d_%H%M%S")
+      # generate the url
+      ds <- p$dataset
+      sc <- utils::URLencode(p$scenario)
+      cd <- p$create_datetime
+      uri <- Sys.getenv("NHP_OUTPUTS_URI")
+      results_url(glue::glue("{uri}#/{ds}/{sc}/{cd}"))
 
-        # generate the url
-        ds <- p$dataset
-        sc <- utils::URLencode(p$scenario)
-        cd <- p$create_datetime
-        uri <- Sys.getenv("NHP_OUTPUTS_URI")
-        results_url(glue::glue("{uri}#/{ds}/{sc}/{cd}"))
+      promises::future_promise(
+        {
+          httr::POST(
+            Sys.getenv("NHP_API_URI"),
+            path = c("api", "run_model"),
+            query = list(
+              app_version = Sys.getenv("NHP_APP_VERSION", "dev"),
+              code = Sys.getenv("NHP_API_KEY")
+            ),
+            body = p,
+            encode = "json"
+          )
+        },
+        packages = character()
+      ) %...>%
+        (\(request) {
+          response <- httr::status_code(request)
+          if (response == 200) {
+            status("Submitted Model Run")
+          } else {
+            status(paste("Error:", response))
+          }
+        })
 
-        mod_run_model_submit(p)
-      }) %...>% (\(results) {
-        if (results == 200) {
-          status("Submitted Model Run")
-        } else {
-          status(paste("Error:", results))
-        }
-      })()
+      # do not return the promise
+      invisible(NULL)
     }) |>
       shiny::bindEvent(input$submit)
 
@@ -321,27 +300,44 @@ mod_run_model_server <- function(id, params) {
     shiny::observe({
       # ensure the button has been pressed
       shiny::req(input$submit)
+
       # stop once the model run has finished
       shiny::req(status() %in% c("Modelling running", "Submitted Model Run"))
 
       p <- shiny::req(fixed_params())
+      id <- p$id
 
-      promises::future_promise({
-        mod_run_model_status(p$id)
-      }) %...>% (\(res) {
-        # will get a 500 error before the container is actually created
-        shiny::req("Error getting status" = !is.null(res))
+      promises::future_promise(
+        {
+          httr::GET(
+            Sys.getenv("NHP_API_URI"),
+            path = c("api", "model_run_status", id),
+            query = list(
+              code = Sys.getenv("NHP_API_KEY")
+            )
+          )
+        },
+        packages = character()
+      ) %...>%
+        (\(request) {
+          # will get a 500 error before the container is actually created
+          shiny::req(httr::status_code(request) == 200)
 
-        if (res$state == "Terminated") {
-          if (res$detail_status == "Completed") {
-            status("Success")
+          res <- httr::content(request)
+
+          if (res$state == "Terminated") {
+            if (res$detail_status == "Completed") {
+              status("Success")
+            } else {
+              status("Error")
+            }
           } else {
-            status("Error")
+            status("Modelling running")
           }
-        } else {
-          status("Modelling running")
-        }
-      })()
+        })
+
+      # do not return the promise
+      invisible(NULL)
     }) |>
       shiny::bindEvent(model_run_status_refresh())
 
