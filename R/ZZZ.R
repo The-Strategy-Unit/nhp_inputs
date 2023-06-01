@@ -1,6 +1,6 @@
 #' @importFrom zeallot %<-%
 #' @importFrom rlang .data .env
-#' @importFrom promises %...>%
+#' @importFrom promises %...>% %...!%
 NULL
 
 utils::globalVariables(c(
