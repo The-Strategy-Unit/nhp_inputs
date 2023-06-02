@@ -31,36 +31,44 @@ mod_expat_repat_ui <- function(id) {
   shiny::tagList(
     shiny::tags$h1("Expatriation/Repatriation"),
     shiny::fluidRow(
-      bs4Dash::box(
-        title = "Selection",
-        width = 2,
-        shiny::selectInput(
-          ns("activity_type"),
-          "Activity Type",
-          c(
-            "Inpatients" = "ip",
-            "Outpatients" = "op",
-            "A&E" = "aae"
-          )
-        ),
-        shinyjs::hidden(
+      col_3(
+        bs4Dash::box(
+          title = "Selection",
+          width = 12,
           shiny::selectInput(
-            ns("ip_subgroup"),
-            "Subgroup",
+            ns("activity_type"),
+            "Activity Type",
             c(
-              "Elective" = "elective",
-              "Non-Elective" = "non-elective",
-              "Maternity" = "maternity"
+              "Inpatients" = "ip",
+              "Outpatients" = "op",
+              "A&E" = "aae"
             )
+          ),
+          shinyjs::hidden(
+            shiny::selectInput(
+              ns("ip_subgroup"),
+              "Subgroup",
+              c(
+                "Elective" = "elective",
+                "Non-Elective" = "non-elective",
+                "Maternity" = "maternity"
+              )
+            )
+          ),
+          shiny::selectInput(
+            ns("type"),
+            NULL,
+            NULL
           )
         ),
-        shiny::selectInput(
-          ns("type"),
-          NULL,
-          NULL
-        )
+        bs4Dash::box(
+          collapsible = FALSE,
+          headerBorder = FALSE,
+          width = 12,
+          md_file_to_html("app", "text", "expat_repat.md")
+        ),
       ),
-      col_10(
+      col_9(
         bs4Dash::box(
           title = "Expatriation Model Parameter",
           width = 12,
