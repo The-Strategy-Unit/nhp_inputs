@@ -26,66 +26,85 @@ age_bands <- function() {
 mod_nda_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
-    shiny::tags$style(
-      shiny::HTML("
-        .label-left .form-group {
-          display: flex;              /* Use flexbox for positioning children */
-          flex-direction: row;        /* Place children on a row (default) */
-          width: 100%;                /* Set width for container */
-          max-width: 400px;
-        }
+    shiny::tags$h1("Non-demographic Adjustment"),
+    shiny::fluidRow(
+      col_3(
+        bs4Dash::box(
+          collapsible = FALSE,
+          headerBorder = FALSE,
+          title = "Activity Type",
+          width = 12,
+          shiny::selectInput(
+            ns("activity_type"),
+            label = NULL,
+            choices = c(
+              "Non-Elective",
+              "Elective",
+              "Maternity"
+            ) |>
+              purrr::set_names() |>
+              purrr::map_chr(stringr::str_to_lower)
+          )
+        ),
+        bs4Dash::box(
+          collapsible = FALSE,
+          headerBorder = FALSE,
+          width = 12,
+          md_file_to_html("app", "text", "nda.md")
+        )
+      ),
+      bs4Dash::box(
+        collapsible = FALSE,
+        headerBorder = FALSE,
+        title = "Age Adjustment",
+        width = 9,
+        shiny::tags$style(
+          shiny::HTML("
+            .label-left .form-group {
+              display: flex;              /* Use flexbox for positioning children */
+              flex-direction: row;        /* Place children on a row (default) */
+              width: 100%;                /* Set width for container */
+              max-width: 400px;
+            }
 
-        .label-left label {
-          margin-right: 2rem;         /* Add spacing between label and slider */
-          align-self: center;         /* Vertical align in center of row */
-          text-align: right;
-          flex-basis: 100px;          /* Target width for label */
-        }
+            .label-left label {
+              margin-right: 2rem;         /* Add spacing between label and slider */
+              align-self: center;         /* Vertical align in center of row */
+              text-align: right;
+              flex-basis: 100px;          /* Target width for label */
+            }
 
-        .label-left .irs {
-          flex-basis: 300px;          /* Target width for slider */
-        }
-      ")
-    ),
-    shiny::selectInput(
-      ns("activity_type"),
-      label = "Activity Type",
-      choices = c(
-        "Non-Elective",
-        "Elective",
-        "Maternity"
-      ) |>
-        purrr::set_names() |>
-        purrr::map_chr(stringr::str_to_lower)
-    ),
-    bs4Dash::box(
-      title = "Age Adjustment",
-      width = 6,
-      purrr::imap(
-        age_bands(),
-        \(.x, .i) {
-          shiny::fluidRow(
-            col_9(
-              shiny::tags$div(
-                class = "label-left",
-                shinyjs::disabled(
-                  shiny::sliderInput(
-                    inputId = ns(.i),
-                    label = .x,
-                    min = 0,
-                    max = 200,
-                    post = "%",
-                    value = c(100, 120)
+            .label-left .irs {
+              flex-basis: 300px;          /* Target width for slider */
+            }
+          ")
+        ),
+        purrr::imap(
+          age_bands(),
+          \(.x, .i) {
+            shiny::fluidRow(
+              col_9(
+                shiny::tags$div(
+                  class = "label-left",
+                  shinyjs::disabled(
+                    shiny::sliderInput(
+                      inputId = ns(.i),
+                      label = .x,
+                      min = 0,
+                      max = 200,
+                      post = "%",
+                      value = c(100, 120)
+                    )
                   )
                 )
-              )
-            ),
-            col_3(shiny::checkboxInput(
-              ns(glue::glue("include_{.i}")),
-              "Include?"
-            ))
-          )
-        }
+              ),
+              col_3(shiny::checkboxInput(
+                ns(glue::glue("include_{.i}")),
+                "Include?"
+              ))
+            )
+          }
+        )
       )
     )
   )
