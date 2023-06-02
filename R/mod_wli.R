@@ -18,24 +18,15 @@ mod_wli_ui <- function(id) {
   ns <- shiny::NS(id)
 
   numeric_input_gt <- function(id, ...) {
-    as.character(
-      shiny::numericInput(
-        ns(id),
-        label = NULL,
-        value = 0,
-        min = 0,
-        ...
-      )
-    ) |>
+    shiny::numericInput(ns(id), label = NULL, value = 0, ...) |>
+      as.character() |>
       gt::html()
   }
 
   text_output_gt <- function(id, ...) {
-    as.character(
-      shinyjs::disabled(
-        shiny::textInput(ns(paste0(id, "_output")), NULL, "0")
-      )
-    ) |>
+    shiny::textInput(ns(paste0(id, "_output")), NULL, "0") |>
+      shinyjs::disabled() |>
+      as.character() |>
       gt::html()
   }
 
@@ -57,26 +48,29 @@ mod_wli_ui <- function(id) {
       columns = tidyselect::starts_with("op")
     ) |>
     gt::cols_label(
-      ip_input = "Additional",
-      ip_output = "Reduction",
-      op_input = "Additional",
-      op_output = "Reduction"
+      ip_input = "Value",
+      ip_output = "Change %",
+      op_input = "Value",
+      op_output = "Change %"
     ) |>
     gt::tab_options(table.width = gt::pct(100))
 
-  shiny::fluidRow(
-    bs4Dash::box(
-      collapsible = FALSE,
-      headerBorder = FALSE,
-      width = 4,
-      md_file_to_html("app", "text", "wli.md")
-    ),
-    bs4Dash::box(
-      collapsible = FALSE,
-      headerBorder = FALSE,
-      width = 8,
-      table |>
-        gt::as_raw_html()
+  shiny::tagList(
+    shiny::tags$h1("Waiting List Imbalances"),
+    shiny::fluidRow(
+      bs4Dash::box(
+        collapsible = FALSE,
+        headerBorder = FALSE,
+        width = 3,
+        md_file_to_html("app", "text", "wli.md")
+      ),
+      bs4Dash::box(
+        collapsible = FALSE,
+        headerBorder = FALSE,
+        width = 9,
+        table |>
+          gt::as_raw_html()
+      )
     )
   )
 }
@@ -123,8 +117,10 @@ mod_wli_server <- function(id, params) {
 
       table |>
         purrr::pwalk(\(activity_type, id, code, ...) {
-          max_v <- bd[[activity_type]][[code]] %||% 0
-          shiny::updateNumericInput(session, id, max = max_v)
+          v <- bd[[activity_type]][[code]] %||% 0
+          if (v == 0) {
+            shinyjs::disable(id)
+          }
         })
     }) |>
       shiny::bindEvent(baseline_data())
@@ -132,8 +128,6 @@ mod_wli_server <- function(id, params) {
     shiny::observe({
       shiny::req(session$userData$data_loaded())
       p <- shiny::req(session$userData$params$waiting_list_adjustment)
-
-      bd <- shiny::req(baseline_data())
 
       table |>
         purrr::pwalk(\(activity_type, id, code, ...) {
@@ -151,11 +145,11 @@ mod_wli_server <- function(id, params) {
             v <- shiny::req(input[[id]])
             bd <- shiny::req(baseline_data())[[activity_type]][[code]] %||% 0
 
-            reduction <- v / bd
+            change <- v / bd
 
-            reduction_string <- scales::percent(reduction, 0.01)
+            change_string <- scales::percent(change, 0.01)
 
-            shiny::updateTextInput(session, paste0(id, "_output"), value = reduction_string)
+            shiny::updateTextInput(session, paste0(id, "_output"), value = change_string)
 
             params[["waiting_list_adjustment"]][[activity_type]][[code]] <- if (v > 0) v
           })
