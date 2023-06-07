@@ -54,57 +54,70 @@ mod_baseline_adjustment_ui <- function(id) {
 
   shiny::tagList(
     shiny::tags$h1("Baseline Adjustment"),
-    bs4Dash::tabsetPanel(
-      shiny::tabPanel(
-        "Inpatients",
+    shiny::fluidRow(
+      bs4Dash::box(
+        collapsible = FALSE,
+        headerBorder = FALSE,
+        width = 3,
+        md_file_to_html("app", "text", "baseline_adjustment.md")
+      ),
+      bs4Dash::box(
+        title = "Parameters",
+        width = 9,
+        collapsible = FALSE,
         bs4Dash::tabsetPanel(
           shiny::tabPanel(
-            "Elective",
-            create_table("ip", "elective")
-          ),
-          shiny::tabPanel(
-            "Non-Elective",
-            create_table("ip", "non-elective")
-          ),
-          shiny::tabPanel(
-            "Maternity",
-            create_table("ip", "maternity", specs |> dplyr::filter(.data[["code"]] == "Other (Medical)"))
-          )
-        )
-      ),
-      shiny::tabPanel(
-        "Outpatients",
-        bs4Dash::tabsetPanel(
-          shiny::tabPanel(
-            "First Attendance",
-            create_table("op", "first")
-          ),
-          shiny::tabPanel(
-            "Follow-up Attendance",
-            create_table("op", "followup")
-          ),
-          shiny::tabPanel(
-            "Procedure",
-            create_table("op", "procedure")
-          )
-        )
-      ),
-      shiny::tabPanel(
-        "A&E",
-        create_table(
-          "aae",
-          "-",
-          tibble::tibble(code = c("ambulance", "walk-in")) |>
-            dplyr::mutate(
-              dplyr::across(
-                "code",
-                .fns = c(
-                  specialty = snakecase::to_title_case,
-                  sanitized_code = sanitize_input_name
-                ),
-                .names = "{.fn}"
+            "Inpatients",
+            bs4Dash::tabsetPanel(
+              shiny::tabPanel(
+                "Elective",
+                create_table("ip", "elective")
+              ),
+              shiny::tabPanel(
+                "Non-Elective",
+                create_table("ip", "non-elective")
+              ),
+              shiny::tabPanel(
+                "Maternity",
+                create_table("ip", "maternity", specs |> dplyr::filter(.data[["code"]] == "Other (Medical)"))
               )
             )
+          ),
+          shiny::tabPanel(
+            "Outpatients",
+            bs4Dash::tabsetPanel(
+              shiny::tabPanel(
+                "First Attendance",
+                create_table("op", "first")
+              ),
+              shiny::tabPanel(
+                "Follow-up Attendance",
+                create_table("op", "followup")
+              ),
+              shiny::tabPanel(
+                "Procedure",
+                create_table("op", "procedure")
+              )
+            )
+          ),
+          shiny::tabPanel(
+            "A&E",
+            create_table(
+              "aae",
+              "-",
+              tibble::tibble(code = c("ambulance", "walk-in")) |>
+                dplyr::mutate(
+                  dplyr::across(
+                    "code",
+                    .fns = c(
+                      specialty = snakecase::to_title_case,
+                      sanitized_code = sanitize_input_name
+                    ),
+                    .names = "{.fn}"
+                  )
+                )
+            )
+          )
         )
       )
     )
