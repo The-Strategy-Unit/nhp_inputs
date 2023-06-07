@@ -54,12 +54,7 @@ mod_run_model_server <- function(id, params) {
 
       params |>
         shiny::reactiveValuesToList() |>
-        mod_run_model_fix_params(session$user) %...!%
-        # handle errors by closing the shiny session
-        (\(e) {
-          warning(e)
-          session$close()
-        })
+        mod_run_model_fix_params(session$user)
     })
 
     # output the status of the model run after submit is pressed
@@ -107,6 +102,12 @@ mod_run_model_server <- function(id, params) {
     # display the params as json
     output$params_json <- shiny::renderText({
       jsonlite::toJSON(fixed_params(), pretty = TRUE, auto_unbox = TRUE)
+    })
+
+    shiny::observe({
+      p <- !is.null(tryCatch(fixed_params(), error = \(...) NULL))
+
+      cat("input$submit: ", input$submit, ", condition: ", p, "\n", sep = "")
     })
 
     # observe the params - enable the submit / download button only when the
