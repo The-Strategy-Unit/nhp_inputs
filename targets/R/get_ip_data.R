@@ -83,3 +83,37 @@ get_ip_los_data <- function(strategies_last_updated, provider_successors_last_up
     dplyr::collect() |>
     janitor::clean_names()
 }
+
+get_ip_wli_data <- function(strategies_last_updated, provider_successors_last_updated, rtt_specialties) {
+  force(strategies_last_updated)
+  force(provider_successors_last_updated)
+
+  con <- get_con("HESData")
+
+  tbl_inpatients <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients"))
+
+  tbl_inpatients |>
+    dplyr::filter(.data[["ADMIMETH"]] == "11", .data[["FYEAR"]] >= 201819) |>
+    dplyr::group_by(.data[["FYEAR"]], .data[["PROCODE3"]]) |>
+    dplyr::count(.data[["TRETSPEF"]]) |>
+    dplyr::collect() |>
+    janitor::clean_names() |>
+    dplyr::mutate(
+      dplyr::across(
+        "tretspef",
+        ~dplyr::case_when(
+          .x %in% rtt_specialties ~ .x,
+          stringr::str_detect(.x, "^1(?!80|9[02])") ~
+            "Other (Surgical)",
+          stringr::str_detect(.x, "^(1(80|9[02])|[2346]|5(?!60)|83[134])") ~
+            "Other (Medical)",
+          TRUE ~ "Other"
+        )
+      )
+    ) |>
+    dplyr::count(.data[["tretspef"]], wt = .data[["n"]], name = "ip") |>
+    dplyr::ungroup() |>
+    dplyr::mutate(
+      dplyr::across("ip", ~ifelse(.x < 5, 0, .x))
+    )
+}

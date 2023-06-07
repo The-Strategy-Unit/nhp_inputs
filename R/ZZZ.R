@@ -1,6 +1,6 @@
 #' @importFrom zeallot %<-%
 #' @importFrom rlang .data .env
-#' @importFrom promises %...>%
+#' @importFrom promises %...>% %...!%
 NULL
 
 utils::globalVariables(c(
@@ -21,4 +21,10 @@ sanitize_input_name <- \(.x) .x |>
 # suppress vs code / languageserver "no visible binding" warnings
 if (FALSE) {
   .data <- NULL
+}
+
+md_file_to_html <- function(...) {
+  file <- shiny::req(app_sys(...))
+
+  shiny::HTML(markdown::mark_html(file, output = FALSE, template = FALSE))
 }

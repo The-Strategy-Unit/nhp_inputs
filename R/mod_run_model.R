@@ -1,231 +1,3 @@
-mod_run_model_fix_params <- function(p, user) {
-  # combine efficiences/activity avoidance items
-  p[["efficiencies"]] <- list(
-    ip = c(
-      p[["efficiencies|mean_los"]]$ip,
-      p[["efficiencies|aec"]]$ip,
-      p[["efficiencies|preop"]]$ip,
-      p[["efficiencies|bads"]]$ip
-    ),
-    op = c(
-      p[["efficiencies|ctt"]]$op
-    )
-  )
-
-  p[["activity_avoidance"]]$op <- c(
-    p[["activity_avoidance|c2c"]]$op,
-    p[["activity_avoidance|f2f"]]$op
-  )
-
-  p[["activity_avoidance"]]$aae <- c(
-    p[["activity_avoidance|fa"]]$aae,
-    p[["activity_avoidance|lbs"]]$aae,
-    p[["activity_avoidance|lcd"]]$aae
-  )
-
-  # remove the items
-  p[["efficiencies|mean_los"]] <- NULL
-  p[["efficiencies|aec"]] <- NULL
-  p[["efficiencies|preop"]] <- NULL
-  p[["efficiencies|bads"]] <- NULL
-  p[["efficiencies|ctt"]] <- NULL
-  p[["activity_avoidance|c2c"]] <- NULL
-  p[["activity_avoidance|f2f"]] <- NULL
-  p[["activity_avoidance|fa"]] <- NULL
-  p[["activity_avoidance|lbs"]] <- NULL
-  p[["activity_avoidance|lcd"]] <- NULL
-
-  # some of the items in our params will be lists of length 0.
-  # jsonlite will serialize these as empty arrays
-  #   toJSON(list()) == "[]"
-  # we need to have these serialize as empty objects, so we need to replace
-  # these with NULL's as
-  #   toJSON(NULL) == "{}"
-  recursive_nullify <- function(.x) {
-    for (i in names(.x)) {
-      if (length(.x[[i]]) == 0) {
-        .x[i] <- list(NULL)
-      } else {
-        .x[[i]] <- recursive_nullify(.x[[i]])
-      }
-    }
-    .x
-  }
-  p <- recursive_nullify(p)
-
-  # for now, hard coding in life expectancy
-  p$life_expectancy <- list(
-    "f" = c(
-      1.8,
-      1.8,
-      1.8,
-      1.8,
-      1.8,
-      1.7,
-      1.8,
-      1.8,
-      1.7,
-      1.7,
-      1.7,
-      1.7,
-      1.6,
-      1.6,
-      1.5,
-      1.5,
-      1.5,
-      1.4,
-      1.4,
-      1.3,
-      1.3,
-      1.2,
-      1.1,
-      1.1,
-      1.1,
-      1,
-      0.9,
-      0.9,
-      0.8,
-      0.8,
-      0.8,
-      0.7,
-      0.6,
-      0.6,
-      0.5,
-      0.1545
-    ),
-    "m" = c(
-      2.1,
-      2.1,
-      2.1,
-      2,
-      1.9,
-      2,
-      1.9,
-      1.9,
-      1.9,
-      1.9,
-      1.8,
-      1.8,
-      1.7,
-      1.7,
-      1.6,
-      1.6,
-      1.6,
-      1.5,
-      1.5,
-      1.4,
-      1.4,
-      1.3,
-      1.3,
-      1.3,
-      1.2,
-      1.1,
-      1,
-      0.9,
-      0.9,
-      0.8,
-      0.8,
-      0.8,
-      0.7,
-      0.6,
-      0.6,
-      0.2364
-    ),
-    "min_age" = 55,
-    "max_age" = 90
-  )
-
-  # need to convert financial year to calendar year
-  p$start_year <- as.integer(stringr::str_sub(p$start_year, 1, 4))
-
-  # generate an id based on the dataset, scenario, and a hash of the params
-  # make sure to add the user after creating the hash
-  # the id must be at most 63 characters long, and must match the regex:
-  #   '[a-z0-9]([-a-z0-9]*[a-z0-9])?'
-  scenario_sanitized <- p$scenario |>
-    stringr::str_to_lower() |>
-    stringr::str_replace_all("[^a-z0-9]+", "-")
-  hash <- digest::digest(p, "crc32", serialize = TRUE)
-
-  p$id <- glue::glue("{p$dataset}-{scenario_sanitized}") |>
-    stringr::str_sub(1, 63 - stringr::str_length(hash)) |>
-    stringr::str_to_lower() |>
-    paste0("-", hash)
-
-  p$user <- user
-  # reorder the params
-  p_order <- c(
-    "id",
-    "user",
-    "dataset",
-    "scenario",
-    "seed",
-    "model_runs",
-    "start_year",
-    "end_year",
-    "app_version",
-    "create_datetime",
-    "demographic_factors",
-    "health_status_adjustment",
-    "life_expectancy",
-    "covid_adjustment",
-    "expat",
-    "repat_local",
-    "repat_nonlocal",
-    "baseline_adjustment",
-    "waiting_list_adjustment",
-    "non-demographic_adjustment",
-    "activity_avoidance",
-    "efficiencies",
-    "bed_occupancy",
-    "theatres"
-  )
-
-  # make sure to only select items that exist in the params
-  p_order <- p_order[p_order %in% names(p)]
-  # add in any items in the params that aren't in the order at the end
-  p_order <- c(p_order, setdiff(names(p), p_order))
-
-  p[p_order]
-}
-
-mod_run_model_submit <- function(params) {
-  api_uri <- Sys.getenv("NHP_API_URI")
-  api_key <- Sys.getenv("NHP_API_KEY")
-
-  req <- httr::POST(
-    api_uri,
-    path = c("api", "run_model"),
-    query = list(
-      app_version = Sys.getenv("NHP_APP_VERSION", "dev"),
-      code = api_key
-    ),
-    body = params,
-    encode = "json"
-  )
-
-  httr::status_code(req)
-}
-
-mod_run_model_status <- function(id) {
-  api_uri <- Sys.getenv("NHP_API_URI")
-  api_key <- Sys.getenv("NHP_API_KEY")
-
-  req <- httr::GET(
-    api_uri,
-    path = c("api", "model_run_status", id),
-    query = list(
-      code = api_key
-    )
-  )
-
-  if (httr::status_code(req) != 200) {
-    return(NULL)
-  }
-
-  httr::content(req)
-}
-
 #' run_model UI Function
 #'
 #' @description A shiny Module.
@@ -264,9 +36,19 @@ mod_run_model_ui <- function(id) {
 #' @noRd
 mod_run_model_server <- function(id, params) {
   shiny::moduleServer(id, function(input, output, session) {
+    # we are using promises to run REST queries to submit a new model run
+    # and to check on the progress of those model runs
+    # because of limitations with shiny (https://stackoverflow.com/a/69451122)
+    # we need to utilise some side effect to notify the user of the status of
+    # the model runs
     status <- shiny::reactiveVal()
+    # when a model run is run we insert the current time into create_datetime,
+    # but this is kept within the job submission. this reactiveVal is used to
+    # store the url of the results when they are complete
     results_url <- shiny::reactiveVal()
 
+    # the params as they are created in the app are not quite ready for use by
+    # the model, this reactive handles this by "fixing" the params
     fixed_params <- shiny::reactive({
       shiny::req(params$scenario != "")
 
@@ -275,8 +57,9 @@ mod_run_model_server <- function(id, params) {
         mod_run_model_fix_params(session$user)
     })
 
+    # output the status of the model run after submit is pressed
     output$status <- shiny::renderUI({
-      s <- status()
+      s <- shiny::req(status())
 
       if (s == "Success") {
         shiny::tags$p(
@@ -288,63 +71,35 @@ mod_run_model_server <- function(id, params) {
       }
     })
 
+    # observe the submit button being pressed
     shiny::observe({
       shiny::req(input$submit)
+      # immediately disable the submit button and the menu for the rest of the app
       shinyjs::disable("submit")
       shinyjs::hide(selector = "#sidebarItemExpanded")
       status("Please Wait...")
 
+      # get the params and insert the current time for when the model run was
+      # submitted
       p <- shiny::req(fixed_params())
+      p$create_datetime <- format(Sys.time(), "%Y%m%d_%H%M%S")
 
-      promises::future_promise({
-        p$create_datetime <- format(Sys.time(), "%Y%m%d_%H%M%S")
+      # generate the results url
+      ds <- p$dataset
+      sc <- utils::URLencode(p$scenario)
+      cd <- p$create_datetime
+      uri <- Sys.getenv("NHP_OUTPUTS_URI")
+      results_url(glue::glue("{uri}#/{ds}/{sc}/{cd}"))
 
-        # generate the url
-        ds <- p$dataset
-        sc <- utils::URLencode(p$scenario)
-        cd <- p$create_datetime
-        uri <- Sys.getenv("NHP_OUTPUTS_URI")
-        results_url(glue::glue("{uri}#/{ds}/{sc}/{cd}"))
+      # submit the model run
+      mod_run_model_submit(params, status)
 
-        mod_run_model_submit(p)
-      }) %...>% (\(results) {
-        if (results == 200) {
-          status("Submitted Model Run")
-        } else {
-          status(paste("Error:", results))
-        }
-      })()
+      # do not return the promise
+      invisible(NULL)
     }) |>
       shiny::bindEvent(input$submit)
 
-    model_run_status_refresh <- shiny::reactiveTimer(10000)
-    shiny::observe({
-      # ensure the button has been pressed
-      shiny::req(input$submit)
-      # stop once the model run has finished
-      shiny::req(status() %in% c("Modelling running", "Submitted Model Run"))
-
-      p <- shiny::req(fixed_params())
-
-      promises::future_promise({
-        mod_run_model_status(p$id)
-      }) %...>% (\(res) {
-        # will get a 500 error before the container is actually created
-        shiny::req("Error getting status" = !is.null(res))
-
-        if (res$state == "Terminated") {
-          if (res$detail_status == "Completed") {
-            status("Success")
-          } else {
-            status("Error")
-          }
-        } else {
-          status("Modelling running")
-        }
-      })()
-    }) |>
-      shiny::bindEvent(model_run_status_refresh())
-
+    # display the params as json
     output$params_json <- shiny::renderText({
       jsonlite::toJSON(fixed_params(), pretty = TRUE, auto_unbox = TRUE)
     })
@@ -352,10 +107,22 @@ mod_run_model_server <- function(id, params) {
     shiny::observe({
       p <- !is.null(tryCatch(fixed_params(), error = \(...) NULL))
 
+      cat("input$submit: ", input$submit, ", condition: ", p, "\n", sep = "")
+    })
+
+    # observe the params - enable the submit / download button only when the
+    # params are valid
+    shiny::observe({
+      p <- !is.null(tryCatch(fixed_params(), error = \(...) NULL))
+
       shinyjs::toggleState("submit", condition = p && !input$submit)
       shinyjs::toggleState("download_params", condition = p)
     })
 
+    # download the params when the download button is pressed
+    # shiny downloadHandlers do not handle errors well, returning a .html file
+    # instead of the intended content. we handle this by disabling the button
+    # until the params are ready
     output$download_params <- shiny::downloadHandler(
       filename = \() paste0(fixed_params()$id, ".json"),
       content = \(file) jsonlite::write_json(fixed_params(), file, pretty = TRUE, auto_unbox = TRUE)

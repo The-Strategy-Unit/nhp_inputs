@@ -20,22 +20,23 @@ app_ui <- function(request) {
       shiny::conditionalPanel(
         condition = "output.status === 'TRUE'",
         ns = shiny::NS("home"),
+        #
         shiny::tags$hr(),
-        bs4Dash::menuItem(
-          "Health Status Adjustment",
-          tabName = "tab_hsa"
-        ),
+        bs4Dash::sidebarHeader("Population Changes"),
         bs4Dash::menuItem(
           "Population Growth",
           tabName = "tab_population_growth"
         ),
         bs4Dash::menuItem(
+          "Health Status Adjustment",
+          tabName = "tab_hsa"
+        ),
+        #
+        shiny::tags$hr(),
+        bs4Dash::sidebarHeader("Demand-supply Imbalances"),
+        bs4Dash::menuItem(
           "Baseline Adjustment",
           tabName = "tab_baseline_adjustment"
-        ),
-        bs4Dash::menuItem(
-          "Non-demographic Adjustment",
-          tabName = "tab_nda"
         ),
         bs4Dash::menuItem(
           "Waiting List Imbalances",
@@ -45,6 +46,15 @@ app_ui <- function(request) {
           "Expat/Repat",
           tabName = "tab_er"
         ),
+        #
+        shiny::tags$hr(),
+        bs4Dash::sidebarHeader("Non-demographic Changes"),
+        bs4Dash::menuItem(
+          "Non-demographic Adjustment",
+          tabName = "tab_nda"
+        ),
+        #
+        shiny::tags$hr(),
         bs4Dash::sidebarHeader("Activity Mitigators"),
         bs4Dash::menuItem(
           "Inpatients",
@@ -99,6 +109,8 @@ app_ui <- function(request) {
             tabName = "aae_low_cost_discharged"
           )
         ),
+        #
+        shiny::tags$hr(),
         bs4Dash::sidebarHeader("Capacity Conversion"),
         bs4Dash::menuItem(
           "Bed Occupancy",
@@ -108,6 +120,7 @@ app_ui <- function(request) {
           "Theatres",
           tabName = "tab_theatres"
         ),
+        #
         shiny::tags$hr(),
         bs4Dash::sidebarHeader("Run Model"),
         bs4Dash::menuItem(

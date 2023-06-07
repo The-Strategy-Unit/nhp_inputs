@@ -19,6 +19,8 @@ run_app <- function(onStart = NULL, # nolint
     create_data_cache()
   }
 
+  future::plan(future::multisession)
+
   golem::with_golem_options(
     app = shiny::shinyApp(
       ui = app_ui,

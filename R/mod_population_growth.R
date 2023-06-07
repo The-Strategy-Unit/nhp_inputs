@@ -22,8 +22,22 @@ mod_population_growth_ui <- function(id) {
   )
 
   shiny::tagList(
-    shinyjs::disabled(slider(projections[[1]], names(projections)[[1]], 100)),
-    purrr::imap(projections[-1], slider)
+    shiny::tags$h1("Population Growth"),
+    shiny::fluidRow(
+      bs4Dash::box(
+        collapsible = FALSE,
+        headerBorder = FALSE,
+        width = 3,
+        md_file_to_html("app", "text", "population_growth.md")
+      ),
+      bs4Dash::box(
+        collapsible = FALSE,
+        headerBorder = FALSE,
+        width = 9,
+        shinyjs::disabled(slider(projections[[1]], names(projections)[[1]], 100)),
+        purrr::imap(projections[-1], slider)
+      )
+    )
   )
 }
 

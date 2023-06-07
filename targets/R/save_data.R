@@ -67,10 +67,34 @@ get_provider_data <- function(age_sex_data, diagnoses_data, rates_data) {
     tibble::deframe()
 }
 
+get_wli_data <- function(ip_wli_data, op_wli_data) {
+  dplyr::full_join(
+    ip_wli_data,
+    op_wli_data,
+    by = dplyr::join_by("fyear", "procode3", "tretspef")
+  ) |>
+    dplyr::mutate(
+      dplyr::across(
+        c("ip", "op"),
+        \(.x) tidyr::replace_na(.x, 0)
+      )
+    ) |>
+    dplyr::group_nest(.data[["procode3"]], .data[["fyear"]]) |>
+    dplyr::group_nest(.data[["procode3"]]) |>
+    dplyr::mutate(
+      dplyr::across(
+        "data",
+        \(.x) purrr::map(.x, purrr::compose(as.list, tibble::deframe))
+      )
+    ) |>
+    tibble::deframe()
+}
+
 upload_data_to_azure <- function(provider,
                                  provider_data,
                                  expat_repat_data,
                                  covid_adjustment,
+                                 wli_data,
                                  azure_storage_endpoint,
                                  azure_storage_key) {
   ep <- AzureStor::blob_endpoint(
@@ -90,7 +114,8 @@ upload_data_to_azure <- function(provider,
       upload_fn(provider_data[[provider]]$data, "data"),
       upload_fn(provider_data[[provider]]$available_strategies, "available_strategies"),
       upload_fn(expat_repat_data[[provider]], "expat_repat"),
-      upload_fn(covid_adjustment[[provider]], "covid_adjustment")
+      upload_fn(covid_adjustment[[provider]], "covid_adjustment"),
+      upload_fn(wli_data[[provider]], "waiting_list_adjustment")
     ),
     time = Sys.time()
   )
