@@ -55,7 +55,6 @@ app_server <- function(input, output, session) {
       mod_expat_repat_server("expat_repat", params, providers())
 
       mod_population_growth_server("population_growth", params)
-      mod_hsa_server("hsa", params)
 
       mod_baseline_adjustment_server("baseline_adjustment", params)
       mod_nda_server("nda", params)
