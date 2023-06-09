@@ -75,10 +75,18 @@ mod_theatres_ui_table <- function(ns = identity) {
 mod_theatres_ui <- function(id) {
   ns <- shiny::NS(id)
 
-  bs4Dash::box(
-    title = "Theatres Utilisation",
-    width = 12,
-    gt::as_raw_html(mod_theatres_ui_table(ns), FALSE)
+  shiny::fluidRow(
+    bs4Dash::box(
+      collapsible = FALSE,
+      headerBorder = FALSE,
+      width = 4,
+      md_file_to_html("app", "text", "theatres.md")
+    ),
+    bs4Dash::box(
+      title = "Theatres Utilisation",
+      width = 8,
+      gt::as_raw_html(mod_theatres_ui_table(ns), FALSE)
+    )
   )
 }
 

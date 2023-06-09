@@ -31,7 +31,7 @@ mod_expat_repat_ui <- function(id) {
   shiny::tagList(
     shiny::tags$h1("Expatriation/Repatriation"),
     shiny::fluidRow(
-      col_3(
+      col_4(
         bs4Dash::box(
           title = "Selection",
           width = 12,
@@ -68,7 +68,7 @@ mod_expat_repat_ui <- function(id) {
           md_file_to_html("app", "text", "expat_repat.md")
         ),
       ),
-      col_9(
+      col_8(
         bs4Dash::box(
           title = "Expatriation Model Parameter",
           width = 12,

@@ -13,8 +13,7 @@ mod_mitigators_ui <- function(id, title) {
     shiny::h1("Activity Mitigators"),
     shiny::h2(title),
     shiny::fluidRow(
-      shiny::column(
-        width = 3,
+      col_4(
         shiny::fluidRow(
           bs4Dash::box(
             title = "Activity Mitigator",
@@ -39,8 +38,7 @@ mod_mitigators_ui <- function(id, title) {
           )
         )
       ),
-      shiny::column(
-        width = 9,
+      col_8(
         shiny::fluidRow(
           bs4Dash::box(
             title = "Trend",

@@ -61,13 +61,13 @@ mod_wli_ui <- function(id) {
       bs4Dash::box(
         collapsible = FALSE,
         headerBorder = FALSE,
-        width = 3,
+        width = 4,
         md_file_to_html("app", "text", "wli.md")
       ),
       bs4Dash::box(
         collapsible = FALSE,
         headerBorder = FALSE,
-        width = 9,
+        width = 8,
         table |>
           gt::as_raw_html()
       )

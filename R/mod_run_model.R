@@ -10,21 +10,30 @@
 mod_run_model_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::fluidRow(
-    col_6(
+    col_4(
       bs4Dash::box(
         title = "Run Model",
         width = 12,
-        shiny::actionButton(ns("submit"), "Submit Model Run"),
+        shiny::fluidRow(
+          col_6(
+            shiny::actionButton(ns("submit"), "Submit Model Run"),
+          ),
+          col_6(
+            shiny::downloadButton(ns("download_params"), "Download params")
+          )
+        ),
         shiny::uiOutput(ns("status"))
       ),
       bs4Dash::box(
-        title = "Download Params",
+        collapsible = FALSE,
+        headerBorder = FALSE,
         width = 12,
-        shiny::downloadButton(ns("download_params"), "Download params")
+        md_file_to_html("app", "text", "run_model.md")
       )
     ),
     bs4Dash::box(
       title = "View Params",
+      width = 8,
       collapsed = TRUE,
       shiny::verbatimTextOutput(ns("params_json"))
     )

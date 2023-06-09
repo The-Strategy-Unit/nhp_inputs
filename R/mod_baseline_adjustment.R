@@ -58,12 +58,12 @@ mod_baseline_adjustment_ui <- function(id) {
       bs4Dash::box(
         collapsible = FALSE,
         headerBorder = FALSE,
-        width = 3,
+        width = 4,
         md_file_to_html("app", "text", "baseline_adjustment.md")
       ),
       bs4Dash::box(
         title = "Parameters",
-        width = 9,
+        width = 8,
         collapsible = FALSE,
         bs4Dash::tabsetPanel(
           shiny::tabPanel(

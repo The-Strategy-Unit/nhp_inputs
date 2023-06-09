@@ -28,7 +28,7 @@ mod_nda_ui <- function(id) {
   shiny::tagList(
     shiny::tags$h1("Non-demographic Adjustment"),
     shiny::fluidRow(
-      col_3(
+      col_4(
         bs4Dash::box(
           collapsible = FALSE,
           headerBorder = FALSE,
@@ -57,7 +57,7 @@ mod_nda_ui <- function(id) {
         collapsible = FALSE,
         headerBorder = FALSE,
         title = "Age Adjustment",
-        width = 9,
+        width = 8,
         shiny::tags$style(
           shiny::HTML("
             .label-left .form-group {

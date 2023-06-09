@@ -24,7 +24,11 @@ if (FALSE) {
 }
 
 md_file_to_html <- function(...) {
-  file <- shiny::req(app_sys(...))
+  file <- app_sys(...)
+
+  if (!file.exists(file)) {
+    return(NULL)
+  }
 
   shiny::HTML(markdown::mark_html(file, output = FALSE, template = FALSE))
 }

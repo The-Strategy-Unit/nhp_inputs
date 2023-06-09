@@ -54,7 +54,7 @@ mod_run_model_check_container_status <- function(id, status) {
             if (res$detail_status == "Completed") {
               status("Success")
             } else {
-              status("Error")
+              status("Error: running the model")
             }
             return(NULL)
           }

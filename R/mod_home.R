@@ -12,7 +12,15 @@ mod_home_ui <- function(id) {
   shiny::tagList(
     htmltools::h1("NHP Model Inputs"),
     shiny::fluidRow(
-      col_6(
+      col_4(
+        bs4Dash::box(
+          collapsible = FALSE,
+          headerBorder = FALSE,
+          width = 12,
+          md_file_to_html("app", "text", "home.md")
+        )
+      ),
+      col_4(
         bs4Dash::box(
           title = "Select Provider and Baseline",
           width = 12,
@@ -36,7 +44,7 @@ mod_home_ui <- function(id) {
           shiny::fileInput(ns("param_upload"), "Upload")
         )
       ),
-      col_6(
+      col_4(
         bs4Dash::box(
           title = "Map of Selected Provider and Peers",
           width = 12,
