@@ -27,10 +27,6 @@ app_ui <- function(request) {
           "Population Growth",
           tabName = "tab_population_growth"
         ),
-        bs4Dash::menuItem(
-          "Health Status Adjustment",
-          tabName = "tab_hsa"
-        ),
         #
         shiny::tags$hr(),
         bs4Dash::sidebarHeader("Demand-supply Imbalances"),
@@ -136,10 +132,6 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "tab_home",
         mod_home_ui("home")
-      ),
-      bs4Dash::tabItem(
-        tabName = "tab_hsa",
-        mod_hsa_ui("hsa")
       ),
       bs4Dash::tabItem(
         tabName = "tab_population_growth",
