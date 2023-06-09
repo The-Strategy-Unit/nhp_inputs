@@ -92,7 +92,7 @@ mod_run_model_server <- function(id, params) {
       results_url(glue::glue("{uri}#/{ds}/{sc}/{cd}"))
 
       # submit the model run
-      mod_run_model_submit(params, status)
+      mod_run_model_submit(p, status)
 
       # do not return the promise
       invisible(NULL)
@@ -106,8 +106,6 @@ mod_run_model_server <- function(id, params) {
 
     shiny::observe({
       p <- !is.null(tryCatch(fixed_params(), error = \(...) NULL))
-
-      cat("input$submit: ", input$submit, ", condition: ", p, "\n", sep = "")
     })
 
     # observe the params - enable the submit / download button only when the
