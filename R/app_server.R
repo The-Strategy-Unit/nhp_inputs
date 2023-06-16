@@ -50,7 +50,7 @@ app_server <- function(input, output, session) {
 
         load_rds_from_adls(glue::glue("{dataset}/available_strategies.rds"))[[year]]
       }) |>
-        shiny::bindCache(params$dataset)
+        shiny::bindCache(params$dataset, params$start_year)
 
       mod_expat_repat_server("expat_repat", params, providers())
 
