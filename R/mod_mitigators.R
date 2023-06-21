@@ -192,6 +192,16 @@ mod_mitigators_server <- function(id,
     }) |>
       shiny::bindEvent(strategies(), session$userData$data_loaded())
 
+    # make sure the slider is updated once a file has been uploaded
+    shiny::observe(
+      {
+        shiny::req(input$strategy)
+        update_slider(input$slider_type)
+      },
+      priority = -1
+    ) |>
+      shiny::bindEvent(session$userData$data_loaded())
+
     # set the strategy text by loading the contents of the file for that strategy
     output$strategy_text <- shiny::renderUI({
       strategy <- shiny::req(input$strategy)
