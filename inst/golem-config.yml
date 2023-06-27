@@ -176,7 +176,7 @@ default:
     mitigators_op_convert_tele:
       activity_type: op
       mitigators_type: efficiencies|ctt
-      y_axis_title: "% of Appointments that are Tele Appointments"
+      y_axis_title: "% of Appointments that are Face-to-Face"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
       funnel_x_title: "Number of Appointments"
@@ -187,15 +187,6 @@ default:
         - convert_to_tele_adult_surgical
         - convert_to_tele_child_non-surgical
         - convert_to_tele_child_surgical
-      param_conversion:
-        absolute:
-          - !expr \(r, p) rev(1 - p + r * p)
-          - !expr \(r, q) rev(1 - (q - r) / (1 - r))
-        relative:
-          - !expr \(r, p) rev(1 - p)
-          - !expr \(r, q) rev(1 - q)
-      param_output: !expr \(r) \(q) rev(1 - (q - r) / (1 - r))
-      inverted: true
     mitigators_op_fup_reduction:
       activity_type: op
       mitigators_type: activity_avoidance|f2f

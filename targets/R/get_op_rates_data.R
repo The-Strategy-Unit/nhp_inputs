@@ -50,7 +50,7 @@ get_op_wli_data <- function(provider_successors_last_updated, rtt_specialties) {
     dplyr::mutate(
       dplyr::across(
         "tretspef",
-        ~dplyr::case_when(
+        ~ dplyr::case_when(
           .x %in% rtt_specialties ~ .x,
           stringr::str_detect(.x, "^1(?!80|9[02])") ~
             "Other (Surgical)",
@@ -63,7 +63,7 @@ get_op_wli_data <- function(provider_successors_last_updated, rtt_specialties) {
     dplyr::count(.data[["tretspef"]], wt = .data[["n"]], name = "op") |>
     dplyr::ungroup() |>
     dplyr::mutate(
-      dplyr::across("op", ~ifelse(.x < 5, 0, .x))
+      dplyr::across("op", ~ ifelse(.x < 5, 0, .x))
     )
 }
 
@@ -200,7 +200,7 @@ get_op_convert_to_tele_data <- function(op_data, peers) {
       strategy = glue::glue("convert_to_tele_{.data$subgroup}")
     ) |>
     dplyr::summarise(
-      rate = sum(.data$n * .data$is_tele_appointment) / sum(.data$n),
+      rate = 1 - sum(.data$n * .data$is_tele_appointment) / sum(.data$n),
       n = sum(.data$n),
       .groups = "drop"
     ) |>
