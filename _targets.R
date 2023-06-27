@@ -52,7 +52,13 @@ list(
   tar_target(lkp_euro_2013, get_lkp_euro_2013()),
   tar_target(list_providers_file, "targets/data/list_providers.rds", format = "file"),
   tar_target(list_providers, readRDS(list_providers_file)),
-  tar_target(ods_succ_update_date, get_ods_succ_update_date(), cue = targets::tar_cue("always")),
+  tar_target(
+    ods_succ_update_date,
+    get_ods_succ_update_date(),
+    # re-running this will cause all other targets to re-run, so disabling for now
+    cue = targets::tar_cue("never")
+    # can re-enable by changing "never" -> "always"
+  ),
   tar_target(ods_successors, get_ods_successors(ods_succ_update_date)),
   tar_target(provider_successors, get_provider_successors(ods_successors, list_providers)),
   tar_target(provider_successors_last_updated, upload_provider_successors(provider_successors)),
