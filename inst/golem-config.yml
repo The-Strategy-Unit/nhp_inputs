@@ -135,7 +135,7 @@ default:
     mitigators_bads:
       activity_type: ip
       mitigators_type: efficiencies|bads
-      y_axis_title: "% of Procedures Performed in Target Setting"
+      y_axis_title: "% of Procedures Performed in Non-Target Setting"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
       funnel_x_title: "Number of Procedures Performed"
@@ -148,17 +148,6 @@ default:
         - bads_outpatients_or_daycase
       params_items:
         type: "bads"
-        baseline_target_rate: !expr \(r) r$rate
-        op_dc_split: !expr \(r) r$split
-      param_conversion:
-        absolute:
-          - !expr \(r, p) rev(1 - p + r * p)
-          - !expr \(r, q) rev(1 - (q - r) / (1 - r))
-        relative:
-          - !expr \(r, p) rev(1 - p)
-          - !expr \(r, q) rev(1 - q)
-      param_output: !expr \(r) \(q) rev(1 - q) * (1 - r) + r
-      inverted: true
     mitigators_op_c2c_reduction:
       activity_type: op
       mitigators_type: activity_avoidance|c2c
