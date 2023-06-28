@@ -1,40 +1,4 @@
 mod_run_model_fix_params <- function(p, user) {
-  # combine efficiences/activity avoidance items
-  p[["efficiencies"]] <- list(
-    ip = c(
-      p[["efficiencies|mean_los"]]$ip,
-      p[["efficiencies|aec"]]$ip,
-      p[["efficiencies|preop"]]$ip,
-      p[["efficiencies|bads"]]$ip
-    ),
-    op = c(
-      p[["efficiencies|ctt"]]$op
-    )
-  )
-
-  p[["activity_avoidance"]]$op <- c(
-    p[["activity_avoidance|c2c"]]$op,
-    p[["activity_avoidance|f2f"]]$op
-  )
-
-  p[["activity_avoidance"]]$aae <- c(
-    p[["activity_avoidance|fa"]]$aae,
-    p[["activity_avoidance|lbs"]]$aae,
-    p[["activity_avoidance|lcd"]]$aae
-  )
-
-  # remove the items
-  p[["efficiencies|mean_los"]] <- NULL
-  p[["efficiencies|aec"]] <- NULL
-  p[["efficiencies|preop"]] <- NULL
-  p[["efficiencies|bads"]] <- NULL
-  p[["efficiencies|ctt"]] <- NULL
-  p[["activity_avoidance|c2c"]] <- NULL
-  p[["activity_avoidance|f2f"]] <- NULL
-  p[["activity_avoidance|fa"]] <- NULL
-  p[["activity_avoidance|lbs"]] <- NULL
-  p[["activity_avoidance|lcd"]] <- NULL
-
   # some of the items in our params will be lists of length 0.
   # jsonlite will serialize these as empty arrays
   #   toJSON(list()) == "[]"
@@ -94,7 +58,8 @@ mod_run_model_fix_params <- function(p, user) {
     "activity_avoidance",
     "efficiencies",
     "bed_occupancy",
-    "theatres"
+    "theatres",
+    "time_profile_mappings"
   )
 
   # make sure to only select items that exist in the params

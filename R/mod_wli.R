@@ -58,11 +58,14 @@ mod_wli_ui <- function(id) {
   shiny::tagList(
     shiny::tags$h1("Waiting List Imbalances"),
     shiny::fluidRow(
-      bs4Dash::box(
-        collapsible = FALSE,
-        headerBorder = FALSE,
-        width = 4,
-        md_file_to_html("app", "text", "wli.md")
+      col_4(
+        bs4Dash::box(
+          collapsible = FALSE,
+          headerBorder = FALSE,
+          width = 12,
+          md_file_to_html("app", "text", "wli.md")
+        ),
+        mod_time_profile_ui(ns("time_profile"))
       ),
       bs4Dash::box(
         collapsible = FALSE,
@@ -78,7 +81,13 @@ mod_wli_ui <- function(id) {
 #' wli Server Functions
 #'
 #' @noRd
-mod_wli_server <- function(id, params) {
+mod_wli_server <- function(id, params) { # nolint: object_usage_linter.
+  selected_time_profile <- update_time_profile <- NULL
+  c(selected_time_profile, update_time_profile) %<-% mod_time_profile_server(
+    shiny::NS(id, "time_profile"),
+    params
+  )
+
   shiny::moduleServer(id, function(input, output, session) {
     table <- mod_wli_table() |>
       tidyr::pivot_longer(
@@ -99,6 +108,12 @@ mod_wli_server <- function(id, params) {
 
       init$destroy()
     })
+
+    # update the time profile
+    shiny::observe({
+      params$time_profile_mappings[["waiting_list_adjustment"]] <- selected_time_profile()
+    }) |>
+      shiny::bindEvent(selected_time_profile())
 
     baseline_data <- shiny::reactive({
       dataset <- shiny::req(params$dataset)
@@ -128,6 +143,9 @@ mod_wli_server <- function(id, params) {
     shiny::observe({
       shiny::req(session$userData$data_loaded())
       p <- shiny::req(session$userData$params$waiting_list_adjustment)
+
+      # update the selected time profile
+      update_time_profile(session$userData$params$time_profile_mappings[["waiting_list_adjustment"]])
 
       table |>
         purrr::pwalk(\(activity_type, id, code, ...) {

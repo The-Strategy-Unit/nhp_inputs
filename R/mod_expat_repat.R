@@ -61,6 +61,7 @@ mod_expat_repat_ui <- function(id) {
             NULL
           )
         ),
+        mod_time_profile_ui(ns("time_profile")),
         bs4Dash::box(
           collapsible = FALSE,
           headerBorder = FALSE,
@@ -121,7 +122,13 @@ mod_expat_repat_ui <- function(id) {
 #' expat_repat Server Functions
 #'
 #' @noRd
-mod_expat_repat_server <- function(id, params, providers) {
+mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usage_linter.
+  selected_time_profile <- update_time_profile <- NULL
+  c(selected_time_profile, update_time_profile) %<-% mod_time_profile_server(
+    shiny::NS(id, "time_profile"),
+    params
+  )
+
   shiny::moduleServer(id, function(input, output, session) {
     rtt_specialties <- readRDS(app_sys("app", "data", "rtt_specialties.Rds"))
     icb_boundaries <- sf::read_sf(app_sys("app", "data", "icb_boundaries.geojson"))
@@ -155,6 +162,18 @@ mod_expat_repat_server <- function(id, params, providers) {
       )
     }
 
+    # update the time profile
+    shiny::observe({
+      params$time_profile_mappings[
+        c(
+          "expat",
+          "repat_local",
+          "repat_nonlocal"
+        )
+      ] <- selected_time_profile()
+    }) |>
+      shiny::bindEvent(selected_time_profile())
+
     # two reactiveValues to keep track of the slider values
     # shadow_params always stores a value for each item selectable by the dropdowns
     # params contains the returned values, and will contain the value from shadow_params if "include" is checked
@@ -174,6 +193,9 @@ mod_expat_repat_server <- function(id, params, providers) {
       {
         shiny::req(session$userData$data_loaded())
         p <- shiny::req(session$userData$params)
+
+        # update the selected time profile (all 3 will have the same value, so just use expat)
+        update_time_profile(session$userData$params$time_profile_mappings[["expat"]])
 
         tidyr::expand_grid(
           type = names(shadow_params),

@@ -46,6 +46,7 @@ mod_nda_ui <- function(id) {
               purrr::map_chr(stringr::str_to_lower)
           )
         ),
+        mod_time_profile_ui(ns("time_profile")),
         bs4Dash::box(
           collapsible = FALSE,
           headerBorder = FALSE,
@@ -113,7 +114,13 @@ mod_nda_ui <- function(id) {
 #' nda Server Functions
 #'
 #' @noRd
-mod_nda_server <- function(id, params) {
+mod_nda_server <- function(id, params) { # nolint: object_usage_linter.
+  selected_time_profile <- update_time_profile <- NULL
+  c(selected_time_profile, update_time_profile) %<-% mod_time_profile_server(
+    shiny::NS(id, "time_profile"),
+    params
+  )
+
   shiny::moduleServer(id, function(input, output, session) {
     slider_values <- c("non-elective", "elective", "maternity") |>
       purrr::set_names() |>
@@ -162,9 +169,18 @@ mod_nda_server <- function(id, params) {
       init$destroy()
     })
 
+    # update the time profile
+    shiny::observe({
+      params$time_profile_mappings[["non-demographic_adjustment"]] <- selected_time_profile()
+    }) |>
+      shiny::bindEvent(selected_time_profile())
+
     shiny::observe({
       shiny::req(session$userData$data_loaded())
       p <- shiny::req(session$userData$params[["non-demographic_adjustment"]])
+
+      # update the selected time profile
+      update_time_profile(session$userData$params$time_profile_mappings[["non-demographic_adjustment"]])
 
       shiny::updateSelectInput(session, "activity_type", selected = "non-elective")
 
