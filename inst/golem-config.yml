@@ -68,7 +68,7 @@ default:
         - zero_los_no_procedure_child
     mitigators_mean_los_reduction:
       activity_type: ip
-      mitigators_type: efficiencies|mean_los
+      mitigators_type: efficiencies
       y_axis_title: "Mean Length of Stay (days)"
       x_axis_title: "Financial Year"
       number_type: !expr scales::comma_format(accuracy = 0.1)
@@ -93,7 +93,7 @@ default:
         type: "all"
     mitigators_aec_los_reduction:
       activity_type: ip
-      mitigators_type: efficiencies|aec
+      mitigators_type: efficiencies
       y_axis_title: "% 0-Day Admissions"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
@@ -117,7 +117,7 @@ default:
       inverted: true
     mitigators_preop_los_reduction:
       activity_type: ip
-      mitigators_type: efficiencies|preop
+      mitigators_type: efficiencies
       y_axis_title: "Procedures with a Pre-op LoS (per 1000 operations)"
       x_axis_title: "Financial Year"
       number_type: !expr scales::comma_format(accuracy = 0.1, scale = 1000)
@@ -134,8 +134,8 @@ default:
           pre-op_los_2-day: 2
     mitigators_bads:
       activity_type: ip
-      mitigators_type: efficiencies|bads
-      y_axis_title: "% of Procedures Performed in Target Setting"
+      mitigators_type: efficiencies
+      y_axis_title: "% of Procedures Performed in Non-Target Setting"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
       funnel_x_title: "Number of Procedures Performed"
@@ -148,20 +148,9 @@ default:
         - bads_outpatients_or_daycase
       params_items:
         type: "bads"
-        baseline_target_rate: !expr \(r) r$rate
-        op_dc_split: !expr \(r) r$split
-      param_conversion:
-        absolute:
-          - !expr \(r, p) rev(1 - p + r * p)
-          - !expr \(r, q) rev(1 - (q - r) / (1 - r))
-        relative:
-          - !expr \(r, p) rev(1 - p)
-          - !expr \(r, q) rev(1 - q)
-      param_output: !expr \(r) \(q) rev(1 - q) * (1 - r) + r
-      inverted: true
     mitigators_op_c2c_reduction:
       activity_type: op
-      mitigators_type: activity_avoidance|c2c
+      mitigators_type: activity_avoidance
       y_axis_title: "% of Appointments that are Consultant to Consultant Referrals"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
@@ -175,8 +164,8 @@ default:
         - consultant_to_consultant_reduction_child_surgical
     mitigators_op_convert_tele:
       activity_type: op
-      mitigators_type: efficiencies|ctt
-      y_axis_title: "% of Appointments that are Tele Appointments"
+      mitigators_type: efficiencies
+      y_axis_title: "% of Appointments that are Face-to-Face"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
       funnel_x_title: "Number of Appointments"
@@ -187,18 +176,9 @@ default:
         - convert_to_tele_adult_surgical
         - convert_to_tele_child_non-surgical
         - convert_to_tele_child_surgical
-      param_conversion:
-        absolute:
-          - !expr \(r, p) rev(1 - p + r * p)
-          - !expr \(r, q) rev(1 - (q - r) / (1 - r))
-        relative:
-          - !expr \(r, p) rev(1 - p)
-          - !expr \(r, q) rev(1 - q)
-      param_output: !expr \(r) \(q) rev(1 - (q - r) / (1 - r))
-      inverted: true
     mitigators_op_fup_reduction:
       activity_type: op
-      mitigators_type: activity_avoidance|f2f
+      mitigators_type: activity_avoidance
       y_axis_title: "Followup to First Ratio"
       x_axis_title: "Financial Year"
       number_type: !expr scales::comma_format()
@@ -212,7 +192,7 @@ default:
         - followup_reduction_child_surgical
     mitigators_aae_frequent_attenders:
       activity_type: aae
-      mitigators_type: activity_avoidance|fa
+      mitigators_type: activity_avoidance
       y_axis_title: "% of Attendances that were Frequent Attenders"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
@@ -226,7 +206,7 @@ default:
         - frequent_attenders_child_walk-in
     mitigators_aae_left_before_seen:
       activity_type: aae
-      mitigators_type: activity_avoidance|lbs
+      mitigators_type: activity_avoidance
       y_axis_title: "% of Attendances Where the Patient Left Before Being Seen"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
@@ -240,7 +220,7 @@ default:
         - left_before_seen_child_walk-in
     mitigators_aae_low_cost_discharged:
       activity_type: aae
-      mitigators_type: activity_avoidance|lcd
+      mitigators_type: activity_avoidance
       y_axis_title: "% of Attendances Which Were Low Cost and Patient Was Discharged Home"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()

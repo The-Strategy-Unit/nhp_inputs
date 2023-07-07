@@ -104,7 +104,7 @@ upload_data_to_azure <- function(provider,
   cont <- AzureStor::blob_container(ep, "inputs-data")
 
   upload_fn <- \(.x, name) {
-    fn <- glue::glue("{provider}/{name}.rds")
+    fn <- glue::glue("dev/{provider}/{name}.rds")
     AzureStor::storage_save_rds(.x, cont, fn)
     fn
   }
@@ -132,7 +132,7 @@ upload_reference_data_to_azure <- function(nhp_current_cohort,
   cont <- AzureStor::blob_container(ep, "inputs-data")
 
   upload_fn <- \(.x, name) {
-    fn <- glue::glue("{name}.rds")
+    fn <- glue::glue("dev/{name}.rds")
     AzureStor::storage_save_rds(.x, cont, fn)
     fn
   }

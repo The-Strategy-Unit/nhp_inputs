@@ -35,7 +35,8 @@ mod_mitigators_ui <- function(id, title) {
               "rate"
             ),
             shiny::sliderInput(ns("slider"), "90% Confidence Interval", 0, 1, c(0, 1))
-          )
+          ),
+          mod_time_profile_ui(ns("time_profile")),
         )
       ),
       col_8(
@@ -84,11 +85,17 @@ mod_mitigators_ui <- function(id, title) {
 #' mitigators_admission_avoidance Server Functions
 #'
 #' @noRd
-mod_mitigators_server <- function(id,
+mod_mitigators_server <- function(id, # nolint: object_usage_linter.
                                   params,
                                   provider_data,
                                   available_strategies,
                                   diagnoses_lkup) {
+  selected_time_profile <- update_time_profile <- NULL
+  c(selected_time_profile, update_time_profile) %<-% mod_time_profile_server(
+    shiny::NS(id, "time_profile"),
+    params
+  )
+
   shiny::moduleServer(id, function(input, output, session) {
     config <- get_golem_config("mitigators_config")[[id]]
 
@@ -97,6 +104,7 @@ mod_mitigators_server <- function(id,
 
     slider_values <- shiny::reactiveValues()
     output_conversions <- shiny::reactiveValues()
+    time_profile_mappings <- shiny::reactiveValues()
 
     param_conversion <- config$param_conversion %||% list(
       absolute = list(\(r, p) p * r, \(r, q) q / r),
@@ -184,6 +192,10 @@ mod_mitigators_server <- function(id,
           }
         })
 
+      tpm <- session$userData$params$time_profile_mappings[[mitigators_type]][[activity_type]]
+      time_profile_mappings$mappings <- tpm
+      params$time_profile_mappings[[mitigators_type]][[activity_type]] <- tpm
+
       shiny::updateCheckboxInput(
         session,
         "include",
@@ -238,7 +250,7 @@ mod_mitigators_server <- function(id,
     rates_baseline_data <- shiny::reactive({
       rates_data() |>
         dplyr::filter(.data$fyear == params$start_year) |>
-        dplyr::mutate(is_peer = .data$peer != .env$params$dataset)
+        dplyr::mutate(is_peer = .data$peer != params$dataset)
     })
 
     # params controls ----
@@ -280,7 +292,14 @@ mod_mitigators_server <- function(id,
       }
 
       values <- pc_fn(max_value, slider_values[[mitigators_type]][[strategy]]$interval) * scale
-      shiny::updateSliderInput(session, "slider", value = values, min = range[[1]], max = range[[2]], step = step)
+      shiny::updateSliderInput(
+        session, "slider",
+        value = values, min = range[[1]], max = range[[2]], step = step
+      )
+
+      update_time_profile(
+        time_profile_mappings$mappings[[strategy]] %||% "linear"
+      )
     }
 
     shiny::observe({
@@ -290,7 +309,6 @@ mod_mitigators_server <- function(id,
       shiny::bindEvent(input$slider_type)
 
     shiny::observe({
-      shiny::req(input$strategy)
       values <- input$slider
       type <- shiny::req(input$slider_type)
       strategy <- shiny::req(input$strategy)
@@ -321,6 +339,16 @@ mod_mitigators_server <- function(id,
       }
     }) |>
       shiny::bindEvent(input$slider, input$include)
+
+    shiny::observe({
+      strategy <- shiny::req(input$strategy)
+      tp <- shiny::req(selected_time_profile())
+
+      time_profile_mappings$mappings[[strategy]] <- tp
+
+      params$time_profile_mappings[[mitigators_type]][[activity_type]][[strategy]] <- if (input$include) tp
+    }) |>
+      shiny::bindEvent(selected_time_profile(), input$include)
 
     shiny::observe({
       shinyjs::toggleState("slider", condition = input$include)

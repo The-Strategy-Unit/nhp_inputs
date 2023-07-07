@@ -21,6 +21,21 @@ app_server <- function(input, output, session) {
   params[["demographic_factors"]] <- list(
     file = "demographic_factors.csv"
   )
+  params[["time_profile_mappings"]] <- list(
+    "covid_adjustment" = "none",
+    "baseline_adjustment" = "none",
+    "bed_occupancy" = "none",
+    "theatres" = "none",
+    "activity_avoidance" = list(
+      "ip" = list(),
+      "op" = list(),
+      "aae" = list()
+    ),
+    "efficiencies" = list(
+      "ip" = list(),
+      "op" = list()
+    )
+  )
 
   session$userData$data_loaded <- shiny::reactiveVal()
 

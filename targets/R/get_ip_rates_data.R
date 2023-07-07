@@ -188,31 +188,30 @@ get_bads_data <- function(ip_los_data, peers) {
 
   dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "bads_admission_type_breakdowns")) |>
     dplyr::collect() |>
-    tidyr::pivot_wider(names_from = "admission_type", values_from = "n", values_fill = 0) |>
+    janitor::clean_names() |>
     dplyr::mutate(
-      value = ifelse(
-        .data$strategy == "bads_outpatients",
-        .data$daycase + .data$elective,
-        .data$elective
+      target_type = ifelse(
+        stringr::str_starts(.data[["strategy"]], "bads_daycase"),
+        "daycase",
+        "outpatients"
       ),
-      n = .data$daycase + .data$elective + .data$outpatients,
-      rate = 1 - (.data$value / .data$n),
-      split = dplyr::case_when(
-        .data$strategy == "bads_outpatients_or_daycase" ~ .data$daycase / (.data$daycase + .data$outpatients),
-        .data$strategy == "bads_outpatients" ~ 0,
-        TRUE ~ 1
+      v = ifelse(
+        .data[["admission_type"]] == .data[["target_type"]],
+        0,
+        .data[["n"]]
       )
     ) |>
-    dplyr::select(
-      fyear = "FYEAR",
-      peer = "PROCODE3",
-      "strategy",
-      "rate",
-      "n",
-      "split"
+    dplyr::summarise(
+      dplyr::across(c("n", "v"), sum),
+      rate = .data[["v"]] / .data[["n"]],
+      .by = c("fyear", "procode3", "strategy")
     ) |>
     # ensure there is no statistical disclosure
-    dplyr::filter(.data$n >= 5, .data$rate * .data$n >= 5, (1 - .data$rate) * .data$n >= 5) |>
+    dplyr::filter(
+      .data$n >= 5,
+      .data[["n"]] - .data[["v"]] >= 5
+    ) |>
+    dplyr::rename("peer" = "procode3") |>
     dplyr::inner_join(
       peers,
       by = c("peer"),
@@ -224,8 +223,7 @@ get_bads_data <- function(ip_los_data, peers) {
       "strategy",
       "peer",
       "rate",
-      "n",
-      "split"
+      "n"
     ) |>
     add_mean_rows()
 }

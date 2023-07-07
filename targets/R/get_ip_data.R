@@ -8,7 +8,7 @@ get_ip_age_sex_data <- function(strategies_last_updated, provider_successors_las
   tbl_ip_strategies <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "strategies"))
 
   dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients")) |>
-    dplyr::filter(.data$sex %in% c(1, 2)) |>
+    dplyr::filter(.data$sex %in% c("1", "2")) |>
     dplyr::inner_join(tbl_age_table, by = c("ADMIAGE" = "age")) |>
     dplyr::inner_join(tbl_ip_strategies, by = c("EPIKEY")) |>
     dplyr::count(
@@ -101,7 +101,7 @@ get_ip_wli_data <- function(strategies_last_updated, provider_successors_last_up
     dplyr::mutate(
       dplyr::across(
         "tretspef",
-        ~dplyr::case_when(
+        ~ dplyr::case_when(
           .x %in% rtt_specialties ~ .x,
           stringr::str_detect(.x, "^1(?!80|9[02])") ~
             "Other (Surgical)",
@@ -114,6 +114,6 @@ get_ip_wli_data <- function(strategies_last_updated, provider_successors_last_up
     dplyr::count(.data[["tretspef"]], wt = .data[["n"]], name = "ip") |>
     dplyr::ungroup() |>
     dplyr::mutate(
-      dplyr::across("ip", ~ifelse(.x < 5, 0, .x))
+      dplyr::across("ip", ~ ifelse(.x < 5, 0, .x))
     )
 }
