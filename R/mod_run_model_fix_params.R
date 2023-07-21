@@ -1,4 +1,17 @@
 mod_run_model_fix_params <- function(p, user) {
+  # the time profiles may be empty, ensure that's not the case
+  tpm <- p[["time_profile_mappings"]]
+  p[["time_profile_mappings"]][["activity_avoidance"]] <- list(
+    ip = tpm[["activity_avoidance"]][["ip"]] %||% list(),
+    op = tpm[["activity_avoidance"]][["op"]] %||% list(),
+    aae = tpm[["activity_avoidance"]][["aae"]] %||% list()
+  )
+
+  p[["time_profile_mappings"]][["efficiencies"]] <- list(
+    ip = tpm[["ip"]] %||% list(),
+    op = tpm[["op"]] %||% list()
+  )
+
   # some of the items in our params will be lists of length 0.
   # jsonlite will serialize these as empty arrays
   #   toJSON(list()) == "[]"
