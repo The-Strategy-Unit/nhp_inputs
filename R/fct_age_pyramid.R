@@ -2,7 +2,10 @@ age_pyramid <- function(age_data) {
   age_data |>
     dplyr::mutate(
       dplyr::across("n", `*`, ifelse(.data$sex == 1, -1, 1)),
-      dplyr::across("sex", ~ ifelse(.x == 1, "Males", "Females"))
+      dplyr::across(
+        "sex",
+        ~ forcats::fct_recode(as.character(.x), "Males" = "1", "Females" = "2")
+      )
     ) |>
     ggplot2::ggplot(
       ggplot2::aes(
