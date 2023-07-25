@@ -27,6 +27,10 @@ app_ui <- function(request) {
           "Baseline Adjustment",
           tabName = "tab_baseline_adjustment"
         ),
+        bs4Dash::menuItem(
+          "Covid Adjustment",
+          tabName = "tab_covid_adjustment"
+        ),
         shiny::tags$hr(),
         bs4Dash::sidebarHeader("Population Changes"),
         bs4Dash::menuItem(
@@ -142,6 +146,10 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "tab_baseline_adjustment",
         mod_baseline_adjustment_ui("baseline_adjustment")
+      ),
+      bs4Dash::tabItem(
+        tabName = "tab_covid_adjustment",
+        mod_covid_adjustment_ui("covid_adjustment")
       ),
       bs4Dash::tabItem(
         tabName = "tab_population_growth",
