@@ -70,6 +70,7 @@ app_server <- function(input, output, session) {
       mod_expat_repat_server("expat_repat", params, providers())
 
       mod_population_growth_server("population_growth", params)
+      mod_health_status_adjustment_server("health_status_adjustment", params)
 
       mod_baseline_adjustment_server("baseline_adjustment", params)
       mod_nda_server("nda", params)
