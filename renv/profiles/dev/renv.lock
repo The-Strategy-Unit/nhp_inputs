@@ -2896,6 +2896,23 @@
       ],
       "Hash": "2c993415154cdb94649d99ae138ff5e5"
     },
+    "watchr": {
+      "Package": "watchr",
+      "Version": "0.0.0.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "tomjemmett",
+      "RemoteRepo": "watchr",
+      "RemoteRef": "main",
+      "RemoteSha": "4a0b171262c40b622110fcc0e3d6af579f6fc994",
+      "Requirements": [
+        "callr",
+        "cli",
+        "fs"
+      ],
+      "Hash": "61d65dcbeea572b02c1bbb11427c7509"
+    },
     "whisker": {
       "Package": "whisker",
       "Version": "0.4.1",
