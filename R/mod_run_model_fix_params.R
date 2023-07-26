@@ -8,8 +8,8 @@ mod_run_model_fix_params <- function(p, user) {
   )
 
   p[["time_profile_mappings"]][["efficiencies"]] <- list(
-    ip = tpm[["ip"]] %||% list(),
-    op = tpm[["op"]] %||% list()
+    ip = tpm[["efficiencies"]][["ip"]] %||% list(),
+    op = tpm[["efficiencies"]][["op"]] %||% list()
   )
 
   # some of the items in our params will be lists of length 0.
