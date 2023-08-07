@@ -22,18 +22,28 @@ app_ui <- function(request) {
         ns = shiny::NS("home"),
         #
         shiny::tags$hr(),
+        bs4Dash::sidebarHeader("Baseline Adjustments"),
+        bs4Dash::menuItem(
+          "Baseline Adjustment",
+          tabName = "tab_baseline_adjustment"
+        ),
+        bs4Dash::menuItem(
+          "Covid Adjustment",
+          tabName = "tab_covid_adjustment"
+        ),
+        shiny::tags$hr(),
         bs4Dash::sidebarHeader("Population Changes"),
         bs4Dash::menuItem(
           "Population Growth",
           tabName = "tab_population_growth"
         ),
+        bs4Dash::menuItem(
+          "Health Status Adjustment",
+          tabName = "tab_health_status_adjustment"
+        ),
         #
         shiny::tags$hr(),
         bs4Dash::sidebarHeader("Demand-supply Imbalances"),
-        bs4Dash::menuItem(
-          "Baseline Adjustment",
-          tabName = "tab_baseline_adjustment"
-        ),
         bs4Dash::menuItem(
           "Waiting List Imbalances",
           tabName = "tab_wli"
@@ -134,12 +144,20 @@ app_ui <- function(request) {
         mod_home_ui("home")
       ),
       bs4Dash::tabItem(
+        tabName = "tab_baseline_adjustment",
+        mod_baseline_adjustment_ui("baseline_adjustment")
+      ),
+      bs4Dash::tabItem(
+        tabName = "tab_covid_adjustment",
+        mod_covid_adjustment_ui("covid_adjustment")
+      ),
+      bs4Dash::tabItem(
         tabName = "tab_population_growth",
         mod_population_growth_ui("population_growth")
       ),
       bs4Dash::tabItem(
-        tabName = "tab_baseline_adjustment",
-        mod_baseline_adjustment_ui("baseline_adjustment")
+        tabName = "tab_health_status_adjustment",
+        mod_health_status_adjustment_ui("health_status_adjustment")
       ),
       bs4Dash::tabItem(
         tabName = "tab_nda",
