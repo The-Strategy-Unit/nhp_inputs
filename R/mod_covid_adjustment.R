@@ -10,7 +10,7 @@
 mod_covid_adjustment_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
-    shiny::tags$h1("Health Status Adjustment"),
+    shiny::tags$h1("COVID Adjustment"),
     shiny::fluidRow(
       bs4Dash::box(
         collapsible = FALSE,

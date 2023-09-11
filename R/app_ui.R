@@ -28,7 +28,7 @@ app_ui <- function(request) {
           tabName = "tab_baseline_adjustment"
         ),
         bs4Dash::menuItem(
-          "Covid Adjustment",
+          "COVID Adjustment",
           tabName = "tab_covid_adjustment"
         ),
         shiny::tags$hr(),
