@@ -104,7 +104,17 @@ mod_home_server <- function(id, providers, params) {
     provider_locations <- sf::read_sf(app_sys("app", "data", "provider_locations.geojson"))
 
     shiny::observe({
-      choices <- providers[providers %in% nhp_current_cohort]
+      g <- session$groups
+
+      allowed_providers <- if (is.null(g) || any(c("nhp_devs", "nhp_power_users") %in% g)) {
+        nhp_current_cohort
+      } else {
+        g |>
+          stringr::str_subset("^nhp_provider_") |>
+          stringr::str_remove("^nhp_provider_")
+      }
+
+      choices <- providers[providers %in% allowed_providers]
       shiny::updateSelectInput(session, "dataset", choices = choices)
     })
 
