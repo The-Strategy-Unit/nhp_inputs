@@ -1,20 +1,89 @@
-age_bands <- function() {
-  bands <- c(
-    " 0- 4",
-    " 5-14",
-    "15-34",
-    "35-49",
-    "50-64",
-    "65-84",
-    "85+"
+nda_groups <- list(
+  "ip" = list(
+    name = "Inpatients",
+    values = c(
+      "elective" = "Elective",
+      "non-elective" = "Non-Elective",
+      "maternity" = "Maternity"
+    )
+  ),
+  "op" = list(
+    name = "Outpatients",
+    values = c(
+      "first" = "First",
+      "followup" = "Follow-up",
+      "procedure" = "Procedure"
+    )
+  ),
+  "aae" = list(
+    name = "Accident and Emergency",
+    values = c(
+      "ambulance" = "Ambulance",
+      "walk-in" = "Walk-in"
+    )
   )
-  purrr::set_names(
-    bands,
-    paste0("ageband_", seq_along(bands))
+)
+
+
+mod_non_demographic_adjustment_input_ui <- function(parent_id, id, label) {
+  ns <- shiny::NS(paste(sep = "-", parent_id, id))
+
+  shiny::fluidRow(
+    col_9(
+      shiny::tags$div(
+        class = "label-left",
+        shinyjs::disabled(
+          shiny::sliderInput(
+            inputId = ns("values"),
+            label = label,
+            min = 0,
+            max = 200,
+            post = "%",
+            value = c(100, 120)
+          )
+        )
+      )
+    ),
+    col_3(
+      shiny::checkboxInput(
+        ns(glue::glue("include")),
+        "Include?"
+      )
+    )
   )
 }
 
-#' nda UI Function
+mod_non_demographic_adjustment_input_server <- function(parent_id, id, type) {
+  shiny::moduleServer(paste(sep = "-", parent_id, id), function(input, output, session) {
+    shiny::observe({
+      shiny::req(session$userData$data_loaded())
+      p <- shiny::req(session$userData$params[["non-demographic_adjustment"]][[type]][[id]])
+
+      if (is.null(p)) {
+        shiny::updateCheckboxInput(session, "include", value = FALSE)
+      } else {
+        shiny::updateCheckboxInput(session, "include", value = TRUE)
+        shiny::updateSliderInput(session, "values", value = p * 100)
+      }
+    }) |>
+      shiny::bindEvent(session$userData$data_loaded())
+
+    shiny::observe({
+      shinyjs::toggleState("values", input$include)
+    }) |>
+      shiny::bindEvent(input$include)
+
+    shiny::reactive({
+      list(
+        include = input$include,
+        values = input$values / 100
+      )
+    })
+  })
+}
+
+
+#' Non Demographic UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -25,27 +94,25 @@ age_bands <- function() {
 #' @importFrom shiny NS tagList
 mod_non_demographic_adjustment_ui <- function(id) {
   ns <- shiny::NS(id)
+
+  boxes <- purrr::map(
+    nda_groups,
+    \(.x) bs4Dash::box(
+      collapsible = FALSE,
+      headerBorder = FALSE,
+      title = .x$name,
+      width = 8,
+      purrr::imap(
+        .x$values,
+        \(.x, .i) mod_non_demographic_adjustment_input_ui(id, .i, .x)
+      )
+    )
+  )
+
   shiny::tagList(
     shiny::tags$h1("Non-demographic Adjustment"),
     shiny::fluidRow(
       col_4(
-        bs4Dash::box(
-          collapsible = FALSE,
-          headerBorder = FALSE,
-          title = "Activity Type",
-          width = 12,
-          shiny::selectInput(
-            ns("activity_type"),
-            label = NULL,
-            choices = c(
-              "Non-Elective",
-              "Elective",
-              "Maternity"
-            ) |>
-              purrr::set_names() |>
-              purrr::map_chr(stringr::str_to_lower)
-          )
-        ),
         mod_time_profile_ui(ns("time_profile")),
         bs4Dash::box(
           collapsible = FALSE,
@@ -54,64 +121,12 @@ mod_non_demographic_adjustment_ui <- function(id) {
           md_file_to_html("app", "text", "non_demographic_adjustment.md")
         )
       ),
-      bs4Dash::box(
-        collapsible = FALSE,
-        headerBorder = FALSE,
-        title = "Age Adjustment",
-        width = 8,
-        shiny::tags$style(
-          shiny::HTML("
-            .label-left .form-group {
-              display: flex;              /* Use flexbox for positioning children */
-              flex-direction: row;        /* Place children on a row (default) */
-              width: 100%;                /* Set width for container */
-              max-width: 400px;
-            }
-
-            .label-left label {
-              margin-right: 2rem;         /* Add spacing between label and slider */
-              align-self: center;         /* Vertical align in center of row */
-              text-align: right;
-              flex-basis: 100px;          /* Target width for label */
-            }
-
-            .label-left .irs {
-              flex-basis: 300px;          /* Target width for slider */
-            }
-          ")
-        ),
-        purrr::imap(
-          age_bands(),
-          \(.x, .i) {
-            shiny::fluidRow(
-              col_9(
-                shiny::tags$div(
-                  class = "label-left",
-                  shinyjs::disabled(
-                    shiny::sliderInput(
-                      inputId = ns(.i),
-                      label = .x,
-                      min = 0,
-                      max = 200,
-                      post = "%",
-                      value = c(100, 120)
-                    )
-                  )
-                )
-              ),
-              col_3(shiny::checkboxInput(
-                ns(glue::glue("include_{.i}")),
-                "Include?"
-              ))
-            )
-          }
-        )
-      )
+      col_8(boxes)
     )
   )
 }
 
-#' nda Server Functions
+#' Non Demographic Server Functions
 #'
 #' @noRd
 mod_non_demographic_adjustment_server <- function(id, params) { # nolint: object_usage_linter.
@@ -121,52 +136,25 @@ mod_non_demographic_adjustment_server <- function(id, params) { # nolint: object
     params
   )
 
-  shiny::moduleServer(id, function(input, output, session) {
-    slider_values <- c("non-elective", "elective", "maternity") |>
-      purrr::set_names() |>
+  nda_values <- purrr::imap(
+    nda_groups,
+    \(.x, .i) {
       purrr::map(
-        \(...) {
-          n <- names(age_bands())
+        purrr::set_names(names(.x$values)),
+        \(.y) mod_non_demographic_adjustment_input_server(id, .y, .i)
+      )
+    }
+  )
 
-          purrr::set_names(
-            rep(list(c(100, 120)), length(n)),
-            n
-          )
-        }
-      ) |>
-      (purrr::lift_dl(shiny::reactiveValues))()
-
-    # when the activity_type input changes, update all of the sliders
-    # to use the values stored in params
+  shiny::moduleServer(id, function(input, output, session) {
     shiny::observe({
-      at <- shiny::req(input$activity_type)
-
-      purrr::iwalk(
-        age_bands(),
-        \(.x, .i) {
-          shiny::updateSliderInput(
-            session,
-            .i,
-            value = slider_values[[at]][[.x]]
-          )
-
-          shiny::updateCheckboxInput(
-            session,
-            glue::glue("include_{.i}"),
-            value = !is.null(params[["non-demographic_adjustment"]][[at]][[.x]])
-          )
-        }
-      )
-    }) |>
-      shiny::bindEvent(input$activity_type)
-
-    init <- shiny::observe({
-      params[["non-demographic_adjustment"]] <- list(
-        "non-elective" = list(),
-        "elective" = list(),
-        "maternity" = list()
-      )
-      init$destroy()
+      params[["non-demographic_adjustment"]] <- nda_values |>
+        purrr::map(\(.x) {
+          .x |>
+            purrr::map(rlang::exec) |>
+            purrr::keep("include") |>
+            purrr::map("values")
+        })
     })
 
     # update the time profile
@@ -174,58 +162,5 @@ mod_non_demographic_adjustment_server <- function(id, params) { # nolint: object
       params$time_profile_mappings[["non-demographic_adjustment"]] <- selected_time_profile()
     }) |>
       shiny::bindEvent(selected_time_profile())
-
-    shiny::observe({
-      shiny::req(session$userData$data_loaded())
-      p <- shiny::req(session$userData$params[["non-demographic_adjustment"]])
-
-      # update the selected time profile
-      update_time_profile(session$userData$params$time_profile_mappings[["non-demographic_adjustment"]])
-
-      shiny::updateSelectInput(session, "activity_type", selected = "non-elective")
-
-      tidyr::expand_grid(
-        activity_type = c("non-elective", "elective", "maternity"),
-        age_band = tibble::enframe(age_bands(), "id", "age_band")
-      ) |>
-        tidyr::unnest_wider("age_band") |>
-        purrr::pwalk(\(activity_type, id, age_band) {
-          v <- p[[activity_type]][[age_band]]
-          params[["non-demographic_adjustment"]][[activity_type]][[age_band]] <- v
-
-          vv <- (v * 100) %||% c(100, 120)
-
-          slider_values[[activity_type]][[age_band]] <- vv
-
-          if (activity_type == "non-elective") {
-            shiny::updateSliderInput(session, id, value = vv)
-            shiny::updateCheckboxInput(session, glue::glue("include_{id}"), value = !is.null(v))
-          }
-        })
-    }) |>
-      shiny::bindEvent(session$userData$data_loaded())
-
-    # when a slider changes, update the values in params
-    purrr::iwalk(
-      age_bands(),
-      \(.x, .i) {
-        include_type <- glue::glue("include_{.i}")
-
-        shiny::observe({
-          at <- shiny::req(input$activity_type)
-
-          include <- input[[include_type]]
-
-          slider_values[[at]][[.x]] <- shiny::req(input[[.i]])
-          params[["non-demographic_adjustment"]][[at]][[.x]] <- if (include) slider_values[[at]][[.x]] / 100
-        }) |>
-          shiny::bindEvent(input[[.i]], input[[include_type]])
-
-        shiny::observe({
-          shinyjs::toggleState(.i, condition = input[[include_type]])
-        }) |>
-          shiny::bindEvent(input[[include_type]])
-      }
-    )
   })
 }
