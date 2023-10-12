@@ -557,7 +557,7 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
       )
 
       leaflet::leaflet(df) |>
-        leaflet::addProviderTiles("Stamen.TonerLite") |>
+        leaflet::addProviderTiles("CartoDB.Positron") |>
         leaflet::addPolygons(
           color = "#000000",
           weight = 1,
