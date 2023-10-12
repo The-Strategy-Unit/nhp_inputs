@@ -73,7 +73,7 @@ app_server <- function(input, output, session) {
       mod_health_status_adjustment_server("health_status_adjustment", params)
 
       mod_baseline_adjustment_server("baseline_adjustment", params)
-      mod_nda_server("nda", params)
+      mod_non_demographic_adjustment_server("non_demographic_adjustment", params)
       mod_wli_server("wli", params)
 
       # currently, there is no corresponding UI for this
