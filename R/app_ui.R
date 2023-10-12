@@ -165,7 +165,7 @@ app_ui <- function(request) {
       ),
       bs4Dash::tabItem(
         tabName = "tab_wli",
-        mod_wli_ui("wli")
+        mod_waiting_list_imbalances_ui("waiting_list_imbalances")
       ),
       bs4Dash::tabItem(
         tabName = "tab_er",

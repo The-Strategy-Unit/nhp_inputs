@@ -1,4 +1,4 @@
-mod_wli_table <- function() {
+mod_waiting_list_imbalances_table <- function() {
   rtt_specialties() |>
     dplyr::mutate(
       ip_id = paste0("wli_ip_", sanitize_input_name(.data$code)),
@@ -14,7 +14,7 @@ mod_wli_table <- function() {
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_wli_ui <- function(id) {
+mod_waiting_list_imbalances_ui <- function(id) {
   ns <- shiny::NS(id)
 
   numeric_input_gt <- function(id, ...) {
@@ -30,7 +30,7 @@ mod_wli_ui <- function(id) {
       gt::html()
   }
 
-  table <- mod_wli_table() |>
+  table <- mod_waiting_list_imbalances_table() |>
     dplyr::mutate(
       ip_input = purrr::map(.data[["ip_id"]], numeric_input_gt),
       ip_output = purrr::map(.data[["ip_id"]], text_output_gt),
@@ -81,7 +81,7 @@ mod_wli_ui <- function(id) {
 #' wli Server Functions
 #'
 #' @noRd
-mod_wli_server <- function(id, params) { # nolint: object_usage_linter.
+mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_usage_linter.
   selected_time_profile <- update_time_profile <- NULL
   c(selected_time_profile, update_time_profile) %<-% mod_time_profile_server(
     shiny::NS(id, "time_profile"),
@@ -89,7 +89,7 @@ mod_wli_server <- function(id, params) { # nolint: object_usage_linter.
   )
 
   shiny::moduleServer(id, function(input, output, session) {
-    table <- mod_wli_table() |>
+    table <- mod_waiting_list_imbalances_table() |>
       tidyr::pivot_longer(
         tidyselect::ends_with("id"),
         names_to = "activity_type",
