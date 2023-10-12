@@ -6,7 +6,7 @@ get_ods_succ_update_date <- function() {
     purrr::keep(~ rvest::html_text(.x) |> stringr::str_starts("(Archived\\s*)?Successor")) |>
     purrr::map(rvest::html_children) |>
     purrr::map(3) |>
-    purrr::map_chr(rvest::html_text) |>
+    purrr::map_chr(rvest::html_text2) |>
     lubridate::as_date(format = "%d %b %Y") |>
     max()
 }
