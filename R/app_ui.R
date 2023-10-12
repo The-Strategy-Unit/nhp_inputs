@@ -161,7 +161,7 @@ app_ui <- function(request) {
       ),
       bs4Dash::tabItem(
         tabName = "tab_nda",
-        mod_nda_ui("nda")
+        mod_non_demographic_adjustment_ui("non_demographic_adjustment")
       ),
       bs4Dash::tabItem(
         tabName = "tab_wli",

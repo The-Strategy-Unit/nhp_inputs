@@ -23,7 +23,7 @@ age_bands <- function() {
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_nda_ui <- function(id) {
+mod_non_demographic_adjustment_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::tags$h1("Non-demographic Adjustment"),
@@ -51,7 +51,7 @@ mod_nda_ui <- function(id) {
           collapsible = FALSE,
           headerBorder = FALSE,
           width = 12,
-          md_file_to_html("app", "text", "nda.md")
+          md_file_to_html("app", "text", "non_demographic_adjustment.md")
         )
       ),
       bs4Dash::box(
@@ -114,7 +114,7 @@ mod_nda_ui <- function(id) {
 #' nda Server Functions
 #'
 #' @noRd
-mod_nda_server <- function(id, params) { # nolint: object_usage_linter.
+mod_non_demographic_adjustment_server <- function(id, params) { # nolint: object_usage_linter.
   selected_time_profile <- update_time_profile <- NULL
   c(selected_time_profile, update_time_profile) %<-% mod_time_profile_server(
     shiny::NS(id, "time_profile"),
