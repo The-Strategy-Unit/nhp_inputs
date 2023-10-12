@@ -80,7 +80,7 @@ mod_home_providers_map <- function(selected_peers) {
 
   selected_peers |>
     leaflet::leaflet() |>
-    leaflet::addProviderTiles("Stamen.TonerLite") |>
+    leaflet::addProviderTiles("CartoDB.Positron") |>
     leaflet::addAwesomeMarkers(
       data = dplyr::filter(selected_peers, .data$is_peer),
       icon = peer_marker,
