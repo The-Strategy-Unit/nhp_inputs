@@ -227,6 +227,7 @@ list(
     nhp_current_cohort,
     c(
       "RA9",
+      "RAS",
       "RD8",
       "RGP",
       "RGR",
