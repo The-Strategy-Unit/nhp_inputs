@@ -74,7 +74,7 @@ app_server <- function(input, output, session) {
 
       mod_baseline_adjustment_server("baseline_adjustment", params)
       mod_non_demographic_adjustment_server("non_demographic_adjustment", params)
-      mod_wli_server("wli", params)
+      mod_waiting_list_imbalances_server("waiting_list_imbalances", params)
 
       # currently, there is no corresponding UI for this
       mod_covid_adjustment_server("covid_adjustment", params)
