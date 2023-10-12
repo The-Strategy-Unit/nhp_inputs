@@ -256,6 +256,7 @@ golem_add_external_resources <- function() {
     golem::bundle_resources(
       path = app_sys("app/www"),
       app_title = "nhp_inputs"
-    )
+    ),
+    tags$base(target = "_blank")
   )
 }
