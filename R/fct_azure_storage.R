@@ -5,7 +5,7 @@
 #' @return The return value, if any, from executing the function.
 #'
 #' @noRd
-load_rds_from_adls <- function(file, app_version = Sys.getenv("APP_VERSION", "dev")) {
+load_rds_from_adls <- function(file, app_version = Sys.getenv("NHP_APP_VERSION", "dev")) {
   fs <- get_adls_fs()
   AzureStor::storage_load_rds(fs, glue::glue("{app_version}/{file}"))
 }
