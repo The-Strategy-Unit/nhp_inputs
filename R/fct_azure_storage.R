@@ -5,9 +5,9 @@
 #' @return The return value, if any, from executing the function.
 #'
 #' @noRd
-load_rds_from_adls <- function(file, app_version = Sys.getenv("NHP_APP_VERSION", "dev")) {
+load_rds_from_adls <- function(file, inputs_data_version = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")) {
   fs <- get_adls_fs()
-  AzureStor::storage_load_rds(fs, glue::glue("{app_version}/{file}"))
+  AzureStor::storage_load_rds(fs, glue::glue("{inputs_data_version}/{file}"))
 }
 
 #' Get ADLS Filesystem
@@ -17,10 +17,12 @@ load_rds_from_adls <- function(file, app_version = Sys.getenv("NHP_APP_VERSION",
 #'
 #' @return the adls filesystem
 get_adls_fs <- function() {
-  ep_uri <- Sys.getenv("LOCAL_STORAGE_EP")
-  sa_key <- Sys.getenv("LOCAL_STORAGE_KEY")
+  ep_uri <- Sys.getenv("AZ_STORAGE_EP")
 
-  ep <- if (sa_key != "") {
+  ep <- if (ep_uri == "") {
+    ep_uri <- Sys.getenv("LOCAL_STORAGE_EP")
+    sa_key <- Sys.getenv("LOCAL_STORAGE_KEY")
+
     AzureStor::adls_endpoint(ep_uri, key = sa_key)
   } else {
     token <- AzureAuth::get_managed_token("https://storage.azure.com/") |>
