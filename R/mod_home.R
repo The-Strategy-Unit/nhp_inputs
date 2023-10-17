@@ -149,7 +149,17 @@ mod_home_server <- function(id, providers, params) {
       cat("loading params\n")
       p <- jsonlite::read_json(input$param_upload$datapath, simplifyVector = TRUE)
 
+      # handle old non-demographic adjusment
+      if (!is.null(p["non-demographic"]["elective"])) {
+        p["non-demographic_adjustment"] <- list(
+          ip = list(),
+          op = list(),
+          aae = list()
+        )
+      }
+
       session$userData$params <- p
+
       session$userData$data_loaded(Sys.time())
 
       if (p$dataset == "synthetic") {
