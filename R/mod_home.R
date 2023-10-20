@@ -150,8 +150,8 @@ mod_home_server <- function(id, providers, params) {
       p <- jsonlite::read_json(input$param_upload$datapath, simplifyVector = TRUE)
 
       # handle old non-demographic adjusment
-      if (!is.null(p["non-demographic"]["elective"])) {
-        p["non-demographic_adjustment"] <- list(
+      if (!is.null(p[["non-demographic"]][["elective"]])) {
+        p[["non-demographic_adjustment"]] <- list(
           ip = list(),
           op = list(),
           aae = list()
