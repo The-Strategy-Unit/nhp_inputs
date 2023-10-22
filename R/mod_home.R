@@ -24,7 +24,8 @@ mod_home_ui <- function(id) {
         bs4Dash::box(
           title = "Select Provider and Baseline",
           width = 12,
-          shiny::selectInput(ns("dataset"), "Provider", choices = NULL),
+          shiny::selectInput(ns("cohort"), "Cohort", c("Current", "All Other Providers")),
+          shiny::selectInput(ns("dataset"), "Provider", choices = NULL, selectize = TRUE),
           shiny::selectInput(ns("start_year"), "Baseline Year", choices = c("2019" = 201920, "2018" = 201819)),
           shiny::sliderInput(ns("end_year"), "Model Year", min = 0, max = 19, value = 0, sep = ""),
           shiny::textInput(ns("scenario"), "Scenario Name"),
@@ -101,21 +102,35 @@ mod_home_server <- function(id, providers, params) {
     peers <- load_rds_from_adls("peers.rds")
     nhp_current_cohort <- load_rds_from_adls("nhp_current_cohort.rds")
 
+    all_providers <- jsonlite::read_json(app_sys("app", "data", "all_providers.json"), simplifyVector = TRUE)
+
     provider_locations <- sf::read_sf(app_sys("app", "data", "provider_locations.geojson"))
 
-    shiny::observe({
+    selected_providers <- shiny::reactive({
       g <- session$groups
 
-      allowed_providers <- if (is.null(g) || any(c("nhp_devs", "nhp_power_users") %in% g)) {
+      cohort <- shiny::req(input$cohort)
+
+      p <- if (cohort == "Current") {
         nhp_current_cohort
+      } else if (cohort == "All Other Providers") {
+        setdiff(all_providers, nhp_current_cohort)
       } else {
-        g |>
-          stringr::str_subset("^nhp_provider_") |>
-          stringr::str_remove("^nhp_provider_")
+        stop("unrecognised option for cohort dropdown")
       }
 
-      choices <- providers[providers %in% allowed_providers]
-      shiny::updateSelectInput(session, "dataset", choices = choices)
+      if (!(is.null(g) || any(c("nhp_devs", "nhp_power_users") %in% g))) {
+        a <- g |>
+          stringr::str_subset("^nhp_provider_") |>
+          stringr::str_remove("^nhp_provider_")
+        p <- intersect(p, a)
+      }
+
+      p <- providers[providers %in% p]
+    })
+
+    shiny::observe({
+      shiny::updateSelectInput(session, "dataset", choices = selected_providers())
     })
 
     shiny::observe({
