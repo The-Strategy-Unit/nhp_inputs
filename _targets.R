@@ -247,6 +247,11 @@ list(
       "RYJ"
     )
   ),
+  tar_target(
+    all_providers,
+    jsonlite::read_json("../nhp_model/providers.json", simplifyVector = TRUE) |>
+      stringr::str_subset("\\|", TRUE)
+  ),
   # combined data into single items
   tar_target(
     age_sex_data,
@@ -285,7 +290,7 @@ list(
   tar_target(
     uploaded_data_azure,
     upload_data_to_azure(
-      nhp_current_cohort,
+      all_providers,
       provider_data,
       expat_repat_data,
       covid_adjustment,
@@ -293,12 +298,12 @@ list(
       Sys.getenv("AZ_STORAGE_EP"),
       Sys.getenv("AZ_STORAGE_KEY")
     ),
-    pattern = map(nhp_current_cohort)
+    pattern = map(all_providers)
   ),
   tar_target(
     uploaded_data_local,
     upload_data_to_azure(
-      nhp_current_cohort,
+      all_providers,
       provider_data,
       expat_repat_data,
       covid_adjustment,
@@ -306,7 +311,7 @@ list(
       Sys.getenv("LOCAL_STORAGE_EP"),
       Sys.getenv("LOCAL_STORAGE_KEY")
     ),
-    pattern = map(nhp_current_cohort)
+    pattern = map(all_providers)
   ),
   tar_target(
     uploaded_reference_data_azure,
@@ -333,6 +338,7 @@ list(
       saveRDS(rtt_specialties, "rtt_specialties.Rds")
       saveRDS(lkp_diag, "diagnoses.Rds")
       saveRDS(providers, "providers.Rds")
+      jsonlite::write_json(all_providers, "all_providers.json", auto_unbox = TRUE)
       sf::write_sf(provider_locations, "provider_locations.geojson", delete_dsn = TRUE)
       sf::write_sf(icb_boundaries, "icb_boundaries.geojson", delete_dsn = TRUE)
     })
