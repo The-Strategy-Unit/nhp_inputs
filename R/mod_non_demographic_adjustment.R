@@ -39,7 +39,8 @@ mod_non_demographic_adjustment_input_ui <- function(parent_id, id, label) {
             min = 0,
             max = 200,
             post = "%",
-            value = c(100, 120)
+            value = c(100, 120),
+            step = 0.01
           )
         )
       )
@@ -53,8 +54,22 @@ mod_non_demographic_adjustment_input_ui <- function(parent_id, id, label) {
   )
 }
 
-mod_non_demographic_adjustment_input_server <- function(parent_id, id, type) {
+mod_non_demographic_adjustment_input_server <- function(parent_id, id, type, params) {
   shiny::moduleServer(paste(sep = "-", parent_id, id), function(input, output, session) {
+    default_values <- get_golem_config(c("non-demographic_adjustment", type, id))
+
+    shiny::observe({
+      y <- params$end_year - as.numeric(stringr::str_sub(params$start_year, 1, 4))
+
+      shiny::updateSliderInput(
+        session,
+        "values",
+        value = (default_values^y) * 100
+      )
+
+      shiny::updateCheckboxInput(session, "include", value = TRUE)
+    })
+
     shiny::observe({
       shiny::req(session$userData$data_loaded())
       p <- shiny::req(session$userData$params[["non-demographic_adjustment"]][[type]][[id]])
@@ -141,7 +156,7 @@ mod_non_demographic_adjustment_server <- function(id, params) { # nolint: object
     \(.x, .i) {
       purrr::map(
         purrr::set_names(names(.x$values)),
-        \(.y) mod_non_demographic_adjustment_input_server(id, .y, .i)
+        \(.y) mod_non_demographic_adjustment_input_server(id, .y, .i, params)
       )
     }
   )
