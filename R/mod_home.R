@@ -160,22 +160,12 @@ mod_home_server <- function(id, providers, params) {
     })
 
     shiny::observe({
-      # TODO: need to validate that the file uploaded is valid
-      cat("loading params\n")
-      p <- jsonlite::read_json(input$param_upload$datapath, simplifyVector = TRUE)
+      load_params(input$param_upload$datapath, session)
+    }) |>
+      shiny::bindEvent(input$param_upload)
 
-      # handle old non-demographic adjusment
-      if (!is.null(p[["non-demographic"]][["elective"]])) {
-        p[["non-demographic_adjustment"]] <- list(
-          ip = list(),
-          op = list(),
-          aae = list()
-        )
-      }
-
-      session$userData$params <- p
-
-      session$userData$data_loaded(Sys.time())
+    shiny::observe({
+      p <- session$userData$params
 
       if (p$dataset == "synthetic") {
         cat("skipping changing the dataset\n")
@@ -191,7 +181,7 @@ mod_home_server <- function(id, providers, params) {
       shiny::updateNumericInput(session, "seed", value = p$seed)
       shiny::updateSelectInput(session, "model_runs", selected = p$model_runs)
     }) |>
-      shiny::bindEvent(input$param_upload)
+      shiny::bindEvent(session$userData$data_loaded())
 
     # the scenario must have some validation applied to it - the next few chunks handle this
     # we use the status output to be the placeholder for the validation text, this is used in the

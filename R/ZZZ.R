@@ -32,3 +32,22 @@ md_file_to_html <- function(...) {
 
   shiny::HTML(markdown::mark_html(file, output = FALSE, template = FALSE))
 }
+
+load_params <- function(file, session) {
+  p <- jsonlite::read_json(file, simplifyVector = TRUE)
+
+  # handle old non-demographic adjusment
+  if (!is.null(p[["non-demographic"]][["elective"]])) {
+    p[["non-demographic_adjustment"]] <- list(
+      ip = list(),
+      op = list(),
+      aae = list()
+    )
+  }
+
+  session$userData$params <- p
+  session$userData$data_loaded(Sys.time())
+
+  invisible(NULL)
+}
+
