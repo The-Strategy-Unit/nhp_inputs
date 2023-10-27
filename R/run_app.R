@@ -19,6 +19,7 @@ run_app <- function(onStart = NULL, # nolint
     create_data_cache()
   }
 
+  # required for async promise calls
   future::plan(future::multisession)
 
   golem::with_golem_options(
