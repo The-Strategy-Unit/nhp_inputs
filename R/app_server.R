@@ -106,6 +106,41 @@ app_server <- function(input, output, session) {
       mod_run_model_server("run_model", params)
     })
 
+
+    shiny::observe({
+      shiny::req(params$scenario != "")
+
+      file <- params_filename(
+        # if running locally, then user will be NULL
+        session$user %||% ".",
+        params$dataset,
+        params$scenario
+      )
+
+      params |>
+        shiny::reactiveValuesToList() |>
+        mod_run_model_fix_params(session$user) |>
+        jsonlite::write_json(file, pretty = TRUE, auto_unbox = TRUE)
+    })
+
+    shiny::observe({
+      query <- shiny::parseQueryString(session$clientData$url_search)
+
+      if ("load_params" %in% names(query)) {
+        dataset <- query$dataset
+        scenario <- query$scenario
+
+        file <- params_filename(
+          # if running locally, then user will be NULL
+          session$user %||% ".",
+          dataset,
+          scenario
+        )
+
+        load_params(file, session)
+      }
+    })
+
     init$destroy()
   })
 
@@ -127,4 +162,7 @@ app_server <- function(input, output, session) {
 
     dc$reset()
   })
+
+  # return
+  NULL
 }

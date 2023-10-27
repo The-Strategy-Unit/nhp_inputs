@@ -9,3 +9,5 @@ _targets/
 .Renviron
 
 rsconnect/
+
+params/
