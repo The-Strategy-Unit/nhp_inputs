@@ -34,18 +34,23 @@ mod_home_ui <- function(id) {
           title = "Scenario",
           collapsible = FALSE,
           width = 12,
-          shiny::selectInput(
-            ns("previous_scenario"),
-            "Base",
-            c("National Defaults")
+          shinyjs::disabled(
+            shiny::radioButtons(
+              ns("scenario_type"),
+              NULL,
+              c(
+                "Create new from scratch",
+                "Create new from existing",
+                "Edit existing"
+              ),
+              inline = TRUE
+            )
           ),
           shinyjs::hidden(
-            shiny::radioButtons(
-              ns("scenario_new_edit"),
-              NULL,
-              c("New", "Edit"),
-              "New",
-              TRUE
+            shiny::selectInput(
+              ns("previous_scenario"),
+              "Previous Scenario",
+              NULL
             )
           ),
           shiny::textInput(ns("scenario"), "Name"),
@@ -207,17 +212,30 @@ mod_home_server <- function(id, providers, params) {
       shiny::bindEvent(session$userData$data_loaded())
 
     shiny::observe({
-      saved_params <- params_path(session$user, input$dataset) |>
+      ds <- shiny::req(input$dataset)
+
+      saved_params <- params_path(session$user, ds) |>
         dir(pattern = "*.json") |>
         stringr::str_remove("\\.json$")
+
+      # TODO: when changing provider this doesn't seem to fire
+      shiny::updateTextInput(
+        session,
+        "scenario",
+        value = ""
+      )
+      shiny::updateRadioButtons(
+        session,
+        "scenario_type",
+        selected = "Create new from scratch"
+      )
+
+      shinyjs::toggleState("scenario_type", condition = length(saved_params) > 0)
 
       shiny::updateSelectInput(
         session,
         "previous_scenario",
-        choices = c(
-          "National Defaults",
-          saved_params
-        )
+        choices = saved_params
       )
     }) |>
       shiny::bindEvent(
@@ -225,50 +243,38 @@ mod_home_server <- function(id, providers, params) {
       )
 
     shiny::observe({
-      shinyjs::toggle(
-        "scenario_new_edit",
-        condition = input$previous_scenario != "National Defaults"
-      )
-    }) |>
-      shiny::bindEvent(
-        input$dataset,
-        input$previous_scenario
-      )
-
-    shiny::observe({
-      if (input$scenario_new_edit == "New") {
-        shiny::updateTextInput(
-          session,
-          "scenario",
-          value = ""
-        )
+      if (input$scenario_type == "Create new from scratch") {
         shinyjs::enable("scenario")
-      } else {
+        shinyjs::hide("previous_scenario")
+      } else if (input$scenario_type == "Create new from existing") {
+        shinyjs::enable("scenario")
+        shinyjs::show("previous_scenario")
+      } else if (input$scenario_type == "Edit existing") {
+        shinyjs::disable("scenario")
+        shinyjs::show("previous_scenario")
         shiny::updateTextInput(
           session,
           "scenario",
           value = input$previous_scenario
         )
-        shinyjs::disable("scenario")
       }
     }) |>
       shiny::bindEvent(
         input$dataset,
         input$previous_scenario,
-        input$scenario_new_edit
+        input$scenario_type
       )
 
     shiny::observe({
-      file <- if (input$previous_scenario == "National Defaults") {
-        shiny::req(FALSE) # TODO: create the national defaults file
-      } else {
-        params_filename(
-          session$user,
-          input$dataset,
-          input$previous_scenario
-        )
-      }
+      shiny::req(input$scenario_type != "Create new from scratch")
 
+      file <- params_filename(
+        session$user,
+        input$dataset,
+        input$previous_scenario
+      )
+
+      # prevents bug where the dataset is changed before the previous scenarios are updated
       shiny::req(file.exists(file))
 
       load_params(file, session)
@@ -302,7 +308,7 @@ mod_home_server <- function(id, providers, params) {
           "Scenario"
         ),
         shiny::need(
-          input$scenario_new_edit == "Edit" || !file.exists(f),
+          input$scenario_type == "Edit existing" || !file.exists(f),
           "Scenario already exists",
           "Scenario"
         )
@@ -320,6 +326,8 @@ mod_home_server <- function(id, providers, params) {
 
     # update the params items with the selections
     shiny::observe({
+      shiny::req(scenario_validation())
+
       params$dataset <- input$dataset
       params$scenario <- input$scenario
       params$seed <- input$seed
