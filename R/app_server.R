@@ -106,9 +106,9 @@ app_server <- function(input, output, session) {
       mod_run_model_server("run_model", params)
     })
 
-
     shiny::observe({
-      shiny::req(params$scenario != "")
+      shiny::req(params$dataset)
+      shiny::req(params$scenario)
 
       file <- params_filename(
         # if running locally, then user will be NULL
