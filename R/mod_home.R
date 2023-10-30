@@ -269,6 +269,8 @@ mod_home_server <- function(id, providers, params) {
         )
       }
 
+      shiny::req(file.exists(file))
+
       load_params(file, session)
 
       # some of the modules do not properly update - forcing the evaluation of the params fixes this
