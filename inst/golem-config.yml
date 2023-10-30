@@ -23,6 +23,18 @@ default:
     half_eu_migration: "50% Future EU migration (Not National Statistics)"
     zero_net_migration: "Zero net migration (natural change only)"
     replacement_fertility: "Replacement fertility"
+  non-demographic_adjustment:
+    aae:
+      walk-in: [1.0117592, 1.014443]
+      ambulance: [1.0117592, 1.014443]
+    ip:
+      elective: [1.0050266, 1.007375]
+      non-elective: [1.0187719, 1.024636]
+      maternity: [0.9732562, 0.980959]
+    op:
+      first: [1.0222222, 1.027585]
+      followup: [1.0222222, 1.027585]
+      procedure: [1.0222222, 1.027585]
   mitigators_config:
     mitigators_admission_avoidance:
       activity_type: ip
