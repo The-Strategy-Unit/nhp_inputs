@@ -23,12 +23,32 @@ mod_home_ui <- function(id) {
       col_4(
         bs4Dash::box(
           title = "Select Provider and Baseline",
+          collapsible = FALSE,
           width = 12,
           shiny::selectInput(ns("cohort"), "Cohort", c("Current", "All Other Providers")),
           shiny::selectInput(ns("dataset"), "Provider", choices = NULL, selectize = TRUE),
           shiny::selectInput(ns("start_year"), "Baseline Year", choices = c("2019" = 201920, "2018" = 201819)),
-          shiny::sliderInput(ns("end_year"), "Model Year", min = 0, max = 19, value = 0, sep = ""),
-          shiny::textInput(ns("scenario"), "Scenario Name"),
+          shiny::sliderInput(ns("end_year"), "Model Year", min = 0, max = 19, value = 0, sep = "")
+        ),
+        bs4Dash::box(
+          title = "Scenario",
+          collapsible = FALSE,
+          width = 12,
+          shiny::selectInput(
+            ns("previous_scenario"),
+            "Base",
+            c("National Defaults")
+          ),
+          shinyjs::hidden(
+            shiny::radioButtons(
+              ns("scenario_new_edit"),
+              NULL,
+              c("New", "Edit"),
+              "New",
+              TRUE
+            )
+          ),
+          shiny::textInput(ns("scenario"), "Name"),
           shiny::textOutput(ns("status"))
         ),
         bs4Dash::box(
@@ -183,6 +203,76 @@ mod_home_server <- function(id, providers, params) {
     }) |>
       shiny::bindEvent(session$userData$data_loaded())
 
+    shiny::observe({
+      saved_params <- params_path(session$user, input$dataset) |>
+        dir(pattern = "*.json") |>
+        stringr::str_remove("\\.json$")
+
+      shiny::updateSelectInput(
+        session,
+        "previous_scenario",
+        choices = c(
+          "National Defaults",
+          saved_params
+        )
+      )
+    }) |>
+      shiny::bindEvent(
+        input$dataset
+      )
+
+    shiny::observe({
+      shinyjs::toggle(
+        "scenario_new_edit",
+        condition = input$previous_scenario != "National Defaults"
+      )
+    }) |>
+      shiny::bindEvent(
+        input$dataset,
+        input$previous_scenario
+      )
+
+    shiny::observe({
+      if (input$scenario_new_edit == "New") {
+        shiny::updateTextInput(
+          session,
+          "scenario",
+          value = ""
+        )
+        shinyjs::enable("scenario")
+      } else {
+        shiny::updateTextInput(
+          session,
+          "scenario",
+          value = input$previous_scenario
+        )
+        shinyjs::disable("scenario")
+      }
+    }) |>
+      shiny::bindEvent(
+        input$dataset,
+        input$previous_scenario,
+        input$scenario_new_edit
+      )
+
+    shiny::observe({
+      file <- if (input$previous_scenario == "National Defaults") {
+        shiny::req(FALSE) # TODO: create the national defaults file
+      } else {
+        params_filename(
+          session$user,
+          input$dataset,
+          input$previous_scenario
+        )
+      }
+
+      load_params(file, session)
+    }) |>
+      shiny::bindEvent(
+        input$dataset,
+        input$previous_scenario
+      )
+
     # the scenario must have some validation applied to it - the next few chunks handle this
     # we use the status output to be the placeholder for the validation text, this is used in the
     # main UI to control the visibility of the items in the panel (`output.status === 'TRUE'`)
@@ -190,6 +280,7 @@ mod_home_server <- function(id, providers, params) {
     # (we only want to show the status output if there are validation errors)
     scenario_validation <- shiny::reactive({
       s <- input$scenario
+      f <- params_filename(session$user, input$dataset, input$scenario)
 
       shiny::validate(
         shiny::need(
@@ -200,6 +291,11 @@ mod_home_server <- function(id, providers, params) {
         shiny::need(
           !stringr::str_detect(s, "[^a-zA-Z0-9\\-]"),
           "Scenario can only container letters, numbers, and - characters",
+          "Scenario"
+        ),
+        shiny::need(
+          input$scenario_new_edit == "Edit" || !file.exists(f),
+          "Scenario already exists",
           "Scenario"
         )
       )

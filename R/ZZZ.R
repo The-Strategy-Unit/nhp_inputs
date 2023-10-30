@@ -51,11 +51,21 @@ load_params <- function(file, session) {
   invisible(NULL)
 }
 
+params_path <- function(user, dataset) {
+  path <- file.path(
+    "params",
+    user %||% ".",
+    dataset
+  )
+
+  dir.create(path, FALSE, TRUE)
+
+  path
+}
+
 params_filename <- function(user, dataset, scenario) {
   file.path(
-    "params",
-    user,
-    dataset,
+    params_path(user, dataset),
     paste0(scenario, ".json")
   )
 }

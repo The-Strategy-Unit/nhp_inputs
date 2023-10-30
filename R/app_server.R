@@ -123,24 +123,6 @@ app_server <- function(input, output, session) {
         jsonlite::write_json(file, pretty = TRUE, auto_unbox = TRUE)
     })
 
-    shiny::observe({
-      query <- shiny::parseQueryString(session$clientData$url_search)
-
-      if ("load_params" %in% names(query)) {
-        dataset <- query$dataset
-        scenario <- query$scenario
-
-        file <- params_filename(
-          # if running locally, then user will be NULL
-          session$user %||% ".",
-          dataset,
-          scenario
-        )
-
-        load_params(file, session)
-      }
-    })
-
     init$destroy()
   })
 
