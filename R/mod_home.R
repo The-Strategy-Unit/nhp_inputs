@@ -181,6 +181,9 @@ mod_home_server <- function(id, providers, params) {
 
     shiny::observe({
       load_params(input$param_upload$datapath, session)
+
+      # some of the modules do not properly update - forcing the evaluation of the params fixes this
+      shiny::reactiveValuesToList(params)
     }) |>
       shiny::bindEvent(input$param_upload)
 
@@ -267,6 +270,9 @@ mod_home_server <- function(id, providers, params) {
       }
 
       load_params(file, session)
+
+      # some of the modules do not properly update - forcing the evaluation of the params fixes this
+      shiny::reactiveValuesToList(params)
     }) |>
       shiny::bindEvent(
         input$dataset,
