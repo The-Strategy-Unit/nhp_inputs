@@ -33,7 +33,7 @@ md_file_to_html <- function(...) {
   shiny::HTML(markdown::mark_html(file, output = FALSE, template = FALSE))
 }
 
-load_params <- function(file, session) {
+load_params <- function(file) {
   p <- jsonlite::read_json(file, simplifyVector = TRUE)
 
   # handle old non-demographic adjusment
@@ -45,10 +45,7 @@ load_params <- function(file, session) {
     )
   }
 
-  session$userData$params <- p
-  session$userData$data_loaded(Sys.time())
-
-  invisible(NULL)
+  p
 }
 
 params_path <- function(user, dataset) {

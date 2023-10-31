@@ -39,7 +39,28 @@ app_server <- function(input, output, session) {
 
   session$userData$data_loaded <- shiny::reactiveVal()
 
-  mod_home_server("home", providers(), params)
+  start <- mod_home_server("home", providers(), params)
+
+  shiny::observe(
+    {
+      shiny::req(start() > 0)
+
+      # hacky way of achieving switch from the home tab to the app itself
+      shinyjs::removeClass("tab-tab_home", "active")
+      shinyjs::removeClass("shiny-tab-tab_home", "active")
+      shinyjs::addClass("tab-tab_baseline_adjustment", "active")
+      shinyjs::addClass("shiny-tab-tab_baseline_adjustment", "active")
+
+      if (!is.null(session$userData$params)) {
+        session$userData$data_loaded(Sys.time())
+
+        # some of the modules do not properly update - forcing the evaluation of the params fixes this
+        shiny::reactiveValuesToList(params)
+      }
+    },
+    priority = -1
+  ) |>
+    shiny::bindEvent(start())
 
   # load all other modules once the home module has finished loading
   init_timeout <- TRUE
@@ -107,6 +128,8 @@ app_server <- function(input, output, session) {
     })
 
     shiny::observe({
+      shiny::req(start() > 0)
+      # TODO: this won't persist across redeployments
       shiny::req(params$dataset)
       shiny::req(params$scenario)
 

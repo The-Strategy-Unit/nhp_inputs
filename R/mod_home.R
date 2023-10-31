@@ -54,7 +54,10 @@ mod_home_ui <- function(id) {
             )
           ),
           shiny::textInput(ns("scenario"), "Name"),
-          shiny::textOutput(ns("status"))
+          shiny::textOutput(ns("status")),
+          shinyjs::disabled(
+            shiny::actionButton(ns("start"), "Start")
+          )
         ),
         bs4Dash::box(
           title = "Advanced Options",
@@ -185,15 +188,7 @@ mod_home_server <- function(id, providers, params) {
     })
 
     shiny::observe({
-      load_params(input$param_upload$datapath, session)
-
-      # some of the modules do not properly update - forcing the evaluation of the params fixes this
-      shiny::reactiveValuesToList(params)
-    }) |>
-      shiny::bindEvent(input$param_upload)
-
-    shiny::observe({
-      p <- session$userData$params
+      p <- session$userData$params <- load_params(input$param_upload$datapath)
 
       if (p$dataset == "synthetic") {
         cat("skipping changing the dataset\n")
@@ -209,7 +204,7 @@ mod_home_server <- function(id, providers, params) {
       shiny::updateNumericInput(session, "seed", value = p$seed)
       shiny::updateSelectInput(session, "model_runs", selected = p$model_runs)
     }) |>
-      shiny::bindEvent(session$userData$data_loaded())
+      shiny::bindEvent(input$param_upload)
 
     shiny::observe({
       ds <- shiny::req(input$dataset)
@@ -218,18 +213,16 @@ mod_home_server <- function(id, providers, params) {
         dir(pattern = "*.json") |>
         stringr::str_remove("\\.json$")
 
-      # TODO: when changing provider this doesn't seem to fire
-      shiny::updateTextInput(
-        session,
-        "scenario",
-        value = ""
-      )
       shiny::updateRadioButtons(
         session,
         "scenario_type",
         selected = "Create new from scratch"
       )
-
+      shiny::updateTextInput(
+        session,
+        "scenario",
+        value = ""
+      )
       shinyjs::toggleState("scenario_type", condition = length(saved_params) > 0)
 
       shiny::updateSelectInput(
@@ -244,13 +237,13 @@ mod_home_server <- function(id, providers, params) {
 
     shiny::observe({
       if (input$scenario_type == "Create new from scratch") {
-        shinyjs::enable("scenario")
+        shinyjs::show("scenario")
         shinyjs::hide("previous_scenario")
       } else if (input$scenario_type == "Create new from existing") {
-        shinyjs::enable("scenario")
+        shinyjs::show("scenario")
         shinyjs::show("previous_scenario")
       } else if (input$scenario_type == "Edit existing") {
-        shinyjs::disable("scenario")
+        shinyjs::hide("scenario")
         shinyjs::show("previous_scenario")
         shiny::updateTextInput(
           session,
@@ -260,13 +253,15 @@ mod_home_server <- function(id, providers, params) {
       }
     }) |>
       shiny::bindEvent(
-        input$dataset,
-        input$previous_scenario,
-        input$scenario_type
+        input$scenario_type,
+        input$previous_scenario
       )
 
     shiny::observe({
-      shiny::req(input$scenario_type != "Create new from scratch")
+      if (input$scenario_type == "Create new from scratch") {
+        session$userData$params <- NULL
+        return()
+      }
 
       file <- params_filename(
         session$user,
@@ -277,10 +272,13 @@ mod_home_server <- function(id, providers, params) {
       # prevents bug where the dataset is changed before the previous scenarios are updated
       shiny::req(file.exists(file))
 
-      load_params(file, session)
+      p <- session$userData$params <- load_params(file)
 
-      # some of the modules do not properly update - forcing the evaluation of the params fixes this
-      shiny::reactiveValuesToList(params)
+      y <- p$start_year * 100 + p$start_year %% 100 + 1
+      shiny::updateSelectInput(session, "start_year", selected = y)
+      shiny::updateNumericInput(session, "end_year", value = p$end_year)
+      shiny::updateNumericInput(session, "seed", value = p$seed)
+      shiny::updateSelectInput(session, "model_runs", selected = p$model_runs)
     }) |>
       shiny::bindEvent(
         input$dataset,
@@ -322,6 +320,7 @@ mod_home_server <- function(id, providers, params) {
     shiny::observe({
       x <- tryCatch(scenario_validation(), error = \(...) FALSE)
       shinyjs::toggle("status", condition = !x)
+      shinyjs::toggleState("start", condition = x)
     })
 
     # update the params items with the selections
@@ -334,6 +333,11 @@ mod_home_server <- function(id, providers, params) {
       params$model_runs <- as.numeric(input$model_runs)
       params$start_year <- input$start_year
       params$end_year <- input$end_year
+    })
+
+    # return the start input so we can observe it in the main server
+    shiny::reactive({
+      input$start
     })
   })
 }
