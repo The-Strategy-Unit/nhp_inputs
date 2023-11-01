@@ -18,6 +18,8 @@ app_server <- function(input, output, session) {
     shiny::bindCache(1)
 
   params <- shiny::reactiveValues()
+
+  params[["user"]] <- session$user %||% "[development]"
   params[["app_version"]] <- Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")
   params[["demographic_factors"]] <- list(
     file = "demographic_factors.csv"
@@ -142,7 +144,7 @@ app_server <- function(input, output, session) {
 
       params |>
         shiny::reactiveValuesToList() |>
-        mod_run_model_fix_params(session$user) |>
+        mod_run_model_fix_params() |>
         jsonlite::write_json(file, pretty = TRUE, auto_unbox = TRUE)
     })
 

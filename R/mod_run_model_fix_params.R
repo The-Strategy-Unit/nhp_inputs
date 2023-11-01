@@ -1,4 +1,4 @@
-mod_run_model_fix_params <- function(p, user) {
+mod_run_model_fix_params <- function(p) {
   # the time profiles may be empty, ensure that's not the case
   tpm <- p[["time_profile_mappings"]]
   p[["time_profile_mappings"]][["activity_avoidance"]] <- list(
@@ -47,7 +47,6 @@ mod_run_model_fix_params <- function(p, user) {
     stringr::str_to_lower() |>
     paste0("-", hash)
 
-  p$user <- user
   # reorder the params
   p_order <- c(
     "id",
