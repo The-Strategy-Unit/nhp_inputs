@@ -32,3 +32,38 @@ md_file_to_html <- function(...) {
 
   shiny::HTML(markdown::mark_html(file, output = FALSE, template = FALSE))
 }
+
+load_params <- function(file) {
+  p <- jsonlite::read_json(file, simplifyVector = TRUE)
+
+  # handle old non-demographic adjusment
+  if (!is.null(p[["non-demographic"]][["elective"]])) {
+    p[["non-demographic_adjustment"]] <- list(
+      ip = list(),
+      op = list(),
+      aae = list()
+    )
+  }
+
+  p
+}
+
+params_path <- function(user, dataset) {
+  path <- file.path(
+    "params",
+    user %||% ".",
+    dataset
+  )
+
+  dir.create(path, FALSE, TRUE)
+
+  path
+}
+
+params_filename <- function(user, dataset, scenario) {
+  file.path(
+    Sys.getenv("PARAMS_DATA_PATH", "."),
+    params_path(user, dataset),
+    paste0(scenario, ".json")
+  )
+}

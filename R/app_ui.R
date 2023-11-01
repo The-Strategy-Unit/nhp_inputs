@@ -12,13 +12,18 @@ app_ui <- function(request) {
     status = "primary",
     bs4Dash::sidebarMenu(
       id = "sidebarMenu",
-      bs4Dash::menuItem(
-        "Home",
-        tabName = "tab_home",
-        icon = shiny::icon("house")
+      shiny::conditionalPanel(
+        condition = "input.start === 0",
+        ns = shiny::NS("home"),
+        #
+        bs4Dash::menuItem(
+          "Home",
+          tabName = "tab_home",
+          icon = shiny::icon("house")
+        )
       ),
       shiny::conditionalPanel(
-        condition = "output.status === 'TRUE'",
+        condition = "input.start > 0",
         ns = shiny::NS("home"),
         #
         shiny::tags$hr(),

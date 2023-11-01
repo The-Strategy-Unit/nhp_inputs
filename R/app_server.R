@@ -18,6 +18,9 @@ app_server <- function(input, output, session) {
     shiny::bindCache(1)
 
   params <- shiny::reactiveValues()
+
+  params[["user"]] <- session$user %||% "[development]"
+  params[["app_version"]] <- Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")
   params[["demographic_factors"]] <- list(
     file = "demographic_factors.csv"
   )
@@ -39,7 +42,28 @@ app_server <- function(input, output, session) {
 
   session$userData$data_loaded <- shiny::reactiveVal()
 
-  mod_home_server("home", providers(), params)
+  start <- mod_home_server("home", providers(), params)
+
+  shiny::observe(
+    {
+      shiny::req(start() > 0)
+
+      # hacky way of achieving switch from the home tab to the app itself
+      shinyjs::removeClass("tab-tab_home", "active")
+      shinyjs::removeClass("shiny-tab-tab_home", "active")
+      shinyjs::addClass("tab-tab_baseline_adjustment", "active")
+      shinyjs::addClass("shiny-tab-tab_baseline_adjustment", "active")
+
+      if (!is.null(session$userData$params)) {
+        session$userData$data_loaded(Sys.time())
+
+        # some of the modules do not properly update - forcing the evaluation of the params fixes this
+        shiny::reactiveValuesToList(params)
+      }
+    },
+    priority = -1
+  ) |>
+    shiny::bindEvent(start())
 
   # load all other modules once the home module has finished loading
   init_timeout <- TRUE
@@ -106,6 +130,24 @@ app_server <- function(input, output, session) {
       mod_run_model_server("run_model", params)
     })
 
+    shiny::observe({
+      shiny::req(start() > 0)
+      shiny::req(params$dataset)
+      shiny::req(params$scenario)
+
+      file <- params_filename(
+        # if running locally, then user will be NULL
+        session$user %||% ".",
+        params$dataset,
+        params$scenario
+      )
+
+      params |>
+        shiny::reactiveValuesToList() |>
+        mod_run_model_fix_params() |>
+        jsonlite::write_json(file, pretty = TRUE, auto_unbox = TRUE)
+    })
+
     init$destroy()
   })
 
@@ -127,4 +169,7 @@ app_server <- function(input, output, session) {
 
     dc$reset()
   })
+
+  # return
+  NULL
 }

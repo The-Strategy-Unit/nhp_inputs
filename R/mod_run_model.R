@@ -63,7 +63,7 @@ mod_run_model_server <- function(id, params) {
 
       params |>
         shiny::reactiveValuesToList() |>
-        mod_run_model_fix_params(session$user)
+        mod_run_model_fix_params()
     })
 
     # output the status of the model run after submit is pressed

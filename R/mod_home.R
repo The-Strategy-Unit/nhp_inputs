@@ -23,13 +23,41 @@ mod_home_ui <- function(id) {
       col_4(
         bs4Dash::box(
           title = "Select Provider and Baseline",
+          collapsible = FALSE,
           width = 12,
           shiny::selectInput(ns("cohort"), "Cohort", c("Current", "All Other Providers")),
           shiny::selectInput(ns("dataset"), "Provider", choices = NULL, selectize = TRUE),
           shiny::selectInput(ns("start_year"), "Baseline Year", choices = c("2019" = 201920, "2018" = 201819)),
-          shiny::sliderInput(ns("end_year"), "Model Year", min = 0, max = 19, value = 0, sep = ""),
-          shiny::textInput(ns("scenario"), "Scenario Name"),
-          shiny::textOutput(ns("status"))
+          shiny::sliderInput(ns("end_year"), "Model Year", min = 0, max = 19, value = 0, sep = "")
+        ),
+        bs4Dash::box(
+          title = "Scenario",
+          collapsible = FALSE,
+          width = 12,
+          shinyjs::disabled(
+            shiny::radioButtons(
+              ns("scenario_type"),
+              NULL,
+              c(
+                "Create new from scratch",
+                "Create new from existing",
+                "Edit existing"
+              ),
+              inline = TRUE
+            )
+          ),
+          shinyjs::hidden(
+            shiny::selectInput(
+              ns("previous_scenario"),
+              "Previous Scenario",
+              NULL
+            )
+          ),
+          shiny::textInput(ns("scenario"), "Name"),
+          shiny::textOutput(ns("status")),
+          shinyjs::disabled(
+            shiny::actionButton(ns("start"), "Start")
+          )
         ),
         bs4Dash::box(
           title = "Advanced Options",
@@ -160,22 +188,7 @@ mod_home_server <- function(id, providers, params) {
     })
 
     shiny::observe({
-      # TODO: need to validate that the file uploaded is valid
-      cat("loading params\n")
-      p <- jsonlite::read_json(input$param_upload$datapath, simplifyVector = TRUE)
-
-      # handle old non-demographic adjusment
-      if (!is.null(p[["non-demographic"]][["elective"]])) {
-        p[["non-demographic_adjustment"]] <- list(
-          ip = list(),
-          op = list(),
-          aae = list()
-        )
-      }
-
-      session$userData$params <- p
-
-      session$userData$data_loaded(Sys.time())
+      p <- session$userData$params <- load_params(input$param_upload$datapath)
 
       if (p$dataset == "synthetic") {
         cat("skipping changing the dataset\n")
@@ -193,6 +206,85 @@ mod_home_server <- function(id, providers, params) {
     }) |>
       shiny::bindEvent(input$param_upload)
 
+    shiny::observe({
+      ds <- shiny::req(input$dataset)
+
+      saved_params <- params_path(session$user, ds) |>
+        dir(pattern = "*.json") |>
+        stringr::str_remove("\\.json$")
+
+      shiny::updateRadioButtons(
+        session,
+        "scenario_type",
+        selected = "Create new from scratch"
+      )
+      shiny::updateTextInput(
+        session,
+        "scenario",
+        value = ""
+      )
+      shinyjs::toggleState("scenario_type", condition = length(saved_params) > 0)
+
+      shiny::updateSelectInput(
+        session,
+        "previous_scenario",
+        choices = saved_params
+      )
+    }) |>
+      shiny::bindEvent(
+        input$dataset
+      )
+
+    shiny::observe({
+      if (input$scenario_type == "Create new from scratch") {
+        shinyjs::show("scenario")
+        shinyjs::hide("previous_scenario")
+      } else if (input$scenario_type == "Create new from existing") {
+        shinyjs::show("scenario")
+        shinyjs::show("previous_scenario")
+      } else if (input$scenario_type == "Edit existing") {
+        shinyjs::hide("scenario")
+        shinyjs::show("previous_scenario")
+        shiny::updateTextInput(
+          session,
+          "scenario",
+          value = input$previous_scenario
+        )
+      }
+    }) |>
+      shiny::bindEvent(
+        input$scenario_type,
+        input$previous_scenario
+      )
+
+    shiny::observe({
+      if (input$scenario_type == "Create new from scratch") {
+        session$userData$params <- NULL
+        return()
+      }
+
+      file <- params_filename(
+        session$user,
+        input$dataset,
+        input$previous_scenario
+      )
+
+      # prevents bug where the dataset is changed before the previous scenarios are updated
+      shiny::req(file.exists(file))
+
+      p <- session$userData$params <- load_params(file)
+
+      y <- p$start_year * 100 + p$start_year %% 100 + 1
+      shiny::updateSelectInput(session, "start_year", selected = y)
+      shiny::updateNumericInput(session, "end_year", value = p$end_year)
+      shiny::updateNumericInput(session, "seed", value = p$seed)
+      shiny::updateSelectInput(session, "model_runs", selected = p$model_runs)
+    }) |>
+      shiny::bindEvent(
+        input$dataset,
+        input$previous_scenario
+      )
+
     # the scenario must have some validation applied to it - the next few chunks handle this
     # we use the status output to be the placeholder for the validation text, this is used in the
     # main UI to control the visibility of the items in the panel (`output.status === 'TRUE'`)
@@ -200,6 +292,7 @@ mod_home_server <- function(id, providers, params) {
     # (we only want to show the status output if there are validation errors)
     scenario_validation <- shiny::reactive({
       s <- input$scenario
+      f <- params_filename(session$user, input$dataset, input$scenario)
 
       shiny::validate(
         shiny::need(
@@ -210,6 +303,11 @@ mod_home_server <- function(id, providers, params) {
         shiny::need(
           !stringr::str_detect(s, "[^a-zA-Z0-9\\-]"),
           "Scenario can only container letters, numbers, and - characters",
+          "Scenario"
+        ),
+        shiny::need(
+          input$scenario_type == "Edit existing" || !file.exists(f),
+          "Scenario already exists",
           "Scenario"
         )
       )
@@ -222,16 +320,24 @@ mod_home_server <- function(id, providers, params) {
     shiny::observe({
       x <- tryCatch(scenario_validation(), error = \(...) FALSE)
       shinyjs::toggle("status", condition = !x)
+      shinyjs::toggleState("start", condition = x)
     })
 
     # update the params items with the selections
     shiny::observe({
+      shiny::req(scenario_validation())
+
       params$dataset <- input$dataset
       params$scenario <- input$scenario
       params$seed <- input$seed
       params$model_runs <- as.numeric(input$model_runs)
       params$start_year <- input$start_year
       params$end_year <- input$end_year
+    })
+
+    # return the start input so we can observe it in the main server
+    shiny::reactive({
+      input$start
     })
   })
 }
