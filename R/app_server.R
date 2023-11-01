@@ -129,7 +129,6 @@ app_server <- function(input, output, session) {
 
     shiny::observe({
       shiny::req(start() > 0)
-      # TODO: this won't persist across redeployments
       shiny::req(params$dataset)
       shiny::req(params$scenario)
 
