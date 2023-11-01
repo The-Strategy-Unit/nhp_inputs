@@ -444,16 +444,17 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
           data,
           diagnosis_description = "Other",
           p = 1 - sum(.data$p),
-          n = sum(.data$n) * .data$p
+          n = sum(.data$n) / (1 - .data$p)
         )
       )
 
-      gt::gt(data) |>
+      gt::gt(data, "diagnosis_description") |>
         gt::cols_label(
           "diagnosis_description" = "Diagnosis",
           "n" = "Count of Activity (spells)",
           "p" = "% of Total Activity"
         ) |>
+        gt::tab_stubhead("Diagnosis") |>
         gt::fmt_number(
           c("n"),
           decimals = 0,
@@ -463,6 +464,13 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
           c("p"),
           decimals = 1
         ) |>
+        gt::grand_summary_rows(
+          columns = "n",
+          fns = list(Total = ~ sum(.)),
+          fmt = list(
+            ~ gt::fmt_number(., decimals = 0, use_seps = TRUE)
+          )
+        ) |>
         gt::tab_style(
           style = list(
             gt::cell_fill(color = "#EFEFEF"),
@@ -470,7 +478,21 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
           ),
           locations = list(
             gt::cells_column_labels(),
+            gt::cells_stubhead(),
+            gt::cells_grand_summary(),
+            gt::cells_stub_grand_summary()
+          )
+        ) |>
+        gt::tab_style(
+          style = list(
+            gt::cell_fill(color = "#FBFBFB"),
+            gt::cell_text(weight = "bold")
+          ),
+          locations = list(
             gt::cells_body(
+              rows = .data$diagnosis_description == "Other"
+            ),
+            gt::cells_stub(
               rows = .data$diagnosis_description == "Other"
             )
           )
