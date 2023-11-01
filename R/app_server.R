@@ -18,6 +18,7 @@ app_server <- function(input, output, session) {
     shiny::bindCache(1)
 
   params <- shiny::reactiveValues()
+  params[["app_version"]] <- Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")
   params[["demographic_factors"]] <- list(
     file = "demographic_factors.csv"
   )
