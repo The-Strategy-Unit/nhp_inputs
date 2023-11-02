@@ -96,20 +96,20 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
     params
   )
 
+  config <- get_golem_config("mitigators_config")[[id]]
+
+  activity_type <- config$activity_type
+  mitigators_type <- config$mitigators_type
+
+  param_conversion <- config$param_conversion %||% list(
+    absolute = list(\(r, p) p * r, \(r, q) q / r),
+    relative = list(\(r, p) p, \(r, q) q)
+  )
+
   shiny::moduleServer(id, function(input, output, session) {
-    config <- get_golem_config("mitigators_config")[[id]]
-
-    activity_type <- config$activity_type
-    mitigators_type <- config$mitigators_type
-
     slider_values <- shiny::reactiveValues()
     output_conversions <- shiny::reactiveValues()
     time_profile_mappings <- shiny::reactiveValues()
-
-    param_conversion <- config$param_conversion %||% list(
-      absolute = list(\(r, p) p * r, \(r, q) q / r),
-      relative = list(\(r, p) p, \(r, q) q)
-    )
 
     strategies <- shiny::reactive({
       # make sure a provider is selected
