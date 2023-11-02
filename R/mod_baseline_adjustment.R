@@ -55,11 +55,14 @@ mod_baseline_adjustment_ui <- function(id) {
   shiny::tagList(
     shiny::tags$h1("Baseline Adjustment"),
     shiny::fluidRow(
-      bs4Dash::box(
-        collapsible = FALSE,
-        headerBorder = FALSE,
-        width = 4,
-        md_file_to_html("app", "text", "baseline_adjustment.md")
+      col_4(
+        bs4Dash::box(
+          collapsible = FALSE,
+          headerBorder = FALSE,
+          width = 12,
+          md_file_to_html("app", "text", "baseline_adjustment.md")
+        ),
+        mod_reasons_ui(ns("reasons"))
       ),
       bs4Dash::box(
         title = "Parameters",
@@ -128,6 +131,8 @@ mod_baseline_adjustment_ui <- function(id) {
 #'
 #' @noRd
 mod_baseline_adjustment_server <- function(id, params) {
+  mod_reasons_server(shiny::NS(id, "reasons"), params, "baseline_adjustment")
+
   shiny::moduleServer(id, function(input, output, session) {
     specs <- rtt_specialties() |>
       dplyr::mutate(sanitized_code = sanitize_input_name(.data[["code"]])) |>

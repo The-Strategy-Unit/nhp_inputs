@@ -24,11 +24,14 @@ mod_population_growth_ui <- function(id) {
   shiny::tagList(
     shiny::tags$h1("Population Growth"),
     shiny::fluidRow(
-      bs4Dash::box(
-        collapsible = FALSE,
-        headerBorder = FALSE,
-        width = 4,
-        md_file_to_html("app", "text", "population_growth.md")
+      col_4(
+        bs4Dash::box(
+          collapsible = FALSE,
+          headerBorder = FALSE,
+          width = 12,
+          md_file_to_html("app", "text", "population_growth.md")
+        ),
+        mod_reasons_ui(ns("reasons"))
       ),
       bs4Dash::box(
         collapsible = FALSE,
@@ -45,6 +48,8 @@ mod_population_growth_ui <- function(id) {
 #'
 #' @noRd
 mod_population_growth_server <- function(id, params) {
+  mod_reasons_server(shiny::NS(id, "reasons"), params, "demographic_factors")
+
   shiny::moduleServer(id, function(input, output, session) {
     projections <- get_golem_config("population_projections")
     changeable_projections <- names(projections)[-1]
@@ -82,11 +87,10 @@ mod_population_growth_server <- function(id, params) {
     )
 
     values <- shiny::reactive({
-      purrr::map_dbl(
-        shiny::reactiveValuesToList(input),
-        `/`,
-        100
-      )[names(projections)]
+      input |>
+        shiny::reactiveValuesToList() |>
+        _[names(projections)] |>
+        purrr::map_dbl(`/`, 100)
     })
 
     shiny::observe({

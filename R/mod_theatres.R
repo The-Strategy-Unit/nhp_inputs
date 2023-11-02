@@ -76,11 +76,14 @@ mod_theatres_ui <- function(id) {
   ns <- shiny::NS(id)
 
   shiny::fluidRow(
-    bs4Dash::box(
-      collapsible = FALSE,
-      headerBorder = FALSE,
-      width = 4,
-      md_file_to_html("app", "text", "theatres.md")
+    col_4(
+      bs4Dash::box(
+        collapsible = FALSE,
+        headerBorder = FALSE,
+        width = 12,
+        md_file_to_html("app", "text", "theatres.md")
+      ),
+      mod_reasons_ui(ns("reasons"))
     ),
     bs4Dash::box(
       title = "Theatres Utilisation",
@@ -94,6 +97,7 @@ mod_theatres_ui <- function(id) {
 #'
 #' @noRd
 mod_theatres_server <- function(id, params) {
+  mod_reasons_server(shiny::NS(id, "reasons"), params, "theatres")
   shiny::moduleServer(id, function(input, output, session) {
     mod_theatres_load_specialties() |>
       purrr::pwalk(\(code, sanitized_code, ...) {

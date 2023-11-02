@@ -128,13 +128,14 @@ mod_non_demographic_adjustment_ui <- function(id) {
     shiny::tags$h1("Non-demographic Adjustment"),
     shiny::fluidRow(
       col_4(
-        mod_time_profile_ui(ns("time_profile")),
         bs4Dash::box(
           collapsible = FALSE,
           headerBorder = FALSE,
           width = 12,
           md_file_to_html("app", "text", "non_demographic_adjustment.md")
-        )
+        ),
+        mod_reasons_ui(ns("reasons")),
+        mod_time_profile_ui(ns("time_profile"))
       ),
       col_8(boxes)
     )
@@ -150,6 +151,8 @@ mod_non_demographic_adjustment_server <- function(id, params) { # nolint: object
     shiny::NS(id, "time_profile"),
     params
   )
+
+  mod_reasons_server(shiny::NS(id, "reasons"), params, "non-demographic_adjustment")
 
   nda_values <- purrr::imap(
     nda_groups,
