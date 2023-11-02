@@ -36,6 +36,7 @@ mod_mitigators_ui <- function(id, title) {
             ),
             shiny::sliderInput(ns("slider"), "90% Confidence Interval", 0, 1, c(0, 1))
           ),
+          mod_reasons_ui(ns("reasons")),
           mod_time_profile_ui(ns("time_profile")),
         )
       ),
@@ -106,6 +107,15 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
     relative = list(\(r, p) p, \(r, q) q)
   )
 
+  reasons_key <- shiny::reactiveVal()
+  mod_reasons_server(
+    shiny::NS(id, "reasons"),
+    params,
+    mitigators_type,
+    activity_type,
+    key = reasons_key
+  )
+
   shiny::moduleServer(id, function(input, output, session) {
     slider_values <- shiny::reactiveValues()
     output_conversions <- shiny::reactiveValues()
@@ -114,6 +124,13 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
     strategies <- shiny::reactive({
       # make sure a provider is selected
       shiny::req(params$dataset)
+
+      shiny::observe(
+        input$strategy |>
+          shiny::req() |>
+          reasons_key()
+      ) |>
+        shiny::bindEvent(input$strategy)
 
       # set the names of the strategies to title case, but fix up some of the replaced words to upper case
       config$strategy_subset |>

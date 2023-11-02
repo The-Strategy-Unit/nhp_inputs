@@ -23,11 +23,17 @@ mod_reasons_ui <- function(id) {
 #' reasons Server Functions
 #'
 #' @noRd
-mod_reasons_server <- function(id, params, ..., key = shiny::reactive(NULL)) {
+mod_reasons_server <- function(id, params, ..., key = NULL) {
   ix <- c(...)
 
   shiny::moduleServer(id, function(input, output, session) {
-    k <- shiny::reactive(c(ix, key()))
+    k <- shiny::reactive({
+      if (is.null(key)) {
+        return(ix)
+      }
+
+      c(ix, shiny::req(key()))
+    })
 
     shiny::observe({
       purrr::pluck(params$reasons, !!!ix) <- purrr::pluck(session$userData$params$reasons, !!!ix)
@@ -35,9 +41,9 @@ mod_reasons_server <- function(id, params, ..., key = shiny::reactive(NULL)) {
       shiny::bindEvent(session$userData$data_loaded())
 
     shiny::observe({
-      shiny::updateTextAreaInput(session, "value", value = purrr::pluck(params$reasons, !!!k()))
+      shiny::updateTextAreaInput(session, "value", value = purrr::pluck(params$reasons, !!!k()) %||% "")
     }) |>
-      shiny::bindEvent(k())
+      shiny::bindEvent(session$userData$data_loaded(), k())
 
     shiny::observe({
       purrr::pluck(params$reasons, !!!k()) <- input$value
