@@ -410,7 +410,7 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
         ) +
         ggplot2::scale_y_continuous(
           labels = scales::percent,
-          limits = c(floor(min(df$pcnt * 10)), ceiling(v * 20)) / 10
+          limits = c(0, ceiling(v * 20)) / 10
         ) +
         ggplot2::labs(
           x = "Financial Year",
@@ -501,6 +501,7 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
         ggplot2::scale_y_continuous(
           labels = scales::percent
         ) +
+        ggplot2::expand_limits(y = 0) +
         ggplot2::labs(
           x = "Financial Year",
           y = "Percentange of Non-Local ICBs Activity"
@@ -518,15 +519,14 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
       shiny::req(nrow(df) > 0)
 
       df |>
+        dplyr::count(.data[["fyear"]], wt = .data[["n"]]) |>
         ggplot2::ggplot(
           ggplot2::aes(
             as.factor(.data$fyear),
-            .data$n,
-            color = .data$icb22cdh,
-            fill = ggplot2::after_scale(ggplot2::alpha(colour, 0.4)) # nolint
+            .data$n
           )
         ) +
-        ggplot2::geom_col(position = "stack") +
+        ggplot2::geom_col(position = "stack", colour = "#f9bf07", fill = "#fef2cd") +
         ggplot2::scale_x_discrete(
           labels = \(.x) stringr::str_replace(.x, "^(\\d{4})(\\d{2})$", "\\1/\\2")
         ) +
