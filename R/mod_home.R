@@ -282,6 +282,7 @@ mod_home_server <- function(id, providers, params) {
     }) |>
       shiny::bindEvent(
         input$dataset,
+        input$scenario_type,
         input$previous_scenario
       )
 
