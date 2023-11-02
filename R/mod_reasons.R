@@ -23,23 +23,24 @@ mod_reasons_ui <- function(id) {
 #' reasons Server Functions
 #'
 #' @noRd
-mod_reasons_server <- function(id, params, key) {
-  if (!shiny::is.reactive(key)) {
-    # copy the value, otherwise we will enter an infinite loop
-    v <- key
-    key <- shiny::reactive(v)
-  }
+mod_reasons_server <- function(id, params, ..., key = shiny::reactive(NULL)) {
+  ix <- c(...)
 
   shiny::moduleServer(id, function(input, output, session) {
-    shiny::observe({
-      p <- session$userData$params
+    k <- shiny::reactive(c(ix, key()))
 
-      shiny::updateTextAreaInput(session, "value", value = purrr::pluck(p$reasons, !!!key()))
+    shiny::observe({
+      purrr::pluck(params$reasons, !!!ix) <- purrr::pluck(session$userData$params$reasons, !!!ix)
     }) |>
-      shiny::bindEvent(session$userData$data_loaded(), key())
+      shiny::bindEvent(session$userData$data_loaded())
 
     shiny::observe({
-      purrr::pluck(params$reasons, !!!key()) <- input$value
+      shiny::updateTextAreaInput(session, "value", value = purrr::pluck(params$reasons, !!!k()))
+    }) |>
+      shiny::bindEvent(k())
+
+    shiny::observe({
+      purrr::pluck(params$reasons, !!!k()) <- input$value
     }) |>
       shiny::bindEvent(input$value)
   })
