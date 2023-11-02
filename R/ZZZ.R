@@ -1,5 +1,5 @@
 #' @importFrom zeallot %<-%
-#' @importFrom rlang .data .env
+#' @importFrom rlang .data .env `!!!`
 #' @importFrom promises %...>% %...!%
 NULL
 

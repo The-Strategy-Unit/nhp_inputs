@@ -80,6 +80,7 @@ mod_bed_occupancy_ui <- function(id) {
             )
           )
         ),
+        mod_reasons_ui(ns("reasons")),
         bs4Dash::box(
           collapsible = FALSE,
           headerBorder = FALSE,
@@ -109,6 +110,8 @@ mod_bed_occupancy_ui <- function(id) {
 #'
 #' @noRd
 mod_bed_occupancy_server <- function(id, params) {
+  mod_reasons_server(shiny::NS(id, "reasons"), params, "bed_occupancy")
+
   shiny::moduleServer(id, function(input, output, session) {
     default_param_values <- c(85, 95)
 

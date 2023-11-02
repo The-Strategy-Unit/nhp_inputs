@@ -61,6 +61,7 @@ mod_expat_repat_ui <- function(id) {
             NULL
           )
         ),
+        mod_reasons_ui(ns("reasons")),
         mod_time_profile_ui(ns("time_profile")),
         bs4Dash::box(
           collapsible = FALSE,
@@ -128,6 +129,8 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
     shiny::NS(id, "time_profile"),
     params
   )
+
+  mod_reasons_server(shiny::NS(id, "reasons"), params, "expat_repat")
 
   shiny::moduleServer(id, function(input, output, session) {
     rtt_specialties <- readRDS(app_sys("app", "data", "rtt_specialties.Rds"))

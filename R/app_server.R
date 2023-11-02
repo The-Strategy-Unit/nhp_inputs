@@ -39,6 +39,17 @@ app_server <- function(input, output, session) {
       "op" = list()
     )
   )
+  params[["reasons"]] <- list(
+    "baseline_adjustment" = "",
+    "demographic_factors" = "",
+    "waiting_list_adjustment" = "",
+    "expat_repat" = "",
+    "non-demographic_adjustment" = "",
+    "activity_avoidance" = list(),
+    "efficiencies" = list(),
+    "bed_occupancy" = "",
+    "theatres" = ""
+  )
 
   session$userData$data_loaded <- shiny::reactiveVal()
 

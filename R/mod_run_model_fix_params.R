@@ -71,7 +71,8 @@ mod_run_model_fix_params <- function(p) {
     "efficiencies",
     "bed_occupancy",
     "theatres",
-    "time_profile_mappings"
+    "time_profile_mappings",
+    "reasons"
   )
 
   # make sure to only select items that exist in the params
