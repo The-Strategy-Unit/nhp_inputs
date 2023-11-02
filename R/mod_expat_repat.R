@@ -142,29 +142,6 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
     }) |>
       shiny::bindCache(params$dataset)
 
-    # helper method to construct the initial values for our params
-    init_params <- function(values) {
-      if (missing(values)) {
-        rtt_specs <- list()
-        aae_groups <- list()
-      } else {
-        rtt_specs <- purrr::map(purrr::set_names(rtt_specialties), ~values)
-        aae_groups <- list(
-          "ambulance" = values,
-          "walk-in" = values
-        )
-      }
-
-      list(
-        "ip" = purrr::map(
-          purrr::set_names(c("elective", "non-elective", "maternity")),
-          ~rtt_specs,
-        ),
-        "op" = rtt_specs,
-        "aae" = aae_groups
-      )
-    }
-
     # update the time profile
     shiny::observe({
       params$time_profile_mappings[
@@ -180,25 +157,21 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
     # two reactiveValues to keep track of the slider values
     # shadow_params always stores a value for each item selectable by the dropdowns
     # params contains the returned values, and will contain the value from shadow_params if "include" is checked
-    shadow_params <- purrr::lift_dl(shiny::reactiveValues)(
-      list(
-        "expat" = init_params(c(0.95, 1.0)),
-        "repat_local" = init_params(c(1.0, 1.05)),
-        "repat_nonlocal" = init_params(c(1.0, 1.05))
-      )
-    )
-    params$expat <- init_params()
-    params$repat_local <- init_params()
-    params$repat_nonlocal <- init_params()
+    shadow_params <- shiny::reactiveValues()
 
     # update values when a file is uploaded
-    shiny::observe(
+    init <- shiny::observe(
       {
-        shiny::req(session$userData$data_loaded())
-        p <- shiny::req(session$userData$params)
+        p <- shiny::isolate({
+          params
+        })
+
+        shadow_params[["expat"]] <- params[["expat"]]
+        shadow_params[["repat_local"]] <- params[["repat_local"]]
+        shadow_params[["repat_nonlocal"]] <- params[["repat_nonlocal"]]
 
         # update the selected time profile (all 3 will have the same value, so just use expat)
-        update_time_profile(session$userData$params$time_profile_mappings[["expat"]])
+        update_time_profile(p$time_profile_mappings[["expat"]])
 
         tidyr::expand_grid(
           type = names(shadow_params),
@@ -229,10 +202,11 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
         shiny::updateSelectInput(session, "activity_type", selected = "ip")
         shiny::updateSelectInput(session, "ip_subgroup", selected = "elective")
         shiny::updateSelectInput(session, "type", selected = default_spec)
+
+        init$destroy()
       },
       priority = 10 # this observer needs to trigger before the dropdown change observer
-    ) |>
-      shiny::bindEvent(session$userData$data_loaded())
+    )
 
     # update the options in the type drop down based on the activity type dropdown
     # also, toggle whether the ip_subgroup is visible or not
@@ -280,7 +254,7 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
         }
       )
     }) |>
-      shiny::bindEvent(input$activity_type, input$ip_subgroup, input$type, session$userData$data_loaded())
+      shiny::bindEvent(input$activity_type, input$ip_subgroup, input$type)
 
     purrr::walk(
       c("expat", "repat_local", "repat_nonlocal"),

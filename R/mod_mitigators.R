@@ -152,24 +152,19 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       c(0.95, 1)
     }
 
-    # update the param values when either:
-    #   * the strategies() change (triggered by the dataset changing)
-    #   * data_loaded() is triggered (params uploaded)
-    shiny::observe({
+    init <- shiny::observe({
       strategies <- shiny::req(strategies())
 
       # update the drop down
       shiny::updateSelectInput(session, "strategy", choices = strategies)
 
-      loaded_values <- if (!is.null(session$userData$params)) {
-        session$userData$params[c("activity_avoidance", "efficiencies")] |>
-          purrr::flatten() |>
-          purrr::flatten() |>
-          _[strategies] |>
-          purrr::map("interval")
-      } else {
-        list()
-      }
+      loaded_values <- params |>
+        shiny::reactiveValuesToList() |>
+        _[c("activity_avoidance", "efficiencies")] |>
+        purrr::flatten() |>
+        purrr::flatten() |>
+        _[strategies] |>
+        purrr::map("interval")
 
       strategies |>
         # remove the friendly name for the strategy, replace with itself
@@ -215,18 +210,9 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
         "include",
         value = !is.null(params[[mitigators_type]][[activity_type]][[strategies[[1]]]])
       )
-    }) |>
-      shiny::bindEvent(strategies(), session$userData$data_loaded())
 
-    # make sure the slider is updated once a file has been uploaded
-    shiny::observe(
-      {
-        shiny::req(input$strategy)
-        update_slider(input$slider_type)
-      },
-      priority = -1
-    ) |>
-      shiny::bindEvent(session$userData$data_loaded())
+      init$destroy()
+    })
 
     # set the strategy text by loading the contents of the file for that strategy
     output$strategy_text <- shiny::renderUI({

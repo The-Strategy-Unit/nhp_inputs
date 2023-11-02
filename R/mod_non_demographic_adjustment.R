@@ -46,10 +46,12 @@ mod_non_demographic_adjustment_input_ui <- function(parent_id, id, label) {
       )
     ),
     col_3(
-      shiny::checkboxInput(
-        ns(glue::glue("include")),
-        "Include?"
-      )
+      shinyjs::disabled({
+        shiny::checkboxInput(
+          ns(glue::glue("include")),
+          "Include?"
+        )
+      })
     )
   )
 }
@@ -58,7 +60,7 @@ mod_non_demographic_adjustment_input_server <- function(parent_id, id, type, par
   shiny::moduleServer(paste(sep = "-", parent_id, id), function(input, output, session) {
     default_values <- get_golem_config(c("non-demographic_adjustment", type, id))
 
-    shiny::observe({
+    init <- shiny::observe({
       y <- params$end_year - as.numeric(stringr::str_sub(params$start_year, 1, 4))
 
       shiny::updateSliderInput(
@@ -68,25 +70,29 @@ mod_non_demographic_adjustment_input_server <- function(parent_id, id, type, par
       )
 
       shiny::updateCheckboxInput(session, "include", value = TRUE)
+
+      init$destroy()
     })
 
-    shiny::observe({
-      shiny::req(session$userData$data_loaded())
-      p <- session$userData$params[["non-demographic_adjustment"]][[type]][[id]]
+    # init <- shiny::observe({
+    #   p <- shiny::isolate({
+    #     params[["non-demographic_adjustment"]][[type]][[id]]
+    #   })
 
-      if (is.null(p)) {
-        shiny::updateCheckboxInput(session, "include", value = FALSE)
-      } else {
-        shiny::updateCheckboxInput(session, "include", value = TRUE)
-        shiny::updateSliderInput(session, "values", value = p * 100)
-      }
-    }) |>
-      shiny::bindEvent(session$userData$data_loaded())
+    #   if (is.null(p)) {
+    #     shiny::updateCheckboxInput(session, "include", value = FALSE)
+    #   } else {
+    #     shiny::updateCheckboxInput(session, "include", value = TRUE)
+    #     shiny::updateSliderInput(session, "values", value = p * 100)
+    #   }
 
-    shiny::observe({
-      shinyjs::toggleState("values", input$include)
-    }) |>
-      shiny::bindEvent(input$include)
+    #   init$destroy()
+    # })
+
+    # shiny::observe({
+    #   shinyjs::toggleState("values", input$include)
+    # }) |>
+    #   shiny::bindEvent(input$include)
 
     shiny::reactive({
       list(

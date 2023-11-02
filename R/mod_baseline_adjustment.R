@@ -163,9 +163,8 @@ mod_baseline_adjustment_server <- function(id, params) {
       ) |>
       dplyr::mutate(id = glue::glue("{at}_{g}_{sanitized_code}"))
 
-    shiny::observe({
-      shiny::req(session$userData$data_loaded())
-      p <- shiny::req(session$userData$params$baseline_adjustment)
+    init <- shiny::observe({
+      p <- params$baseline_adjustment
 
       purrr::pwalk(specs, \(at, g, code, id, ...) {
         include_id <- glue::glue("include_{id}")
@@ -181,16 +180,8 @@ mod_baseline_adjustment_server <- function(id, params) {
         shiny::updateCheckboxInput(session, include_id, value = !is.null(v))
         shiny::updateSliderInput(session, param_id, value = v %||% mod_baseline_adjustment_default_slider_values)
       })
-    }) |>
-      shiny::bindEvent(session$userData$data_loaded())
 
-    shiny::observe({
-      # initialise the baseline adjustment
-      params[["baseline_adjustment"]] <- list(
-        ip = list(),
-        op = list(),
-        aae = list()
-      )
+      init$destroy()
     })
 
     specs |>

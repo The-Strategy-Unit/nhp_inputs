@@ -125,14 +125,21 @@ mod_home_providers_map <- function(selected_peers) {
 #' home Server Functions
 #'
 #' @noRd
-mod_home_server <- function(id, providers, params) {
+mod_home_server <- function(id, providers) {
   shiny::moduleServer(id, function(input, output, session) {
+    # static data ----
     peers <- load_rds_from_adls("peers.rds")
     nhp_current_cohort <- load_rds_from_adls("nhp_current_cohort.rds")
 
     all_providers <- jsonlite::read_json(app_sys("app", "data", "all_providers.json"), simplifyVector = TRUE)
 
     provider_locations <- sf::read_sf(app_sys("app", "data", "provider_locations.geojson"))
+
+    # reactives ----
+    params <- shiny::reactiveValues(
+      "user" = session$user %||% "[development]",
+      "app_version" = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")
+    )
 
     selected_providers <- shiny::reactive({
       g <- session$groups
@@ -155,17 +162,8 @@ mod_home_server <- function(id, providers, params) {
       }
 
       p <- providers[providers %in% p]
-    })
-
-    shiny::observe({
-      shiny::updateSelectInput(session, "dataset", choices = selected_providers())
-    })
-
-    shiny::observe({
-      x <- as.numeric(stringr::str_sub(input$start_year, 1, 4))
-
-      shiny::updateSliderInput(session, "end_year", min = x + 1, max = x + 20, value = x + 15)
-    })
+    }) |>
+      shiny::bindEvent(input$cohort)
 
     selected_peers <- shiny::reactive({
       p <- shiny::req(input$dataset)
@@ -177,114 +175,8 @@ mod_home_server <- function(id, providers, params) {
           by = c("org_id" = "peer")
         ) |>
         dplyr::mutate(is_peer = .data$org_id != p)
-    })
-
-    output$peers_list <- gt::render_gt({
-      mod_home_peers_table(selected_peers())
-    })
-
-    output$providers_map <- leaflet::renderLeaflet({
-      mod_home_providers_map(selected_peers())
-    })
-
-    shiny::observe({
-      p <- session$userData$params <- load_params(input$param_upload$datapath)
-
-      if (p$dataset == "synthetic") {
-        cat("skipping changing the dataset\n")
-      } else {
-        shiny::updateSelectInput(session, "dataset", selected = p$dataset)
-      }
-
-      shiny::updateTextInput(session, "scenario", value = p$scenario)
-
-      y <- p$start_year * 100 + p$start_year %% 100 + 1
-      shiny::updateSelectInput(session, "start_year", selected = y)
-      shiny::updateNumericInput(session, "end_year", value = p$end_year)
-      shiny::updateNumericInput(session, "seed", value = p$seed)
-      shiny::updateSelectInput(session, "model_runs", selected = p$model_runs)
     }) |>
-      shiny::bindEvent(input$param_upload)
-
-    shiny::observe({
-      ds <- shiny::req(input$dataset)
-
-      saved_params <- params_path(session$user, ds) |>
-        dir(pattern = "*.json") |>
-        stringr::str_remove("\\.json$")
-
-      shiny::updateRadioButtons(
-        session,
-        "scenario_type",
-        selected = "Create new from scratch"
-      )
-      shiny::updateTextInput(
-        session,
-        "scenario",
-        value = ""
-      )
-      shinyjs::toggleState("scenario_type", condition = length(saved_params) > 0)
-
-      shiny::updateSelectInput(
-        session,
-        "previous_scenario",
-        choices = saved_params
-      )
-    }) |>
-      shiny::bindEvent(
-        input$dataset
-      )
-
-    shiny::observe({
-      if (input$scenario_type == "Create new from scratch") {
-        shinyjs::show("scenario")
-        shinyjs::hide("previous_scenario")
-      } else if (input$scenario_type == "Create new from existing") {
-        shinyjs::show("scenario")
-        shinyjs::show("previous_scenario")
-      } else if (input$scenario_type == "Edit existing") {
-        shinyjs::hide("scenario")
-        shinyjs::show("previous_scenario")
-        shiny::updateTextInput(
-          session,
-          "scenario",
-          value = input$previous_scenario
-        )
-      }
-    }) |>
-      shiny::bindEvent(
-        input$scenario_type,
-        input$previous_scenario
-      )
-
-    shiny::observe({
-      if (input$scenario_type == "Create new from scratch") {
-        session$userData$params <- NULL
-        return()
-      }
-
-      file <- params_filename(
-        session$user,
-        input$dataset,
-        input$previous_scenario
-      )
-
-      # prevents bug where the dataset is changed before the previous scenarios are updated
-      shiny::req(file.exists(file))
-
-      p <- session$userData$params <- load_params(file)
-
-      y <- p$start_year * 100 + p$start_year %% 100 + 1
-      shiny::updateSelectInput(session, "start_year", selected = y)
-      shiny::updateNumericInput(session, "end_year", value = p$end_year)
-      shiny::updateNumericInput(session, "seed", value = p$seed)
-      shiny::updateSelectInput(session, "model_runs", selected = p$model_runs)
-    }) |>
-      shiny::bindEvent(
-        input$dataset,
-        input$scenario_type,
-        input$previous_scenario
-      )
+      shiny::bindEvent(input$dataset)
 
     # the scenario must have some validation applied to it - the next few chunks handle this
     # we use the status output to be the placeholder for the validation text, this is used in the
@@ -314,9 +206,142 @@ mod_home_server <- function(id, providers, params) {
       )
 
       TRUE
-    })
+    }) |>
+      shiny::bindEvent(input$dataset, input$scenario, input$scenario_type)
 
-    output$status <- shiny::renderText(scenario_validation())
+    # observers ----
+    shiny::observe({
+      shiny::updateSelectInput(
+        session,
+        "dataset",
+        choices = selected_providers()
+      )
+    }) |>
+      shiny::bindEvent(selected_providers())
+
+    shiny::observe({
+      x <- as.numeric(stringr::str_sub(input$start_year, 1, 4))
+
+      shiny::updateSliderInput(
+        session,
+        "end_year",
+        min = x + 1,
+        max = x + 20,
+        value = x + 15
+      )
+    }) |>
+      shiny::bindEvent(input$start_year)
+
+    shiny::observe({
+      ds <- shiny::req(input$dataset)
+
+      saved_params <- params_path(session$user, ds) |>
+        dir(pattern = "*.json") |>
+        stringr::str_remove("\\.json$")
+
+      shiny::updateRadioButtons(
+        session,
+        "scenario_type",
+        selected = "Create new from scratch"
+      )
+      shiny::updateTextInput(
+        session,
+        "scenario",
+        value = ""
+      )
+      shinyjs::toggleState("scenario_type", condition = length(saved_params) > 0)
+
+      shiny::updateSelectInput(
+        session,
+        "previous_scenario",
+        choices = saved_params
+      )
+    }) |>
+      shiny::bindEvent(input$dataset)
+
+    shiny::observe({
+      if (input$scenario_type == "Create new from scratch") {
+        shinyjs::show("scenario")
+        shinyjs::hide("previous_scenario")
+      } else if (input$scenario_type == "Create new from existing") {
+        shinyjs::show("scenario")
+        shinyjs::show("previous_scenario")
+      } else if (input$scenario_type == "Edit existing") {
+        shinyjs::hide("scenario")
+        shinyjs::show("previous_scenario")
+        shiny::updateTextInput(
+          session,
+          "scenario",
+          value = input$previous_scenario
+        )
+      }
+    }) |>
+      shiny::bindEvent(
+        input$scenario_type,
+        input$previous_scenario
+      )
+
+    shiny::observe({
+      # TODO: should we remove file uploads?
+      # this code needs to carefully replicate the next observer
+      p <- load_params(input$param_upload$datapath)
+
+      if (p$dataset == "synthetic") {
+        cat("skipping changing the dataset\n")
+      } else {
+        shiny::updateSelectInput(session, "dataset", selected = p$dataset)
+      }
+
+      shiny::updateTextInput(session, "scenario", value = p$scenario)
+
+      y <- p$start_year * 100 + p$start_year %% 100 + 1
+      shiny::updateSelectInput(session, "start_year", selected = y)
+      shiny::updateNumericInput(session, "end_year", value = p$end_year)
+      shiny::updateNumericInput(session, "seed", value = p$seed)
+      shiny::updateSelectInput(session, "model_runs", selected = p$model_runs)
+
+      # copy the loaded params into params
+      for (i in names(p)) {
+        params[[i]] <- p[[i]]
+      }
+    }) |>
+      shiny::bindEvent(input$param_upload)
+
+    shiny::observe({
+      default_params <- app_sys("app", "default_params.json")
+      file <- if (input$scenario_type == "Create new from scratch") {
+        default_params
+      } else {
+        params_filename(
+          session$user,
+          input$dataset,
+          input$previous_scenario
+        )
+      }
+
+      # prevents bug where the dataset is changed before the previous scenarios are updated
+      shiny::req(file.exists(file))
+
+      p <- load_params(file)
+
+      if (file != default_params) {
+        y <- p$start_year * 100 + p$start_year %% 100 + 1
+        shiny::updateSelectInput(session, "start_year", selected = y)
+        shiny::updateNumericInput(session, "end_year", value = p$end_year)
+        shiny::updateNumericInput(session, "seed", value = p$seed)
+        shiny::updateSelectInput(session, "model_runs", selected = p$model_runs)
+      }
+
+      # copy the loaded params into params
+      for (i in names(p)) {
+        params[[i]] <- p[[i]]
+      }
+    }) |>
+      shiny::bindEvent(
+        input$dataset,
+        input$scenario_type,
+        input$previous_scenario
+      )
 
     shiny::observe({
       x <- tryCatch(scenario_validation(), error = \(...) FALSE)
@@ -326,8 +351,6 @@ mod_home_server <- function(id, providers, params) {
 
     # update the params items with the selections
     shiny::observe({
-      shiny::req(scenario_validation())
-
       params$dataset <- input$dataset
       params$scenario <- input$scenario
       params$seed <- input$seed
@@ -336,9 +359,19 @@ mod_home_server <- function(id, providers, params) {
       params$end_year <- input$end_year
     })
 
-    # return the start input so we can observe it in the main server
-    shiny::reactive({
-      input$start
+    # renders ----
+    output$peers_list <- gt::render_gt({
+      mod_home_peers_table(selected_peers())
     })
+
+    output$providers_map <- leaflet::renderLeaflet({
+      mod_home_providers_map(selected_peers())
+    })
+
+    output$status <- shiny::renderText(scenario_validation())
+
+    # return ----
+    # the start input so we can observe it in the main server
+    list(params, shiny::reactive(input$start))
   })
 }

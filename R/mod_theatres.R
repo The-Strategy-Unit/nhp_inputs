@@ -121,77 +121,47 @@ mod_theatres_server <- function(id, params) {
           c <- input[[cases_param_id]]
 
           params$theatres$spells_per_case[[code]]$interval <- s
-          params$theatres$cases_per_spell[[code]]$interval <- c
+          params$theatres$cases_per_session[[code]]$interval <- c
           params$theatres$change_utilisation[[code]]$interval <- rev(1 / (s * c))
         }) |>
           shiny::bindEvent(input[[spells_param_id]], input[[cases_param_id]])
       })
 
-    theatres_data <- shiny::reactiveValues(data = {
-      # TODO: this should be loaded dynamically
-      readRDS(app_sys("app", "data", "theatre_specialties.Rds")) |>
-        dplyr::select(-"specialty") |>
-        dplyr::mutate(
-          dplyr::across("code", sanitize_input_name),
-          # baseline_spells = c(1.6, 1.7, 2.2, 1.8, 5.4, 2.8, 2, 2.4, 2.6),
-          # baseline_cases = c(1.4, 1, 1.1, 2.9, 1, 1.3, 1, 1.1, 1.2),
-          baseline_spells = c(1, 1, 1, 1, 1, 1, 1, 1, 1),
-          baseline_cases = c(1, 1, 1, 1, 1, 1, 1, 1, 1),
-          spells_per_case = purrr::map(.data[["baseline_spells"]], `*`, c(0.95, 1.05)),
-          cases_per_session = purrr::map(.data[["baseline_cases"]], `*`, c(0.95, 1.05))
-        ) |>
-        dplyr::group_nest(.data[["code"]]) |>
-        tibble::deframe() |>
-        purrr::map(as.list) |>
-        purrr::map(purrr::flatten)
-    })
-
-    shiny::observe({
-      td <- shiny::req(theatres_data)$data
-
-      purrr::iwalk(
-        td,
-        \(.x, code) {
-          shiny::updateNumericInput(
-            session,
-            glue::glue("spells_baseline_{code}"),
-            value = .x$baseline_spells
-          )
-          shiny::updateSliderInput(
-            session,
-            glue::glue("spells_param_{code}"),
-            value = .x$spells_per_case
-          )
-          shiny::updateNumericInput(
-            session,
-            glue::glue("cases_baseline_{code}"),
-            value = .x$baseline_cases
-          )
-          shiny::updateSliderInput(
-            session,
-            glue::glue("cases_param_{code}"),
-            value = .x$cases_per_session
-          )
-        }
-      )
-    }) |>
-      shiny::bindEvent(theatres_data$data)
-
-    shiny::observe({
-      shiny::req(session$userData$data_loaded())
-      p <- shiny::req(session$userData$params$theatres)
-
-      theatres_data$data <- names(p$spells_per_case) |>
-        purrr::set_names(sanitize_input_name) |>
-        purrr::map(\(.x) {
-          list(
-            baseline_spells = p$spells_per_case[[.x]]$baseline,
-            baseline_cases = p$cases_per_session[[.x]]$baseline,
-            spells_per_case = p$spells_per_case[[.x]]$interval,
-            cases_per_session = p$cases_per_session[[.x]]$interval
-          )
+    init <- shiny::observe(
+      {
+        p <- shiny::isolate({
+          params$theatres
         })
-    }) |>
-      shiny::bindEvent(session$userData$data_loaded())
+
+        p$spells_per_case |>
+          names() |>
+          purrr::set_names(sanitize_input_name) |>
+          purrr::iwalk(\(.x, .i) {
+            shiny::updateNumericInput(
+              session,
+              glue::glue("spells_baseline_{.i}"),
+              value = p$spells_per_case[[.x]]$baseline
+            )
+            shiny::updateSliderInput(
+              session,
+              glue::glue("spells_param_{.i}"),
+              value = p$spells_per_case[[.x]]$interval
+            )
+            shiny::updateNumericInput(
+              session,
+              glue::glue("cases_baseline_{.i}"),
+              value = p$cases_per_session[[.x]]$baseline
+            )
+            shiny::updateSliderInput(
+              session,
+              glue::glue("cases_param_{.i}"),
+              value = p$cases_per_session[[.x]]$interval
+            )
+          })
+
+        init$destroy()
+      },
+      priority = 20
+    )
   })
 }

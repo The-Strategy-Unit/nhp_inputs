@@ -228,39 +228,45 @@ mod_bed_occupancy_server <- function(id, params) {
           )
         })
     }) |>
-      shiny::bindEvent(ward_group_names(), session$userData$data_loaded())
+      shiny::bindEvent(ward_group_names())
 
     # add observers for the specialty dropdowns
     purrr::pwalk(
       specialties,
       \(group, code, ...) {
-        shiny::observe({
-          value <- input[[glue::glue("specialty_{code}")]]
+        shiny::observe(
+          {
+            value <- input[[glue::glue("specialty_{code}")]]
 
-          params[["bed_occupancy"]][["specialty_mapping"]][[group]][[code]] <- value
-        }) |>
+            params[["bed_occupancy"]][["specialty_mapping"]][[group]][[code]] <- value
+          },
+          priority = -1
+        ) |>
           shiny::bindEvent(input[[glue::glue("specialty_{code}")]])
       }
     )
 
-    # param file uploaded
-    shiny::observe({
-      shiny::req(session$userData$data_loaded())
-      p <- shiny::req(session$userData$params$bed_occupancy)
-      params$bed_occupancy <- p
+    init <- shiny::observe(
+      {
+        p <- shiny::isolate({
+          params$bed_occupancy
+        })
 
-      ward_groups$groups <- p[["day+night"]] |>
-        purrr::map(`*`, 100)
+        ward_groups$groups <- p[["day+night"]] |>
+          purrr::map(`*`, 100)
 
-      shiny::updateSelectInput(
-        session,
-        "ward_group",
-        choices = ward_group_names(),
-        selected = "Other"
-      )
-      shiny::updateSliderInput(session, "occupancy", value = ward_groups$groups[["Other"]])
-    }) |>
-      shiny::bindEvent(session$userData$data_loaded())
+        shiny::updateSelectInput(
+          session,
+          "ward_group",
+          choices = ward_group_names(),
+          selected = "Other"
+        )
+        shiny::updateSliderInput(session, "occupancy", value = ward_groups$groups[["Other"]])
+
+        init$destroy()
+      },
+      priority = 20
+    )
 
     # update the params
     shiny::observe({

@@ -58,16 +58,22 @@ mod_population_growth_server <- function(id, params) {
       "Principal Projection should be the base case" = names(projections)[[1]] == "principal_proj"
     )
 
-    shiny::observe({
-      shiny::req(session$userData$data_loaded())
-      vp <- shiny::req(session$userData$params$demographic_factors$variant_probabilities)
+    # when the module loads, run this observer once, and only once
+    init <- shiny::observe(
+      {
+        # do not observe this event
+        shiny::isolate({
+          params$demographic_factors$variant_probabilities
+        }) |>
+          purrr::imap(\(.x, .i) {
+            shiny::updateSliderInput(session, .i, value = .x * 100)
+          })
 
-      vp |>
-        purrr::imap(\(.x, .i) {
-          shiny::updateSliderInput(session, .i, value = .x * 100)
-        })
-    }) |>
-      shiny::bindEvent(session$userData$data_loaded())
+        init$destroy()
+      },
+      # for some reason, not setting the priority to be low causes the values not to load
+      priority = -1
+    )
 
     purrr::map(
       changeable_projections,
@@ -93,10 +99,17 @@ mod_population_growth_server <- function(id, params) {
         purrr::map_dbl(`/`, 100)
     })
 
+    # without this timeout, the first time the observer runs it will overwrite whatever the init observer sets
+    init_timeout <- TRUE
     shiny::observe({
+      if (init_timeout) {
+        shiny::invalidateLater(50)
+        shiny::req((init_timeout <<- FALSE))
+      }
       v <- values()
 
       params[["demographic_factors"]][["variant_probabilities"]] <- as.list(v[v > 0])
-    })
+    }) |>
+      shiny::bindEvent(values())
   })
 }

@@ -103,11 +103,17 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
       )
 
     init <- shiny::observe({
-      # initialise the params
-      params[["waiting_list_adjustment"]] <- list(
-        ip = list(),
-        op = list()
-      )
+      p <- params$waiting_list_adjustment
+
+      # update the selected time profile
+      update_time_profile(params$time_profile_mappings[["waiting_list_adjustment"]])
+
+      table |>
+        purrr::pwalk(\(activity_type, id, code, ...) {
+          v <- p[[activity_type]][[code]] %||% 0
+
+          shiny::updateNumericInput(session, id, value = v)
+        })
 
       init$destroy()
     })
@@ -143,22 +149,6 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
     }) |>
       shiny::bindEvent(baseline_data())
 
-    shiny::observe({
-      shiny::req(session$userData$data_loaded())
-      p <- shiny::req(session$userData$params$waiting_list_adjustment)
-
-      # update the selected time profile
-      update_time_profile(session$userData$params$time_profile_mappings[["waiting_list_adjustment"]])
-
-      table |>
-        purrr::pwalk(\(activity_type, id, code, ...) {
-          v <- p[[activity_type]][[code]] %||% 0
-
-          shiny::updateNumericInput(session, id, value = v)
-        })
-    }) |>
-      shiny::bindEvent(session$userData$data_loaded())
-
     table |>
       purrr::pwalk(
         \(activity_type, id, code, ...) {
@@ -172,7 +162,7 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
 
             shiny::updateTextInput(session, paste0(id, "_output"), value = change_string)
 
-            params[["waiting_list_adjustment"]][[activity_type]][[code]] <- if (v > 0) v
+            params[["waiting_list_adjustment"]][[activity_type]][[code]] <- if (v != 0) v
           })
         }
       )
