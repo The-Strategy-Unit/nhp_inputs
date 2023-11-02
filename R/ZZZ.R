@@ -50,6 +50,7 @@ load_params <- function(file) {
 
 params_path <- function(user, dataset) {
   path <- file.path(
+    Sys.getenv("PARAMS_DATA_PATH", "."),
     "params",
     user %||% ".",
     dataset
@@ -62,7 +63,6 @@ params_path <- function(user, dataset) {
 
 params_filename <- function(user, dataset, scenario) {
   file.path(
-    Sys.getenv("PARAMS_DATA_PATH", "."),
     params_path(user, dataset),
     paste0(scenario, ".json")
   )
