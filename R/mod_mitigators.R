@@ -144,9 +144,6 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       # update the drop down
       shiny::updateSelectInput(session, "strategy", choices = strategies)
 
-      # reset the params reactiveValues
-      params[[mitigators_type]][[activity_type]] <- list()
-
       loaded_values <- if (!is.null(session$userData$params)) {
         session$userData$params[c("activity_avoidance", "efficiencies")] |>
           purrr::flatten() |>
