@@ -1,88 +1,3 @@
-#' mitigators_admission_avoidance UI Function
-#'
-#' @description A shiny Module.
-#'
-#' @param id,input,output,session Internal parameters for {shiny}.
-#'
-#' @noRd
-#'
-#' @importFrom shiny NS tagList
-mod_mitigators_ui <- function(id, title) {
-  ns <- shiny::NS(id)
-  shiny::tagList(
-    shiny::h1("Activity Mitigators"),
-    shiny::h2(title),
-    shiny::fluidRow(
-      col_4(
-        shiny::fluidRow(
-          bs4Dash::box(
-            title = "Activity Mitigator",
-            width = 12,
-            shiny::selectInput(ns("strategy"), "Selection", choices = NULL),
-            shiny::uiOutput(ns("strategy_text"))
-          ),
-          bs4Dash::box(
-            title = "Model Parameter",
-            width = 12,
-            shiny::checkboxInput(
-              ns("include"),
-              "Include?"
-            ),
-            shiny::radioButtons(
-              ns("slider_type"),
-              "Display Type",
-              c("Absolute" = "rate", "Relative" = "% change"),
-              "rate"
-            ),
-            shiny::sliderInput(ns("slider"), "90% Confidence Interval", 0, 1, c(0, 1))
-          ),
-          mod_reasons_ui(ns("reasons")),
-          mod_time_profile_ui(ns("time_profile")),
-        )
-      ),
-      col_8(
-        shiny::fluidRow(
-          bs4Dash::box(
-            title = "Trend",
-            shinycssloaders::withSpinner({
-              shiny::plotOutput(ns("trend_plot"))
-            }),
-            width = 5
-          ),
-          bs4Dash::box(
-            title = "Funnel",
-            shinycssloaders::withSpinner({
-              shiny::plotOutput(ns("funnel_plot"))
-            }),
-            width = 5
-          ),
-          bs4Dash::box(
-            title = "Boxplot",
-            shinycssloaders::withSpinner({
-              shiny::plotOutput(ns("boxplot"))
-            }),
-            width = 2
-          ),
-          bs4Dash::box(
-            title = "Top 6 Primary Diagnoses",
-            shinycssloaders::withSpinner({
-              gt::gt_output(ns("diagnoses_table"))
-            }),
-            width = 6
-          ),
-          bs4Dash::box(
-            title = "Bar Chart of Activity by Age and Sex",
-            shinycssloaders::withSpinner({
-              shiny::plotOutput(ns("age_grp_plot"))
-            }),
-            width = 6
-          )
-        )
-      )
-    )
-  )
-}
-
 #' mitigators_admission_avoidance Server Functions
 #'
 #' @noRd
@@ -152,24 +67,19 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       c(0.95, 1)
     }
 
-    # update the param values when either:
-    #   * the strategies() change (triggered by the dataset changing)
-    #   * data_loaded() is triggered (params uploaded)
-    shiny::observe({
+    init <- shiny::observe({
       strategies <- shiny::req(strategies())
 
       # update the drop down
       shiny::updateSelectInput(session, "strategy", choices = strategies)
 
-      loaded_values <- if (!is.null(session$userData$params)) {
-        session$userData$params[c("activity_avoidance", "efficiencies")] |>
-          purrr::flatten() |>
-          purrr::flatten() |>
-          _[strategies] |>
-          purrr::map("interval")
-      } else {
-        list()
-      }
+      loaded_values <- params |>
+        shiny::reactiveValuesToList() |>
+        _[c("activity_avoidance", "efficiencies")] |>
+        purrr::flatten() |>
+        purrr::flatten() |>
+        _[strategies] |>
+        purrr::map("interval")
 
       strategies |>
         # remove the friendly name for the strategy, replace with itself
@@ -215,18 +125,9 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
         "include",
         value = !is.null(params[[mitigators_type]][[activity_type]][[strategies[[1]]]])
       )
-    }) |>
-      shiny::bindEvent(strategies(), session$userData$data_loaded())
 
-    # make sure the slider is updated once a file has been uploaded
-    shiny::observe(
-      {
-        shiny::req(input$strategy)
-        update_slider(input$slider_type)
-      },
-      priority = -1
-    ) |>
-      shiny::bindEvent(session$userData$data_loaded())
+      init$destroy()
+    })
 
     # set the strategy text by loading the contents of the file for that strategy
     output$strategy_text <- shiny::renderUI({
