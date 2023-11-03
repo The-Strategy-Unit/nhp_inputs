@@ -361,6 +361,10 @@ mod_home_server <- function(id, providers) {
       x <- tryCatch(scenario_validation(), error = \(...) FALSE)
       shinyjs::toggle("status", condition = !x)
       shinyjs::toggleState("start", condition = x)
+
+      # change the colour of the button from grey to green
+      shinyjs::toggleClass("start", "btn-default", !x)
+      shinyjs::toggleClass("start", "btn-success", x)
     })
 
     # update the params items with the selections
