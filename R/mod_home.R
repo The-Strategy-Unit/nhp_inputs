@@ -136,11 +136,14 @@ mod_home_server <- function(id, providers) {
     provider_locations <- sf::read_sf(app_sys("app", "data", "provider_locations.geojson"))
 
     # reactives ----
+
+    # set up the applications values store, all of the parameters for the model will be stored in this reactiveValues
     params <- shiny::reactiveValues(
       "user" = session$user %||% "[development]",
       "app_version" = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")
     )
 
+    # only show the providers that a user is allowed to access
     selected_providers <- shiny::reactive({
       g <- session$groups
 
@@ -165,6 +168,7 @@ mod_home_server <- function(id, providers) {
     }) |>
       shiny::bindEvent(input$cohort)
 
+    # when the user changes the provider (dataset), get the list of peers for that provider
     selected_peers <- shiny::reactive({
       p <- shiny::req(input$dataset)
 
@@ -179,10 +183,6 @@ mod_home_server <- function(id, providers) {
       shiny::bindEvent(input$dataset)
 
     # the scenario must have some validation applied to it - the next few chunks handle this
-    # we use the status output to be the placeholder for the validation text, this is used in the
-    # main UI to control the visibility of the items in the panel (`output.status === 'TRUE'`)
-    # we observe the validation to make sure that we have TRUE returned, and then hide the output
-    # (we only want to show the status output if there are validation errors)
     scenario_validation <- shiny::reactive({
       s <- input$scenario
       f <- params_filename(session$user, input$dataset, input$scenario)
@@ -205,11 +205,14 @@ mod_home_server <- function(id, providers) {
         )
       )
 
+      # scenario is valid, so return TRUE. the validate function will return an error if there are issues
       TRUE
     }) |>
       shiny::bindEvent(input$dataset, input$scenario, input$scenario_type)
 
     # observers ----
+
+    # update the dataset dropdown when the list of providers changes
     shiny::observe({
       shiny::updateSelectInput(
         session,
@@ -219,6 +222,8 @@ mod_home_server <- function(id, providers) {
     }) |>
       shiny::bindEvent(selected_providers())
 
+    # when the user changes the year, update the end year slider. the end year should be 1 year after the start year
+    # to 20 years after, and it will default to 15 years after the start year
     shiny::observe({
       x <- as.numeric(stringr::str_sub(input$start_year, 1, 4))
 
@@ -232,6 +237,7 @@ mod_home_server <- function(id, providers) {
     }) |>
       shiny::bindEvent(input$start_year)
 
+    # when a user changes the dataset, reset the scenario box back to default (create new from scratch)
     shiny::observe({
       ds <- shiny::req(input$dataset)
 
@@ -259,6 +265,9 @@ mod_home_server <- function(id, providers) {
     }) |>
       shiny::bindEvent(input$dataset)
 
+    # watch the scenario inputs
+    # this shows/hides some of the inputs in the scenario box, depending on what is selected in the scenario_type radio
+    # buttons
     shiny::observe({
       if (input$scenario_type == "Create new from scratch") {
         shinyjs::show("scenario")
@@ -281,6 +290,7 @@ mod_home_server <- function(id, providers) {
         input$previous_scenario
       )
 
+    # watch for uploaded files, and replace the values in params with the contents of the file
     shiny::observe({
       # TODO: should we remove file uploads?
       # this code needs to carefully replicate the next observer
@@ -307,6 +317,9 @@ mod_home_server <- function(id, providers) {
     }) |>
       shiny::bindEvent(input$param_upload)
 
+    # load the selected params
+    # if the user chooses to create new from scratch, we use the default parameters file
+    # otherwise, load the values for the scenario the user selected
     shiny::observe({
       default_params <- app_sys("app", "default_params.json")
       file <- if (input$scenario_type == "Create new from scratch") {
@@ -319,11 +332,11 @@ mod_home_server <- function(id, providers) {
         )
       }
 
-      # prevents bug where the dataset is changed before the previous scenarios are updated
+      # make sure the file exists before loading it
       shiny::req(file.exists(file))
-
       p <- load_params(file)
 
+      # if we use the default parameters, don't try to alter these inputs (they don't exist in the default params)
       if (file != default_params) {
         y <- p$start_year * 100 + p$start_year %% 100 + 1
         shiny::updateSelectInput(session, "start_year", selected = y)
@@ -343,6 +356,7 @@ mod_home_server <- function(id, providers) {
         input$previous_scenario
       )
 
+    # watch the scenario validation - if valid then hide the state and enable the start button
     shiny::observe({
       x <- tryCatch(scenario_validation(), error = \(...) FALSE)
       shinyjs::toggle("status", condition = !x)
@@ -368,6 +382,8 @@ mod_home_server <- function(id, providers) {
       mod_home_providers_map(selected_peers())
     })
 
+    # the status text is used only for showing the validation of scenario - you need to bind validate to an output
+    # in cases where the scenario has been validated, the value will be TRUE, but we hide the output in this case
     output$status <- shiny::renderText(scenario_validation())
 
     # return ----
