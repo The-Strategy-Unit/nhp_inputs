@@ -1,4 +1,4 @@
-mod_expat_repat_trend_plot <- function(df, include, values, start_year, title) {
+mod_expat_repat_trend_plot <- function(df, include, values, start_year, title, scale = 10) {
   v <- dplyr::filter(df, .data$fyear == start_year)$pcnt
 
   interval <- if (include) {
@@ -27,7 +27,7 @@ mod_expat_repat_trend_plot <- function(df, include, values, start_year, title) {
     ) +
     ggplot2::scale_y_continuous(
       labels = scales::percent,
-      limits = c(0, ceiling(v * 20)) / 10
+      limits = c(0, ceiling(v * 2 * scale)) / scale
     ) +
     ggplot2::labs(
       x = "Financial Year",
