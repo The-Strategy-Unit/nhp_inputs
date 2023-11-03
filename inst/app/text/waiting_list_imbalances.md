@@ -30,7 +30,7 @@ outpatient attendances for that treatment function.
 [1]: https://www.datadictionary.nhs.uk/attributes/admission_method.html
 
 The values default to the actual amount of activity for that treatment function
-in the baseline. The change values are then ca
+in the baseline.
 
 ## Data source
 
