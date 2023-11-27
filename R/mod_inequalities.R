@@ -16,7 +16,7 @@ mod_inequalities_ui <- function(id){
         collapsible = FALSE,
         headerBorder = FALSE,
         width = 12,
-        md_file_to_html("app", "text", "covid_adjustment.md")
+        md_file_to_html("app", "text", "inequalities.md")
       )
     )
   )
