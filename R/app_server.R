@@ -40,6 +40,9 @@ app_server <- function(input, output, session) {
     mod_covid_adjustment_server("covid_adjustment", params)
 
     mod_population_growth_server("population_growth", params)
+
+    mod_inequalities_server("inequalities_1", params)
+
     mod_health_status_adjustment_server("health_status_adjustment", params)
 
     mod_waiting_list_imbalances_server("waiting_list_imbalances", params)

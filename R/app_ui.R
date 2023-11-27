@@ -37,6 +37,12 @@ app_ui <- function(request) {
           tabName = "tab_covid_adjustment"
         ),
         shiny::tags$hr(),
+        bs4Dash::sidebarHeader("Inequalities"),
+        bs4Dash::menuItem(
+          "Inequalities",
+          tabName = "tab_inequalities"
+        ),
+        shiny::tags$hr(),
         bs4Dash::sidebarHeader("Population Changes"),
         bs4Dash::menuItem(
           "Population Growth",
@@ -159,6 +165,10 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "tab_population_growth",
         mod_population_growth_ui("population_growth")
+      ),
+      bs4Dash::tabItem(
+        tabName = "tab_inequalities",
+        mod_inequalities_ui("inequalities_1")
       ),
       bs4Dash::tabItem(
         tabName = "tab_health_status_adjustment",
