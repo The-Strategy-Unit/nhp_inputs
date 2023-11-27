@@ -15,7 +15,41 @@ mod_inequalities_ui <- function(id){
       bs4Dash::box(
         collapsible = FALSE,
         headerBorder = FALSE,
+        width = 6,
+        md_file_to_html("app", "text", "inequalities.md")
+      ),
+      bs4Dash::box(
+        collapsible = FALSE,
+        headerBorder = FALSE,
+        width = 6,
+        p("GRAPH")
+      )
+    ),
+    shiny::fluidRow(
+      bs4Dash::box(
+        collapsible = FALSE,
+        headerBorder = FALSE,
         width = 12,
+        md_file_to_html("app", "text", "inequalities_cont.md")
+      )
+    ),
+    shiny::fluidRow(
+      bs4Dash::box(
+        collapsible = FALSE,
+        headerBorder = FALSE,
+        width = 4,
+        img(src='www/level_up.png')
+      ),
+      bs4Dash::box(
+        collapsible = FALSE,
+        headerBorder = FALSE,
+        width = 4,
+        md_file_to_html("app", "text", "inequalities.md")
+      ),
+      bs4Dash::box(
+        collapsible = FALSE,
+        headerBorder = FALSE,
+        width = 4,
         md_file_to_html("app", "text", "inequalities.md")
       )
     )
