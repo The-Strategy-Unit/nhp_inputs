@@ -12,25 +12,27 @@ mod_inequalities_ui <- function(id){
   tagList(
     shiny::tags$h1("Inequalities"),
     shiny::fluidRow(
-      bs4Dash::box(
-        collapsible = FALSE,
-        headerBorder = FALSE,
-        width = 6,
-        md_file_to_html("app", "text", "inequalities.md")
+      column(6,
+             bs4Dash::box(
+               collapsible = FALSE,
+               headerBorder = FALSE,
+               width = 12,
+               md_file_to_html("app", "text", "inequalities.md"),
+               bs4Dash::box(
+                 collapsible = FALSE,
+                 headerBorder = FALSE,
+                 width = 12,
+                 md_file_to_html("app", "text", "inequalities_cont.md")
+               )
+             )
       ),
-      bs4Dash::box(
-        collapsible = FALSE,
-        headerBorder = FALSE,
-        width = 6,
-        img(src='www/inequality.png', width = "100%")
-      )
-    ),
-    shiny::fluidRow(
-      bs4Dash::box(
-        collapsible = FALSE,
-        headerBorder = FALSE,
-        width = 12,
-        md_file_to_html("app", "text", "inequalities_cont.md")
+      column(6,
+             bs4Dash::box(
+               collapsible = FALSE,
+               headerBorder = FALSE,
+               width = 12,
+               img(src='www/inequality.png', width = "100%")
+             )
       )
     ),
     shiny::fluidRow(
@@ -42,7 +44,7 @@ mod_inequalities_ui <- function(id){
         selectInput(ns("change"), "",
                     choices = c("No change", "Level up", "Level down",
                                 "Zero sum redistribution")
-                    ))
+        ))
     ),
     shiny::fluidRow(
       bs4Dash::box(
