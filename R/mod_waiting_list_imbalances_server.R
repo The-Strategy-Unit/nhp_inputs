@@ -11,32 +11,60 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
   mod_reasons_server(shiny::NS(id, "reasons"), params, "waiting_list_adjustment")
 
   shiny::moduleServer(id, function(input, output, session) {
-    # static values ----
-    table <- mod_waiting_list_imbalances_table() |>
-      tidyr::pivot_longer(
-        tidyselect::ends_with("id"),
-        names_to = "activity_type",
-        values_to = "id"
-      ) |>
-      dplyr::mutate(
-        dplyr::across("activity_type", ~ stringr::str_sub(.x, 1, 2))
-      )
-
     # reactives ----
+
+    avg_change <- shiny::reactive({
+      dataset <- shiny::req(params$dataset)
+      year <- as.character(shiny::req(params$start_year))
+
+      multipliers <- readr::read_csv("inst/app/data/waiting_list_params.csv", col_types = "cddddd") |>
+        dplyr::transmute(
+          .data[["tretspef"]],
+          ip = .data[["mixed_split"]] * .data[["avg_ip_activity_per_pathway_mixed"]],
+          op = .data[["op_only_split"]] * .data[["avg_op_first_activity_per_pathway_op_only"]] +
+            .data[["mixed_split"]] * .data[["avg_op_first_activity_per_pathway_mixed"]]
+        )
+
+      # TODO: this needs to acutally be implemented
+      multipliers |>
+        dplyr::transmute(
+          .data[["tretspef"]],
+          change = 1
+        ) |>
+        dplyr::inner_join(multipliers, by = dplyr::join_by("tretspef")) |>
+        dplyr::mutate(
+          dplyr::across(c("ip", "op"), \(.x) .x * .data[["change"]])
+        ) |>
+        dplyr::select(-"change") |>
+        tidyr::pivot_longer(-"tretspef", names_to = "activity_type", values_to = "change")
+    }) |>
+      shiny::bindCache(params$dataset, params$start_year)
 
     # load the waiting list data from azure
     baseline_data <- shiny::reactive({
       dataset <- shiny::req(params$dataset)
       year <- as.character(shiny::req(params$start_year))
 
-      df <- load_rds_from_adls(glue::glue("{dataset}/waiting_list_adjustment.rds"))[[year]]
-
-      tretspef <- df[["tretspef"]]
-      list("ip", "op") |>
-        purrr::set_names() |>
-        purrr::map(\(.x) purrr::set_names(as.list(df[[.x]]), tretspef))
+      glue::glue("{dataset}/waiting_list_adjustment.rds") |>
+        load_rds_from_adls() |>
+        purrr::pluck(year) |>
+        tidyr::pivot_longer(-"tretspef", names_to = "activity_type", values_to = "count") |>
+        dplyr::filter(.data[["count"]] > 0)
     }) |>
       shiny::bindCache(params$dataset, params$start_year)
+
+    # the parameters to use in the model
+    wli_params <- shiny::reactive({
+      baseline_data() |>
+        dplyr::inner_join(
+          avg_change(),
+          by = dplyr::join_by("tretspef", "activity_type")
+        ) |>
+        dplyr::arrange(.data[["tretspef"]]) |>
+        dplyr::mutate(
+          value = floor((1 - .data[["change"]]) * .data[["count"]])
+        )
+    })
 
     # observers ----
 
@@ -46,42 +74,6 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
     }) |>
       shiny::bindEvent(selected_time_profile())
 
-    # when the baseline data is loaded, if any of the loaded values are 0 then the inputs should be disabled
-    shiny::observe({
-      bd <- shiny::req(baseline_data())
-
-      purrr::pwalk(
-        table,
-        \(activity_type, id, code, ...) {
-          v <- bd[[activity_type]][[code]] %||% 0
-          if (v == 0) {
-            shinyjs::disable(id)
-          }
-        }
-      )
-    }) |>
-      shiny::bindEvent(baseline_data())
-
-    # create observers for all of the inputs in the table
-    # when any of the values change, update the params. if the value is 0 then remove it from the params
-    purrr::pwalk(
-      table,
-      \(activity_type, id, code, ...) {
-        shiny::observe({
-          v <- shiny::req(input[[id]])
-          bd <- shiny::req(baseline_data())[[activity_type]][[code]] %||% 0
-
-          change <- v / bd
-
-          change_string <- scales::percent(change, 0.01)
-
-          shiny::updateTextInput(session, paste0(id, "_output"), value = change_string)
-
-          params[["waiting_list_adjustment"]][[activity_type]][[code]] <- if (v != 0) v
-        })
-      }
-    )
-
     # when the module is initialised, load the values from the loaded params file
     init <- shiny::observe({
       p <- params$waiting_list_adjustment
@@ -89,14 +81,38 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
       # update the selected time profile
       update_time_profile(params$time_profile_mappings[["waiting_list_adjustment"]])
 
-      table |>
-        purrr::pwalk(\(activity_type, id, code, ...) {
-          v <- p[[activity_type]][[code]] %||% 0
-
-          shiny::updateNumericInput(session, id, value = v)
-        })
+      if (length(p$ip) + length(p$op) > 0) {
+        shinyWidgets::updateSwitchInput(
+          session,
+          "use_wli",
+          value = TRUE
+        )
+      }
 
       init$destroy()
+    })
+
+    shiny::observe({
+      params[["waiting_list_adjustment"]] <- if (input$use_wli) {
+        wli_params() |>
+          dplyr::select("activity_type", "tretspef", "value") |>
+          dplyr::group_nest(.data[["activity_type"]]) |>
+          dplyr::mutate(
+            dplyr::across(
+              "data",
+              \(.x) purrr::map(.x, purrr::compose(as.list, tibble::deframe)))
+          ) |>
+          tibble::deframe()
+      } else {
+        list(ip = list(), op = list())
+      }
+    }) |>
+      shiny::bindEvent(input$use_wli)
+
+    # renders ----
+
+    output$table <- gt::render_gt({
+      mod_waiting_list_imbalances_table(x())
     })
   })
 }

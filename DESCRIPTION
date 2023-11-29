@@ -34,6 +34,7 @@ Imports:
     shiny (>= 1.7.1),
     shinycssloaders,
     shinyjs,
+    shinyWidgets,
     snakecase,
     stringr,
     tibble,
