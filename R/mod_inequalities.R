@@ -22,7 +22,7 @@ mod_inequalities_ui <- function(id){
         collapsible = FALSE,
         headerBorder = FALSE,
         width = 6,
-        p("GRAPH")
+        img(src='www/inequality.png', width = "100%")
       )
     ),
     shiny::fluidRow(
@@ -37,20 +37,31 @@ mod_inequalities_ui <- function(id){
       bs4Dash::box(
         collapsible = FALSE,
         headerBorder = FALSE,
+        width = 6,
+        p("Please select the appropriate change below"),
+        selectInput(ns("change"), "",
+                    choices = c("No change", "Level up", "Level down",
+                                "Zero sum redistribution")
+                    ))
+    ),
+    shiny::fluidRow(
+      bs4Dash::box(
+        collapsible = FALSE,
+        headerBorder = FALSE,
         width = 4,
-        img(src='www/level_up.png')
+        img(src='www/level_up.png', width = "100%")
       ),
       bs4Dash::box(
         collapsible = FALSE,
         headerBorder = FALSE,
         width = 4,
-        md_file_to_html("app", "text", "inequalities.md")
+        img(src='www/level_down.png', width = "100%")
       ),
       bs4Dash::box(
         collapsible = FALSE,
         headerBorder = FALSE,
         width = 4,
-        md_file_to_html("app", "text", "inequalities.md")
+        img(src='www/zero_sum.png', width = "100%")
       )
     )
   )
