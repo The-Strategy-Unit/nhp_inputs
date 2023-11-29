@@ -168,7 +168,7 @@ app_ui <- function(request) {
       ),
       bs4Dash::tabItem(
         tabName = "tab_inequalities",
-        mod_inequalities_ui("inequalities_1")
+        mod_inequalities_ui("inequalities")
       ),
       bs4Dash::tabItem(
         tabName = "tab_health_status_adjustment",
