@@ -12,8 +12,7 @@ mod_inequalities_ui <- function(id) {
   tagList(
     shiny::tags$h1("Inequalities"),
     shiny::fluidRow(
-      column(
-        6,
+      col_6(
         bs4Dash::box(
           collapsible = FALSE,
           headerBorder = FALSE,
@@ -27,8 +26,7 @@ mod_inequalities_ui <- function(id) {
           )
         )
       ),
-      column(
-        6,
+      col_6(
         bs4Dash::box(
           collapsible = FALSE,
           headerBorder = FALSE,
