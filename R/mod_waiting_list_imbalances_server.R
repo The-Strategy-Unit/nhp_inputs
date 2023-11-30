@@ -100,7 +100,8 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
           dplyr::mutate(
             dplyr::across(
               "data",
-              \(.x) purrr::map(.x, purrr::compose(as.list, tibble::deframe)))
+              \(.x) purrr::map(.x, purrr::compose(as.list, tibble::deframe))
+            )
           ) |>
           tibble::deframe()
       } else {
@@ -112,7 +113,7 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
     # renders ----
 
     output$table <- gt::render_gt({
-      mod_waiting_list_imbalances_table(x())
+      mod_waiting_list_imbalances_table(wli_params())
     })
   })
 }
