@@ -1,5 +1,8 @@
 mod_waiting_list_imbalances_table <- function(df) {
-  df |>
+  readRDS(app_sys("app", "data", "rtt_specialties.Rds")) |>
+    tibble::enframe("description", "tretspef") |>
+    dplyr::inner_join(df, by = dplyr::join_by("tretspef")) |>
+    dplyr::select(-"tretspef") |>
     dplyr::mutate(
       pcnt = .data[["value"]] / .data[["count"]]
     ) |>
@@ -8,7 +11,7 @@ mod_waiting_list_imbalances_table <- function(df) {
       names_from = "activity_type",
       values_from = c("count", "pcnt")
     ) |>
-    gt::gt(rowname_col = "name", groupname_col = "activity_type") |>
+    gt::gt(rowname_col = "description") |>
     gt::tab_spanner(
       "Inpatients",
       columns = tidyselect::ends_with("ip")
@@ -23,6 +26,14 @@ mod_waiting_list_imbalances_table <- function(df) {
       "count_op" = "Baseline Count",
       "pcnt_op" = "Change"
     ) |>
+    gt::fmt_number(
+      tidyselect::starts_with("count"),
+      decimals = 0
+    ) |>
+    gt::fmt_percent(
+      tidyselect::starts_with("pcnt")
+    ) |>
+    gt::sub_missing() |>
     gt::tab_options(
       row_group.border.top.width = gt::px(2),
       row_group.border.top.color = "black",
