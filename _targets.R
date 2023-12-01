@@ -219,8 +219,12 @@ list(
   ),
   # wli data
   tar_target(
+    waiting_list_avg_change_data,
+    get_waiting_list_avg_change_data(provider_successors, rtt_specialties)
+  ),
+  tar_target(
     wli_data,
-    get_wli_data(ip_wli_data, op_wli_data)
+    get_wli_data(ip_wli_data, op_wli_data, waiting_list_avg_change_data)
   ),
   # save data
   tar_target(
@@ -295,8 +299,7 @@ list(
       expat_repat_data,
       covid_adjustment,
       wli_data,
-      Sys.getenv("AZ_STORAGE_EP"),
-      Sys.getenv("AZ_STORAGE_KEY")
+      FALSE
     ),
     pattern = map(all_providers)
   ),
@@ -308,8 +311,7 @@ list(
       expat_repat_data,
       covid_adjustment,
       wli_data,
-      Sys.getenv("LOCAL_STORAGE_EP"),
-      Sys.getenv("LOCAL_STORAGE_KEY")
+      TRUE
     ),
     pattern = map(all_providers)
   ),
@@ -318,8 +320,7 @@ list(
     upload_reference_data_to_azure(
       nhp_current_cohort,
       lkp_peers,
-      Sys.getenv("AZ_STORAGE_EP"),
-      Sys.getenv("AZ_STORAGE_KEY")
+      FALSE
     )
   ),
   tar_target(
@@ -327,8 +328,7 @@ list(
     upload_reference_data_to_azure(
       nhp_current_cohort,
       lkp_peers,
-      Sys.getenv("LOCAL_STORAGE_EP"),
-      Sys.getenv("LOCAL_STORAGE_KEY")
+      TRUE
     )
   ),
   tar_target(reference_data_last_updated, {
