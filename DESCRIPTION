@@ -70,3 +70,5 @@ Config/renv/profiles/dev/remotes:
     github::tomjemmett/watchr,
     github::NHS-R-Community/NHSRtools,
     github::ManuelHentschel/vscDebugger
+Depends: 
+    R (>= 2.10)
