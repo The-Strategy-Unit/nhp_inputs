@@ -4,38 +4,18 @@ reconfiguration).
 
 ### Expatriation
 
-This input reflects the percentage of admissions currently being treated
-within the provider that are expected to be treated elsewhere in future, e.g.
-because a nearby hospital is expected to increase their activity/capacity or
-because the new hospital will no longer deliver that specialty.
+This adjustment accounts for the expected reductions in the current number of patients treated at the hospital because they will receive care elsewhere in the future. For example, if the new hospital will no longer delivery a particular specialty.
 
-For example, 100% means no change due to expatriation over the model horizon,
-and 95% means 5% of current admissions would be 'expatriated' (treated
-elsewhere). A value of 0% would expatriate all of that activity.
+100% means no change due to expatriation. 95% means 5% of current activity would be ‘expatriated’ (treated elsewhere). A value of 0% would mean all activity is ‘expatriated’.
 
 ### Repatriation - Local
-This input reflects the percentage increase on current admission levels to
-account for patients that are within the local area but not currently being
-treated by the provider, changing to be treated by the provider, e.g. because
-previously the provider didn't have sufficient capacity but in future they are
-expected to.
 
-100% means no change over the model horizon. 105% means a 5% increase in
-activity, sampled from all patient records in the baseline.
+This adjustment accounts for the number of local ICB patients not currently treated at the hospital that will be in the future. For example, if the new hospital plans to increase the capacity of a particular specialty to address a historic under provision which has resulted in local ICB patients travelling further to other trusts.
 
-Here the local area is defined as the predominant ICB driving activity for the
-provider.
+100% means no change. 105% means a 5% increase in activity.
 
 ### Repatriation - Non-Local
 
-This input reflects the percentage increase in non-local admissions to account
-for patients that are outside the local area and not currently being treated by
-the provider, changing to be treated by the provider. 100% means no change over
-the model horizon.
+This adjustment accounts for an expected increase in non local patients (patients living outside of the local ICB) . For example, if the new hospital includes a larger specialist ophthalmology department that it expects will attract patients from outside of the local area.
 
-105% means a 5% increase in non-local admissions, sampled from patient records
-for those currently being treated by the provider but come from outside the
-local area. 
-
-Here the local area is defined as the predominant ICB driving activity for the
-provider.
+100% means no change. 105% means a 5% increase in current levels of non local activity.
