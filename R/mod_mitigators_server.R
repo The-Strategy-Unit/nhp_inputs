@@ -423,5 +423,20 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       shiny::req(nrow(age_data) > 0)
       age_pyramid(age_data)
     })
+
+    # NEE result
+
+    output$nee_result <- renderPlot({
+
+      ggplot2::ggplot() +
+        ggplot2::geom_segment(
+          ggplot2::aes(y = 1, yend = 1, x = 20, xend = 80), size = 2
+          ) +
+        ggplot2::xlim(0, 100) +
+        ggplot2::theme_minimal() +
+        ggplot2::theme(axis.title.y = ggplot2::element_blank(),
+              axis.text.y = ggplot2::element_blank(),
+              axis.ticks.y = ggplot2::element_blank())
+    }, width = "auto", height = 60)
   })
 }
