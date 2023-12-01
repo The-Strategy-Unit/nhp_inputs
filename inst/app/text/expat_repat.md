@@ -1,7 +1,3 @@
-These change factors reflect demand-supply imbalances and are intended to
-reflect marginal changes in market share (as opposed to e.g. system
-reconfiguration).
-
 ### Expatriation
 
 This adjustment accounts for the expected reductions in the current number of patients treated at the hospital because they will receive care elsewhere in the future. For example, if the new hospital will no longer delivery a particular specialty.
