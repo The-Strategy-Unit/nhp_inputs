@@ -1,0 +1,3 @@
+The NHP model currently converts projected hospital bed days to general and acute beds. The model uses [KH03 data](https://www.england.nhs.uk/statistics/statistical-work-areas/bed-availability-and-occupancy/) which is a quarterly collection from NHS providers.
+
+The model user can set proposed future occupancy rates by specialty or group of specialties.  The user will first need to  group specialties into groups that will have the same assumed bed occupancy (using the add group function) and then set the assumed bed occupancy for each of those groups. The NHP bed conversion uses the ratio of projected bed days to baseline bed days and applies this ratio to current KH03 bed numbers and occupancy rates.  Further development work is planned on capacity conversion. 

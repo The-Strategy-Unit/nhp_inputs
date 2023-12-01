@@ -1,7 +1,3 @@
-The net impact of non-demographic growth factors on activity is calculated by
-subtracting historic demographic growth rates from activity growth rates.
+This adjustment accounts for the growth in activity which is _not_ due to changes in the size and age-sex structure of the population over time.
 
-This ‘Track 1’ approach will be replaced in its entirety when the analysis for
-the three ‘Track 2’ change factors (new technologies and interventions,
-changes in national standards, and changes in patient expectations), has been
-completed.
+This adjustment is based on detailed analysis to quantify growth after accounting for changes in population size and structure. No user inputs are required for this factor but the adjustments made within their model are shown for information.
