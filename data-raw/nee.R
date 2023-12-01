@@ -8,4 +8,4 @@ nee_lookup <- readr::read_csv("data-raw/NEE_lookup.csv")
 
 nee_table <- readr::read_csv("data-raw/NEE_table.csv")
 
-usethis::use_data(nee_lookup, overwrite = TRUE)
+usethis::use_data(nee_table, overwrite = TRUE)
