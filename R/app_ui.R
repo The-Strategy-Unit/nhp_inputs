@@ -37,7 +37,7 @@ app_ui <- function(request) {
           tabName = "tab_covid_adjustment"
         ),
         shiny::tags$hr(),
-        bs4Dash::sidebarHeader("Inequalities"),
+        bs4Dash::sidebarHeader("Need-supply imbalances"),
         bs4Dash::menuItem(
           "Inequalities",
           tabName = "tab_inequalities"
