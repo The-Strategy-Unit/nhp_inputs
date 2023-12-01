@@ -186,7 +186,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
 
       shiny::updateCheckboxInput(session, "include", value = include)
       shiny::updateRadioButtons(session, "slider_type", selected = "% rate")
-      update_slider("rate")
+      update_slider("% change")
     }) |>
       shiny::bindEvent(input$strategy)
 
