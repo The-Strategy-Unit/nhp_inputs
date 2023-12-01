@@ -138,11 +138,16 @@ app_ui <- function(request) {
           tabName = "tab_theatres"
         ),
         #
-        shiny::tags$hr(),
-        bs4Dash::sidebarHeader("Run Model"),
-        bs4Dash::menuItem(
-          "Run Model",
-          tabName = "tab_run_model"
+        shinyjs::hidden(
+          shiny::tags$div(
+            id = "run-model-container",
+            shiny::tags$hr(),
+            bs4Dash::sidebarHeader("Run Model"),
+            bs4Dash::menuItem(
+              "Run Model",
+              tabName = "tab_run_model"
+            )
+          )
         )
       )
     )
