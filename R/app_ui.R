@@ -37,12 +37,6 @@ app_ui <- function(request) {
           tabName = "tab_covid_adjustment"
         ),
         shiny::tags$hr(),
-        bs4Dash::sidebarHeader("Need-supply imbalances"),
-        bs4Dash::menuItem(
-          "Inequalities",
-          tabName = "tab_inequalities"
-        ),
-        shiny::tags$hr(),
         bs4Dash::sidebarHeader("Population Changes"),
         bs4Dash::menuItem(
           "Population Growth",
@@ -62,6 +56,13 @@ app_ui <- function(request) {
         bs4Dash::menuItem(
           "Expat/Repat",
           tabName = "tab_er"
+        ),
+        #
+        shiny::tags$hr(),
+        bs4Dash::sidebarHeader("Need-supply Imbalances"),
+        bs4Dash::menuItem(
+          "Inequalities",
+          tabName = "tab_inequalities"
         ),
         #
         shiny::tags$hr(),
