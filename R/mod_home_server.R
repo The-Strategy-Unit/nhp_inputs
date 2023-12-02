@@ -16,7 +16,8 @@ mod_home_server <- function(id, providers) {
     # set up the applications values store, all of the parameters for the model will be stored in this reactiveValues
     params <- shiny::reactiveValues(
       "user" = session$user %||% "[development]",
-      "app_version" = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")
+      "app_version" = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev"),
+      "interval_type" = 0.8
     )
 
     # only show the providers that a user is allowed to access
