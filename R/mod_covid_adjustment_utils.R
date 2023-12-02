@@ -17,7 +17,7 @@ mod_covid_adjustment_table <- function(covid_adjustment) {
     tidyr::unnest_wider("value") |>
     gt::gt(rowname_col = "name", groupname_col = "activity_type") |>
     gt::tab_spanner(
-      "90% Confidence Interval",
+      "80% Confidence Interval",
       columns = c("low", "high")
     ) |>
     gt::cols_label(
