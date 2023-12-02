@@ -6,10 +6,9 @@
 #'
 #' @noRd
 #'
-#' @importFrom shiny NS tagList
 mod_inequalities_ui <- function(id) {
-  ns <- NS(id)
-  tagList(
+  ns <- shiny::NS(id)
+  shiny::tagList(
     shiny::tags$h1("Inequalities"),
     shiny::fluidRow(
       col_6(
@@ -31,7 +30,7 @@ mod_inequalities_ui <- function(id) {
           collapsible = FALSE,
           headerBorder = FALSE,
           width = 12,
-          img(src = "www/inequality.png", width = "100%")
+          shiny::tags$img(src = "www/inequality.png", width = "100%")
         )
       )
     ),
@@ -40,8 +39,8 @@ mod_inequalities_ui <- function(id) {
         collapsible = FALSE,
         headerBorder = FALSE,
         width = 6,
-        p("Please select the appropriate change below"),
-        selectInput(ns("change"), "",
+        shiny::tags$p("Please select the appropriate change below"),
+        shiny::selectInput(ns("change"), "",
           choices = c(
             "No change", "Level up", "Level down",
             "Zero sum redistribution"
@@ -54,29 +53,20 @@ mod_inequalities_ui <- function(id) {
         collapsible = FALSE,
         headerBorder = FALSE,
         width = 4,
-        img(src = "www/level_up.png", width = "100%")
+        shiny::tags$img(src = "www/level_up.png", width = "100%")
       ),
       bs4Dash::box(
         collapsible = FALSE,
         headerBorder = FALSE,
         width = 4,
-        img(src = "www/level_down.png", width = "100%")
+        shiny::tags$img(src = "www/level_down.png", width = "100%")
       ),
       bs4Dash::box(
         collapsible = FALSE,
         headerBorder = FALSE,
         width = 4,
-        img(src = "www/zero_sum.png", width = "100%")
+        shiny::tags$img(src = "www/zero_sum.png", width = "100%")
       )
     )
   )
-}
-
-#' inequalities Server Functions
-#'
-#' @noRd
-mod_inequalities_server <- function(id, params) {
-  moduleServer(id, function(input, output, session) {
-    ns <- session$ns
-  })
 }
