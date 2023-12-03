@@ -431,19 +431,20 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       nee_params <- nee_table |>
         dplyr::filter(param_name == input$strategy)
 
-      cat(str(nee_params))
-
-      ggplot2::ggplot() +
+      nee_params |>
+        ggplot2::ggplot() +
         ggplot2::geom_segment(
-          ggplot2::aes(y = 1, yend = 1, x = 20, xend = 80),
+          ggplot2::aes(y = 1, yend = 1, x = percentile10, xend = percentile90),
           size = 2) +
-        ggplot2::geom_point(ggplot2::aes(y = 1, x = 45), size = 5) +
+        ggplot2::geom_point(ggplot2::aes(y = 1, x = mean), size = 5) +
         ggplot2::xlim(0, 100) +
-        ggplot2::xlab("80% confidence interval- mean represented as point")
+        ggplot2::xlab("80% confidence interval- mean represented as point") +
         ggplot2::theme_minimal() +
         ggplot2::theme(axis.title.y = ggplot2::element_blank(),
                        axis.text.y = ggplot2::element_blank(),
-                       axis.ticks.y = ggplot2::element_blank())
+                       axis.ticks.y = ggplot2::element_blank()) +
+        ggplot2::ggtitle("Nationally determined estimate")
+
     }, width = "auto", height = 60)
   })
 }

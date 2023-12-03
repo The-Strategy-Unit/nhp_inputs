@@ -34,8 +34,8 @@ mod_mitigators_ui <- function(id, title) {
               choices = c("Relative" = "% change", "Absolute" = "rate"),
               selected = "% change"
             ),
-            plotOutput(ns("nee_result"), height = 80),
-            shiny::sliderInput(ns("slider"), "90% Confidence Interval", 0, 1, c(0, 1))
+            shiny::plotOutput(ns("nee_result"), height = 80),
+            shiny::sliderInput(ns("slider"), "80% Confidence Interval", 0, 1, c(0, 1))
           ),
           mod_reasons_ui(ns("reasons")),
           mod_time_profile_ui(ns("time_profile")),
