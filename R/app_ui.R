@@ -37,12 +37,6 @@ app_ui <- function(request) {
           tabName = "tab_covid_adjustment"
         ),
         shiny::tags$hr(),
-        bs4Dash::sidebarHeader("Inequalities"),
-        bs4Dash::menuItem(
-          "Inequalities",
-          tabName = "tab_inequalities"
-        ),
-        shiny::tags$hr(),
         bs4Dash::sidebarHeader("Population Changes"),
         bs4Dash::menuItem(
           "Population Growth",
@@ -62,6 +56,13 @@ app_ui <- function(request) {
         bs4Dash::menuItem(
           "Expat/Repat",
           tabName = "tab_er"
+        ),
+        #
+        shiny::tags$hr(),
+        bs4Dash::sidebarHeader("Need-supply Imbalances"),
+        bs4Dash::menuItem(
+          "Inequalities",
+          tabName = "tab_inequalities"
         ),
         #
         shiny::tags$hr(),
@@ -138,11 +139,16 @@ app_ui <- function(request) {
           tabName = "tab_theatres"
         ),
         #
-        shiny::tags$hr(),
-        bs4Dash::sidebarHeader("Run Model"),
-        bs4Dash::menuItem(
-          "Run Model",
-          tabName = "tab_run_model"
+        shinyjs::hidden(
+          shiny::tags$div(
+            id = "run-model-container",
+            shiny::tags$hr(),
+            bs4Dash::sidebarHeader("Run Model"),
+            bs4Dash::menuItem(
+              "Run Model",
+              tabName = "tab_run_model"
+            )
+          )
         )
       )
     )

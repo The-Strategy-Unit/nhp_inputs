@@ -1,13 +1,3 @@
-The baseline data that is used in the model is the "Hospital Episodes
-Statistics" ([HES][1]) data, which is submitted by providers via the Secondary
-Users Service (SUS) data sets.
+This adjustment accounts for activity numbers (admission or attendance) that maybe under or over counted at the hospital trust. It relates to Hospital Episodes Statistics (HES) data (from providers) via Secondary Users Service (SUS). The adjustment required is the Percentage adjustment to the baseline data currently extracted for your trust for each POD/specialty.
 
-[1]: https://digital.nhs.uk/data-and-information/data-tools-and-services/data-services/hospital-episode-statistics
-
-This dataset contains all of the hospitals activity for a given year, so should
-be a complete and accurate record for our baseline.
-
-However, there are circumstances where activity that was undertaken was not
-recorded and submitted via SUS, or there was a gap in activity due to some
-unusual or unexpected reason (that isn't already acounted for via the
-expat/repat parameters).
+Please provide the reason for your adjustment and cite an evidence base.
