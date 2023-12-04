@@ -51,7 +51,6 @@ app_server <- function(input, output, session) {
     mod_non_demographic_adjustment_server("non_demographic_adjustment", params)
 
     mod_bed_occupancy_server("bed_occupancy", params)
-    mod_theatres_server("theatres", params)
 
     purrr::walk(
       c(
