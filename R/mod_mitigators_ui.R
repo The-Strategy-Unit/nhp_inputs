@@ -31,9 +31,10 @@ mod_mitigators_ui <- function(id, title) {
             shiny::radioButtons(
               ns("slider_type"),
               "Display Type",
-              c("Absolute" = "rate", "Relative" = "% change"),
-              "rate"
+              choices = c("Relative" = "% change", "Absolute" = "rate"),
+              selected = "% change"
             ),
+            shiny::plotOutput(ns("nee_result"), height = 80),
             shiny::sliderInput(ns("slider"), "80% Confidence Interval", 0, 1, c(0, 1))
           ),
           mod_reasons_ui(ns("reasons")),

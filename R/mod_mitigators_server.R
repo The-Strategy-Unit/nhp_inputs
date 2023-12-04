@@ -185,8 +185,8 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       include <- !is.null(params[[mitigators_type]][[activity_type]][[input$strategy]])
 
       shiny::updateCheckboxInput(session, "include", value = include)
-      shiny::updateRadioButtons(session, "slider_type", selected = "rate")
-      update_slider("rate")
+      shiny::updateRadioButtons(session, "slider_type", selected = "% rate")
+      update_slider("% change")
     }) |>
       shiny::bindEvent(input$strategy)
 
@@ -423,5 +423,29 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       shiny::req(nrow(age_data) > 0)
       age_pyramid(age_data)
     })
+
+    # NEE result
+
+    output$nee_result <- shiny::renderPlot({
+
+      nee_params <- nee_table |>
+        dplyr::filter(.data[["param_name"]] == input$strategy)
+
+      nee_params |>
+        ggplot2::ggplot() +
+        ggplot2::geom_segment(
+          ggplot2::aes(y = 1, yend = 1,
+                       x = .data[["percentile10"]], xend = .data[["percentile90"]]),
+          size = 2) +
+        ggplot2::geom_point(ggplot2::aes(y = 1, x = mean), size = 5) +
+        ggplot2::xlim(0, 100) +
+        ggplot2::xlab("80% confidence interval- mean represented as point") +
+        ggplot2::theme_minimal() +
+        ggplot2::theme(axis.title.y = ggplot2::element_blank(),
+                       axis.text.y = ggplot2::element_blank(),
+                       axis.ticks.y = ggplot2::element_blank()) +
+        ggplot2::ggtitle("Nationally determined estimate")
+
+    }, width = "auto", height = 60)
   })
 }
