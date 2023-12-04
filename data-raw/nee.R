@@ -14,4 +14,4 @@ nee_table <- readr::read_csv("data-raw/NEE_table.csv")
 nee_table <- nee_table |>
   dplyr::mutate(dplyr::across(c(mean, percentile10, percentile90), ~ 100 - .x))
 
-usethis::use_data(nee_table, overwrite = TRUE)
+saveRDS(nee_table, file = "inst/app/data/nee_table.Rds")

@@ -5,6 +5,9 @@
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
+
+  nee_table <- readRDS(app_sys("app", "data", "nee_table.Rds"))
+
   diagnoses_lkup <- shiny::reactive({
     readRDS(app_sys("app", "data", "diagnoses.Rds"))
   })
