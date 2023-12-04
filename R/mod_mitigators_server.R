@@ -426,15 +426,16 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
 
     # NEE result
 
-    output$nee_result <- renderPlot({
+    output$nee_result <- shiny::renderPlot({
 
       nee_params <- nee_table |>
-        dplyr::filter(param_name == input$strategy)
+        dplyr::filter(.data[["param_name"]] == input$strategy)
 
       nee_params |>
         ggplot2::ggplot() +
         ggplot2::geom_segment(
-          ggplot2::aes(y = 1, yend = 1, x = percentile10, xend = percentile90),
+          ggplot2::aes(y = 1, yend = 1,
+                       x = .data[["percentile10"]], xend = .data[["percentile90"]]),
           size = 2) +
         ggplot2::geom_point(ggplot2::aes(y = 1, x = mean), size = 5) +
         ggplot2::xlim(0, 100) +
