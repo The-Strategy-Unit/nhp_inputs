@@ -17,7 +17,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
   activity_type <- config$activity_type
   mitigators_type <- config$mitigators_type
 
-  param_conversion <- config$param_conversion %||% list(
+  param_conversion <- list(
     absolute = list(\(r, p) p * r, \(r, q) q / r),
     relative = list(\(r, p) p, \(r, q) q)
   )
@@ -169,9 +169,8 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
     })
 
     # params controls ----
-    get_range <- function(max_value, scale, inverted) {
-      range <- c(0, max_value, 1) * scale
-      range[1:2 + (inverted)]
+    get_range <- function(max_value, scale) {
+      c(0, max_value, 1) * scale
     }
 
     provider_max_value <- shiny::reactive({
@@ -196,7 +195,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
 
       if (type == "rate") {
         scale <- config$slider_scale
-        range <- get_range(max_value, scale, config$inverted %||% FALSE)
+        range <- get_range(max_value, scale)
         step <- config$slider_step
         pc_fn <- param_conversion$absolute[[1]]
       } else {
