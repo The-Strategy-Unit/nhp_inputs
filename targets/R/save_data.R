@@ -67,12 +67,16 @@ get_provider_data <- function(age_sex_data, diagnoses_data, rates_data) {
     tibble::deframe()
 }
 
-get_wli_data <- function(ip_wli_data, op_wli_data) {
+get_wli_data <- function(ip_wli_data, op_wli_data, waiting_list_avg_change_data) {
   dplyr::full_join(
     ip_wli_data,
     op_wli_data,
     by = dplyr::join_by("fyear", "procode3", "tretspef")
   ) |>
+    dplyr::inner_join(
+      waiting_list_avg_change_data,
+      by = dplyr::join_by("procode3" == "procode", "tretspef")
+    ) |>
     dplyr::mutate(
       dplyr::across(
         c("ip", "op"),
@@ -95,11 +99,10 @@ upload_data_to_azure <- function(provider,
                                  expat_repat_data,
                                  covid_adjustment,
                                  wli_data,
-                                 azure_storage_endpoint,
-                                 azure_storage_key) {
+                                 local = TRUE) {
   ep <- AzureStor::blob_endpoint(
-    endpoint = azure_storage_endpoint,
-    key = azure_storage_key
+    endpoint = Sys.getenv(ifelse(local, "LOCAL_STORAGE_EP", "AZ_STORAGE_EP")),
+    key = Sys.getenv(ifelse(local, "LOCAL_STORAGE_KEY", "AZ_STORAGE_KEY"))
   )
   cont <- AzureStor::blob_container(ep, "inputs-data")
 
@@ -121,13 +124,10 @@ upload_data_to_azure <- function(provider,
   )
 }
 
-upload_reference_data_to_azure <- function(nhp_current_cohort,
-                                           lkp_peers,
-                                           azure_storage_endpoint,
-                                           azure_storage_key) {
+upload_reference_data_to_azure <- function(nhp_current_cohort, lkp_peers, local = TRUE) {
   ep <- AzureStor::blob_endpoint(
-    endpoint = azure_storage_endpoint,
-    key = azure_storage_key
+    endpoint = Sys.getenv(ifelse(local, "LOCAL_STORAGE_EP", "AZ_STORAGE_EP")),
+    key = Sys.getenv(ifelse(local, "LOCAL_STORAGE_KEY", "AZ_STORAGE_KEY"))
   )
   cont <- AzureStor::blob_container(ep, "inputs-data")
 

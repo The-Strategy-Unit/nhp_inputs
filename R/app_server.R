@@ -74,7 +74,13 @@ app_server <- function(input, output, session) {
       diagnoses_lkup()
     )
 
-    mod_run_model_server("run_model", params)
+    # enable the run_model page for certain users/running locally
+    is_local <- Sys.getenv("SHINY_PORT") == ""
+    is_power_user <- any(c("nhp_devs", "nhp_power_users") %in% session$groups)
+    if (is_local || is_power_user) {
+      shinyjs::show("run-model-container")
+      mod_run_model_server("run_model", params)
+    }
 
     # hacky way of achieving switch from the home tab to the app itself
     # maybe add some timeout to this?

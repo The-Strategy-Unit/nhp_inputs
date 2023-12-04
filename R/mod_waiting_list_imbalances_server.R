@@ -11,34 +11,17 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
   mod_reasons_server(shiny::NS(id, "reasons"), params, "waiting_list_adjustment")
 
   shiny::moduleServer(id, function(input, output, session) {
+    # static values ----
+    multipliers <- readr::read_csv("inst/app/data/waiting_list_params.csv", col_types = "cddddd") |>
+      dplyr::transmute(
+        .data[["tretspef"]],
+        ip = .data[["mixed_split"]] * .data[["avg_ip_activity_per_pathway_mixed"]],
+        op = .data[["op_only_split"]] * .data[["avg_op_first_activity_per_pathway_op_only"]] +
+          .data[["mixed_split"]] * .data[["avg_op_first_activity_per_pathway_mixed"]]
+      ) |>
+      tidyr::pivot_longer(c("ip", "op"), names_to = "activity_type", values_to = "multiplier")
+
     # reactives ----
-
-    avg_change <- shiny::reactive({
-      dataset <- shiny::req(params$dataset)
-      year <- as.character(shiny::req(params$start_year))
-
-      multipliers <- readr::read_csv("inst/app/data/waiting_list_params.csv", col_types = "cddddd") |>
-        dplyr::transmute(
-          .data[["tretspef"]],
-          ip = .data[["mixed_split"]] * .data[["avg_ip_activity_per_pathway_mixed"]],
-          op = .data[["op_only_split"]] * .data[["avg_op_first_activity_per_pathway_op_only"]] +
-            .data[["mixed_split"]] * .data[["avg_op_first_activity_per_pathway_mixed"]]
-        )
-
-      # TODO: this needs to acutally be implemented
-      multipliers |>
-        dplyr::transmute(
-          .data[["tretspef"]],
-          change = 1
-        ) |>
-        dplyr::inner_join(multipliers, by = dplyr::join_by("tretspef")) |>
-        dplyr::mutate(
-          dplyr::across(c("ip", "op"), \(.x) .x * .data[["change"]])
-        ) |>
-        dplyr::select(-"change") |>
-        tidyr::pivot_longer(-"tretspef", names_to = "activity_type", values_to = "change")
-    }) |>
-      shiny::bindCache(params$dataset, params$start_year)
 
     # load the waiting list data from azure
     baseline_data <- shiny::reactive({
@@ -48,23 +31,20 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
       glue::glue("{dataset}/waiting_list_adjustment.rds") |>
         load_rds_from_adls() |>
         purrr::pluck(year) |>
-        tidyr::pivot_longer(-"tretspef", names_to = "activity_type", values_to = "count") |>
-        dplyr::filter(.data[["count"]] > 0)
-    }) |>
-      shiny::bindCache(params$dataset, params$start_year)
-
-    # the parameters to use in the model
-    wli_params <- shiny::reactive({
-      baseline_data() |>
+        tidyr::pivot_longer(c("ip", "op"), names_to = "activity_type", values_to = "count") |>
+        dplyr::filter(.data[["count"]] > 0) |>
         dplyr::inner_join(
-          avg_change(),
+          multipliers,
           by = dplyr::join_by("tretspef", "activity_type")
         ) |>
-        dplyr::arrange(.data[["tretspef"]]) |>
-        dplyr::mutate(
-          value = floor((1 - .data[["change"]]) * .data[["count"]])
+        dplyr::transmute(
+          .data[["tretspef"]],
+          .data[["activity_type"]],
+          .data[["count"]],
+          param = 1 + .data[["avg_change"]] * .data[["multiplier"]] / .data[["count"]]
         )
-    })
+    }) |>
+      shiny::bindCache(params$dataset, params$start_year)
 
     # observers ----
 
@@ -94,8 +74,8 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
 
     shiny::observe({
       params[["waiting_list_adjustment"]] <- if (input$use_wli) {
-        wli_params() |>
-          dplyr::select("activity_type", "tretspef", "value") |>
+        baseline_data() |>
+          dplyr::select("activity_type", "tretspef", "param") |>
           dplyr::group_nest(.data[["activity_type"]]) |>
           dplyr::mutate(
             dplyr::across(
@@ -113,7 +93,7 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
     # renders ----
 
     output$table <- gt::render_gt({
-      mod_waiting_list_imbalances_table(wli_params())
+      mod_waiting_list_imbalances_table(baseline_data())
     })
   })
 }

@@ -3,13 +3,9 @@ mod_waiting_list_imbalances_table <- function(df) {
     tibble::enframe("description", "tretspef") |>
     dplyr::inner_join(df, by = dplyr::join_by("tretspef")) |>
     dplyr::select(-"tretspef") |>
-    dplyr::mutate(
-      pcnt = .data[["value"]] / .data[["count"]]
-    ) |>
-    dplyr::select(-"change", -"value") |>
     tidyr::pivot_wider(
       names_from = "activity_type",
-      values_from = c("count", "pcnt")
+      values_from = c("count", "param")
     ) |>
     gt::gt(rowname_col = "description") |>
     gt::tab_spanner(
@@ -22,16 +18,16 @@ mod_waiting_list_imbalances_table <- function(df) {
     ) |>
     gt::cols_label(
       "count_ip" = "Baseline Count",
-      "pcnt_ip" = "Change",
+      "param_ip" = "Change",
       "count_op" = "Baseline Count",
-      "pcnt_op" = "Change"
+      "param_op" = "Change"
     ) |>
     gt::fmt_number(
       tidyselect::starts_with("count"),
       decimals = 0
     ) |>
     gt::fmt_percent(
-      tidyselect::starts_with("pcnt")
+      tidyselect::starts_with("param")
     ) |>
     gt::sub_missing() |>
     gt::tab_options(
