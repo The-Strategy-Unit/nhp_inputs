@@ -70,7 +70,6 @@ mod_run_model_fix_params <- function(p) {
     "activity_avoidance",
     "efficiencies",
     "bed_occupancy",
-    "theatres",
     "time_profile_mappings",
     "reasons"
   )

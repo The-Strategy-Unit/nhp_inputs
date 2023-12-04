@@ -134,10 +134,6 @@ app_ui <- function(request) {
           "Bed Occupancy",
           tabName = "tab_bed_occ"
         ),
-        bs4Dash::menuItem(
-          "Theatres",
-          tabName = "tab_theatres"
-        ),
         #
         shinyjs::hidden(
           shiny::tags$div(
@@ -239,10 +235,6 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "tab_bed_occ",
         mod_bed_occupancy_ui("bed_occupancy")
-      ),
-      bs4Dash::tabItem(
-        tabName = "tab_theatres",
-        mod_theatres_ui("theatres")
       ),
       bs4Dash::tabItem(
         tabName = "tab_run_model",
