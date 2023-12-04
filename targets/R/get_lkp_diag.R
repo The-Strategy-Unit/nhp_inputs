@@ -9,7 +9,7 @@ get_lkp_diag <- function() {
     dplyr::filter(.data$diagnosis_code %LIKE% "%X" | .data$diagnosis_code %LIKE% "___") |>
     dplyr::collect() |>
     dplyr::arrange(.data$diagnosis_code) |>
-    dplyr::group_by(dplyr::across("diagnosis_code", stringr::str_sub, 1, 3)) |>
+    dplyr::group_by(dplyr::across("diagnosis_code", \(.x) stringr::str_sub(.x, 1, 3))) |>
     dplyr::slice(1) |>
     dplyr::ungroup()
 
