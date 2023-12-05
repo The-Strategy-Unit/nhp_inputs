@@ -82,7 +82,7 @@ get_op_diag_data <- function(provider_successors_last_updated) {
   tbl_outpatients_diagnoses <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "outpatients_diagnoses")) |>
     dplyr::filter(.data$diagorder == 1) |>
     dplyr::mutate(
-      dplyr::across("diagnosis", LEFT, 3)
+      dplyr::across("diagnosis", \(.x) LEFT(.x, 3))
     )
 
   tbl_outpatients <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "outpatients")) |>
@@ -100,7 +100,7 @@ get_op_diag_data <- function(provider_successors_last_updated) {
       dplyr::filter(.data$is_tele_appointment == 0) |>
       dplyr::mutate(is_first = 1 - .data$is_first) |>
       dplyr::summarise(
-        dplyr::across(c("is_first", "is_cons_cons_ref"), sum, na.rm = TRUE),
+        dplyr::across(c("is_first", "is_cons_cons_ref"), \(.x) sum(.x, na.rm = TRUE)),
         .groups = "keep"
       ) |>
       tidyr::pivot_longer(c("is_first", "is_cons_cons_ref"), values_to = "n") |>

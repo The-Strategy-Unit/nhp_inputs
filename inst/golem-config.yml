@@ -39,7 +39,7 @@ default:
     mitigators_admission_avoidance:
       activity_type: ip
       mitigators_type: activity_avoidance
-      y_axis_title: "Indexed Directly Standardised Rate"
+      y_axis_title: "Admissions per 1,000 population"
       x_axis_title: "Financial Year"
       number_type: !expr scales::comma_format(accuracy = 0.001)
       funnel_x_title: "Catchment Population of Trust"
@@ -106,7 +106,7 @@ default:
     mitigators_aec_los_reduction:
       activity_type: ip
       mitigators_type: efficiencies
-      y_axis_title: "% 0-Day Admissions"
+      y_axis_title: "% admissions with a greater than 0-day length of stay"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
       funnel_x_title: "Number of Admissions"
@@ -119,14 +119,6 @@ default:
         - ambulatory_emergency_care_very_high
       params_items:
         type: "aec"
-      param_conversion:
-        absolute:
-          - !expr \(r, p) rev(1 - p + r * p)
-          - !expr \(r, q) rev(1 - (q - r) / (1 - r))
-        relative:
-          - !expr \(r, p) rev(1 - p)
-          - !expr \(r, q) rev(1 - q)
-      inverted: true
     mitigators_preop_los_reduction:
       activity_type: ip
       mitigators_type: efficiencies
