@@ -12,7 +12,8 @@ cat(
   "  * NHP_API_URI:            ", Sys.getenv("NHP_API_URI"), "\n",
   "  * NHP_INPUTS_DATA_VERSION:", Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev"), "\n",
   "  * NHP_CONTAINER_VERSION:  ", Sys.getenv("NHP_CONTAINER_VERSION", "dev"), "\n",
-  "  * NHP_OUTPUTS_URI:        ", Sys.getenv("NHP_OUTPUTS_URI"), "\n"
+  "  * NHP_OUTPUTS_URI:        ", Sys.getenv("NHP_OUTPUTS_URI"), "\n",
+  "  * CACHE_VERSION:          ", Sys.getenv("CACHE_VERSION"), "\n"
 )
 
 inputs::run_app() # add parameters here (if any)
