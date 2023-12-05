@@ -67,6 +67,7 @@ mod_run_model_fix_params <- function(p) {
     "baseline_adjustment",
     "waiting_list_adjustment",
     "non-demographic_adjustment",
+    "inequalities",
     "activity_avoidance",
     "efficiencies",
     "bed_occupancy",
