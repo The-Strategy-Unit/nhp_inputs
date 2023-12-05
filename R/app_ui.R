@@ -74,6 +74,10 @@ app_ui <- function(request) {
         #
         shiny::tags$hr(),
         bs4Dash::sidebarHeader("Activity Mitigators"),
+          bs4Dash::menuItem(
+            "Summary totals",
+            tabName = "mitigators_summary"
+        ),
         bs4Dash::menuItem(
           "Inpatients",
           bs4Dash::menuSubItem(
@@ -187,6 +191,10 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "tab_er",
         mod_expat_repat_ui("expat_repat")
+      ),
+      bs4Dash::tabItem(
+        tabName = "mitigators_summary",
+        mod_mitigators_summary_ui("mitigators_summary")
       ),
       bs4Dash::tabItem(
         tabName = "ip_am_admission_avoidance",
