@@ -42,7 +42,7 @@ get_ip_diag_data <- function(strategies_last_updated, provider_successors_last_u
   tbl_inpatients_diagnoses <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients_diagnoses")) |>
     dplyr::filter(.data$DIAGORDER == 1) |>
     dplyr::mutate(
-      dplyr::across("DIAGNOSIS", LEFT, 3)
+      dplyr::across("DIAGNOSIS", \(.x) LEFT(.x, 3))
     )
 
   tbl_inpatients |>
