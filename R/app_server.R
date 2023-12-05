@@ -6,6 +6,20 @@
 #' @noRd
 app_server <- function(input, output, session) {
 
+  # TODO: MD
+  shiny::observe({
+    if (input$button_begin) {
+      # Switch to home tab
+      bs4Dash::updateTabItems(
+        session,
+        inputId = "sidebarMenu",
+        selected = "tab_home"
+      )
+      # Open sidebar
+      bs4Dash::updateTabItems(session, inputId = "sidebar")
+    }
+  })
+
   nee_table <- readRDS(app_sys("app", "data", "nee_table.Rds"))
 
   diagnoses_lkup <- shiny::reactive({
