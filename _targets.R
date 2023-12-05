@@ -113,7 +113,7 @@ list(
   ),
   # op data
   tar_target(op_data, get_op_data(provider_successors_last_updated)),
-  tar_target(op_diag_data, get_op_diag_data(provider_successors_last_updated)),
+  tar_target(op_diag_data, get_op_diag_data(op_age_sex_data)),
   tar_target(op_age_sex_data, get_op_age_sex_data(op_data)),
   tar_target(
     op_wli_data,

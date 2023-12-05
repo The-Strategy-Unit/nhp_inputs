@@ -104,7 +104,10 @@ get_repat_local_ip_data <- function(rtt_specialties, provider_successors_last_up
       )
     ) |>
     dplyr::group_by(.data$procode, .data$icb22cdh, .data$fyear, .data$admigroup, .data$specialty, .data$provider) |>
-    dplyr::summarise(dplyr::across("n", sum), .groups = "drop_last") |>
+    dplyr::summarise(
+      dplyr::across("n", sum),
+      .groups = "drop_last"
+    ) |>
     dplyr::mutate(pcnt = .data$n / sum(.data$n)) |>
     dplyr::ungroup()
 }
@@ -145,7 +148,10 @@ get_repat_local_op_data <- function(rtt_specialties, provider_successors_last_up
       )
     ) |>
     dplyr::group_by(.data$procode, .data$icb22cdh, .data$fyear, .data$specialty, .data$provider) |>
-    dplyr::summarise(dplyr::across("n", sum), .groups = "drop_last") |>
+    dplyr::summarise(
+      dplyr::across("n", sum),
+      .groups = "drop_last"
+    ) |>
     dplyr::mutate(pcnt = .data$n / sum(.data$n)) |>
     dplyr::ungroup()
 }
@@ -313,15 +319,24 @@ get_expat_repat_data <- function(expat_ip_data, expat_op_data, expat_aae_data,
   ) |>
     dplyr::group_nest(.data$procode, .data$type, .data$activity_type) |>
     dplyr::mutate(
-      dplyr::across("data", purrr::map, janitor::remove_empty, which = "cols")
+      dplyr::across(
+        "data",
+        \(.x) purrr::map(.x, janitor::remove_empty, which = "cols")
+      )
     ) |>
     dplyr::group_nest(.data$procode, .data$type) |>
     dplyr::mutate(
-      dplyr::across("data", purrr::map, tibble::deframe)
+      dplyr::across(
+        "data",
+        \(.x) purrr::map(.x, tibble::deframe)
+      )
     ) |>
     dplyr::group_nest(.data$procode) |>
     dplyr::mutate(
-      dplyr::across("data", purrr::map, tibble::deframe)
+      dplyr::across(
+        "data",
+        \(.x) purrr::map(.x, tibble::deframe)
+      )
     ) |>
     tibble::deframe()
 }

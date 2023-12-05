@@ -67,82 +67,18 @@ get_op_wli_data <- function(provider_successors_last_updated, rtt_specialties) {
     )
 }
 
-get_op_diag_data <- function(provider_successors_last_updated) {
-  force(provider_successors_last_updated)
-
-  strategies <- tibble::tribble(
-    ~name, ~strategy,
-    "is_cons_cons_ref", "consultant_to_consultant_reduction",
-    "is_first", "followup_reduction",
-    "is_tele_appointment", "convert_to_tele"
-  )
-
-  con <- get_con("HESData")
-
-  tbl_outpatients_diagnoses <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "outpatients_diagnoses")) |>
-    dplyr::filter(.data$diagorder == 1) |>
-    dplyr::mutate(
-      dplyr::across("diagnosis", \(.x) LEFT(.x, 3))
-    )
-
-  tbl_outpatients <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "outpatients")) |>
-    dplyr::inner_join(tbl_outpatients_diagnoses, by = c("attendkey")) |>
-    dplyr::group_by(
-      .data$fyear,
-      .data$procode3,
-      .data$diagnosis,
-      .data$is_surgical_specialty,
-      .data$is_adult
-    )
-
-  list(
-    tbl_outpatients |>
-      dplyr::filter(.data$is_tele_appointment == 0) |>
-      dplyr::mutate(is_first = 1 - .data$is_first) |>
-      dplyr::summarise(
-        dplyr::across(c("is_first", "is_cons_cons_ref"), \(.x) sum(.x, na.rm = TRUE)),
-        .groups = "keep"
-      ) |>
-      tidyr::pivot_longer(c("is_first", "is_cons_cons_ref"), values_to = "n") |>
-      dplyr::group_by(.data$name, .add = TRUE),
-    # need to handle tele appointments separately
-    tbl_outpatients |>
-      dplyr::filter(.data$is_tele_appointment == 1) |>
-      dplyr::summarise(
-        name = "is_tele_appointment",
-        n = dplyr::n(),
-        .groups = "keep"
-      )
-  ) |>
-    purrr::map_dfr(\(.x) {
-      .x |>
-        dbplyr::window_order(dplyr::desc(.data$n)) |>
-        dplyr::filter(
-          dplyr::row_number() <= 6,
-          .data$n >= 5
-        ) |>
-        dplyr::ungroup() |>
-        dplyr::collect()
-    }) |>
-    janitor::clean_names() |>
-    dplyr::rename(procode = "procode3") |>
-    dplyr::mutate(
-      p = .data$n / sum(.data$n),
-      subgroup = paste0(
-        ifelse(.data$is_adult, "adult", "child"),
-        "_",
-        ifelse(.data$is_surgical_specialty, "", "non-"),
-        "surgical"
-      )
-    ) |>
-    dplyr::inner_join(strategies, by = c("name")) |>
+get_op_diag_data <- function(op_age_sex_data) {
+  # TODO: outpatients doesn't have much, if any, diagnosis coding. but the save process needs to have a set of results
+  # for diagnoses. For now, we can use the age/sex data summarised to give us a placeholder table
+  op_age_sex_data |>
+    dplyr::count(.data[["fyear"]], .data[["procode"]], .data[["strategy"]], wt = .data[["n"]]) |>
     dplyr::transmute(
       .data$fyear,
       .data$procode,
-      .data$diagnosis,
-      strategy = glue::glue("{strategy}_{subgroup}"),
+      diagnosis = "R69",
+      .data$strategy,
       .data$n,
-      .data$p
+      p = 1
     )
 }
 

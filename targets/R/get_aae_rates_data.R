@@ -26,8 +26,7 @@ get_aae_data <- function(provider_successors_last_updated) {
           "is_left_before_treatment",
           "is_frequent_attender"
         ),
-        sum,
-        na.rm = TRUE
+        \(.x) sum(.x, na.rm = TRUE)
       ),
       n = dplyr::n(),
       .groups = "drop"
