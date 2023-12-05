@@ -55,6 +55,8 @@ app_server <- function(input, output, session) {
 
     mod_bed_occupancy_server("bed_occupancy", params)
 
+    mod_mitigators_summary_server("mitigators_summary", provider_data)
+
     purrr::walk(
       c(
         "mitigators_admission_avoidance",
