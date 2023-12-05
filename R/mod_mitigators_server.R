@@ -149,6 +149,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
     })
     rates_data <- shiny::reactive({
       d <- shiny::req(selected_data())
+
       d$rates
     })
     age_sex_data <- shiny::reactive({

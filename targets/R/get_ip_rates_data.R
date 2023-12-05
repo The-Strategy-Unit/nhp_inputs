@@ -1,49 +1,60 @@
-get_ip_dsr_data <- function(ip_age_sex, peers, catchments, lkp_euro_2013, strategies) {
-  ip_age_sex <- ip_age_sex |>
-    dplyr::filter(.data$strategy %in% strategies[["admission avoidance"]])
-
-  dsr <- peers |>
-    dplyr::inner_join(
-      ip_age_sex,
-      by = c("peer" = "procode"),
-      relationship = "many-to-many"
+get_ip_dsr_data <- function(ip_age_sex_data, lkp_peers, catchments, lkp_euro_2013, strategies) {
+  df <- ip_age_sex_data |>
+    tidyr::complete(
+      tidyr::crossing(
+        fyear, # nolint
+        age_group, # nolint
+        sex, # nolint
+        strategy # nolint
+      ),
+      .data[["procode"]],
+      fill = list(n = 0)
     ) |>
-    dplyr::left_join(
+    dplyr::inner_join(
       catchments,
-      by = c("fyear", "sex", "age_group", "peer" = "provider"),
+      by = dplyr::join_by("fyear", "sex", "age_group", "procode" == "provider"),
       relationship = "many-to-one"
     ) |>
-    dplyr::mutate(dplyr::across("pop_catch", ~ tidyr::replace_na(.x, 0))) |>
     dplyr::inner_join(
       lkp_euro_2013,
-      by = c("sex", "age_group"),
-      relationship = "many-to-one"
+      by = dplyr::join_by("age_group", "sex")
     )
 
-  dsr <- dplyr::bind_rows(
-    dsr,
-    dsr |>
-      dplyr::group_by(.data$procode, .data$strategy, .data$fyear) |>
+  dplyr::bind_rows(
+    df,
+    df |>
       dplyr::summarise(
-        dplyr::across(
-          c("n", "pop_catch", "pop_euro"),
-          sum
-        ),
-        .groups = "drop"
+        procode = "NATIONAL",
+        dplyr::across(c("n", "pop_catch", "pop_euro"), sum),
+        .by = c("fyear", "age_group", "sex", "strategy")
       )
   ) |>
-    dplyr::group_by(.data$procode, .data$strategy, .data$fyear, .data$peer) |>
     dplyr::summarise(
-      rate = sum(.data$n / .data$pop_catch * .data$pop_euro) / sum(.data$pop_euro),
-      n = sum(.data$pop_catch),
-      .groups = "drop"
+      rate = sum(.data[["n"]] / .data[["pop_catch"]] * .data[["pop_euro"]]) / sum(.data[["pop_euro"]]),
+      n = sum(.data[["pop_catch"]]),
+      .by = c("procode", "strategy", "fyear")
     ) |>
-    dplyr::arrange(.data$procode, .data$strategy, .data$fyear, .data$peer)
-
-  dsr |>
-    dplyr::group_by(.data$procode, .data$strategy, .data$fyear) |>
-    dplyr::mutate(dplyr::across("rate", \(.x) .x / sum(.x * is.na(peer)))) |>
-    dplyr::ungroup()
+    dplyr::rename(peer = "procode") |>
+    dplyr::inner_join(
+      dplyr::bind_rows(
+        lkp_peers,
+        lkp_peers |>
+          dplyr::distinct(.data[["procode"]]) |>
+          dplyr::mutate(peer = "NATIONAL")
+      ),
+      by = dplyr::join_by("peer"),
+      relationship = "many-to-many"
+    ) |>
+    dplyr::relocate("procode", .before = "peer") |>
+    dplyr::mutate(
+      dplyr::across(
+        "peer",
+        \(.x) ifelse(.x == "NATIONAL", NA, .x)
+      )
+    ) |>
+    dplyr::mutate(
+      dplyr::across("rate", \(.x) .x * 10^3)
+    )
 }
 
 add_mean_rows <- function(data) {
