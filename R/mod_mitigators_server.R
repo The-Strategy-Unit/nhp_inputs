@@ -47,20 +47,11 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       ) |>
         shiny::bindEvent(input$strategy)
 
-      # set the names of the strategies to title case, but fix up some of the replaced words to upper case
-      config$strategy_subset |>
-        intersect(available_strategies()) |>
-        purrr::set_names(
-          purrr::compose(
-            purrr::partial(
-              gsub,
-              pattern = "(Bads |Eol |Ent$|Gi |Msk$|Nsaids$|Los |Ae$|Ip$)",
-              replacement = "\\U\\1",
-              perl = TRUE
-            ),
-            snakecase::to_title_case
-          )
-        )
+      # need to invert this list (flip names -> values)
+      strats_subset <- config$strategy_subset
+      available_subset <- intersect(names(strats_subset), available_strategies())
+
+      purrr::set_names(available_subset, strats_subset[available_subset])
     })
 
     get_default <- function(rate) {
