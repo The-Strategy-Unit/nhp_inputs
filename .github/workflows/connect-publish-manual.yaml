@@ -8,14 +8,6 @@ on:
 
 jobs:
   connect-publish-manual:
-    name: "Connect Publish ({{ $inputs.namespace }})"
-    runs-on: ubuntu-latest
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: ./.github/workflows/connect-publish.yaml
-        with:
-          namespace: nhp_dev
+    uses: ./.github/workflows/connect-publish.yaml
+    with:
+      namespace: nhp_dev
