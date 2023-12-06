@@ -69,8 +69,7 @@ list(
   tar_target(pop_year_long, get_pop_year_long(age_table)),
   tar_target(catchments, get_catchments(provider_successors_last_updated, pop_year_long)),
   tar_target(icb_lu_path, "targets/data/LOC22_ICB22_NHSER22_EN_LU.xlsx", format = "file"),
-  tar_target(icb_code_lu_path, "targets/data/icb22cdh_to_icb22cd.csv", format = "file"),
-  tar_target(icb_boundaries, get_icb_boundaries(icb_code_lu_path)),
+  tar_target(icb_boundaries, get_icb_boundaries()),
   tar_target(ccg_to_icb_lu, get_ccg_to_icb_lu(ods_successors, icb_lu_path)),
   tar_target(ccg_to_icb_last_updated, upload_ccg_to_icb_lu(ccg_to_icb_lu)),
   # ip data
