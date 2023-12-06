@@ -11,3 +11,4 @@ jobs:
     uses: ./.github/workflows/connect-publish.yaml
     with:
       namespace: nhp_dev
+    secrets: inherit
