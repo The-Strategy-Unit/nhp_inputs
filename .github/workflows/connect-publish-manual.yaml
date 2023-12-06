@@ -1,0 +1,19 @@
+name: "Connect Publish (manual)"
+on:
+  workflow_dispatch:
+    inputs:
+      namespace:
+        required: true
+        type: string
+
+jobs:
+  connect-publish-dev:
+    name: "Connect Publish (dev)"
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: ./.github/workflows/connect-publish.yaml
+        with:
+          namespace: nhp_dev
