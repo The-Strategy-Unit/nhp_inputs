@@ -7,8 +7,8 @@ on:
         type: string
 
 jobs:
-  connect-publish-dev:
-    name: "Connect Publish (dev)"
+  connect-publish-manual:
+    name: "Connect Publish ({{ $inputs.namespace }})"
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
