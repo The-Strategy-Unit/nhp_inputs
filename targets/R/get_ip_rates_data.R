@@ -1,5 +1,6 @@
 get_ip_dsr_data <- function(ip_age_sex_data, lkp_peers, catchments, lkp_euro_2013, strategies) {
   df <- ip_age_sex_data |>
+    dplyr::filter(.data$strategy %in% strategies[["admission avoidance"]]) |>
     tidyr::complete(
       tidyr::crossing(
         fyear, # nolint

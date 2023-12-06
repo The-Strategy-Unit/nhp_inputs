@@ -353,15 +353,20 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
         dplyr::inner_join(diagnoses_lkup, by = c("diagnosis" = "diagnosis_code")) |>
         dplyr::select("diagnosis_description", "n", "p")
 
-      data <- dplyr::bind_rows(
-        data,
-        dplyr::summarise(
+      n_total <- sum(data$n)
+      p_total <- sum(data$p)
+
+      # if we need to include an other row
+      if (p_total < 1) {
+        data <- dplyr::bind_rows(
           data,
-          diagnosis_description = "Other",
-          p = 1 - sum(.data$p),
-          n = sum(.data$n) / (1 - .data$p)
+          tibble::tibble(
+            diagnosis_description = "Other",
+            n = n_total * (1 - p_total) / p_total,
+            p = 1 - p_total
+          )
         )
-      )
+      }
 
       gt::gt(data, "diagnosis_description") |>
         gt::cols_label(
