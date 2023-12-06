@@ -10,7 +10,7 @@
 mod_reasons_ui <- function(id) {
   ns <- shiny::NS(id)
   bs4Dash::box(
-    title = "Reasons",
+    title = "Supporting Rationale",
     width = 12,
     shiny::textAreaInput(
       ns("value"),
