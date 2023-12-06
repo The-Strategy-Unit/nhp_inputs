@@ -10,5 +10,5 @@ jobs:
   connect-publish-manual:
     uses: ./.github/workflows/connect-publish.yaml
     with:
-      namespace: nhp_dev
+      namespace: ${{ inputs.namespace }}
     secrets: inherit
