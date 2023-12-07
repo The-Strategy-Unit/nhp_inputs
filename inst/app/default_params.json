@@ -124,7 +124,6 @@
     "covid_adjustment": "none",
     "baseline_adjustment": "none",
     "bed_occupancy": "none",
-    "theatres": "none",
     "activity_avoidance": {
       "ip": {},
       "op": {},
@@ -155,7 +154,6 @@
       "ip": {},
       "op": {}
     },
-    "bed_occupancy": "",
-    "theatres": ""
+    "bed_occupancy": ""
   }
 }
