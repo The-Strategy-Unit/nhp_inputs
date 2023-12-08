@@ -67,3 +67,8 @@ params_filename <- function(user, dataset, scenario) {
     paste0(scenario, ".json")
   )
 }
+
+# check to see whether the app is running locally or in production
+is_local <- function() {
+  Sys.getenv("SHINY_PORT") == "" || !getOption("golem.app.prod", TRUE)
+}

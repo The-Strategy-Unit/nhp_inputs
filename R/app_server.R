@@ -76,9 +76,9 @@ app_server <- function(input, output, session) {
     )
 
     # enable the run_model page for certain users/running locally
-    is_local <- Sys.getenv("SHINY_PORT") == ""
+
     is_power_user <- any(c("nhp_devs", "nhp_power_users") %in% session$groups)
-    if (is_local || is_power_user) {
+    if (is_local() || is_power_user) {
       shinyjs::show("run-model-container")
       mod_run_model_server("run_model", params)
     }

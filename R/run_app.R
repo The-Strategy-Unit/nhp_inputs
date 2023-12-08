@@ -20,7 +20,9 @@ run_app <- function(onStart = NULL, # nolint
   }
 
   # required for async promise calls
-  future::plan(future::multisession)
+  if (!is_local()) {
+    future::plan(future::multicore)
+  }
 
   golem::with_golem_options(
     app = shiny::shinyApp(
