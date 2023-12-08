@@ -479,7 +479,12 @@
     "curl": {
       "Package": "curl",
       "Version": "5.1.0",
-      "Source": "Repository"
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R"
+      ],
+      "Hash": "9123f3ef96a2c1a93927d828b2fe7d4c"
     },
     "desc": {
       "Package": "desc",
@@ -585,7 +590,14 @@
     "fansi": {
       "Package": "fansi",
       "Version": "1.0.5",
-      "Source": "Repository"
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "grDevices",
+        "utils"
+      ],
+      "Hash": "3e8583a60163b4bc1a80016e63b9959e"
     },
     "farver": {
       "Package": "farver",
