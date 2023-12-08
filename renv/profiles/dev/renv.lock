@@ -883,15 +883,8 @@
     },
     "fansi": {
       "Package": "fansi",
-      "Version": "1.0.6",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "grDevices",
-        "utils"
-      ],
-      "Hash": "962174cf2aeb5b9eea581522286a911f"
+      "Version": "1.0.5",
+      "Source": "Repository"
     },
     "farver": {
       "Package": "farver",
