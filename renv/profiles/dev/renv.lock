@@ -670,13 +670,8 @@
     },
     "curl": {
       "Package": "curl",
-      "Version": "5.2.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R"
-      ],
-      "Hash": "ce88d13c0b10fe88a37d9c59dba2d7f9"
+      "Version": "5.1.0",
+      "Source": "Repository"
     },
     "cyclocomp": {
       "Package": "cyclocomp",
