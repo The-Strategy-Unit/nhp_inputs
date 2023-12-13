@@ -67,6 +67,52 @@ get_op_wli_data <- function(provider_successors_last_updated, rtt_specialties) {
     )
 }
 
+get_op_baseline_data <- function(provider_successors_last_updated, rtt_specialties) {
+  force(provider_successors_last_updated)
+
+  con <- get_con("HESData")
+
+  dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "outpatients")) |>
+    dplyr::mutate(
+      group = dplyr::case_when(
+        .data[["has_procedures"]] == 1 ~ "procedure",
+        .data[["is_first"]] == 1 ~ "first",
+        .default = "follow-up"
+      )
+    ) |>
+    dplyr::filter(
+      .data[["fyear"]] >= 201819,
+      .data[["is_tele_appointment"]] == 0
+    ) |>
+    dplyr::group_by(
+      dplyr::across(
+        c(
+          "fyear",
+          "procode3",
+          "group"
+        )
+      )
+    ) |>
+    dplyr::count(.data[["tretspef"]]) |>
+    dplyr::collect() |>
+    janitor::clean_names() |>
+    dplyr::mutate(
+      dplyr::across(
+        "tretspef",
+        ~ dplyr::case_when(
+          .x %in% rtt_specialties ~ .x,
+          stringr::str_detect(.x, "^1(?!80|9[02])") ~
+            "Other (Surgical)",
+          stringr::str_detect(.x, "^(1(80|9[02])|[2346]|5(?!60)|83[134])") ~
+            "Other (Medical)",
+          TRUE ~ "Other"
+        )
+      )
+    ) |>
+    dplyr::count(.data[["tretspef"]], wt = .data[["n"]])
+}
+
+
 get_op_diag_data <- function(op_age_sex_data) {
   # TODO: outpatients doesn't have much, if any, diagnosis coding. but the save process needs to have a set of results
   # for diagnoses. For now, we can use the age/sex data summarised to give us a placeholder table

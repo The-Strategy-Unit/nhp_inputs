@@ -99,6 +99,7 @@ upload_data_to_azure <- function(provider,
                                  expat_repat_data,
                                  covid_adjustment,
                                  wli_data,
+                                 baseline_data,
                                  local = TRUE) {
   ep <- AzureStor::blob_endpoint(
     endpoint = Sys.getenv(ifelse(local, "LOCAL_STORAGE_EP", "AZ_STORAGE_EP")),
@@ -118,7 +119,8 @@ upload_data_to_azure <- function(provider,
       upload_fn(provider_data[[provider]]$available_strategies, "available_strategies"),
       upload_fn(expat_repat_data[[provider]], "expat_repat"),
       upload_fn(covid_adjustment[[provider]], "covid_adjustment"),
-      upload_fn(wli_data[[provider]], "waiting_list_adjustment")
+      upload_fn(wli_data[[provider]], "waiting_list_adjustment"),
+      upload_fn(baseline_data[[provider]], "baseline_data")
     ),
     time = Sys.time()
   )

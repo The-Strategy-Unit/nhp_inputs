@@ -117,3 +117,45 @@ get_ip_wli_data <- function(strategies_last_updated, provider_successors_last_up
       dplyr::across("ip", ~ ifelse(.x < 5, 0, .x))
     )
 }
+
+get_ip_baseline_data <- function(provider_successors_last_updated, rtt_specialties) {
+  force(provider_successors_last_updated)
+
+  con <- get_con("HESData")
+
+  dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients")) |>
+    dplyr::mutate(
+      group = dplyr::case_when(
+        .data[["ADMIMETH"]] %LIKE% "1%" ~ "elective",
+        .data[["ADMIMETH"]] %LIKE% "3%" ~ "maternity",
+        .default = "non-elective"
+      )
+    ) |>
+    dplyr::filter(.data[["FYEAR"]] >= 201819) |>
+    dplyr::group_by(
+      dplyr::across(
+        c(
+          "FYEAR",
+          "PROCODE3",
+          "group"
+        )
+      )
+    ) |>
+    dplyr::count(.data[["TRETSPEF"]]) |>
+    dplyr::collect() |>
+    janitor::clean_names() |>
+    dplyr::mutate(
+      dplyr::across(
+        "tretspef",
+        ~ dplyr::case_when(
+          .x %in% rtt_specialties ~ .x,
+          stringr::str_detect(.x, "^1(?!80|9[02])") ~
+            "Other (Surgical)",
+          stringr::str_detect(.x, "^(1(80|9[02])|[2346]|5(?!60)|83[134])") ~
+            "Other (Medical)",
+          TRUE ~ "Other"
+        )
+      )
+    ) |>
+    dplyr::count(.data[["tretspef"]], wt = .data[["n"]])
+}

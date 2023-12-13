@@ -87,6 +87,13 @@ list(
     )
   ),
   tar_target(
+    ip_baseline_data,
+    get_ip_baseline_data(
+      provider_successors_last_updated,
+      rtt_specialties
+    )
+  ),
+  tar_target(
     expat_ip_data,
     get_expat_ip_data(
       rtt_specialties,
@@ -122,6 +129,13 @@ list(
     )
   ),
   tar_target(
+    op_baseline_data,
+    get_op_baseline_data(
+      provider_successors_last_updated,
+      rtt_specialties
+    )
+  ),
+  tar_target(
     expat_op_data,
     get_expat_op_data(
       rtt_specialties,
@@ -148,6 +162,12 @@ list(
   # aae data
   tar_target(aae_data, get_aae_data(provider_successors_last_updated)),
   tar_target(aae_diag_data, get_aae_diag_data(provider_successors_last_updated)),
+  tar_target(
+    aae_baseline_data,
+    get_aae_baseline_data(
+      provider_successors_last_updated
+    )
+  ),
   tar_target(aae_age_sex_data, get_aae_age_sex_data(aae_data)),
   tar_target(
     expat_aae_data,
@@ -225,6 +245,16 @@ list(
     wli_data,
     get_wli_data(ip_wli_data, op_wli_data, waiting_list_avg_change_data)
   ),
+  # baseline data
+  tar_target(
+    baseline_data,
+    get_baseline_data(
+      all_providers,
+      ip = ip_baseline_data,
+      op = op_baseline_data,
+      aae = aae_baseline_data
+    )
+  ),
   # save data
   tar_target(
     nhp_current_cohort,
@@ -298,6 +328,7 @@ list(
       expat_repat_data,
       covid_adjustment,
       wli_data,
+      baseline_data,
       FALSE
     ),
     pattern = map(all_providers)
@@ -310,6 +341,7 @@ list(
       expat_repat_data,
       covid_adjustment,
       wli_data,
+      baseline_data,
       TRUE
     ),
     pattern = map(all_providers)
