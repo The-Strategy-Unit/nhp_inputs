@@ -47,37 +47,37 @@ default:
       slider_scale: 1
       slider_step: 0.001
       strategy_subset:
-        alcohol_partially_attributable_acute: "Alcohol Partially Attributable (Acute)"
-        alcohol_partially_attributable_chronic: "Alcohol Partially Attributable (Chronic)"
-        alcohol_wholly_attributable: "Alcohol Wholly Attributable"
-        ambulatory_care_conditions_acute: "Ambulatory Care Conditions (Acute)"
-        ambulatory_care_conditions_chronic: "Ambulatory Care Conditions (Chronic)"
-        ambulatory_care_conditions_vaccine_preventable: "Ambulatory Care Conditions (Vaccine Preventable)"
+        alcohol_partially_attributable_acute: "Alcohol Related Admissions (Acute Conditions - Partially Attributable)"
+        alcohol_partially_attributable_chronic: "Alcohol Related Admissions (Chronic Conditions - Partially Attributable)"
+        alcohol_wholly_attributable: "Alcohol Related Admissions (Wholly Attributable)"
+        ambulatory_care_conditions_acute: "Ambulatory Care Sensitive Admissions (Acute Conditions)"
+        ambulatory_care_conditions_chronic: "Ambulatory Care Sensitive Admissions (Chronic Conditions)"
+        ambulatory_care_conditions_vaccine_preventable: "Ambulatory Care Sensitive Admissions (Vaccine Preventable)"
         cancelled_operations: "Cancelled Operations"
-        eol_care_2_days: "EOL Care (2 Days)"
-        eol_care_3_to_14_days: "EOL Care (3 to 14 Days)"
-        evidence_based_interventions_ent: "Evidence Based Interventions (ENT)"
-        evidence_based_interventions_general_surgery: "Evidence Based Interventions (General Surgery)"
-        evidence_based_interventions_gi_surgical: "Evidence Based Interventions (GI Surgical)"
-        evidence_based_interventions_msk: "Evidence Based Interventions (MSK)"
-        evidence_based_interventions_urology: "Evidence Based Interventions (Urology)"
-        evidence_based_interventions_vascular_varicose_veins: "Evidence Based Interventions (Vascular Varicose Veins)"
+        eol_care_2_days: "End of Life Care Admissions (died within 2 days)"
+        eol_care_3_to_14_days: "End of Life Care Admissions (died within 3-14 days)"
+        evidence_based_interventions_ent: "Interventions with Limited Evidence (ENT)"
+        evidence_based_interventions_general_surgery: "Interventions with Limited Evidence (General Surgery)"
+        evidence_based_interventions_gi_surgical: "Interventions with Limited Evidence (GI Surgical)"
+        evidence_based_interventions_msk: "Interventions with Limited Evidence (MSK)"
+        evidence_based_interventions_urology: "Interventions with Limited Evidence (Urology)"
+        evidence_based_interventions_vascular_varicose_veins: "Interventions with Limited Evidence (Vascular Varicose Veins)"
         falls_related_admissions: "Falls Related Admissions"
-        frail_elderly_high: "Frail Elderly (High)"
-        frail_elderly_intermediate: "Frail Elderly (Intermediate)"
-        intentional_self_harm: "Intentional Self Harm"
-        medically_unexplained_related_admissions: "Medically Unexplained Related Admissions"
-        medicines_related_admissions_explicit: "Medicines Related Admissions: Explicit"
-        medicines_related_admissions_implicit_anti-diabetics: "Medicines Related Admissions: Implicit (Anti Diabetics)"
-        medicines_related_admissions_implicit_benzodiasepines: "Medicines Related Admissions: Implicit (Benzodiasepines)"
-        medicines_related_admissions_implicit_diurectics: "Medicines Related Admissions: Implicit (Diurectics)"
-        medicines_related_admissions_implicit_nsaids: "Medicines Related Admissions: Implicit (NSAIDS)"
+        frail_elderly_high: "Frail Elderly Admissions (High Frailty Risk)"
+        frail_elderly_intermediate: "Frail Elderly Admissions (Intermediate Frailty Risk)"
+        intentional_self_harm: "Intentional Self Harm Admissions"
+        medically_unexplained_related_admissions: "Medically Unexplained Symptoms Admissions"
+        medicines_related_admissions_explicit: "Medicines Related Admissions (Explicit)"
+        medicines_related_admissions_implicit_anti-diabetics: "Medicines Related Admissions (Implicit - Anti-Diabetics)"
+        medicines_related_admissions_implicit_benzodiasepines: "Medicines Related Admissions (Implicit - Benzodiazepines)"
+        medicines_related_admissions_implicit_diurectics: "Medicines Related Admissions (Implicit - Diurectics)"
+        medicines_related_admissions_implicit_nsaids: "Medicines Related Admissions (Implicit - NSAIDs)"
         obesity_related_admissions: "Obesity Related Admissions"
-        raid_ae: "Raid AE"
-        readmission_within_28_days: "Readmission Within 28 Days"
-        smoking: "Smoking"
-        zero_los_no_procedure_adult: "Zero LOS: No Procedure (Adult)"
-        zero_los_no_procedure_child: "Zero LOS: No Procedure (Child)"
+        raid_ae: "Mental Health Admissions via Emergency Department"
+        readmission_within_28_days: "Emergency Readmissions Within 28 Days"
+        smoking: "Smoking Related Admissions"
+        zero_los_no_procedure_adult: "Admission With No Overnight Stay and No Procedure (Adults)"
+        zero_los_no_procedure_child: "Admission With No Overnight Stay and No Procedure (Children)"
     mitigators_mean_los_reduction:
       activity_type: ip
       mitigators_type: efficiencies
@@ -88,7 +88,7 @@ default:
       slider_scale: 1
       slider_step: 0.1
       strategy_subset:
-        emergency_elderly: "Emergency Elderly"
+        emergency_elderly: "Emergency Admission of Older People"
         enhanced_recovery_bladder: "Enhanced Recovery (Bladder)"
         enhanced_recovery_breast: "Enhanced Recovery (Breast)"
         enhanced_recovery_colectomy: "Enhanced Recovery (Colectomy)"
@@ -97,9 +97,9 @@ default:
         enhanced_recovery_knee: "Enhanced Recovery (Knee)"
         enhanced_recovery_prostate: "Enhanced Recovery (Prostate)"
         enhanced_recovery_rectum: "Enhanced Recovery (Rectum)"
-        excess_beddays_elective: "Excess Beddays (Elective)"
-        excess_beddays_emergency: "Excess Beddays (Emergency)"
-        raid_ip: "Raid IP"
+        excess_beddays_elective: "Excess Beddays (Elective Admissions)"
+        excess_beddays_emergency: "Excess Beddays (Emergency Admissions)"
+        raid_ip: "Admissions with Mental Health Comorbidities"
         stroke_early_supported_discharge: "Stroke Early Supported Discharge"
       params_items:
         type: "all"
@@ -113,10 +113,10 @@ default:
       slider_scale: 100
       slider_step: 0.1
       strategy_subset:
-        ambulatory_emergency_care_low: "Ambulatory Emergency Care: Low"
-        ambulatory_emergency_care_moderate: "Ambulatory Emergency Care: Moderate"
-        ambulatory_emergency_care_high: "Ambulatory Emergency Care: High"
-        ambulatory_emergency_care_very_high: "Ambulatory Emergency Care: Very High"
+        ambulatory_emergency_care_low: "Ambulatory Emergency Care (Low Potential)"
+        ambulatory_emergency_care_moderate: "Ambulatory Emergency Care (Moderate Potential)"
+        ambulatory_emergency_care_high: "Ambulatory Emergency Care (High Potential)"
+        ambulatory_emergency_care_very_high: "Ambulatory Emergency Care (Very High Potential)"
       params_items:
         type: "aec"
     mitigators_preop_los_reduction:
@@ -129,8 +129,8 @@ default:
       slider_scale: 1000
       slider_step: 0.1
       strategy_subset:
-        pre-op_los_1-day: "Pre Op LOS (1 Day)"
-        pre-op_los_2-day: "Pre Op LOS (2 Day)"
+        pre-op_los_1-day: "Pre-op Length of Stay of 1 day"
+        pre-op_los_2-day: "Pre-op Length of Stay of 2 days"
       params_items:
         type: "pre-op"
         pre-op_days:
@@ -146,10 +146,10 @@ default:
       slider_scale: 100
       slider_step: 0.1
       strategy_subset:
-        bads_daycase_occasional: "BADS: Daycase Occasional"
-        bads_daycase: "BADS: Daycase"
-        bads_outpatients: "BADS: Outpatients"
-        bads_outpatients_or_daycase: "BADS: Outpatients or Daycase"
+        bads_daycase_occasional: "Elective surgery - recommended occasional day case"
+        bads_daycase: "Elective surgery - recommended mainly day case"
+        bads_outpatients: "Elective surgery - recommended mainly outpatient procedure"
+        bads_outpatients_or_daycase: "Elective surgery - recommended mainly outpatient procedure or day case"
       params_items:
         type: "bads"
     mitigators_op_c2c_reduction:
@@ -162,10 +162,10 @@ default:
       slider_scale: 100
       slider_step: 0.1
       strategy_subset:
-        consultant_to_consultant_reduction_adult_non-surgical: "Consultant to Consultant Reduction: Non Surgical (Adult)"
-        consultant_to_consultant_reduction_adult_surgical: "Consultant to Consultant Reduction: Surgical (Adult)"
-        consultant_to_consultant_reduction_child_non-surgical: "Consultant to Consultant Reduction: Non Surgical (Child)"
-        consultant_to_consultant_reduction_child_surgical: "Consultant to Consultant Reduction: Surgical (Child)"
+        consultant_to_consultant_reduction_adult_non-surgical: "Outpatient Consultant to Consultant Referrals (Adult, Non-Surgical)"
+        consultant_to_consultant_reduction_adult_surgical: "Outpatient Consultant to Consultant Referrals (Adult, Surgical)"
+        consultant_to_consultant_reduction_child_non-surgical: "Outpatient Consultant to Consultant Referrals (Children, Non-Surgical)"
+        consultant_to_consultant_reduction_child_surgical: "Outpatient Consultant to Consultant Referrals (Children, Surgical)"
     mitigators_op_convert_tele:
       activity_type: op
       mitigators_type: efficiencies
@@ -176,10 +176,10 @@ default:
       slider_scale: 100
       slider_step: 0.1
       strategy_subset:
-        convert_to_tele_adult_non-surgical: "Convert to Tele: Non Surgical (Adult)"
-        convert_to_tele_adult_surgical: "Convert to Tele: Surgical (Adult)"
-        convert_to_tele_child_non-surgical: "Convert to Tele: Non Surgical (Child)"
-        convert_to_tele_child_surgical: "Convert to Tele: Surgical (Child)"
+        convert_to_tele_adult_non-surgical: "Outpatient Convert to Tele-Attendance (Adult, Non-Surgical)"
+        convert_to_tele_adult_surgical: "Outpatient Convert to Tele-Attendance (Adult, Surgical)"
+        convert_to_tele_child_non-surgical: "Outpatient Convert to Tele-Attendance (Children, Non-Surgical)"
+        convert_to_tele_child_surgical: "Outpatient Convert to Tele-Attendance (Children, Surgical)"
     mitigators_op_fup_reduction:
       activity_type: op
       mitigators_type: activity_avoidance
@@ -190,10 +190,10 @@ default:
       slider_scale: 1
       slider_step: 0.1
       strategy_subset:
-        followup_reduction_adult_non-surgical: "Followup Reduction: Non Surgical (Adult)"
-        followup_reduction_adult_surgical: "Followup Reduction: Surgical (Adult)"
-        followup_reduction_child_non-surgical: "Followup Reduction: Non Surgical (Child)"
-        followup_reduction_child_surgical: "Followup Reduction: Surgical (Child)"
+        followup_reduction_adult_non-surgical: "Outpatient Followup Appointment Reduction (Adult, Non-Surgical)"
+        followup_reduction_adult_surgical: "Outpatient Followup Appointment Reduction (Adult, Surgical)"
+        followup_reduction_child_non-surgical: "Outpatient Followup Appointment Reduction (Children, Non-Surgical)"
+        followup_reduction_child_surgical: "Outpatient Followup Appointment Reduction (Children, Surgical)"
     mitigators_aae_frequent_attenders:
       activity_type: aae
       mitigators_type: activity_avoidance
@@ -204,10 +204,10 @@ default:
       slider_scale: 100
       slider_step: 0.1
       strategy_subset:
-        frequent_attenders_adult_ambulance: "Frequent Attenders: Ambulance (Adult)"
-        frequent_attenders_adult_walk-in: "Frequent Attenders: Walk-in (Adult)"
-        frequent_attenders_child_ambulance: "Frequent Attenders: Ambulance (Child)"
-        frequent_attenders_child_walk-in: "Frequent Attenders: Walk-in (Child)"
+        frequent_attenders_adult_ambulance: "A&E Frequent Attenders (Adult, Ambulance Conveyed)"
+        frequent_attenders_adult_walk-in: "A&E Frequent Attenders (Adult, Walk-in)"
+        frequent_attenders_child_ambulance: "A&E Frequent Attenders (Children, Ambulance Conveyed)"
+        frequent_attenders_child_walk-in: "A&E Frequent Attenders (Children, Walk-in)"
     mitigators_aae_left_before_seen:
       activity_type: aae
       mitigators_type: activity_avoidance
@@ -218,10 +218,10 @@ default:
       slider_scale: 100
       slider_step: 0.1
       strategy_subset:
-        left_before_seen_adult_ambulance: "Left Before Seen: Ambulance (Adult)"
-        left_before_seen_adult_walk-in: "Left Before Seen: Walk-in (Adult)"
-        left_before_seen_child_ambulance: "Left Before Seen: Ambulance (Child)"
-        left_before_seen_child_walk-in: "Left Before Seen: Walk-in (Child)"
+        left_before_seen_adult_ambulance: "A&E Patients Left Before Being Treated (Adult, Ambulance Conveyed)"
+        left_before_seen_adult_walk-in: "A&E Patients Left Before Being Treated (Adult, Walk-in)"
+        left_before_seen_child_ambulance: "A&E Patients Left Before Being Treated (Children, Ambulance Conveyed)"
+        left_before_seen_child_walk-in: "A&E Patients Left Before Being Treated (Children, Walk-in)"
     mitigators_aae_low_cost_discharged:
       activity_type: aae
       mitigators_type: activity_avoidance
@@ -232,10 +232,10 @@ default:
       slider_scale: 100
       slider_step: 0.1
       strategy_subset:
-        low_cost_discharged_adult_ambulance: "Low Cost Discharged: Ambulance (Adult)"
-        low_cost_discharged_adult_walk-in: "Low Cost Discharged: Walk-in (Adult)"
-        low_cost_discharged_child_ambulance: "Low Cost Discharged: Ambulance (Child)"
-        low_cost_discharged_child_walk-in: "Low Cost Discharged: Walk-in (Child)"
+        low_cost_discharged_adult_ambulance: "A&E Low Cost Discharged Attendances (Adult, Ambulance Conveyed)"
+        low_cost_discharged_adult_walk-in: "A&E Low Cost Discharged Attendances (Adult, Walk-in)"
+        low_cost_discharged_child_ambulance: "A&E Low Cost Discharged Attendances (Children, Ambulance Conveyed)"
+        low_cost_discharged_child_walk-in: "A&E Low Cost Discharged Attendances (Children, Walk-in)"
 production:
   app_prod: yes
 dev:
