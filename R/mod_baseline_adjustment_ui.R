@@ -1,4 +1,3 @@
-mod_baseline_adjustment_default_slider_values <- c(0.95, 1.05)
 #' baseline_adjustment UI Function
 #'
 #' @description A shiny Module.
@@ -20,13 +19,11 @@ mod_baseline_adjustment_ui <- function(id) {
         param = purrr::map(
           .data[["sanitized_code"]],
           \(.x) shinyjs::disabled(
-            shiny::sliderInput(
+            shiny::numericInput(
               ns(glue::glue("param_{at}_{g}_{.x}")),
               label = NULL,
-              min = 0,
-              max = 2,
-              value = mod_baseline_adjustment_default_slider_values,
-              step = 0.001
+              value = 0,
+              step = 1
             )
           ) |>
             as.character() |>
