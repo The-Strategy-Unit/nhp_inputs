@@ -21,7 +21,7 @@ run_app <- function(onStart = NULL, # nolint
 
   # required for async promise calls
   if (!is_local()) {
-    future::plan(future::multicore)
+    future::plan(future::multicore, workers = 2)
   }
 
   golem::with_golem_options(
