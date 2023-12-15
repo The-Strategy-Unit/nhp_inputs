@@ -1,8 +1,8 @@
 watchr::watch_files_and_start_task(
   \() {
     try({
-      app <- golem::run_dev()
-      print(app)
+      pkgload::load_all()
+      print(run_app())
     })
   },
   \() fs::dir_ls(path = c("R"), recurse = TRUE, glob = "*.R"),
