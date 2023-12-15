@@ -104,13 +104,17 @@ mod_home_server <- function(id, providers) {
     shiny::observe({
       x <- as.numeric(stringr::str_sub(input$start_year, 1, 4))
 
-      shiny::updateSliderInput(
+      fy_yyyy <- seq(x + 1, x + 20)
+      fy_yy <- stringr::str_sub(fy_yyyy + 1, 3, 4)
+      fy_choices <- paste(fy_yyyy, fy_yy, sep = "/")
+
+      shiny::updateSelectInput(
         session,
         "end_year",
-        min = x + 1,
-        max = x + 20,
-        value = x + 15
+        choices = setNames(x + (0:19), fy_choices),
+        selected = x + 15
       )
+
     }) |>
       shiny::bindEvent(input$start_year)
 
@@ -183,7 +187,7 @@ mod_home_server <- function(id, providers) {
 
       y <- p$start_year * 100 + p$start_year %% 100 + 1
       shiny::updateSelectInput(session, "start_year", selected = y)
-      shiny::updateNumericInput(session, "end_year", value = p$end_year)
+      shiny::updateSelectInput(session, "end_year", selected = as.character(p$end_year))
       shiny::updateNumericInput(session, "seed", value = p$seed)
       shiny::updateSelectInput(session, "model_runs", selected = p$model_runs)
 
@@ -217,7 +221,7 @@ mod_home_server <- function(id, providers) {
       if (file != default_params) {
         y <- p$start_year * 100 + p$start_year %% 100 + 1
         shiny::updateSelectInput(session, "start_year", selected = y)
-        shiny::updateNumericInput(session, "end_year", value = p$end_year)
+        shiny::updateSelectInput(session, "end_year", selected = as.character(p$end_year))
         shiny::updateNumericInput(session, "seed", value = p$seed)
         shiny::updateSelectInput(session, "model_runs", selected = p$model_runs)
       }
@@ -251,7 +255,7 @@ mod_home_server <- function(id, providers) {
       params$seed <- input$seed
       params$model_runs <- as.numeric(input$model_runs)
       params$start_year <- input$start_year
-      params$end_year <- input$end_year
+      params$end_year <- as.numeric(input$end_year)
     })
 
     # renders ----
