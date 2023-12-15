@@ -77,7 +77,7 @@ get_op_baseline_data <- function(provider_successors_last_updated, rtt_specialti
       group = dplyr::case_when(
         .data[["has_procedures"]] == 1 ~ "procedure",
         .data[["is_first"]] == 1 ~ "first",
-        .default = "follow-up"
+        .default = "followup"
       )
     ) |>
     dplyr::filter(
