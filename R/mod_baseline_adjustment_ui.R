@@ -16,34 +16,48 @@ mod_baseline_adjustment_ui <- function(id) {
   create_table <- function(at, g, df = specs) {
     df |>
       dplyr::mutate(
-        param = purrr::map(
+        baseline = purrr::map(
           .data[["sanitized_code"]],
-          \(.x) shinyjs::disabled(
+          \(.x) {
+            shiny::textOutput(
+              ns(glue::glue("baseline_{at}_{g}_{.x}"))
+            ) |>
+              as.character() |>
+              gt::html()
+          }
+        ),
+        adjustment = purrr::map(
+          .data[["sanitized_code"]],
+          \(.x) {
             shiny::numericInput(
-              ns(glue::glue("param_{at}_{g}_{.x}")),
+              ns(glue::glue("adjustment_{at}_{g}_{.x}")),
               label = NULL,
+              min = 0,
+              max = 0,
               value = 0,
               step = 1
-            )
-          ) |>
-            as.character() |>
-            gt::html()
+            ) |>
+              as.character() |>
+              gt::html()
+          }
         ),
-        include = purrr::map(
+        param = purrr::map(
           .data[["sanitized_code"]],
-          ~ shiny::checkboxInput(
-            ns(glue::glue("include_{at}_{g}_{.x}")),
-            label = NULL
-          ) |>
-            as.character() |>
-            gt::html()
+          \(.x) {
+            shiny::textOutput(
+              ns(glue::glue("param_{at}_{g}_{.x}"))
+            ) |>
+              as.character() |>
+              gt::html()
+          }
         )
       ) |>
       dplyr::select(-tidyselect::ends_with("code")) |>
       gt::gt(rowname_col = "specialty") |>
       gt::cols_label(
-        param ~ "Confidence Interval",
-        include ~ "Include?"
+        baseline ~ "Baseline Count",
+        adjustment ~ "Adjustment",
+        param ~ "Relative Change"
       ) |>
       gt::tab_options(table.width = gt::pct(100)) |>
       gt::as_raw_html()

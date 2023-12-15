@@ -67,7 +67,6 @@ mod_baseline_adjustment_server <- function(id, params) {
       })
 
       purrr::pwalk(specs, \(at, g, code, id, ...) {
-        include_id <- glue::glue("include_{id}")
         param_id <- glue::glue("param_{id}")
 
         ix <- c(at, if (at != "aae") g, code)
@@ -81,8 +80,11 @@ mod_baseline_adjustment_server <- function(id, params) {
         # get the new param value
         v <- purrr::pluck(p, !!!ix)
 
-        shiny::updateCheckboxInput(session, include_id, value = !is.null(v))
-        shiny::updateNumericInput(session, param_id, value = round(((v %||% 1) - 1) * bc))
+        shiny::updateNumericInput(
+          session,
+          param_id,
+          value = round(((v %||% 1) - 1) * bc)
+        )
       })
 
       init$destroy()
@@ -91,30 +93,56 @@ mod_baseline_adjustment_server <- function(id, params) {
     # iterate over all of the rows in specs, and create an observer for that input
     specs |>
       purrr::pwalk(\(code, at, g, id, ...) {
-        include_id <- glue::glue("include_{id}")
+        adjustment_id <- glue::glue("adjustment_{id}")
+        baseline_id <- glue::glue("baseline_{id}")
         param_id <- glue::glue("param_{id}")
 
         ix <- c(at, if (at != "aae") g, code)
 
         bc <- baseline_counts() |>
+          shiny::req() |>
           purrr::pluck(!!!ix)
 
         if (is.null(bc)) {
-          shinyjs::disable(include_id)
+          shinyjs::runjs(
+            glue::glue(
+              "$('#{session$ns(baseline_id)}').parents('tr').remove()"
+            )
+          )
           return()
         }
 
+        # update numeric input doesn't update min/max for some reason
+        shinyjs::runjs(
+          glue::glue(
+            "$('#{session$ns(adjustment_id)}').attr('min', -{bc}).attr('max', {2 * bc});"
+          )
+        )
+
+        output[[baseline_id]] <- shiny::renderText({
+          scales::comma(bc)
+        })
+
+        output[[param_id]] <- shiny::renderText({
+          i <- shiny::req(input[[adjustment_id]])
+          if (i == 0) {
+            return("-")
+          }
+          v <- 1 + i / bc
+          scales::number(v, 1e-6)
+        })
+
         shiny::observe({
-          i <- input[[include_id]]
-          shinyjs::toggleState(param_id, i)
+          i <- shiny::req(input[[adjustment_id]])
+          v <- 1 + i / bc
 
           if (at == "aae") {
-            params[["baseline_adjustment"]][[at]][[code]] <- if (i) 1 + input[[param_id]] / bc
+            params[["baseline_adjustment"]][[at]][[code]] <- if (i != 0) v
           } else {
-            params[["baseline_adjustment"]][[at]][[g]][[code]] <- if (i) 1 + input[[param_id]] / bc
+            params[["baseline_adjustment"]][[at]][[g]][[code]] <- if (i != 0) v
           }
         }) |>
-          shiny::bindEvent(input[[include_id]], input[[param_id]])
+          shiny::bindEvent(input[[adjustment_id]])
       })
   })
 }
