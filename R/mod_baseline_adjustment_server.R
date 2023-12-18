@@ -123,8 +123,23 @@ mod_baseline_adjustment_server <- function(id, params) {
           scales::comma(bc)
         })
 
-        output[[param_id]] <- shiny::renderText({
+        adjustment_value <- shiny::reactive({
           i <- shiny::req(input[[adjustment_id]])
+
+          if (!stringr::str_detect(i, "^-[0-9]")) {
+            i
+          }
+        })
+
+        output[[param_id]] <- shiny::renderText({
+          shiny::validate(
+            shiny::need(
+              !is.null(input[[adjustment_id]]),
+              "Invalid adjustment value, defaulting to 0"
+            )
+          )
+
+          i <- shiny::req(adjustment_value())
           if (i == 0) {
             return("-")
           }
@@ -133,7 +148,7 @@ mod_baseline_adjustment_server <- function(id, params) {
         })
 
         shiny::observe({
-          i <- shiny::req(input[[adjustment_id]])
+          i <- adjustment_value() %||% 0
           v <- 1 + i / bc
 
           if (at == "aae") {
