@@ -64,27 +64,32 @@ mod_baseline_adjustment_server <- function(id, params) {
     init <- shiny::observe({
       shiny::isolate({
         p <- params$baseline_adjustment
-      })
 
-      purrr::pwalk(specs, \(at, g, code, id, ...) {
-        param_id <- glue::glue("param_{id}")
+        bc <- baseline_counts()
 
-        ix <- c(at, if (at != "aae") g, code)
+        purrr::pwalk(specs, \(at, g, code, id, ...) {
+          adjustment_id <- glue::glue("adjustment_{id}")
 
-        shiny::isolate({
-          bc <- baseline_counts() |>
-            purrr::pluck(!!!ix) |>
-            shiny::req()
+          ix <- c(at, if (at != "aae") g, code)
+
+          bcd <- purrr::pluck(bc, !!!ix)
+
+          if (is.null(bcd)) {
+            # don't use shiny::req here, it ends up exiting the entire pwalk
+            return()
+          }
+
+          # get the new param value
+          v <- purrr::pluck(p, !!!ix)
+
+          shiny::updateSliderInput(
+            session,
+            adjustment_id,
+            min = -bcd,
+            max = 2 * bcd,
+            value = round(((v %||% 1) - 1) * bcd)
+          )
         })
-
-        # get the new param value
-        v <- purrr::pluck(p, !!!ix)
-
-        shiny::updateNumericInput(
-          session,
-          param_id,
-          value = round(((v %||% 1) - 1) * bc)
-        )
       })
 
       init$destroy()
@@ -99,11 +104,10 @@ mod_baseline_adjustment_server <- function(id, params) {
 
         ix <- c(at, if (at != "aae") g, code)
 
-        bc <- baseline_counts() |>
-          shiny::req() |>
+        bcd <- baseline_counts() |>
           purrr::pluck(!!!ix)
 
-        if (is.null(bc)) {
+        if (is.null(bcd)) {
           shinyjs::runjs(
             glue::glue(
               "$('#{session$ns(baseline_id)}').parents('tr').remove()"
@@ -112,44 +116,22 @@ mod_baseline_adjustment_server <- function(id, params) {
           return()
         }
 
-        # update numeric input doesn't update min/max for some reason
-        shinyjs::runjs(
-          glue::glue(
-            "$('#{session$ns(adjustment_id)}').attr('min', -{bc}).attr('max', {2 * bc});"
-          )
-        )
-
         output[[baseline_id]] <- shiny::renderText({
-          scales::comma(bc)
-        })
-
-        adjustment_value <- shiny::reactive({
-          i <- shiny::req(input[[adjustment_id]])
-
-          if (!stringr::str_detect(i, "^-[0-9]")) {
-            i
-          }
+          scales::comma(bcd)
         })
 
         output[[param_id]] <- shiny::renderText({
-          shiny::validate(
-            shiny::need(
-              !is.null(input[[adjustment_id]]),
-              "Invalid adjustment value, defaulting to 0"
-            )
-          )
-
-          i <- shiny::req(adjustment_value())
+          i <- shiny::req(input[[adjustment_id]])
           if (i == 0) {
             return("-")
           }
-          v <- 1 + i / bc
+          v <- 1 + i / bcd
           scales::number(v, 1e-6)
         })
 
         shiny::observe({
-          i <- adjustment_value() %||% 0
-          v <- 1 + i / bc
+          i <- shiny::req(input[[adjustment_id]])
+          v <- 1 + i / bcd
 
           if (at == "aae") {
             params[["baseline_adjustment"]][[at]][[code]] <- if (i != 0) v

@@ -29,11 +29,11 @@ mod_baseline_adjustment_ui <- function(id) {
         adjustment = purrr::map(
           .data[["sanitized_code"]],
           \(.x) {
-            shiny::numericInput(
+            shiny::sliderInput(
               ns(glue::glue("adjustment_{at}_{g}_{.x}")),
               label = NULL,
-              min = 0,
-              max = 0,
+              min = -1,
+              max = 1,
               value = 0,
               step = 1
             ) |>
