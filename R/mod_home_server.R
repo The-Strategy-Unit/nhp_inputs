@@ -99,20 +99,21 @@ mod_home_server <- function(id, providers) {
     }) |>
       shiny::bindEvent(selected_providers())
 
-    # when the user changes the year, update the end year slider. the end year should be 1 year after the start year
-    # to 20 years after, and it will default to 15 years after the start year
+    # the end-year range should be 1 year after the start year to the year 2043,
+    # which will also be the default.
     shiny::observe({
       x <- as.numeric(stringr::str_sub(input$start_year, 1, 4))
 
-      fy_yyyy <- seq(x + 1, x + 20)
+      fy_yyyy <- seq(x + 1, 2041)  # 2043 fixed as latest possible end year
       fy_yy <- stringr::str_sub(fy_yyyy + 1, 3, 4)
       fy_choices <- paste(fy_yyyy, fy_yy, sep = "/")
+      fy_choices_num <- setNames(fy_yyyy, fy_choices)
 
       shiny::updateSelectInput(
         session,
         "end_year",
-        choices = setNames(x + (0:19), fy_choices),
-        selected = x + 15
+        choices = fy_choices_num,
+        selected = max(fy_choices_num)
       )
 
     }) |>
