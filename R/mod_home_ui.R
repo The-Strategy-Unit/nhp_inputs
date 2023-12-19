@@ -30,8 +30,17 @@ mod_home_ui <- function(id) {
       width = 12,
       shiny::selectInput(ns("cohort"), "Cohort", c("Current", "All Other Providers")),
       shiny::selectInput(ns("dataset"), "Provider", choices = NULL, selectize = TRUE),
-      shiny::selectInput(ns("start_year"), "Baseline Financial Year", choices = c("2019/20" = 201920, "2018/19" = 201819)),
-      shiny::selectInput(ns("end_year"), "Model Financial Year", choices = setNames(as.character(0:23), paste(2020:2043, 21:44, sep = "/")))
+      shiny::selectInput(
+        ns("start_year"),
+        "Baseline Financial Year",
+        choices = c("2019/20" = 201920, "2018/19" = 201819)
+      ),
+      shiny::selectInput(
+        ns("end_year"),
+        "Model Financial Year",
+        choices = setNames(as.character(0:21), paste(2020:2041, 21:42, sep = "/")),
+        selected = "21"
+      )
     ),
     bs4Dash::box(
       title = "Scenario",
