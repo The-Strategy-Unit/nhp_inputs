@@ -79,7 +79,7 @@ mod_expat_repat_ui <- function(id) {
         bs4Dash::box(
           title = "Repatriation (Local) Model Parameter",
           width = 12,
-          generate_param_controls("repat_local", 100, 200, c(100, 105)),
+          generate_param_controls("repat_local", 100, 500, c(100, 105)),
           shiny::fluidRow(
             col_6(
               shiny::plotOutput(
@@ -96,7 +96,7 @@ mod_expat_repat_ui <- function(id) {
         bs4Dash::box(
           title = "Repatriation (Non-Local) Model Parameter",
           width = 12,
-          generate_param_controls("repat_nonlocal", 100, 200, c(100, 105)),
+          generate_param_controls("repat_nonlocal", 100, 500, c(100, 105)),
           shiny::fluidRow(
             col_4(
               shiny::plotOutput(
