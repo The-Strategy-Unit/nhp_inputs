@@ -38,25 +38,58 @@ mod_baseline_adjustment_server <- function(id, params) {
       ) |>
       dplyr::mutate(id = glue::glue("{at}_{g}_{sanitized_code}"))
 
+    # reactives ----
+    baseline_counts <- shiny::reactive({
+      dataset <- shiny::req(params$dataset)
+      year <- as.character(shiny::req(params$start_year))
+
+      glue::glue("{dataset}/baseline_data.rds") |>
+        load_rds_from_adls() |>
+        purrr::pluck(year) |>
+        tidyr::nest(.by = c("activity_type", "group")) |>
+        dplyr::mutate(
+          dplyr::across("data", \(.x) purrr::map(.x, tibble::deframe))
+        ) |>
+        tidyr::nest(.by = c("activity_type")) |>
+        dplyr::mutate(
+          dplyr::across("data", \(.x) purrr::map(.x, tibble::deframe))
+        ) |>
+        tibble::deframe() |>
+        purrr::modify_at("aae", purrr::map, unname)
+    })
+
     # observers ----
 
     # when the module initialy loads, run this observer and update the UI with any values that were loaded into params
     init <- shiny::observe({
-      p <- params$baseline_adjustment
+      shiny::isolate({
+        p <- params$baseline_adjustment
 
-      purrr::pwalk(specs, \(at, g, code, id, ...) {
-        include_id <- glue::glue("include_{id}")
-        param_id <- glue::glue("param_{id}")
+        bc <- baseline_counts()
 
-        # get the new param value
-        v <- if (at == "aae") {
-          p[[at]][[code]]
-        } else {
-          p[[at]][[g]][[code]]
-        }
+        purrr::pwalk(specs, \(at, g, code, id, ...) {
+          adjustment_id <- glue::glue("adjustment_{id}")
 
-        shiny::updateCheckboxInput(session, include_id, value = !is.null(v))
-        shiny::updateSliderInput(session, param_id, value = v %||% mod_baseline_adjustment_default_slider_values)
+          ix <- c(at, if (at != "aae") g, code)
+
+          bcd <- purrr::pluck(bc, !!!ix)
+
+          if (is.null(bcd)) {
+            # don't use shiny::req here, it ends up exiting the entire pwalk
+            return()
+          }
+
+          # get the new param value
+          v <- purrr::pluck(p, !!!ix)
+
+          shiny::updateSliderInput(
+            session,
+            adjustment_id,
+            min = -bcd,
+            max = 2 * bcd,
+            value = round(((v %||% 1) - 1) * bcd)
+          )
+        })
       })
 
       init$destroy()
@@ -65,20 +98,48 @@ mod_baseline_adjustment_server <- function(id, params) {
     # iterate over all of the rows in specs, and create an observer for that input
     specs |>
       purrr::pwalk(\(code, at, g, id, ...) {
-        include_id <- glue::glue("include_{id}")
+        adjustment_id <- glue::glue("adjustment_{id}")
+        baseline_id <- glue::glue("baseline_{id}")
         param_id <- glue::glue("param_{id}")
 
+        ix <- c(at, if (at != "aae") g, code)
+
+        bcd <- baseline_counts() |>
+          purrr::pluck(!!!ix)
+
+        if (is.null(bcd)) {
+          shinyjs::runjs(
+            glue::glue(
+              "$('#{session$ns(baseline_id)}').parents('tr').remove()"
+            )
+          )
+          return()
+        }
+
+        output[[baseline_id]] <- shiny::renderText({
+          scales::comma(bcd)
+        })
+
+        output[[param_id]] <- shiny::renderText({
+          i <- shiny::req(input[[adjustment_id]])
+          if (i == 0) {
+            return("-")
+          }
+          v <- 1 + i / bcd
+          scales::number(v, 1e-6)
+        })
+
         shiny::observe({
-          i <- input[[include_id]]
-          shinyjs::toggleState(param_id, i)
+          i <- shiny::req(input[[adjustment_id]])
+          v <- 1 + i / bcd
 
           if (at == "aae") {
-            params[["baseline_adjustment"]][[at]][[code]] <- if (i) input[[param_id]]
+            params[["baseline_adjustment"]][[at]][[code]] <- if (i != 0) v
           } else {
-            params[["baseline_adjustment"]][[at]][[g]][[code]] <- if (i) input[[param_id]]
+            params[["baseline_adjustment"]][[at]][[g]][[code]] <- if (i != 0) v
           }
         }) |>
-          shiny::bindEvent(input[[include_id]], input[[param_id]])
+          shiny::bindEvent(input[[adjustment_id]])
       })
   })
 }

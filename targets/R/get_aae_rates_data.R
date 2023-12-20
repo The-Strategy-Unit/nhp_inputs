@@ -70,6 +70,35 @@ get_aae_age_sex_data <- function(aae_data) {
     dplyr::rename("n" = "value", "procode" = "procode3")
 }
 
+get_aae_baseline_data <- function(provider_successors_last_updated) {
+  force(provider_successors_last_updated)
+
+  con <- get_con("HESData")
+
+  dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "aae")) |>
+    dplyr::mutate(
+      group = dplyr::case_when(
+        .data[["aearrivalmode"]] == "1" ~ "ambulance",
+        .default = "walk-in"
+      )
+    ) |>
+    dplyr::filter(
+      .data[["fyear"]] >= 201819
+    ) |>
+    dplyr::group_by(
+      dplyr::across(
+        c(
+          "fyear",
+          "procode3",
+          "group"
+        )
+      )
+    ) |>
+    dplyr::count() |>
+    dplyr::collect() |>
+    janitor::clean_names()
+}
+
 get_aae_diag_data <- function(provider_successors_last_updated) {
   force(provider_successors_last_updated)
 
