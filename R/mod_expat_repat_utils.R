@@ -1,13 +1,15 @@
 mod_expat_repat_trend_plot <- function(df, include, values, start_year, title, scale = 10) {
   v <- dplyr::filter(df, .data$fyear == start_year)$pcnt
 
+  ymax_ci <- values[[2]] * v / 100
+
   interval <- if (include) {
     ggplot2::annotate(
       "rect",
       xmin = -Inf,
       xmax = Inf,
       ymin = values[[1]] * v / 100,
-      ymax = values[[2]] * v / 100,
+      ymax = ymax_ci,
       colour = "#f9bf07",
       fill = ggplot2::alpha("#f9bf07", 0.2),
       na.rm = TRUE
@@ -27,7 +29,7 @@ mod_expat_repat_trend_plot <- function(df, include, values, start_year, title, s
     ) +
     ggplot2::scale_y_continuous(
       labels = scales::percent,
-      limits = c(0, ceiling(v * 2 * scale)) / scale
+      limits = c(0, max(ceiling(v * 2 * scale) / scale, ymax_ci))
     ) +
     ggplot2::labs(
       x = "Financial Year",
