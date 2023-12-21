@@ -104,7 +104,7 @@ mod_home_server <- function(id, providers) {
     shiny::observe({
       x <- as.numeric(stringr::str_sub(input$start_year, 1, 4))
 
-      fy_yyyy <- seq(x + 1, 2041)  # 2043 fixed as latest possible end year
+      fy_yyyy <- seq(x + 1, 2041) # 2043 fixed as latest possible end year
       fy_yy <- stringr::str_sub(fy_yyyy + 1, 3, 4)
       fy_choices <- paste(fy_yyyy, fy_yy, sep = "/")
       fy_choices_num <- setNames(fy_yyyy, fy_choices)
@@ -115,7 +115,6 @@ mod_home_server <- function(id, providers) {
         choices = fy_choices_num,
         selected = max(fy_choices_num)
       )
-
     }) |>
       shiny::bindEvent(input$start_year)
 
