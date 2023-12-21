@@ -7,7 +7,6 @@ mod_non_demographic_adjustment_server <- function(id, params) {
 
     # load the non-demographic adjustment values
     non_demographic_adjustment <- shiny::reactive({
-
       return(
         list(
           "aae" = list(
@@ -26,14 +25,13 @@ mod_non_demographic_adjustment_server <- function(id, params) {
           )
         )
       )
-
     })
 
     # observers ----
 
     # the non-demographic adjustment values are fixed, load them straight into the parameters
     shiny::observe({
-      params$non_demographic_adjustment <- non_demographic_adjustment()
+      params[["non-demographic_adjustment"]] <- non_demographic_adjustment()
     })
 
     # renders ----
