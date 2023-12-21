@@ -107,9 +107,8 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
           }
         })
 
-      tpm <- session$userData$params$time_profile_mappings[[mitigators_type]][[activity_type]]
+      tpm <- params$time_profile_mappings[[mitigators_type]][[activity_type]]
       time_profile_mappings$mappings <- tpm
-      params$time_profile_mappings[[mitigators_type]][[activity_type]] <- tpm
 
       shiny::updateCheckboxInput(
         session,
