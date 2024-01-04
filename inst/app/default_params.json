@@ -136,7 +136,7 @@
     "expat": "linear",
     "repat_local": "linear",
     "repat_nonlocal": "linear",
-    "non-demographic_adjustment": "linear",
+    "non-demographic_adjustment": "none",
     "waiting_list_adjustment": "linear"
   },
   "reasons": {
