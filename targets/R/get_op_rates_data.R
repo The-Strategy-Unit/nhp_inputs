@@ -192,7 +192,6 @@ get_op_convert_to_tele_data <- function(op_data, peers) {
 
 get_op_gp_first <- function(op_data, peers) {
   op_data |>
-    dplyr::filter(.data$is_gp_ref == 0) |>
     dplyr::group_by(.data$fyear, peer = .data$procode3, .data$subgroup) |>
     dplyr::summarise(
       dplyr::across(c("is_gp_ref", "n"), sum),

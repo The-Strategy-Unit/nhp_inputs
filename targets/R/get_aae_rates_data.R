@@ -51,7 +51,8 @@ get_aae_data <- function(provider_successors_last_updated) {
       c(
         "low_cost_discharged",
         "left_before_seen",
-        "frequent_attenders"
+        "frequent_attenders",
+        "discharged_no_treatment"
       )
     ) |>
     dplyr::arrange(.data$age_group) |>
