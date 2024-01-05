@@ -194,6 +194,20 @@ default:
         followup_reduction_adult_surgical: "Outpatient Followup Appointment Reduction (Adult, Surgical)"
         followup_reduction_child_non-surgical: "Outpatient Followup Appointment Reduction (Children, Non-Surgical)"
         followup_reduction_child_surgical: "Outpatient Followup Appointment Reduction (Children, Surgical)"
+    mitigators_op_gp_referred_first_attendance_reduction:
+      activity_type: op
+      mitigators_type: activity_avoidance
+      y_axis_title: "% of Attendances that were GP Referred First Attendances"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::comma_format()
+      funnel_x_title: "Number of Appointments"
+      slider_scale: 1
+      slider_step: 0.1
+      strategy_subset:
+        gp_referred_first_attendance_reduction_adult_non-surgical: "Outpatient GP Referred First Attendance Reduction (Adult, Non-Surgical)"
+        gp_referred_first_attendance_reduction_adult_surgical: "Outpatient GP Referred First Attendance Reduction (Adult, Surgical)"
+        gp_referred_first_attendance_reduction_child_non-surgical: "Outpatient GP Referred First Attendance Reduction (Children, Non-Surgical)"
+        gp_referred_first_attendance_reduction_child_surgical: "Outpatient GP Referred First Attendance Reduction (Children, Surgical)"
     mitigators_aae_frequent_attenders:
       activity_type: aae
       mitigators_type: activity_avoidance
@@ -222,6 +236,20 @@ default:
         left_before_seen_adult_walk-in: "A&E Patients Left Before Being Treated (Adult, Walk-in)"
         left_before_seen_child_ambulance: "A&E Patients Left Before Being Treated (Children, Ambulance Conveyed)"
         left_before_seen_child_walk-in: "A&E Patients Left Before Being Treated (Children, Walk-in)"
+    mitigators_aae_discharged_no_treatment:
+      activity_type: aae
+      mitigators_type: activity_avoidance
+      y_axis_title:  "% of Arrivals where the patient was discharged with no treatment or investigations being performed"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::percent_format()
+      funnel_x_title: "Number of Attendances"
+      slider_scale: 100
+      slider_step: 0.1
+      strategy_subset:
+        discharged_no_treatment_adult_ambulance: "A&E Discharged No Investigation or Treatment (Adult, Ambulance Conveyed)"
+        discharged_no_treatment_adult_walk-in: "A&E Discharged No Investigation or Treatment (Adult, Walk-in)"
+        discharged_no_treatment_child_ambulance: "A&E Discharged No Investigation or Treatment (Children, Ambulance Conveyed)"
+        discharged_no_treatment_child_walk-in: "A&E Discharged No Investigation or Treatment (Children, Walk-in)"
     mitigators_aae_low_cost_discharged:
       activity_type: aae
       mitigators_type: activity_avoidance

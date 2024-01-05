@@ -114,10 +114,18 @@ app_ui <- function(request) {
           bs4Dash::menuSubItem(
             "Followup Reduction",
             tabName = "op_am_fup_reduction"
+          ),
+          bs4Dash::menuSubItem(
+            "GP Referred First Attendances",
+            tabName = "mitigators_op_gp_referred_first_attendance_reduction"
           )
         ),
         bs4Dash::menuItem(
           "A&E",
+          bs4Dash::menuSubItem(
+            "Discharged with No Investigations or Treatments",
+            tabName = "mitigators_aae_discharged_no_treatment"
+          ),
           bs4Dash::menuSubItem(
             "Frequent Attenders",
             tabName = "aae_frequent_attenders"
@@ -227,6 +235,14 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "op_am_fup_reduction",
         mod_mitigators_ui("mitigators_op_fup_reduction", "Follow-Up Reduction")
+      ),
+      bs4Dash::tabItem(
+        tabName = "op_gp_referred_first_attendance_reduction",
+        mod_mitigators_ui("mitigators_op_gp_referred_first_attendance_reduction", "GP Referred First Attendances")
+      ),
+      bs4Dash::tabItem(
+        tabName = "aae_discharged_no_treatment",
+        mod_mitigators_ui("mitigators_aae_discharged_no_treatment", "Discharged with No Investigations or Treatments")
       ),
       bs4Dash::tabItem(
         tabName = "aae_frequent_attenders",
