@@ -197,6 +197,7 @@ list(
   tar_target(preop_los_data, get_preop_los_data(ip_los_data, lkp_peers)),
   tar_target(bads_data, get_bads_data(ip_los_data, lkp_peers)),
   tar_target(op_convert_to_tele_data, get_op_convert_to_tele_data(op_data, lkp_peers)),
+  tar_target(op_gp_first, get_op_gp_first(op_data, lkp_peers)),
   tar_target(op_consultant_to_consultant_reduction, get_op_consultant_to_consultant_reduction(op_data, lkp_peers)),
   tar_target(op_followup_reduction, get_op_followup_reduction(op_data, lkp_peers)),
   tar_target(aae_rates, get_aae_rates(aae_data, lkp_peers)),
@@ -311,6 +312,7 @@ list(
       preop_los_data,
       bads_data,
       op_convert_to_tele_data,
+      op_gp_first,
       op_consultant_to_consultant_reduction,
       op_followup_reduction,
       aae_rates

@@ -24,7 +24,8 @@ get_aae_data <- function(provider_successors_last_updated) {
         c(
           "is_low_cost_referred_or_discharged",
           "is_left_before_treatment",
-          "is_frequent_attender"
+          "is_frequent_attender",
+          "is_discharged_no_treatment"
         ),
         \(.x) sum(.x, na.rm = TRUE)
       ),
@@ -43,7 +44,8 @@ get_aae_data <- function(provider_successors_last_updated) {
     dplyr::rename(
       "low_cost_discharged" = "is_low_cost_referred_or_discharged",
       "left_before_seen" = "is_left_before_treatment",
-      "frequent_attenders" = "is_frequent_attender"
+      "frequent_attenders" = "is_frequent_attender",
+      "discharged_no_treatment" = "is_discharged_no_treatment"
     ) |>
     tidyr::pivot_longer(
       c(
@@ -128,7 +130,8 @@ get_aae_diag_data <- function(provider_successors_last_updated) {
         c(
           "is_low_cost_referred_or_discharged",
           "is_left_before_treatment",
-          "is_frequent_attender"
+          "is_frequent_attender",
+          "is_discharged_no_treatment"
         ),
         sum,
         na.rm = TRUE
@@ -148,13 +151,15 @@ get_aae_diag_data <- function(provider_successors_last_updated) {
     dplyr::rename(
       "low_cost_discharged" = "is_low_cost_referred_or_discharged",
       "left_before_seen" = "is_left_before_treatment",
-      "frequent_attenders" = "is_frequent_attender"
+      "frequent_attenders" = "is_frequent_attender",
+      "discharged_no_treatment" = "is_discharged_no_treatment"
     ) |>
     tidyr::pivot_longer(
       c(
         "low_cost_discharged",
         "left_before_seen",
-        "frequent_attenders"
+        "frequent_attenders",
+        "discharged_no_treatment"
       )
     ) |>
     dplyr::group_by(
