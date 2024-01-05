@@ -117,14 +117,14 @@ app_ui <- function(request) {
           ),
           bs4Dash::menuSubItem(
             "GP Referred First Attendances",
-            tabName = "mitigators_op_gp_referred_first_attendance_reduction"
+            tabName = "op_gp_referred_first_attendance_reduction"
           )
         ),
         bs4Dash::menuItem(
           "A&E",
           bs4Dash::menuSubItem(
             "Discharged with No Investigations or Treatments",
-            tabName = "mitigators_aae_discharged_no_treatment"
+            tabName = "aae_discharged_no_treatment"
           ),
           bs4Dash::menuSubItem(
             "Frequent Attenders",
