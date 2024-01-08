@@ -199,7 +199,7 @@ default:
       mitigators_type: activity_avoidance
       y_axis_title: "% of Attendances that were GP Referred First Attendances"
       x_axis_title: "Financial Year"
-      number_type: !expr scales::comma_format()
+      number_type: !expr scales::percent_format()
       funnel_x_title: "Number of Appointments"
       slider_scale: 1
       slider_step: 0.1
@@ -239,7 +239,7 @@ default:
     mitigators_aae_discharged_no_treatment:
       activity_type: aae
       mitigators_type: activity_avoidance
-      y_axis_title:  "% of Arrivals where the patient was discharged with no treatment or investigations being performed"
+      y_axis_title: "% of Arrivals where the patient was discharged\nwith no treatment or investigations being performed"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
       funnel_x_title: "Number of Attendances"
