@@ -116,14 +116,14 @@ app_ui <- function(request) {
             tabName = "op_am_fup_reduction"
           ),
           bs4Dash::menuSubItem(
-            HTML("GP Referred<br>First Attendances"),
+            "GP Referred First Att.",
             tabName = "op_gp_referred_first_attendance_reduction"
           )
         ),
         bs4Dash::menuItem(
           "A&E",
           bs4Dash::menuSubItem(
-            HTML("Discharged with<br>No Investigations<br>or Treatments"),
+            "Discharged No Treatment",
             tabName = "aae_discharged_no_treatment"
           ),
           bs4Dash::menuSubItem(
