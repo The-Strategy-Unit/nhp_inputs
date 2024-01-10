@@ -16,7 +16,7 @@ mod_bed_occupancy_specialty_table <- function(specialties, ns = identity) {
             shiny::selectInput(
               ns(glue::glue("specialty_{code}")),
               NULL,
-              "Other",
+              NULL,
               width = "100%"
             )
           )
