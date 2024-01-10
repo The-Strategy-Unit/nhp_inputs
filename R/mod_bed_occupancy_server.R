@@ -13,9 +13,7 @@ mod_bed_occupancy_server <- function(id, params) {
     # reactives ----
 
     # use a reactiveValues to store the list of ward groups that the user has created
-    ward_groups <- shiny::reactiveValues(
-      groups = list(Other = default_param_values)
-    )
+    ward_groups <- shiny::reactiveValues(groups = list())
 
     # extract the names of the ward groups, make sure to put Other at the end of the list
     ward_group_names <- shiny::reactive({
@@ -135,7 +133,7 @@ mod_bed_occupancy_server <- function(id, params) {
       \(group, code, ...) {
         shiny::observe(
           {
-            value <- input[[glue::glue("specialty_{code}")]]
+            value <- shiny::req(input[[glue::glue("specialty_{code}")]])
 
             params[["bed_occupancy"]][["specialty_mapping"]][[group]][[code]] <- value
           },
@@ -162,8 +160,7 @@ mod_bed_occupancy_server <- function(id, params) {
           params$bed_occupancy
         })
 
-        ward_groups$groups <- p[["day+night"]] |>
-          purrr::map(`*`, 100)
+        ward_groups$groups <- purrr::map(p[["day+night"]], `*`, 100)
 
         shiny::updateSelectInput(
           session,
