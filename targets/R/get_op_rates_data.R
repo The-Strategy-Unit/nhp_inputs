@@ -18,7 +18,7 @@ get_op_data <- function(provider_successors_last_updated) {
     ) |>
     dplyr::summarise(
       dplyr::across(
-        c("is_first", "is_cons_cons_ref"),
+        c("is_first", "is_cons_cons_ref", "is_gp_ref"),
         \(.x) sum(.x, na.rm = TRUE)
       ),
       n = dplyr::n(),
@@ -134,14 +134,15 @@ get_op_age_sex_data <- function(op_data) {
     ~name, ~strategy,
     "is_cons_cons_ref", "consultant_to_consultant_reduction",
     "is_first", "followup_reduction",
-    "is_tele_appointment", "convert_to_tele"
+    "is_tele_appointment", "convert_to_tele",
+    "is_gp_ref", "gp_referred_first_attendance_reduction"
   )
 
   dplyr::bind_rows(
     op_data |>
       dplyr::filter(.data$is_tele_appointment == 0) |>
       dplyr::select(-"n") |>
-      tidyr::pivot_longer(c("is_first", "is_cons_cons_ref"), values_to = "n"),
+      tidyr::pivot_longer(c("is_first", "is_cons_cons_ref", "is_gp_ref"), values_to = "n"),
     op_data |>
       dplyr::filter(.data$is_tele_appointment == 1) |>
       dplyr::count(
@@ -185,6 +186,29 @@ get_op_convert_to_tele_data <- function(op_data, peers) {
       rate = 1 - sum(.data$n * .data$is_tele_appointment) / sum(.data$n),
       n = sum(.data$n),
       .groups = "drop"
+    ) |>
+    add_mean_rows()
+}
+
+get_op_gp_first <- function(op_data, peers) {
+  op_data |>
+    dplyr::group_by(.data$fyear, peer = .data$procode3, .data$subgroup) |>
+    dplyr::summarise(
+      dplyr::across(c("is_gp_ref", "n"), sum),
+      .groups = "drop"
+    ) |>
+    dplyr::inner_join(
+      peers,
+      by = c("peer"),
+      relationship = "many-to-many"
+    ) |>
+    dplyr::transmute(
+      .data$fyear,
+      .data$procode,
+      .data$peer,
+      strategy = glue::glue("gp_referred_first_attendance_reduction_{.data$subgroup}"),
+      rate = .data$is_gp_ref / .data$n,
+      .data$n
     ) |>
     add_mean_rows()
 }

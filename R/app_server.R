@@ -64,6 +64,8 @@ app_server <- function(input, output, session) {
         "mitigators_op_c2c_reduction",
         "mitigators_op_convert_tele",
         "mitigators_op_fup_reduction",
+        "mitigators_op_gp_referred_first_attendance_reduction",
+        "mitigators_aae_discharged_no_treatment",
         "mitigators_aae_frequent_attenders",
         "mitigators_aae_left_before_seen",
         "mitigators_aae_low_cost_discharged"
