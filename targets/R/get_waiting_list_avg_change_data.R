@@ -48,12 +48,6 @@ get_waiting_list_avg_change_data <- function(provider_successors, rtt_specialtie
       dplyr::across("date", lubridate::ymd)
     ) |>
     dplyr::arrange(.data[["procode"]], .data[["date"]], .data[["tretspef"]]) |>
-    tidyr::complete(
-      .data[["procode"]],
-      .data[["tretspef"]],
-      .data[["date"]],
-      fill = list(n = 0)
-    ) |>
     dplyr::group_by(.data[["procode"]], .data[["tretspef"]]) |>
     dplyr::summarise(
       avg_change = mean(diff(.data[["n"]])),
