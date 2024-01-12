@@ -148,6 +148,7 @@ get_ip_baseline_data <- function(provider_successors_last_updated, rtt_specialti
       dplyr::across(
         "tretspef",
         ~ dplyr::case_when(
+          .data[["group"]] == "maternity" ~ "Other (Medical)",
           .x %in% rtt_specialties ~ .x,
           stringr::str_detect(.x, "^1(?!80|9[02])") ~
             "Other (Surgical)",
