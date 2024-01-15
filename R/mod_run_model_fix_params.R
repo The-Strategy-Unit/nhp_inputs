@@ -43,7 +43,7 @@ mod_run_model_fix_params <- function(p) {
   hash <- digest::digest(p, "crc32", serialize = TRUE)
 
   p$id <- glue::glue("{p$dataset}-{scenario_sanitized}") |>
-    stringr::str_sub(1, 63 - stringr::str_length(hash)) |>
+    stringr::str_sub(1, 62 - stringr::str_length(hash)) |>
     stringr::str_to_lower() |>
     paste0("-", hash)
 
