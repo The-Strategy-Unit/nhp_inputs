@@ -77,6 +77,7 @@ list(
   tar_target(strategies, get_strategies(strategies_last_updated)),
   tar_target(ip_age_sex_data, get_ip_age_sex_data(strategies_last_updated, provider_successors_last_updated)),
   tar_target(ip_diag_data, get_ip_diag_data(strategies_last_updated, provider_successors_last_updated)),
+  tar_target(ip_procedures_data, get_ip_procedures_data(strategies_last_updated, provider_successors_last_updated)),
   tar_target(ip_los_data, get_ip_los_data(strategies_last_updated, provider_successors_last_updated)),
   tar_target(
     ip_wli_data,
@@ -120,6 +121,7 @@ list(
   # op data
   tar_target(op_data, get_op_data(provider_successors_last_updated)),
   tar_target(op_diag_data, get_op_diag_data(op_age_sex_data)),
+  tar_target(op_procedures_data, get_op_procedures_data(provider_successors_last_updated)),
   tar_target(op_age_sex_data, get_op_age_sex_data(op_data)),
   tar_target(
     op_wli_data,
@@ -162,6 +164,7 @@ list(
   # aae data
   tar_target(aae_data, get_aae_data(provider_successors_last_updated)),
   tar_target(aae_diag_data, get_aae_diag_data(provider_successors_last_updated)),
+  tar_target(aae_procedures_data, get_aae_procedures_data(provider_successors_last_updated)),
   tar_target(
     aae_baseline_data,
     get_aae_baseline_data(
@@ -301,6 +304,14 @@ list(
       ip_diag_data,
       op_diag_data,
       aae_diag_data
+    )
+  ),
+  tar_target(
+    procedures_data,
+    dplyr::bind_rows(
+      ip_procedures_data,
+      op_procedures_data,
+      aae_procedures_data
     )
   ),
   tar_target(

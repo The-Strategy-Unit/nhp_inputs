@@ -62,6 +62,39 @@ get_ip_diag_data <- function(strategies_last_updated, provider_successors_last_u
     dplyr::rename(procode = "procode3")
 }
 
+
+get_ip_procedures_data <- function(strategies_last_updated, provider_successors_last_updated) {
+  force(strategies_last_updated)
+  force(provider_successors_last_updated)
+
+  con <- get_con("HESData")
+
+  tbl_inpatients <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients"))
+
+  tbl_ip_strategies <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "strategies"))
+  tbl_inpatients_procedures <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients_procedures")) |>
+    dplyr::filter(.data$OPORDER == 1) |>
+    dplyr::mutate(
+      dplyr::across("OPCODE", \(.x) LEFT(.x, 3)) # nolint
+    )
+
+  tbl_inpatients |>
+    dplyr::inner_join(tbl_inpatients_procedures, by = c("FYEAR", "EPIKEY")) |>
+    dplyr::inner_join(tbl_ip_strategies, by = c("EPIKEY")) |>
+    dplyr::group_by(.data$FYEAR, .data$PROCODE3, .data$strategy, procedure = .data$OPCODE) |>
+    dplyr::summarise(n = sum(.data$sample_rate, na.rm = TRUE), .groups = "drop_last") |>
+    dplyr::mutate(p = .data$n * 1.0 / sum(.data$n, na.rm = TRUE)) |>
+    dbplyr::window_order(dplyr::desc(.data$n)) |>
+    dplyr::filter(
+      dplyr::row_number() <= 6,
+      .data$n >= 5
+    ) |>
+    dplyr::ungroup() |>
+    dplyr::collect() |>
+    janitor::clean_names() |>
+    dplyr::rename(procode = "procode3")
+}
+
 get_ip_los_data <- function(strategies_last_updated, provider_successors_last_updated) {
   force(strategies_last_updated)
   force(provider_successors_last_updated)
