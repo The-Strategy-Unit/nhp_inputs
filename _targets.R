@@ -331,7 +331,7 @@ list(
   ),
   tar_target(
     provider_data,
-    get_provider_data(age_sex_data, diagnoses_data, rates_data)
+    get_provider_data(age_sex_data, diagnoses_data, procedures_data, rates_data)
   ),
   tar_target(
     uploaded_data_azure,

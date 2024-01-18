@@ -31,14 +31,16 @@ save_data <- function(nhp_current_cohort, ...) {
   list("save_data", Sys.time())
 }
 
-get_provider_data <- function(age_sex_data, diagnoses_data, rates_data) {
+get_provider_data <- function(age_sex_data, diagnoses_data, procedures_data, rates_data) {
   list(
     age_sex = age_sex_data,
     diagnoses = diagnoses_data,
+    procedures_data = procedures_data,
     rates = rates_data
   ) |>
     purrr::imap(\(data, key) dplyr::group_nest(data, .data$procode, .data$strategy, .key = key)) |>
-    purrr::reduce(dplyr::inner_join, by = c("procode", "strategy")) |>
+    purrr::reduce(dplyr::left_join, by = c("procode", "strategy")) |>
+    dplyr::filter(!purrr::map_lgl(.data[["rates"]], is.null)) |>
     tidyr::pivot_longer(!where(rlang::is_atomic)) |>
     dplyr::filter(!purrr::map_lgl(.data$value, is.null)) |>
     dplyr::mutate(dplyr::across("value", \(.x) purrr::map(.x, janitor::remove_empty, "cols"))) |>
