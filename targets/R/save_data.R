@@ -35,7 +35,7 @@ get_provider_data <- function(age_sex_data, diagnoses_data, procedures_data, rat
   list(
     age_sex = age_sex_data,
     diagnoses = diagnoses_data,
-    procedures_data = procedures_data,
+    procedures = procedures_data,
     rates = rates_data
   ) |>
     purrr::imap(\(data, key) dplyr::group_nest(data, .data$procode, .data$strategy, .key = key)) |>
