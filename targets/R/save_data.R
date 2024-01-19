@@ -32,6 +32,19 @@ save_data <- function(nhp_current_cohort, ...) {
 }
 
 get_provider_data <- function(age_sex_data, diagnoses_data, procedures_data, rates_data) {
+  # remove invalid procedures
+  procedure_codes <- readRDS("inst/app/data/procedures.Rds")$code
+  procedures_data <- procedures_data |>
+    dplyr::mutate(
+      dplyr::across(
+        "procedure", \(.x) ifelse(.x %in% procedure_codes, .x, NA_character_)
+      )
+    ) |>
+    dplyr::summarise(
+      dplyr::across(c("n", "p"), sum),
+      .by = c("fyear", "procode", "strategy", "procedure")
+    )
+
   list(
     age_sex = age_sex_data,
     diagnoses = diagnoses_data,
