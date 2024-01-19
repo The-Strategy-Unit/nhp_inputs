@@ -134,8 +134,7 @@ get_aae_diag_data <- function(provider_successors_last_updated) {
           "is_frequent_attender",
           "is_discharged_no_treatment"
         ),
-        sum,
-        na.rm = TRUE
+        \(.x) sum(.x, na.rm = TRUE)
       ),
       n = dplyr::n(),
       .groups = "drop"
@@ -176,6 +175,82 @@ get_aae_diag_data <- function(provider_successors_last_updated) {
     dplyr::relocate("strategy", .before = "diagnosis") |>
     dplyr::ungroup()
 }
+
+
+get_aae_procedures_data <- function(provider_successors_last_updated) {
+  force(provider_successors_last_updated)
+
+  con <- get_con("HESData")
+
+  tbl_aae <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "aae"))
+
+  tbl_aae_treatments <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "aae_treatments")) |>
+    dplyr::filter(.data$treatorder == 1) |>
+    dplyr::select("aekey", "procedure" = "treat_2")
+
+  tbl_aae |>
+    dplyr::inner_join(tbl_aae_treatments, by = c("aekey")) |>
+    dplyr::mutate(
+      is_adult = .data$activage >= 18,
+      is_ambulance = .data$aearrivalmode == "1"
+    ) |>
+    dplyr::group_by(
+      .data$fyear,
+      .data$procode3,
+      .data$procedure,
+      .data$is_ambulance,
+      .data$is_adult
+    ) |>
+    dplyr::summarise(
+      dplyr::across(
+        c(
+          "is_low_cost_referred_or_discharged",
+          "is_left_before_treatment",
+          "is_frequent_attender",
+          "is_discharged_no_treatment"
+        ),
+        \(.x) sum(.x, na.rm = TRUE)
+      ),
+      n = dplyr::n(),
+      .groups = "drop"
+    ) |>
+    dplyr::collect() |>
+    dplyr::mutate(
+      subgroup = paste(
+        ifelse(.data$is_adult, "adult", "child"),
+        ifelse(.data$is_ambulance, "ambulance", "walk-in"),
+        sep = "_"
+      )
+    ) |>
+    dplyr::select(-"is_adult", -"is_ambulance") |>
+    dplyr::rename(
+      "low_cost_discharged" = "is_low_cost_referred_or_discharged",
+      "left_before_seen" = "is_left_before_treatment",
+      "frequent_attenders" = "is_frequent_attender",
+      "discharged_no_treatment" = "is_discharged_no_treatment"
+    ) |>
+    tidyr::pivot_longer(
+      c(
+        "low_cost_discharged",
+        "left_before_seen",
+        "frequent_attenders",
+        "discharged_no_treatment"
+      )
+    ) |>
+    dplyr::group_by(
+      .data$fyear,
+      .data$procode3,
+      strategy = glue::glue("{.data$name}_{.data$subgroup}")
+    ) |>
+    dplyr::select(-"name", -"n", -"subgroup") |>
+    dplyr::rename("n" = "value", "procode" = "procode3") |>
+    dplyr::mutate(p = .data$n / sum(.data$n)) |>
+    dplyr::slice_max(order_by = .data$n, n = 6) |>
+    dplyr::filter(.data$n > 5) |>
+    dplyr::relocate("strategy", .before = "procedure") |>
+    dplyr::ungroup()
+}
+
 
 get_aae_rates <- function(aae_data, peers) {
   aae_data |>
