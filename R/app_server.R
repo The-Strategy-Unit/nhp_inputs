@@ -9,6 +9,10 @@ app_server <- function(input, output, session) {
     readRDS(app_sys("app", "data", "diagnoses.Rds"))
   })
 
+  procedures_lkup <- shiny::reactive({
+    readRDS(app_sys("app", "data", "procedures.Rds"))
+  })
+
   providers <- shiny::reactive({
     readRDS(app_sys("app", "data", "providers.Rds"))
   })
@@ -74,7 +78,8 @@ app_server <- function(input, output, session) {
       params,
       provider_data,
       available_strategies,
-      diagnoses_lkup()
+      diagnoses_lkup(),
+      procedures_lkup()
     )
 
     # enable the run_model page for certain users/running locally

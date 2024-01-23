@@ -79,7 +79,14 @@ mod_mitigators_ui <- function(id, title) {
               shiny::plotOutput(ns("age_grp_plot"))
             }),
             width = 6
-          )
+          ),
+          bs4Dash::box(
+            title = "Breakdown by Procedure",
+            shinycssloaders::withSpinner({
+              gt::gt_output(ns("procedures_table"))
+            }),
+            width = 6
+          ),
         )
       )
     )

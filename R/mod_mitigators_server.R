@@ -5,7 +5,8 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
                                   params,
                                   provider_data,
                                   available_strategies,
-                                  diagnoses_lkup) {
+                                  diagnoses_lkup,
+                                  procedures_lkup) {
   selected_time_profile <- update_time_profile <- NULL
   c(selected_time_profile, update_time_profile) %<-% mod_time_profile_server(
     shiny::NS(id, "time_profile"),
@@ -149,6 +150,10 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
     diagnoses_data <- shiny::reactive({
       d <- shiny::req(selected_data())
       d$diagnoses
+    })
+    procedures_data <- shiny::reactive({
+      d <- shiny::req(selected_data())
+      d$procedures
     })
 
     # rates data baseline year ----
@@ -404,6 +409,81 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
             ),
             gt::cells_stub(
               rows = .data$diagnosis_description == "Other"
+            )
+          )
+        )
+    })
+
+    # procedures ----
+
+    output$procedures_table <- gt::render_gt({
+      data <- procedures_data() |>
+        dplyr::filter(.data$fyear == params$start_year) |>
+        dplyr::left_join(procedures_lkup, by = c("procedure" = "code")) |>
+        tidyr::replace_na(list(description = "Unknown/Invalid Procedure Code")) |>
+        dplyr::select("procedure_description" = "description", "n", "p")
+
+      n_total <- sum(data$n)
+      p_total <- sum(data$p)
+
+      # if we need to include an other row
+      if (p_total < 1) {
+        data <- dplyr::bind_rows(
+          data,
+          tibble::tibble(
+            procedure_description = "Other",
+            n = n_total * (1 - p_total) / p_total,
+            p = 1 - p_total
+          )
+        )
+      }
+
+      gt::gt(data, "procedure_description") |>
+        gt::cols_label(
+          "procedure_description" = "Procedure",
+          "n" = "Count of Activity (spells)",
+          "p" = "% of Total Activity"
+        ) |>
+        gt::tab_stubhead("Procedure") |>
+        gt::fmt_number(
+          c("n"),
+          decimals = 0,
+          use_seps = TRUE
+        ) |>
+        gt::fmt_percent(
+          c("p"),
+          decimals = 1
+        ) |>
+        gt::grand_summary_rows(
+          columns = "n",
+          fns = list(Total = ~ sum(.)),
+          fmt = list(
+            ~ gt::fmt_number(., decimals = 0, use_seps = TRUE)
+          )
+        ) |>
+        gt::tab_style(
+          style = list(
+            gt::cell_fill(color = "#EFEFEF"),
+            gt::cell_text(weight = "bold")
+          ),
+          locations = list(
+            gt::cells_column_labels(),
+            gt::cells_stubhead(),
+            gt::cells_grand_summary(),
+            gt::cells_stub_grand_summary()
+          )
+        ) |>
+        gt::tab_style(
+          style = list(
+            gt::cell_fill(color = "#FBFBFB"),
+            gt::cell_text(weight = "bold")
+          ),
+          locations = list(
+            gt::cells_body(
+              rows = .data$procedure_description == "Other"
+            ),
+            gt::cells_stub(
+              rows = .data$procedure_description == "Other"
             )
           )
         )
