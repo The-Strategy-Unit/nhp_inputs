@@ -417,7 +417,16 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
     # procedures ----
 
     output$procedures_table <- gt::render_gt({
-      data <- procedures_data() |>
+      pd <- procedures_data()
+
+      shiny::validate(
+        shiny::need(
+          !is.null(pd) && nrow(pd) > 0,
+          "No procedures to display"
+        )
+      )
+
+      data <- pd |>
         dplyr::filter(.data$fyear == params$start_year) |>
         dplyr::left_join(procedures_lkup, by = c("procedure" = "code")) |>
         tidyr::replace_na(list(description = "Unknown/Invalid Procedure Code")) |>
