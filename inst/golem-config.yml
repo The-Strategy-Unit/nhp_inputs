@@ -99,6 +99,8 @@ default:
         enhanced_recovery_rectum: "Enhanced Recovery (Rectum)"
         excess_beddays_elective: "Excess Beddays (Elective Admissions)"
         excess_beddays_emergency: "Excess Beddays (Emergency Admissions)"
+        general_los_reduction_elective: "General LoS Reduction: Elective Admissions"
+        general_los_reduction_emergency: "General LoS Reduction: Emergency Admissions"
         raid_ip: "Admissions with Mental Health Comorbidities"
         stroke_early_supported_discharge: "Stroke Early Supported Discharge"
       params_items:

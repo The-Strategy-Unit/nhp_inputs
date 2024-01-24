@@ -82,6 +82,8 @@ get_mean_los_data <- function(ip_los_data, peers) {
     "enhanced_recovery_rectum",
     "excess_beddays_elective",
     "excess_beddays_emergency",
+    "general_los_reduction_elective",
+    "general_los_reduction_emergency",
     "raid_ip",
     "stroke_early_supported_discharge"
   )
