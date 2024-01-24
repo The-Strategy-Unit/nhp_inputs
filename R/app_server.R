@@ -45,7 +45,7 @@ app_server <- function(input, output, session) {
 
     mod_population_growth_server("population_growth", params)
 
-    mod_inequalities_server("inequalities", params)
+    # mod_inequalities_server("inequalities", params)
 
     mod_health_status_adjustment_server("health_status_adjustment", params)
 
