@@ -81,8 +81,7 @@ get_op_baseline_data <- function(provider_successors_last_updated, rtt_specialti
       )
     ) |>
     dplyr::filter(
-      .data[["fyear"]] >= 201819,
-      .data[["is_tele_appointment"]] == 0
+      .data[["fyear"]] >= 201819
     ) |>
     dplyr::group_by(
       dplyr::across(
