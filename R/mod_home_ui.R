@@ -33,7 +33,7 @@ mod_home_ui <- function(id) {
       shiny::selectInput(
         ns("start_year"),
         "Baseline Financial Year",
-        choices = c("2019/20" = 201920, "2018/19" = 201819)
+        choices = c("2019/20" = 201920)
       ),
       shiny::selectInput(
         ns("end_year"),
