@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ renv/profiles/dev/renv.lock -nt manifest.json ] || [ dev/generate_manifest.R -nt manifest.json ]
+then
+        echo "updating manifest.json"
+        Rscript dev/generate_manifest.R
+        git add manifest.json
+fi
