@@ -71,7 +71,8 @@ mod_baseline_adjustment_ui <- function(id) {
           collapsible = FALSE,
           headerBorder = FALSE,
           width = 12,
-          md_file_to_html("app", "text", "baseline_adjustment.md")
+          md_file_to_html("app", "text", "baseline_adjustment.md"),
+          shiny::downloadButton(ns("download_baseline"), "Download Baseline Values (excel)")
         ),
         mod_reasons_ui(ns("reasons"))
       ),
