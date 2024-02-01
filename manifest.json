@@ -6321,7 +6321,7 @@
       "checksum": "45df5500777a5ba8a716f811b530dba0"
     },
     "inst/app/text/non_demographic_adjustment.md": {
-      "checksum": "4c8ecc2e4eb3f1e6d294db6b0a262caa"
+      "checksum": "176a20f43315c857af0df59f46abdbd5"
     },
     "inst/app/text/population_growth.md": {
       "checksum": "a702c4b72903bcab6d1bb5255ecfc17e"
@@ -6468,7 +6468,7 @@
       "checksum": "c1382c30b4bcdeab4d684873518c419a"
     },
     "R/mod_non_demographic_adjustment_server.R": {
-      "checksum": "45f2bceb7849f8a7fc0eeb8c6d94e117"
+      "checksum": "abe2886fd20679d342fa2fd47fee8a2f"
     },
     "R/mod_non_demographic_adjustment_ui.R": {
       "checksum": "93b7cc8f6fbc4e389efd601147fc773e"
