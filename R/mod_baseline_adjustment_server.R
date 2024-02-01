@@ -39,13 +39,17 @@ mod_baseline_adjustment_server <- function(id, params) {
       dplyr::mutate(id = glue::glue("{at}_{g}_{sanitized_code}"))
 
     # reactives ----
-    baseline_counts <- shiny::reactive({
+    baseline_data <- shiny::reactive({
       dataset <- shiny::req(params$dataset)
       year <- as.character(shiny::req(params$start_year))
 
       glue::glue("{dataset}/baseline_data.rds") |>
         load_rds_from_adls() |>
-        purrr::pluck(year) |>
+        purrr::pluck(year)
+    })
+
+    baseline_counts <- shiny::reactive({
+      baseline_data() |>
         tidyr::nest(.by = c("activity_type", "group")) |>
         dplyr::mutate(
           dplyr::across("data", \(.x) purrr::map(.x, tibble::deframe))
@@ -94,6 +98,15 @@ mod_baseline_adjustment_server <- function(id, params) {
 
       init$destroy()
     })
+
+    output$download_baseline <- shiny::downloadHandler(
+      \() {
+        cat("dataset: ", params[["dataset"]], "\n")
+        paste0(params[["dataset"]], "_baseline.csv")
+      },
+      \(filename) readr::write_csv(baseline_data(), filename),
+      "text/csv"
+    )
 
     # iterate over all of the rows in specs, and create an observer for that input
     specs |>
