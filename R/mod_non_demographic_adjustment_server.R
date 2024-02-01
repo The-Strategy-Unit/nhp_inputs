@@ -15,7 +15,7 @@ mod_non_demographic_adjustment_server <- function(id, params) {
           ),
           "ip" = list(
             "elective" = c(1.0050266, 1.007375),
-            "maternity" = c(0.9732562, 0.980959),
+            "maternity" = c(1, 1),
             "non-elective" = c(1.0187719, 1.024636)
           ),
           "op" = list(
