@@ -6254,6 +6254,9 @@
     "inst/app/strategy_text/frequent_attenders.md": {
       "checksum": "133a681fcfca313aa61f2676681d05c8"
     },
+    "inst/app/strategy_text/general_los_reduction.md": {
+      "checksum": "b2cbf38c0f1b25530b60c5974a65a16e"
+    },
     "inst/app/strategy_text/gp_referred_first_attendance_reduction.md": {
       "checksum": "3dcec9c484fddc3bcb95dac26993de79"
     },
@@ -6354,7 +6357,7 @@
       "checksum": "35f183672422864199cea4257a4fb332"
     },
     "inst/golem-config.yml": {
-      "checksum": "fc9612cc4d789ab015b5c9ebdf63c7ad"
+      "checksum": "5412b2f45e54642369cbb6f9ff6bcd92"
     },
     "inst/WORDLIST": {
       "checksum": "3855faecd79c7c5699b99e1045fc3948"
