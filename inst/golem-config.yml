@@ -70,7 +70,7 @@ default:
         medicines_related_admissions_explicit: "Medicines Related Admissions (Explicit)"
         medicines_related_admissions_implicit_anti-diabetics: "Medicines Related Admissions (Implicit - Anti-Diabetics)"
         medicines_related_admissions_implicit_benzodiasepines: "Medicines Related Admissions (Implicit - Benzodiazepines)"
-        medicines_related_admissions_implicit_diurectics: "Medicines Related Admissions (Implicit - Diurectics)"
+        medicines_related_admissions_implicit_diurectics: "Medicines Related Admissions (Implicit - Diuretics)"
         medicines_related_admissions_implicit_nsaids: "Medicines Related Admissions (Implicit - NSAIDs)"
         obesity_related_admissions: "Obesity Related Admissions"
         raid_ae: "Mental Health Admissions via Emergency Department"
