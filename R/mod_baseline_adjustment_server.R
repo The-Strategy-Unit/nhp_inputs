@@ -65,45 +65,52 @@ mod_baseline_adjustment_server <- function(id, params) {
     # observers ----
 
     # when the module initialy loads, run this observer and update the UI with any values that were loaded into params
-    init <- shiny::observe({
-      shiny::isolate({
-        p <- params$baseline_adjustment
+    init <- shiny::observe(
+      {
+        shiny::isolate({
+          p <- params$baseline_adjustment
 
-        bc <- baseline_counts()
+          bc <- baseline_counts()
 
-        purrr::pwalk(specs, \(at, g, code, id, ...) {
-          adjustment_id <- glue::glue("adjustment_{id}")
+          purrr::pwalk(specs, \(at, g, code, id, ...) {
+            adjustment_id <- glue::glue("adjustment_{id}")
 
-          ix <- c(at, if (at != "aae") g, code)
+            ix <- c(at, if (at != "aae") g, code)
 
-          bcd <- purrr::pluck(bc, !!!ix)
+            bcd <- purrr::pluck(bc, !!!ix)
 
-          if (is.null(bcd)) {
-            # don't use shiny::req here, it ends up exiting the entire pwalk
-            return()
-          }
+            if (is.null(bcd)) {
+              # don't use shiny::req here, it ends up exiting the entire pwalk
+              return()
+            }
 
-          # get the new param value
-          v <- purrr::pluck(p, !!!ix)
+            # get the new param value
+            v <- purrr::pluck(p, !!!ix)
 
-          shiny::updateSliderInput(
-            session,
-            adjustment_id,
-            min = -bcd,
-            max = 2 * bcd,
-            value = round(((v %||% 1) - 1) * bcd)
-          )
+            shiny::updateSliderInput(
+              session,
+              adjustment_id,
+              min = -bcd,
+              max = 2 * bcd,
+              value = round(((v %||% 1) - 1) * bcd)
+            )
+          })
         })
-      })
 
-      init$destroy()
-    })
+        init$destroy()
+      },
+      priority = 10
+    )
+
+    shiny::observe({
+      shiny::req(baseline_counts())
+      shinyjs::enable("download_baseline")
+    }) |>
+      shiny::bindEvent(baseline_counts())
+
 
     output$download_baseline <- shiny::downloadHandler(
-      \() {
-        cat("dataset: ", params[["dataset"]], "\n")
-        paste0(params[["dataset"]], "_baseline.csv")
-      },
+      \() paste0(params[["dataset"]], "_baseline.csv"),
       \(filename) readr::write_csv(baseline_data(), filename),
       "text/csv"
     )
