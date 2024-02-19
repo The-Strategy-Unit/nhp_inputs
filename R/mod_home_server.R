@@ -171,33 +171,6 @@ mod_home_server <- function(id, providers) {
         input$previous_scenario
       )
 
-    # watch for uploaded files, and replace the values in params with the contents of the file
-    shiny::observe({
-      # TODO: should we remove file uploads?
-      # this code needs to carefully replicate the next observer
-      p <- load_params(input$param_upload$datapath)
-
-      if (p$dataset == "synthetic") {
-        cat("skipping changing the dataset\n")
-      } else {
-        shiny::updateSelectInput(session, "dataset", selected = p$dataset)
-      }
-
-      shiny::updateTextInput(session, "scenario", value = p$scenario)
-
-      y <- p$start_year * 100 + p$start_year %% 100 + 1
-      shiny::updateSelectInput(session, "start_year", selected = y)
-      shiny::updateSelectInput(session, "end_year", selected = as.character(p$end_year))
-      shiny::updateNumericInput(session, "seed", value = p$seed)
-      shiny::updateSelectInput(session, "model_runs", selected = p$model_runs)
-
-      # copy the loaded params into params
-      for (i in names(p)) {
-        params[[i]] <- p[[i]]
-      }
-    }) |>
-      shiny::bindEvent(input$param_upload)
-
     # load the selected params
     # if the user chooses to create new from scratch, we use the default parameters file
     # otherwise, load the values for the scenario the user selected

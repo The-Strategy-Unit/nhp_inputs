@@ -77,12 +77,6 @@ mod_home_ui <- function(id) {
       collapsed = TRUE,
       shiny::numericInput(ns("seed"), "Seed", sample(1:100000, 1)),
       shiny::selectInput(ns("model_runs"), "Model Runs", choices = c(256, 512, 1024), selected = 256)
-    ),
-    bs4Dash::box(
-      title = "Upload Previous Set of Parameters",
-      width = 12,
-      collapsed = TRUE,
-      shiny::fileInput(ns("param_upload"), "Upload")
     )
   )
 
