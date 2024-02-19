@@ -2,6 +2,8 @@
 #'
 #' @noRd
 mod_run_model_server <- function(id, params) {
+  mod_reasons_server(shiny::NS(id, "reasons"), params, "model_run")
+
   shiny::moduleServer(id, function(input, output, session) {
     # we are using promises to run REST queries to submit a new model run
     # and to check on the progress of those model runs
