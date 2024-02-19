@@ -59,66 +59,69 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       c(0.95, 1)
     }
 
-    init <- shiny::observe({
-      strategies <- shiny::req(strategies())
+    init <- shiny::observe(
+      {
+        strategies <- shiny::req(strategies())
 
-      # update the drop down
-      shiny::updateSelectInput(session, "strategy", choices = strategies)
+        # update the drop down
+        shiny::updateSelectInput(session, "strategy", choices = strategies)
 
-      loaded_values <- params |>
-        shiny::reactiveValuesToList() |>
-        _[c("activity_avoidance", "efficiencies")] |>
-        purrr::flatten() |>
-        purrr::flatten() |>
-        _[strategies] |>
-        purrr::map("interval")
+        loaded_values <- params |>
+          shiny::reactiveValuesToList() |>
+          _[c("activity_avoidance", "efficiencies")] |>
+          purrr::flatten() |>
+          purrr::flatten() |>
+          _[strategies] |>
+          purrr::map("interval")
 
-      strategies |>
-        # remove the friendly name for the strategy, replace with itself
-        purrr::set_names() |>
-        purrr::walk(\(i) {
-          # get the rates data for this strategy (for the provider in the baseline year)
-          r <- provider_data()[[i]]$rates |>
-            dplyr::filter(
-              .data$peer == params$dataset,
-              .data$fyear == params$start_year
+        strategies |>
+          # remove the friendly name for the strategy, replace with itself
+          purrr::set_names() |>
+          purrr::walk(\(i) {
+            # get the rates data for this strategy (for the provider in the baseline year)
+            r <- provider_data()[[i]]$rates |>
+              dplyr::filter(
+                .data$peer == params$dataset,
+                .data$fyear == params$start_year
+              )
+
+            slider_values[[mitigators_type]][[i]] <- c(
+              # add the additional param items if they exist.
+              config$params_items |>
+                # if the additional item is a list, chose the value for the current strategy
+                purrr::map_if(is.list, ~ .x[[i]]) |>
+                # if the additional item is a function, evaluate it with the rates data
+                purrr::map_if(is.function, rlang::exec, r),
+              list(
+                interval = loaded_values[[i]] %||% get_default(r$rate)
+              )
             )
 
-          slider_values[[mitigators_type]][[i]] <- c(
-            # add the additional param items if they exist.
-            config$params_items |>
-              # if the additional item is a list, chose the value for the current strategy
-              purrr::map_if(is.list, ~ .x[[i]]) |>
-              # if the additional item is a function, evaluate it with the rates data
-              purrr::map_if(is.function, rlang::exec, r),
-            list(
-              interval = loaded_values[[i]] %||% get_default(r$rate)
-            )
-          )
+            output_conversions[[mitigators_type]][[i]] <- (config$param_output %||% \(...) identity)(r$rate)
 
-          output_conversions[[mitigators_type]][[i]] <- (config$param_output %||% \(...) identity)(r$rate)
+            params[[mitigators_type]][[activity_type]][[i]] <- if (!is.null(loaded_values[[i]])) {
+              fn <- output_conversions[[mitigators_type]][[i]]
 
-          params[[mitigators_type]][[activity_type]][[i]] <- if (!is.null(loaded_values[[i]])) {
-            fn <- output_conversions[[mitigators_type]][[i]]
+              v <- slider_values[[mitigators_type]][[i]]
+              v$interval <- fn(v$interval)
 
-            v <- slider_values[[mitigators_type]][[i]]
-            v$interval <- fn(v$interval)
+              v
+            }
+          })
 
-            v
-          }
-        })
+        tpm <- params$time_profile_mappings[[mitigators_type]][[activity_type]]
+        time_profile_mappings$mappings <- tpm
 
-      tpm <- params$time_profile_mappings[[mitigators_type]][[activity_type]]
-      time_profile_mappings$mappings <- tpm
+        shiny::updateCheckboxInput(
+          session,
+          "include",
+          value = !is.null(params[[mitigators_type]][[activity_type]][[strategies[[1]]]])
+        )
 
-      shiny::updateCheckboxInput(
-        session,
-        "include",
-        value = !is.null(params[[mitigators_type]][[activity_type]][[strategies[[1]]]])
-      )
-
-      init$destroy()
-    })
+        init$destroy()
+      },
+      priority = 100
+    )
 
     # set the strategy text by loading the contents of the file for that strategy
     output$strategy_text <- shiny::renderUI({
