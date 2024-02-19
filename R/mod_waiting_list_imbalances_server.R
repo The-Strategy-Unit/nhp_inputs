@@ -55,22 +55,29 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
       shiny::bindEvent(selected_time_profile())
 
     # when the module is initialised, load the values from the loaded params file
-    init <- shiny::observe({
-      p <- params$waiting_list_adjustment
+    init <- shiny::observe(
+      {
+        p <- shiny::isolate({
+          params
+        })
 
-      # update the selected time profile
-      update_time_profile(params$time_profile_mappings[["waiting_list_adjustment"]])
+        # update the selected time profile
+        update_time_profile(p$time_profile_mappings[["waiting_list_adjustment"]])
 
-      if (length(p$ip) + length(p$op) > 0) {
-        shinyWidgets::updateSwitchInput(
-          session,
-          "use_wli",
-          value = TRUE
-        )
-      }
+        p <- p$waiting_list_adjustment
 
-      init$destroy()
-    })
+        if (length(p$ip) + length(p$op) > 0) {
+          shinyWidgets::updateSwitchInput(
+            session,
+            "use_wli",
+            value = TRUE
+          )
+        }
+
+        init$destroy()
+      },
+      priority = 10
+    )
 
     shiny::observe({
       params[["waiting_list_adjustment"]] <- if (input$use_wli) {
