@@ -11,6 +11,7 @@ mod_run_model_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::fluidRow(
     col_4(
+      mod_reasons_ui(ns("reasons")),
       bs4Dash::box(
         title = "Run Model",
         width = 12,
