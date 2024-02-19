@@ -104,7 +104,11 @@ mod_baseline_adjustment_server <- function(id, params) {
 
     shiny::observe({
       shiny::req(baseline_counts())
-      shinyjs::enable("download_baseline")
+
+      shinyjs::toggle(
+        "download_baseline",
+        condition = nrow(baseline_counts()) > 0
+      )
     }) |>
       shiny::bindEvent(baseline_counts())
 
