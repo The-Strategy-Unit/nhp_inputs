@@ -74,9 +74,9 @@ app_ui <- function(request) {
         #
         shiny::tags$hr(),
         bs4Dash::sidebarHeader("Activity Mitigators"),
-          bs4Dash::menuItem(
-            "Summary totals",
-            tabName = "mitigators_summary"
+        bs4Dash::menuItem(
+          "Summary totals",
+          tabName = "mitigators_summary"
         ),
         bs4Dash::menuItem(
           "Inpatients",
@@ -292,7 +292,7 @@ golem_add_external_resources <- function() {
     golem::favicon(),
     golem::bundle_resources(
       path = app_sys("app/www"),
-      app_title = "nhp_inputs"
+      app_title = "NHP: Inputs"
     ),
     tags$base(target = "_blank")
   )
