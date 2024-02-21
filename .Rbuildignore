@@ -22,3 +22,5 @@ $run_dev.*
 ^\.github$
 
 ^params/$
+^update_manifest.js$
+^manifest.json$

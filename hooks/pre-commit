@@ -1,7 +1,0 @@
-#!/bin/sh
-
-export RENV_CONFIG_SYNCHRONIZED_CHECK=FALSE
-export RENV_PROFILE=dev
-
-Rscript dev/generate_manifest.R
-git add manifest.json
