@@ -64,7 +64,6 @@ app_server <- function(input, output, session) {
         "mitigators_mean_los_reduction",
         "mitigators_aec_los_reduction",
         "mitigators_preop_los_reduction",
-        "mitigators_bads",
         "mitigators_op_c2c_reduction",
         "mitigators_op_convert_tele",
         "mitigators_op_fup_reduction",
