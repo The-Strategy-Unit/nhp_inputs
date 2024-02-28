@@ -95,10 +95,6 @@ app_ui <- function(request) {
           bs4Dash::menuSubItem(
             "Pre-op LoS Reduction",
             tabName = "ip_am_preop_los_reduction"
-          ),
-          bs4Dash::menuSubItem(
-            "Day Surgery",
-            tabName = "ip_am_bads"
           )
         ),
         bs4Dash::menuItem(
@@ -219,10 +215,6 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "ip_am_preop_los_reduction",
         mod_mitigators_ui("mitigators_preop_los_reduction", "Pre-op Length of Stay Reduction")
-      ),
-      bs4Dash::tabItem(
-        tabName = "ip_am_bads",
-        mod_mitigators_ui("mitigators_bads", "Day Surgery Type Conversion")
       ),
       bs4Dash::tabItem(
         tabName = "op_am_c2c_referrals",
