@@ -17,8 +17,17 @@ app_server <- function(input, output, session) {
     readRDS(app_sys("app", "data", "providers.Rds"))
   })
 
-  params <- start <- NULL
-  c(params, start) %<-% mod_home_server("home", providers())
+  filename <- shiny::reactive(input$params_file)
+
+  params <- mod_home_server("home", providers(), filename)
+
+  # we could probably drop the need for start now, kept for historical reasons
+  start <- shiny::reactive({
+    shiny::req(length(params) > 0)
+    shiny::req(params$dataset)
+    shiny::req(params$scenario)
+    1
+  })
 
   # load all other modules once the home module has finished loading
   init <- shiny::observe({
@@ -89,13 +98,6 @@ app_server <- function(input, output, session) {
       mod_run_model_server("run_model", params)
     }
 
-    # hacky way of achieving switch from the home tab to the app itself
-    # maybe add some timeout to this?
-    shinyjs::removeClass("tab-tab_home", "active")
-    shinyjs::removeClass("shiny-tab-tab_home", "active")
-    shinyjs::addClass("tab-tab_baseline_adjustment", "active")
-    shinyjs::addClass("shiny-tab-tab_baseline_adjustment", "active")
-
     init$destroy()
   }) |>
     shiny::bindEvent(start())
@@ -116,6 +118,8 @@ app_server <- function(input, output, session) {
       shiny::reactiveValuesToList() |>
       mod_run_model_fix_params() |>
       jsonlite::write_json(file, pretty = TRUE, auto_unbox = TRUE)
+
+    file.copy(file, filename())
   })
 
   if (as.logical(Sys.getenv("ENABLE_AUTO_RECONNECT", FALSE))) {

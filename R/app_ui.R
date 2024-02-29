@@ -4,6 +4,26 @@
 #'     DO NOT REMOVE.
 #' @noRd
 app_ui <- function(request) {
+  # handle loading the provided filename
+
+  f <- URLdecode(stringr::str_sub(request$QUERY_STRING, 2L))
+
+  file <- file.path(dirname(tempdir()), f)
+
+  if (f == "" || !file.exists(file)) {
+    # redirect back to the inputs selection tool
+    return(
+      shiny::httpResponse(
+        302L,
+        headers = list(
+          Location = get_golem_config("inputs_selection_app") %||% "http://localhost:9080/"
+        )
+      )
+    )
+  }
+
+
+
   header <- bs4Dash::dashboardHeader(title = "NHP Model Inputs")
 
   sidebar <- bs4Dash::dashboardSidebar(
@@ -12,146 +32,137 @@ app_ui <- function(request) {
     status = "primary",
     bs4Dash::sidebarMenu(
       id = "sidebarMenu",
-      shiny::conditionalPanel(
-        condition = "input.start === 0",
-        ns = shiny::NS("home"),
-        #
-        bs4Dash::menuItem(
-          "Home",
-          tabName = "tab_home",
-          icon = shiny::icon("house")
+      #
+      bs4Dash::menuItem(
+        "Home",
+        tabName = "tab_home",
+        icon = shiny::icon("house")
+      ),
+      shiny::tags$hr(),
+      bs4Dash::sidebarHeader("Baseline Adjustments"),
+      bs4Dash::menuItem(
+        "Baseline Adjustment",
+        tabName = "tab_baseline_adjustment"
+      ),
+      bs4Dash::menuItem(
+        "Covid Adjustment",
+        tabName = "tab_covid_adjustment"
+      ),
+      shiny::tags$hr(),
+      bs4Dash::sidebarHeader("Population Changes"),
+      bs4Dash::menuItem(
+        "Population Growth",
+        tabName = "tab_population_growth"
+      ),
+      bs4Dash::menuItem(
+        "Health Status Adjustment",
+        tabName = "tab_health_status_adjustment"
+      ),
+      #
+      shiny::tags$hr(),
+      bs4Dash::sidebarHeader("Demand-supply Imbalances"),
+      bs4Dash::menuItem(
+        "Waiting List Imbalances",
+        tabName = "tab_wli"
+      ),
+      bs4Dash::menuItem(
+        "Expat/Repat",
+        tabName = "tab_er"
+      ),
+      #
+      # shiny::tags$hr(),
+      # bs4Dash::sidebarHeader("Need-supply Imbalances"),
+      # bs4Dash::menuItem(
+      #   "Inequalities",
+      #   tabName = "tab_inequalities"
+      # ),
+      #
+      shiny::tags$hr(),
+      bs4Dash::sidebarHeader("Non-demographic Changes"),
+      bs4Dash::menuItem(
+        "Non-demographic Adjustment",
+        tabName = "tab_nda"
+      ),
+      #
+      shiny::tags$hr(),
+      bs4Dash::sidebarHeader("Activity Mitigators"),
+      bs4Dash::menuItem(
+        "Summary totals",
+        tabName = "mitigators_summary"
+      ),
+      bs4Dash::menuItem(
+        "Inpatients",
+        bs4Dash::menuSubItem(
+          "Admission Avoidance",
+          tabName = "ip_am_admission_avoidance"
+        ),
+        bs4Dash::menuSubItem(
+          "Mean LoS Reduction",
+          tabName = "ip_am_mean_los_reduction"
+        ),
+        bs4Dash::menuSubItem(
+          "AEC LoS Reduction",
+          tabName = "ip_am_aec_los_reduction"
+        ),
+        bs4Dash::menuSubItem(
+          "Pre-op LoS Reduction",
+          tabName = "ip_am_preop_los_reduction"
         )
       ),
-      shiny::conditionalPanel(
-        condition = "input.start > 0",
-        ns = shiny::NS("home"),
-        #
-        shiny::tags$hr(),
-        bs4Dash::sidebarHeader("Baseline Adjustments"),
-        bs4Dash::menuItem(
-          "Baseline Adjustment",
-          tabName = "tab_baseline_adjustment"
+      bs4Dash::menuItem(
+        "Outpatients",
+        bs4Dash::menuSubItem(
+          "Consultant Referrals",
+          tabName = "op_am_c2c_referrals"
         ),
-        bs4Dash::menuItem(
-          "Covid Adjustment",
-          tabName = "tab_covid_adjustment"
+        bs4Dash::menuSubItem(
+          "Convert to Tele",
+          tabName = "op_am_convert_tele"
         ),
-        shiny::tags$hr(),
-        bs4Dash::sidebarHeader("Population Changes"),
-        bs4Dash::menuItem(
-          "Population Growth",
-          tabName = "tab_population_growth"
+        bs4Dash::menuSubItem(
+          "Followup Reduction",
+          tabName = "op_am_fup_reduction"
         ),
-        bs4Dash::menuItem(
-          "Health Status Adjustment",
-          tabName = "tab_health_status_adjustment"
+        bs4Dash::menuSubItem(
+          "GP Referred First Att.",
+          tabName = "op_gp_referred_first_attendance_reduction"
+        )
+      ),
+      bs4Dash::menuItem(
+        "A&E",
+        bs4Dash::menuSubItem(
+          "Discharged No Treatment",
+          tabName = "aae_discharged_no_treatment"
         ),
-        #
-        shiny::tags$hr(),
-        bs4Dash::sidebarHeader("Demand-supply Imbalances"),
-        bs4Dash::menuItem(
-          "Waiting List Imbalances",
-          tabName = "tab_wli"
+        bs4Dash::menuSubItem(
+          "Frequent Attenders",
+          tabName = "aae_frequent_attenders"
         ),
-        bs4Dash::menuItem(
-          "Expat/Repat",
-          tabName = "tab_er"
+        bs4Dash::menuSubItem(
+          "Left Before Seen",
+          tabName = "aae_left_before_seen"
         ),
-        #
-        # shiny::tags$hr(),
-        # bs4Dash::sidebarHeader("Need-supply Imbalances"),
-        # bs4Dash::menuItem(
-        #   "Inequalities",
-        #   tabName = "tab_inequalities"
-        # ),
-        #
-        shiny::tags$hr(),
-        bs4Dash::sidebarHeader("Non-demographic Changes"),
-        bs4Dash::menuItem(
-          "Non-demographic Adjustment",
-          tabName = "tab_nda"
-        ),
-        #
-        shiny::tags$hr(),
-        bs4Dash::sidebarHeader("Activity Mitigators"),
-        bs4Dash::menuItem(
-          "Summary totals",
-          tabName = "mitigators_summary"
-        ),
-        bs4Dash::menuItem(
-          "Inpatients",
-          bs4Dash::menuSubItem(
-            "Admission Avoidance",
-            tabName = "ip_am_admission_avoidance"
-          ),
-          bs4Dash::menuSubItem(
-            "Mean LoS Reduction",
-            tabName = "ip_am_mean_los_reduction"
-          ),
-          bs4Dash::menuSubItem(
-            "AEC LoS Reduction",
-            tabName = "ip_am_aec_los_reduction"
-          ),
-          bs4Dash::menuSubItem(
-            "Pre-op LoS Reduction",
-            tabName = "ip_am_preop_los_reduction"
-          )
-        ),
-        bs4Dash::menuItem(
-          "Outpatients",
-          bs4Dash::menuSubItem(
-            "Consultant Referrals",
-            tabName = "op_am_c2c_referrals"
-          ),
-          bs4Dash::menuSubItem(
-            "Convert to Tele",
-            tabName = "op_am_convert_tele"
-          ),
-          bs4Dash::menuSubItem(
-            "Followup Reduction",
-            tabName = "op_am_fup_reduction"
-          ),
-          bs4Dash::menuSubItem(
-            "GP Referred First Att.",
-            tabName = "op_gp_referred_first_attendance_reduction"
-          )
-        ),
-        bs4Dash::menuItem(
-          "A&E",
-          bs4Dash::menuSubItem(
-            "Discharged No Treatment",
-            tabName = "aae_discharged_no_treatment"
-          ),
-          bs4Dash::menuSubItem(
-            "Frequent Attenders",
-            tabName = "aae_frequent_attenders"
-          ),
-          bs4Dash::menuSubItem(
-            "Left Before Seen",
-            tabName = "aae_left_before_seen"
-          ),
-          bs4Dash::menuSubItem(
-            "Low Cost Discharged",
-            tabName = "aae_low_cost_discharged"
-          )
-        ),
-        #
-        shiny::tags$hr(),
-        bs4Dash::sidebarHeader("Capacity Conversion"),
-        bs4Dash::menuItem(
-          "Bed Occupancy",
-          tabName = "tab_bed_occ"
-        ),
-        #
-        shinyjs::hidden(
-          shiny::tags$div(
-            id = "run-model-container",
-            shiny::tags$hr(),
-            bs4Dash::sidebarHeader("Run Model"),
-            bs4Dash::menuItem(
-              "Run Model",
-              tabName = "tab_run_model"
-            )
+        bs4Dash::menuSubItem(
+          "Low Cost Discharged",
+          tabName = "aae_low_cost_discharged"
+        )
+      ),
+      #
+      shiny::tags$hr(),
+      bs4Dash::sidebarHeader("Capacity Conversion"),
+      bs4Dash::menuItem(
+        "Bed Occupancy",
+        tabName = "tab_bed_occ"
+      ),
+      #
+      shinyjs::hidden(
+        shiny::tags$div(
+          id = "run-model-container",
+          shiny::tags$hr(),
+          bs4Dash::sidebarHeader("Run Model"),
+          bs4Dash::menuItem(
+            "Run Model",
+            tabName = "tab_run_model"
           )
         )
       )
@@ -262,6 +273,7 @@ app_ui <- function(request) {
   shiny::tagList(
     golem_add_external_resources(),
     shinyjs::useShinyjs(),
+    shiny::conditionalPanel("false", shiny::textInput("params_file", NULL, file)),
     bs4Dash::dashboardPage(
       header,
       sidebar,

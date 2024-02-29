@@ -10,9 +10,6 @@
 mod_home_ui <- function(id) {
   ns <- shiny::NS(id)
 
-  # each of the columns is created in it's own variable
-
-  # left column contains the documentation for this module
   left_column <- col_4(
     bs4Dash::box(
       collapsible = FALSE,
@@ -22,79 +19,13 @@ mod_home_ui <- function(id) {
     )
   )
 
-  # middle column contains the inputs that the user is going to set
-  middle_column <- col_4(
+  right_column <- col_8(
     bs4Dash::box(
-      title = "Select Provider and Baseline",
+      title = "Model Options",
       collapsible = FALSE,
       width = 12,
-      shiny::selectInput(ns("cohort"), "Cohort", c("Current", "All Other Providers")),
-      shiny::selectInput(ns("dataset"), "Provider", choices = NULL, selectize = TRUE),
-      shiny::selectInput(
-        ns("start_year"),
-        "Baseline Financial Year",
-        choices = c("2019/20" = 201920)
-      ),
-      shiny::selectInput(
-        ns("end_year"),
-        "Model Financial Year",
-        choices = setNames(as.character(0:21), paste(2020:2041, 21:42, sep = "/")),
-        selected = "21"
-      )
-    ),
-    bs4Dash::box(
-      title = "Scenario",
-      collapsible = FALSE,
-      width = 12,
-      shinyjs::disabled(
-        shiny::radioButtons(
-          ns("scenario_type"),
-          NULL,
-          c(
-            "Create new from scratch",
-            "Create new from existing",
-            "Edit existing"
-          ),
-          inline = TRUE
-        )
-      ),
-      shinyjs::hidden(
-        shiny::selectInput(
-          ns("previous_scenario"),
-          "Previous Scenario",
-          NULL
-        )
-      ),
-      shiny::textInput(ns("scenario"), "Name"),
-      shiny::textOutput(ns("status")),
-      shinyjs::disabled(
-        shiny::actionButton(ns("start"), "Start")
-      )
-    ),
-    bs4Dash::box(
-      title = "Advanced Options",
-      width = 12,
-      collapsed = TRUE,
-      shiny::numericInput(ns("seed"), "Seed", sample(1:100000, 1)),
-      shiny::selectInput(ns("model_runs"), "Model Runs", choices = c(256, 512, 1024), selected = 256)
-    )
-  )
-
-  # right column contains the outputs in the home module (map and peers list)
-  right_column <- col_4(
-    bs4Dash::box(
-      title = "Map of Selected Provider and Peers",
-      width = 12,
       shinycssloaders::withSpinner(
-        leaflet::leafletOutput(ns("providers_map"), height = "730px")
-      )
-    ),
-    bs4Dash::box(
-      title = "Peers (from NHS Trust Peer Finder Tool)",
-      width = 12,
-      collapsed = TRUE,
-      shinycssloaders::withSpinner(
-        gt::gt_output(ns("peers_list"))
+        gt::gt_output(ns("model_options"))
       )
     )
   )
@@ -104,7 +35,6 @@ mod_home_ui <- function(id) {
     htmltools::h1("NHP Model Inputs"),
     shiny::fluidRow(
       left_column,
-      middle_column,
       right_column
     )
   )

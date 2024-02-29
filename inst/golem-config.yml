@@ -268,5 +268,6 @@ default:
         low_cost_discharged_child_walk-in: "A&E Low Cost Discharged Attendances (Children, Walk-in)"
 production:
   app_prod: yes
+  inputs_selection_app: /nhp/inputs
 dev:
   golem_wd: !expr here::here()
