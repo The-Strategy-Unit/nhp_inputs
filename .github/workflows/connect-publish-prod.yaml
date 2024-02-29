@@ -24,6 +24,7 @@ jobs:
           CONNECT_ENV_SET_NHP_OUTPUTS_URI: ${{ secrets.NHP_OUTPUTS_URI }}
           CONNECT_ENV_SET_AZ_STORAGE_CONTAINER: ${{ secrets.AZ_STORAGE_CONTAINER }}
           CONNECT_ENV_SET_AZ_STORAGE_EP: ${{ secrets.AZ_STORAGE_EP }}
+          CONNECT_ENV_SET_GOLEM_CONFIG_ACTIVE: "production"
         with:
           url: ${{ secrets.RSCONNECT_URL }}
           api-key: ${{ secrets.RSCONNECT_API_KEY }}
