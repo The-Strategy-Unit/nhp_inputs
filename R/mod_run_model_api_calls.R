@@ -6,7 +6,7 @@ mod_run_model_submit <- function(params, status) {
         Sys.getenv("NHP_API_URI"),
         path = c("api", "run_model"),
         query = list(
-          app_version = Sys.getenv("NHP_CONTAINER_VERSION", "dev"),
+          app_version = params$app_version,
           code = Sys.getenv("NHP_API_KEY")
         ),
         body = params,
