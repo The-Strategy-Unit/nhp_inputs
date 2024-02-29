@@ -1,0 +1,11 @@
+default:
+  app_url: "http://localhost:8080/"
+  params_data_path: ".."
+
+development:
+  app_url: "/nhp/dev/inputs/"
+  params_data_path: "/data/nhp/dev/inputs"
+
+production:
+  app_url: "/nhp/{version}/inputs/"
+  params_data_path: "/data/nhp/prod/inputs"
