@@ -16,11 +16,13 @@ jobs:
       - name: Publish Connect content
         uses: rstudio/actions/connect-publish@main
         env:
-          CONNECT_ENV_SET_NHP_INPUTS_DATA_VERSION: "dev"
-          CONNECT_ENV_SET_NHP_API_URI: ${{ secrets.NHP_API_URI }}
-          CONNECT_ENV_SET_NHP_OUTPUTS_URI: ${{ secrets.NHP_OUTPUTS_URI }}
           CONNECT_ENV_SET_AZ_STORAGE_CONTAINER: ${{ secrets.AZ_STORAGE_CONTAINER }}
           CONNECT_ENV_SET_AZ_STORAGE_EP: ${{ secrets.AZ_STORAGE_EP }}
+          CONNECT_ENV_SET_NHP_API_KEY: ${{ secrets.NHP_API_KEY }}
+          CONNECT_ENV_SET_NHP_API_URI: ${{ secrets.NHP_API_URI }}
+          CONNECT_ENV_SET_NHP_ENCRYPT_KEY: ${{ secrets.NHP_ENCRYPT_KEY }}
+          CONNECT_ENV_SET_NHP_INPUTS_DATA_VERSION: "dev"
+          CONNECT_ENV_SET_NHP_OUTPUTS_URI: ${{ secrets.NHP_OUTPUTS_URI }}
           CONNECT_ENV_SET_GOLEM_CONFIG_ACTIVE: "production"
         with:
           url: ${{ secrets.RSCONNECT_URL }}
