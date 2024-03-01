@@ -8,7 +8,7 @@ app_ui <- function(request) {
 
   f <- URLdecode(stringr::str_sub(request$QUERY_STRING, 2L))
 
-  file <- file.path(dirname(tempdir()), f)
+  file <- file.path(get_golem_config("params_data_path"), "tmp", f)
   cat("requested file:", file, "\n")
 
   # if (f == "" || !file.exists(file)) {

@@ -50,7 +50,7 @@ load_params <- function(file) {
 
 params_path <- function(user, dataset) {
   path <- file.path(
-    Sys.getenv("PARAMS_DATA_PATH", "."),
+    get_golem_config("params_data_path"),
     "params",
     user %||% ".",
     dataset
