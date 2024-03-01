@@ -72,3 +72,14 @@ params_filename <- function(user, dataset, scenario) {
 is_local <- function() {
   Sys.getenv("SHINY_PORT") == "" || !getOption("golem.app.prod", TRUE)
 }
+
+encrypt_filename <- function(filename, key_b64 = Sys.getenv("NHP_ENCRYPT_KEY")) {
+  key <- openssl::base64_decode(key_b64)
+
+  f <- charToRaw(filename)
+
+  ct <- openssl::aes_cbc_encrypt(f, key, NULL)
+  hm <- as.raw(openssl::sha256(ct, key))
+
+  openssl::base64_encode(c(hm, ct))
+}
