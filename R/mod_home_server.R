@@ -22,6 +22,9 @@ mod_home_server <- function(id, providers, filename) {
       # copy the loaded params into params
       purrr::walk(names(p), \(i) params[[i]] <- p[[i]])
 
+      # remove the temporary file
+      unlink(filename())
+
       init$destroy()
     })
 

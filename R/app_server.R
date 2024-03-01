@@ -17,9 +17,11 @@ app_server <- function(input, output, session) {
     readRDS(app_sys("app", "data", "providers.Rds"))
   })
 
-  filename <- shiny::reactive(input$params_file)
-
-  params <- mod_home_server("home", providers(), filename)
+  params <- mod_home_server(
+    "home",
+    providers(),
+    shiny::reactive(input$params_file)
+  )
 
   # we could probably drop the need for start now, kept for historical reasons
   start <- shiny::reactive({
@@ -118,8 +120,6 @@ app_server <- function(input, output, session) {
       shiny::reactiveValuesToList() |>
       mod_run_model_fix_params() |>
       jsonlite::write_json(file, pretty = TRUE, auto_unbox = TRUE)
-
-    file.copy(file, filename())
   })
 
   if (as.logical(Sys.getenv("ENABLE_AUTO_RECONNECT", FALSE))) {

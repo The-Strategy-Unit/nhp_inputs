@@ -11,17 +11,17 @@ app_ui <- function(request) {
   file <- file.path(get_golem_config("params_data_path"), "tmp", f)
   cat("requested file:", file, "\n")
 
-  # if (f == "" || !file.exists(file)) {
-  #   # redirect back to the inputs selection tool
-  #   return(
-  #     shiny::httpResponse(
-  #       302L,
-  #       headers = list(
-  #         Location = get_golem_config("inputs_selection_app") %||% "http://localhost:9080/"
-  #       )
-  #     )
-  #   )
-  # }
+  if (f == "" || !file.exists(file)) {
+    # redirect back to the inputs selection tool
+    return(
+      shiny::httpResponse(
+        302L,
+        headers = list(
+          Location = get_golem_config("inputs_selection_app") %||% "http://localhost:9080/"
+        )
+      )
+    )
+  }
 
 
 
