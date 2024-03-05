@@ -17,8 +17,19 @@ app_server <- function(input, output, session) {
     readRDS(app_sys("app", "data", "providers.Rds"))
   })
 
-  params <- start <- NULL
-  c(params, start) %<-% mod_home_server("home", providers())
+  params <- mod_home_server(
+    "home",
+    providers(),
+    shiny::reactive(input$params_file)
+  )
+
+  # we could probably drop the need for start now, kept for historical reasons
+  start <- shiny::reactive({
+    shiny::req(length(params) > 0)
+    shiny::req(params$dataset)
+    shiny::req(params$scenario)
+    1
+  })
 
   # load all other modules once the home module has finished loading
   init <- shiny::observe({
@@ -83,18 +94,11 @@ app_server <- function(input, output, session) {
 
     # enable the run_model page for certain users/running locally
 
-    is_power_user <- any(c("nhp_devs", "nhp_power_users") %in% session$groups)
-    if (is_local() || is_power_user) {
+    can_run_model <- any(c("nhp_devs", "nhp_power_users", "nhp_run_model") %in% session$groups)
+    if (is_local() || can_run_model) {
       shinyjs::show("run-model-container")
       mod_run_model_server("run_model", params)
     }
-
-    # hacky way of achieving switch from the home tab to the app itself
-    # maybe add some timeout to this?
-    shinyjs::removeClass("tab-tab_home", "active")
-    shinyjs::removeClass("shiny-tab-tab_home", "active")
-    shinyjs::addClass("tab-tab_baseline_adjustment", "active")
-    shinyjs::addClass("shiny-tab-tab_baseline_adjustment", "active")
 
     init$destroy()
   }) |>

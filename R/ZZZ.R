@@ -50,7 +50,7 @@ load_params <- function(file) {
 
 params_path <- function(user, dataset) {
   path <- file.path(
-    Sys.getenv("PARAMS_DATA_PATH", "."),
+    get_golem_config("params_data_path"),
     "params",
     user %||% ".",
     dataset
@@ -71,4 +71,15 @@ params_filename <- function(user, dataset, scenario) {
 # check to see whether the app is running locally or in production
 is_local <- function() {
   Sys.getenv("SHINY_PORT") == "" || !getOption("golem.app.prod", TRUE)
+}
+
+encrypt_filename <- function(filename, key_b64 = Sys.getenv("NHP_ENCRYPT_KEY")) {
+  key <- openssl::base64_decode(key_b64)
+
+  f <- charToRaw(filename)
+
+  ct <- openssl::aes_cbc_encrypt(f, key, NULL)
+  hm <- as.raw(openssl::sha256(ct, key))
+
+  openssl::base64_encode(c(hm, ct))
 }

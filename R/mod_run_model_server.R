@@ -54,11 +54,17 @@ mod_run_model_server <- function(id, params) {
       p$create_datetime <- format(Sys.time(), "%Y%m%d_%H%M%S")
 
       # generate the results url
-      ds <- p$dataset
-      sc <- utils::URLencode(p$scenario)
-      cd <- p$create_datetime
-      uri <- Sys.getenv("NHP_OUTPUTS_URI")
-      results_url(glue::glue("{uri}#/{ds}/{sc}/{cd}"))
+      version <- p$app_version
+      f <- encrypt_filename( # nolint
+        file.path(
+          version,
+          p$dataset,
+          paste0(p$id, ".json.gz"),
+          fsep = "/"
+        )
+      )
+
+      results_url(glue::glue(Sys.getenv("NHP_OUTPUTS_URI"), "?{f}"))
 
       # submit the model run
       mod_run_model_submit(p, status)

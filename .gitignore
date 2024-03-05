@@ -11,3 +11,6 @@ _targets/
 rsconnect/
 
 params/
+
+# worktrees
+inputs_selection_app/

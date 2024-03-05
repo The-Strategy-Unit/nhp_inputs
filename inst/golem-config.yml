@@ -2,6 +2,7 @@ default:
   golem_name: inputs
   golem_version: 0.0.0.9000
   app_prod: no
+  params_data_path: ".."
   population_projections:
     principal_proj: "Principal projection"
     var_proj_10_year_migration: "10 year migration trends"
@@ -268,5 +269,7 @@ default:
         low_cost_discharged_child_walk-in: "A&E Low Cost Discharged Attendances (Children, Walk-in)"
 production:
   app_prod: yes
+  inputs_selection_app: /nhp/inputs
+  params_data_path: "/data/nhp/prod/inputs"
 dev:
   golem_wd: !expr here::here()
