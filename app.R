@@ -142,7 +142,7 @@ ui_body <- function() {
       shiny::numericInput("seed", "Seed", sample(1:100000, 1)),
       shiny::selectInput("model_runs", "Model Runs", choices = c(256, 512, 1024), selected = 256),
       shinyjs::disabled(
-        shiny::selectInput("app_version", "Model Version", choices = c("v1.0", "v0.6", "dev"))
+        shiny::selectInput("app_version", "Model Version", choices = c("v1.0", "dev"))
       )
     )
   )
