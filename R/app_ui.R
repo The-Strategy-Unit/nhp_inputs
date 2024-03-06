@@ -276,6 +276,8 @@ app_ui <- function(request) {
     shinyjs::useShinyjs(),
     shiny::conditionalPanel("false", shiny::textInput("params_file", NULL, file)),
     bs4Dash::dashboardPage(
+      help = NULL,
+      dark = NULL,
       header,
       sidebar,
       body
