@@ -57,9 +57,10 @@ mod_run_model_server <- function(id, params) {
       version <- p$app_version
       f <- encrypt_filename( # nolint
         file.path(
+          "prod",
           version,
           p$dataset,
-          paste0(p$id, ".json.gz"),
+          glue::glue("{p$scenario}-{p$create_datetime}.json.gz"),
           fsep = "/"
         )
       )
