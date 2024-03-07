@@ -7,13 +7,20 @@ jobs:
   connect-publish-prod:
     name: "Connect Publish: Production"
     runs-on: ubuntu-latest
+    env:
+      # these get set later
+      VERSION: ""
+      INPUTS_DATA_VERSION: ""
+
     steps:
       - uses: actions/checkout@v3
 
       - name: Get version
         run: |
           VERSION=`echo ${{ github.ref_name }} | awk 'BEGIN { FS="."; } { print ""$1"-"$2; }'`
+          INPUTS_DATA_VERSION=`echo $VERSION | sed 's/-/./'`
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "INPUTS_DATA_VERSION=$INPUTS_DATA_VERSION" >> $GITHUB_ENV
 
       - name: Update manifest.json
         run: node update_manifest.js
