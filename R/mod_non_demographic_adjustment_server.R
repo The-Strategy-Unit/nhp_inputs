@@ -2,6 +2,9 @@
 #'
 #' @noRd
 mod_non_demographic_adjustment_server <- function(id, params) {
+
+  mod_reasons_server(shiny::NS(id, "reasons"), params, "non-demographic_adjustment")
+
   shiny::moduleServer(id, function(input, output, session) {
 
     # reactives ----
@@ -19,9 +22,10 @@ mod_non_demographic_adjustment_server <- function(id, params) {
 
     # renders ----
 
-    # shows the selected values for the non-demographic adjustment
     output$non_demographic_adjustment_table <- gt::render_gt({
       mod_non_demographic_adjustment_table(non_demographic_adjustment())
     })
+
   })
+
 }

@@ -22,6 +22,7 @@ mod_non_demographic_adjustment_ui <- function(id) {
         ),
         bs4Dash::box(
           title = "Non-demographic Variant",
+          md_file_to_html("app", "text", "non_demographic_adjustment_variants.md"),
           width = 12,
           shiny::selectInput(
             inputId = ns("ndg_variant"),
@@ -32,7 +33,8 @@ mod_non_demographic_adjustment_ui <- function(id) {
             ),
             selected = "variant_1"
           )
-        )
+        ),
+        mod_reasons_ui(ns("reasons"))
       ),
       bs4Dash::box(
         collapsible = FALSE,
