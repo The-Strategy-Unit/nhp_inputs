@@ -12,11 +12,27 @@ mod_non_demographic_adjustment_ui <- function(id) {
   shiny::tagList(
     shiny::tags$h1("Non-demographic Adjustment"),
     shiny::fluidRow(
-      bs4Dash::box(
-        collapsible = FALSE,
-        headerBorder = FALSE,
+      bs4Dash::column(
         width = 4,
-        md_file_to_html("app", "text", "non_demographic_adjustment.md")
+        bs4Dash::box(
+          collapsible = FALSE,
+          headerBorder = FALSE,
+          width = 12,
+          md_file_to_html("app", "text", "non_demographic_adjustment.md")
+        ),
+        bs4Dash::box(
+          title = "Non-demographic Variant",
+          width = 12,
+          shiny::selectInput(
+            inputId = ns("ndg_variant"),
+            label = "Selection",
+            choices = purrr::set_names(
+              c("variant_1", "variant_2"),
+              snakecase::to_title_case
+            ),
+            selected = "variant_1"
+          )
+        )
       ),
       bs4Dash::box(
         collapsible = FALSE,

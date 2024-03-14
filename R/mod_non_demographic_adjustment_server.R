@@ -3,33 +3,16 @@
 #' @noRd
 mod_non_demographic_adjustment_server <- function(id, params) {
   shiny::moduleServer(id, function(input, output, session) {
+
     # reactives ----
 
-    # load the non-demographic adjustment values
     non_demographic_adjustment <- shiny::reactive({
-      return(
-        list(
-          "aae" = list(
-            "ambulance" = c(1.0117592, 1.014443),
-            "walk-in" = c(1.0117592, 1.014443)
-          ),
-          "ip" = list(
-            "elective" = c(1.0050266, 1.007375),
-            "maternity" = c(1, 1),
-            "non-elective" = c(1.0187719, 1.024636)
-          ),
-          "op" = list(
-            "first" = c(1.0222222, 1.027585),
-            "followup" = c(1.0222222, 1.027585),
-            "procedure" = c(1.0222222, 1.027585)
-          )
-        )
-      )
+      ndg_variants <- readr::read_rds(app_sys("app", "data", "ndg_variants.rds"))
+      ndg_variants[[input$ndg_variant]]
     })
 
     # observers ----
 
-    # the non-demographic adjustment values are fixed, load them straight into the parameters
     shiny::observe({
       params[["non-demographic_adjustment"]] <- non_demographic_adjustment()
     })

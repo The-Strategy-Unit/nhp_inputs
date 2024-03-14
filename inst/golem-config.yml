@@ -2,7 +2,7 @@ default:
   golem_name: inputs
   golem_version: 0.0.0.9000
   app_prod: no
-  params_data_path: ".."
+  params_data_path: "."
   population_projections:
     principal_proj: "Principal projection"
     var_proj_10_year_migration: "10 year migration trends"
