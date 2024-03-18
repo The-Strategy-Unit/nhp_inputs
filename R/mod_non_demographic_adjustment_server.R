@@ -17,7 +17,6 @@ mod_non_demographic_adjustment_server <- function(id, params) {
 
     # observers ----
 
-    # Show variant dropdown and rationale boxes
     shiny::observe({
       can_select_variant <-
         is_local() || any(c("nhp_devs", "nhp_run_model") %in% session$groups)
@@ -31,31 +30,17 @@ mod_non_demographic_adjustment_server <- function(id, params) {
 
     init <- shiny::observe({
 
-      p <- shiny::isolate({
+      p_ndg <- shiny::isolate({
         params[["non-demographic_adjustment"]]
       })
 
-      current_ndg_values <- unlist(p)
+      detected_ndg_variant <- detect_non_demographic_variant(p_ndg, ndg_variants)
 
-      if (!is.null(current_ndg_values)) {
-
-        current_ndg_values <- current_ndg_values |> round(4)
-        ndg_variant_sets <- purrr::map(ndg_variants, \(x) round(unlist(x), 4))
-
-        current_ndg_variant <- purrr::map(
-          ndg_variant_sets,
-          \(x) all(current_ndg_values == x)
-        ) |>
-          purrr::keep(isTRUE) |>
-          names()  # e.g. "variant_2"
-
-        shiny::updateSelectInput(
-          session,
-          "ndg_variant",
-          selected = current_ndg_variant
-        )
-
-      }
+      shiny::updateSelectInput(
+        session,
+        "ndg_variant",
+        selected = detected_ndg_variant
+      )
 
       init$destroy()
     },
@@ -67,18 +52,6 @@ mod_non_demographic_adjustment_server <- function(id, params) {
     output$non_demographic_adjustment_table <- gt::render_gt({
       mod_non_demographic_adjustment_table(non_demographic_adjustment())
     })
-
-    # output$ndg_variant_select <- shiny::renderUI({
-    #   shiny::selectInput(
-    #     inputId = ns("ndg_variant"),
-    #     label = "Selection",
-    #     choices = purrr::set_names(
-    #       c("variant_1", "variant_2"),
-    #       snakecase::to_title_case
-    #     ),
-    #     selected = current_ndg_variant
-    #   )
-    # })
 
   })
 
