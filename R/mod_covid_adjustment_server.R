@@ -32,7 +32,8 @@ mod_covid_adjustment_server <- function(id, params) {
 
       glue::glue("{ds}/covid_adjustment.rds") |>
         load_rds_from_adls() |>
-        purrr::map_depth(2, `*`, 1 + c(-1, 1) * 0.025 / 12) # 5% either side, but adjusted to be for 1 month
+        purrr::map_depth(2, `*`, 1 + c(-1, 1) * 0.025 / 12) |>  # 5% either side, but adjusted to be for 1 month
+        purrr::map_depth(2, janitor::round_half_up, 4)  # 4dp used for model, so present 4dp too
     }) |>
       shiny::bindCache(params$dataset, params$start_year)
 
