@@ -6,7 +6,7 @@
 app_ui <- function(request) {
   # handle loading the provided filename
 
-  f <- URLdecode(stringr::str_sub(request$QUERY_STRING, 2L))
+  f <- utils::URLdecode(stringr::str_sub(request$QUERY_STRING, 2L))
 
   file <- file.path(get_golem_config("params_data_path"), "tmp", f)
   cat("requested file:", file, "\n")
