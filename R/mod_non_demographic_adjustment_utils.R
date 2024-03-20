@@ -66,8 +66,7 @@ detect_non_demographic_variant <- function(p_ndg, ndg_variants) {
 
   if (!is.null(current_ndg_values)) {
 
-    current_ndg_values <- current_ndg_values |> round(4)
-    ndg_variant_sets <- purrr::map(ndg_variants, \(x) unlist(x) |> round(4))
+    ndg_variant_sets <- purrr::map(ndg_variants, unlist)
 
     detected_ndg_variant <- purrr::map(
       ndg_variant_sets,
