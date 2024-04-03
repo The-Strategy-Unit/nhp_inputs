@@ -8,4 +8,4 @@ files <- c(
 
 files <- files[!files == "deploy.R"]
 
-rsconnect::deployApp(appFiles = files)
+rsconnect::deployApp(appId = 215, appFiles = files)
