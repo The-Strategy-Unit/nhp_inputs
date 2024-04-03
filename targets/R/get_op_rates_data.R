@@ -156,42 +156,33 @@ get_op_procedures_data <- function(provider_successors_last_updated) {
       .data$opcode
     )
 
-  list(
-    tbl_outpatients |>
-      dplyr::filter(.data$is_tele_appointment == 0) |>
-      dplyr::mutate(is_first = 1 - .data$is_first) |>
-      dplyr::summarise(
-        dplyr::across(
-          c("is_first", "is_cons_cons_ref", "is_gp_ref"),
-          \(.x) sum(.x, na.rm = TRUE)
-        ),
-        .groups = "drop_last"
-      ) |>
-      tidyr::pivot_longer(c("is_first", "is_cons_cons_ref", "is_gp_ref"), values_to = "n") |>
-      dplyr::group_by(.data$name, .add = TRUE) |>
-      dplyr::filter(.data$n > 0) |>
-      dplyr::mutate(p = .data$n * 1.0 / sum(.data$n, na.rm = TRUE)),
-    # need to handle tele appointments separately
-    tbl_outpatients |>
-      dplyr::filter(.data$is_tele_appointment == 1) |>
-      dplyr::summarise(
-        name = "is_tele_appointment",
-        n = dplyr::n(),
-        .groups = "drop_last"
-      ) |>
-      dplyr::filter(.data$n > 0) |>
-      dplyr::mutate(p = .data$n * 1.0 / sum(.data$n, na.rm = TRUE))
-  ) |>
-    purrr::map_dfr(\(.x) {
-      .x |>
-        dbplyr::window_order(dplyr::desc(.data$n)) |>
-        dplyr::filter(
-          dplyr::row_number() <= 6,
-          .data$n >= 5
-        ) |>
-        dplyr::ungroup() |>
-        dplyr::collect()
-    }) |>
+  tbl_outpatients |>
+    dplyr::filter(.data$is_tele_appointment == 0) |>
+    dplyr::mutate(
+      is_first = 1 - .data$is_first,
+      is_tele_appointment = 1
+    ) |>
+    dplyr::summarise(
+      dplyr::across(
+        strategies$name,
+        \(.x) sum(.x, na.rm = TRUE)
+      ),
+      .groups = "drop_last"
+    ) |>
+    tidyr::pivot_longer(
+      strategies$name,
+      values_to = "n"
+    ) |>
+    dplyr::group_by(.data$name, .add = TRUE) |>
+    dplyr::filter(.data$n > 0) |>
+    dplyr::mutate(p = .data$n * 1.0 / sum(.data$n, na.rm = TRUE)) |>
+    dbplyr::window_order(dplyr::desc(.data$n)) |>
+    dplyr::filter(
+      dplyr::row_number() <= 6,
+      .data$n >= 5
+    ) |>
+    dplyr::ungroup() |>
+    dplyr::collect() |>
     janitor::clean_names() |>
     dplyr::rename(procode = "procode3") |>
     dplyr::mutate(
@@ -222,23 +213,14 @@ get_op_age_sex_data <- function(op_data) {
     "is_gp_ref", "gp_referred_first_attendance_reduction"
   )
 
-  dplyr::bind_rows(
-    op_data |>
-      dplyr::filter(.data$is_tele_appointment == 0) |>
-      dplyr::select(-"n") |>
-      tidyr::pivot_longer(c("is_first", "is_cons_cons_ref", "is_gp_ref"), values_to = "n"),
-    op_data |>
-      dplyr::filter(.data$is_tele_appointment == 1) |>
-      dplyr::count(
-        .data$fyear,
-        .data$procode3,
-        .data$age_group,
-        .data$sex,
-        .data$subgroup,
-        wt = .data$n
-      ) |>
-      dplyr::mutate(name = "is_tele_appointment")
-  ) |>
+  op_data |>
+    dplyr::filter(.data$is_tele_appointment == 0) |>
+    dplyr::select(-"is_tele_appointment") |>
+    dplyr::rename("is_tele_appointment" = "n") |>
+    tidyr::pivot_longer(
+      tidyselect::starts_with("is_"),
+      values_to = "n"
+    ) |>
     dplyr::inner_join(strategies, by = "name") |>
     dplyr::arrange(.data$age_group) |>
     dplyr::transmute(
@@ -249,7 +231,8 @@ get_op_age_sex_data <- function(op_data) {
       .data$sex,
       .data$n
     ) |>
-    dplyr::arrange(.data$fyear, .data$procode, .data$strategy, .data$age_group, .data$sex)
+    dplyr::arrange(.data$fyear, .data$procode, .data$strategy, .data$age_group, .data$sex) |>
+    dplyr::filter(.data[["n"]] > 0)
 }
 
 get_op_convert_to_tele_data <- function(op_data, peers) {
