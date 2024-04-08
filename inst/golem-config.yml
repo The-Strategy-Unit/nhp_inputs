@@ -77,6 +77,8 @@ default:
         raid_ae: "Mental Health Admissions via Emergency Department"
         readmission_within_28_days: "Emergency Readmissions Within 28 Days"
         smoking: "Smoking Related Admissions"
+        virtual_wards_ari: "Virtual Wards (Acute Respiratory Infection)"
+        virtual_wards_heart_failure: "Virtual Wards (Heart Failure)"
         zero_los_no_procedure_adult: "Admission With No Overnight Stay and No Procedure (Adults)"
         zero_los_no_procedure_child: "Admission With No Overnight Stay and No Procedure (Children)"
     mitigators_mean_los_reduction:
