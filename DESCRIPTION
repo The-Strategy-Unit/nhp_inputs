@@ -1,6 +1,6 @@
 Package: inputs
 Title: NHP Model Inputs
-Version: 0.2.2
+Version: 1.0.1
 Authors@R: person('Tom', 'Jemmett', email = 'thomas.jemmett@nhs.net', role = c('cre', 'aut'))
 Description: A shiny app for getting model input parameters.
 License: MIT + file LICENSE
