@@ -35,11 +35,11 @@ jobs:
 
       - uses: r-lib/actions/setup-renv@v2
         with:
-          profile: '"prod"'
+          profile: '"dev"'
 
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
           error-on: '"error"'
-        env: 
+        env:
           _R_CHECK_EXCESSIVE_IMPORTS_: 0
