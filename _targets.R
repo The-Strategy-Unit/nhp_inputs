@@ -73,7 +73,7 @@ list(
   tar_target(ccg_to_icb_lu, get_ccg_to_icb_lu(ods_successors, icb_lu_path)),
   tar_target(ccg_to_icb_last_updated, upload_ccg_to_icb_lu(ccg_to_icb_lu)),
   # ip data
-  tar_target(strategies_last_updated, Sys.Date()), # use tar_invalidate(strategies_last_updated)
+  tar_target(strategies_last_updated, Sys.time()), # use tar_invalidate(strategies_last_updated)
   tar_target(strategies, get_strategies(strategies_last_updated)),
   tar_target(ip_age_sex_data, get_ip_age_sex_data(strategies_last_updated, provider_successors_last_updated)),
   tar_target(ip_diag_data, get_ip_diag_data(strategies_last_updated, provider_successors_last_updated)),

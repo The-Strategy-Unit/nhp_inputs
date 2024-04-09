@@ -85,7 +85,9 @@ get_mean_los_data <- function(ip_los_data, peers) {
     "general_los_reduction_elective",
     "general_los_reduction_emergency",
     "raid_ip",
-    "stroke_early_supported_discharge"
+    "stroke_early_supported_discharge",
+    "virtual_wards_activity_avoidance_ari",
+    "virtual_wards_activity_avoidance_heart_failure"
   )
 
   ip_los_data |>
