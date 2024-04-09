@@ -5,6 +5,7 @@
 .DS_Store
 
 _targets/
+_targets.yaml
 
 .Renviron
 
