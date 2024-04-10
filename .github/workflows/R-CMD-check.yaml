@@ -34,8 +34,6 @@ jobs:
           use-public-rspm: true
 
       - uses: r-lib/actions/setup-renv@v2
-        with:
-          profile: '"dev"'
 
       - uses: r-lib/actions/check-r-package@v2
         with:
