@@ -61,7 +61,7 @@ Suggests:
     targets,
     usethis,
     vscDebugger,
-    watchr (>= 0.0.0.9000)
+    watchr (>= 0.0.0.9000),
     withr
 Config/testthat/edition: 3
 Language: en-US
