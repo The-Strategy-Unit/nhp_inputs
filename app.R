@@ -467,7 +467,7 @@ server <- function(input, output, session) {
   NULL
 }
 
-app <- shiny::shinyApp(
+shiny::shinyApp(
   shiny::tagList(
     shiny::tags$head(
       shiny::tags$title("NHP: Inputs Selection")
@@ -475,10 +475,5 @@ app <- shiny::shinyApp(
     shinyjs::useShinyjs(),
     ui
   ),
-  server,
-  options = list(port = 9080)
+  server
 )
-
-if (interactive()) {
-  print(app)
-}
