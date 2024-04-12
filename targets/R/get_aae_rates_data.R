@@ -67,6 +67,75 @@ get_aae_data <- function(provider_successors_last_updated) {
     )
 }
 
+get_aae_data_with_ecds <- function(aae_data_raw) {
+  df_201920 <- fs::dir_ls("../nhp_model/data/2019/", glob = "*/aae.parquet", recurse = TRUE) |>
+    as.character() |>
+    purrr::set_names(\(.x) stringr::str_extract(.x, "\\w*(?=/aae.parquet)")) |>
+    purrr::map(arrow::read_parquet) |>
+    purrr::discard(\(.x) nrow(.x) == 0) |>
+    dplyr::bind_rows(.id = "procode3") |>
+    dplyr::mutate(procode3 = "RL4") |>
+    dplyr::mutate(
+      is_adult = .data$age >= 18
+    ) |>
+    dplyr::mutate(
+      subgroup = paste(
+        ifelse(.data$is_adult, "adult", "child"),
+        ifelse(.data$is_ambulance, "ambulance", "walk-in"),
+        sep = "_"
+      )
+    ) |>
+    dplyr::select(-"is_adult", -"is_ambulance") |>
+    dplyr::rename(
+      "low_cost_discharged" = "is_low_cost_referred_or_discharged",
+      "left_before_seen" = "is_left_before_treatment",
+      "frequent_attenders" = "is_frequent_attender",
+      "discharged_no_treatment" = "is_discharged_no_treatment"
+    ) |>
+    tidyr::pivot_longer(
+      c(
+        "low_cost_discharged",
+        "left_before_seen",
+        "frequent_attenders",
+        "discharged_no_treatment"
+      )
+    ) |>
+    dplyr::group_by(
+      fyear = 201920,
+      .data[["procode3"]],
+      age_group = cut_age(.data[["age"]]),
+      dplyr::across("sex", as.character),
+      .data[["subgroup"]],
+      .data[["name"]],
+      .data[["value"]]
+    ) |>
+    dplyr::summarise(
+      dplyr::across("arrivals", sum),
+      .groups = "drop_last"
+    ) |>
+    dplyr::summarise(
+      value = sum(.data[["arrivals"]] * .data[["value"]]),
+      n = sum(.data[["arrivals"]]),
+      .groups = "drop"
+    ) |>
+    dplyr::arrange(.data[["age_group"]]) |>
+    dplyr::transmute(
+      .data[["fyear"]],
+      .data[["procode3"]],
+      dplyr::across("age_group", forcats::fct_inorder),
+      .data[["sex"]],
+      strategy = glue::glue("{.data[['name']]}_{.data[['subgroup']]}"),
+      .data[["value"]],
+      .data[["n"]]
+    )
+
+  dplyr::bind_rows(
+    aae_data_raw |>
+      dplyr::filter(.data[["fyear"]] != 201920),
+    df_201920
+  )
+}
+
 get_aae_age_sex_data <- function(aae_data) {
   aae_data |>
     dplyr::select(-"n") |>
