@@ -19,6 +19,15 @@ get_provider_successors <- function(ods_successors, list_providers) {
       by = "old_code"
     )
 
+  missing_rows <- dplyr::anti_join(
+    successors,
+    successors,
+    by = dplyr::join_by("new_code" == "old_code")
+  ) |>
+    dplyr::distinct(old_code = .data[["new_code"]], .data[["new_code"]])
+
+  successors <- dplyr::bind_rows(successors, missing_rows)
+
   stopifnot(
     "non-unique mappings in successors file" = successors |>
       dplyr::group_by(.data$old_code) |>
