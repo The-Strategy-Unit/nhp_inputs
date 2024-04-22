@@ -56,8 +56,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       purrr::set_names(
         available_subset,
         mitigator_codes_lkup[available_subset]  # e.g. 'IP-EF-017: Enhanced Recovery (Hip)'
-      ) |>
-        sort()
+      )
 
     })
 

@@ -18,7 +18,7 @@ app_server <- function(input, output, session) {
     lkup <- readRDS(app_sys("app", "data", "mitigator-codes.Rds"))
 
     purrr::set_names(
-      paste0(lkup[["mitigator_code"]], ": ", lkup[["strategy_name"]]),
+      paste0(lkup[["strategy_name"]], " (", lkup[["mitigator_code"]], ")"),
       lkup[["strategy"]]
     )
 
