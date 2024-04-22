@@ -20,7 +20,7 @@ mod_mitigators_summary_server <- function(id, provider_data, params) {
           by = dplyr::join_by("strategy", "strategy_name")
         ) |>
         dplyr::mutate(
-          strategy_name = glue::glue("{mitigator_code}: {strategy_name}")
+          strategy_name = glue::glue("{strategy_name} ({mitigator_code})")
         ) |>
         dplyr::select(-"mitigator_code")
 
