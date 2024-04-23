@@ -6,7 +6,8 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
                                   provider_data,
                                   available_strategies,
                                   diagnoses_lkup,
-                                  procedures_lkup) {
+                                  procedures_lkup,
+                                  mitigator_codes_lkup) {
   selected_time_profile <- update_time_profile <- NULL
   c(selected_time_profile, update_time_profile) %<-% mod_time_profile_server(
     shiny::NS(id, "time_profile"),
@@ -52,7 +53,11 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       strats_subset <- config$strategy_subset
       available_subset <- intersect(names(strats_subset), available_strategies())
 
-      purrr::set_names(available_subset, strats_subset[available_subset])
+      purrr::set_names(
+        available_subset,
+        mitigator_codes_lkup[available_subset]  # e.g. 'IP-EF-017: Enhanced Recovery (Hip)'
+      )
+
     })
 
     get_default <- function(rate) {

@@ -6,11 +6,23 @@ mod_mitigators_summary_server <- function(id, provider_data, params) {
     mitigators_summary <- shiny::reactive({
       year <- as.character(shiny::req(params$start_year))
 
+      strategy_codes <- app_sys("app", "data", "mitigator-codes.Rds") |>
+        readr::read_rds() |>
+        dplyr::select("strategy", "strategy_name", "mitigator_code")
+
       strategy_names <- get_golem_config("mitigators_config") |>
         purrr::map("strategy_subset") |>
         purrr::flatten() |>
         tibble::enframe("strategy", "strategy_name") |>
-        tidyr::unnest("strategy_name")
+        tidyr::unnest("strategy_name") |>
+        dplyr::left_join(
+          strategy_codes,
+          by = dplyr::join_by("strategy", "strategy_name")
+        ) |>
+        dplyr::mutate(
+          strategy_name = glue::glue("{strategy_name} ({mitigator_code})")
+        ) |>
+        dplyr::select(-"mitigator_code")
 
       provider_data() |>
         purrr::map("age_sex") |>
