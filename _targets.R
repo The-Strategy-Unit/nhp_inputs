@@ -72,6 +72,9 @@ list(
   tar_target(icb_boundaries, get_icb_boundaries()),
   tar_target(ccg_to_icb_lu, get_ccg_to_icb_lu(ods_successors, icb_lu_path)),
   tar_target(ccg_to_icb_last_updated, upload_ccg_to_icb_lu(ccg_to_icb_lu)),
+  # day procedures table
+  tar_target(day_procedures_counts, get_day_procedures_counts()),
+  tar_target(day_procedures_table, generate_day_procedures_table(day_procedures_counts, 0.001)),
   # ip data
   tar_target(strategies_last_updated, Sys.time()), # use tar_invalidate(strategies_last_updated)
   tar_target(strategies, get_strategies(strategies_last_updated)),
@@ -83,13 +86,6 @@ list(
     ip_wli_data,
     get_ip_wli_data(
       strategies_last_updated,
-      provider_successors_last_updated,
-      rtt_specialties
-    )
-  ),
-  tar_target(
-    ip_baseline_data,
-    get_ip_baseline_data(
       provider_successors_last_updated,
       rtt_specialties
     )
@@ -131,13 +127,6 @@ list(
     )
   ),
   tar_target(
-    op_baseline_data,
-    get_op_baseline_data(
-      provider_successors_last_updated,
-      rtt_specialties
-    )
-  ),
-  tar_target(
     expat_op_data,
     get_expat_op_data(
       rtt_specialties,
@@ -162,15 +151,10 @@ list(
     )
   ),
   # aae data
-  tar_target(aae_data, get_aae_data(provider_successors_last_updated)),
+  tar_target(aae_data_raw, get_aae_data(provider_successors_last_updated)),
+  tar_target(aae_data, get_aae_data_with_ecds(aae_data_raw)),
   tar_target(aae_diag_data, get_aae_diag_data(provider_successors_last_updated)),
   tar_target(aae_procedures_data, get_aae_procedures_data(provider_successors_last_updated)),
-  tar_target(
-    aae_baseline_data,
-    get_aae_baseline_data(
-      provider_successors_last_updated
-    )
-  ),
   tar_target(aae_age_sex_data, get_aae_age_sex_data(aae_data)),
   tar_target(
     expat_aae_data,
@@ -198,7 +182,7 @@ list(
   tar_target(mean_los_data, get_mean_los_data(ip_los_data, lkp_peers)),
   tar_target(zero_los_data, get_zero_los_data(ip_los_data, lkp_peers)),
   tar_target(preop_los_data, get_preop_los_data(ip_los_data, lkp_peers)),
-  tar_target(bads_data, get_bads_data(ip_los_data, lkp_peers)),
+  tar_target(day_procedures_data, get_day_procedures_data(ip_los_data, lkp_peers)),
   tar_target(op_convert_to_tele_data, get_op_convert_to_tele_data(op_data, lkp_peers)),
   tar_target(op_gp_first, get_op_gp_first(op_data, lkp_peers)),
   tar_target(op_consultant_to_consultant_reduction, get_op_consultant_to_consultant_reduction(op_data, lkp_peers)),
@@ -249,15 +233,10 @@ list(
     wli_data,
     get_wli_data(ip_wli_data, op_wli_data, waiting_list_avg_change_data)
   ),
-  # baseline data
+  # baseline data (depends upon nhp_model targets being up to date)
   tar_target(
     baseline_data,
-    get_baseline_data(
-      all_providers,
-      ip = ip_baseline_data,
-      op = op_baseline_data,
-      aae = aae_baseline_data
-    )
+    get_baseline_data(all_providers)
   ),
   # save data
   tar_target(
@@ -321,7 +300,7 @@ list(
       mean_los_data,
       zero_los_data,
       preop_los_data,
-      bads_data,
+      day_procedures_data,
       op_convert_to_tele_data,
       op_gp_first,
       op_consultant_to_consultant_reduction,

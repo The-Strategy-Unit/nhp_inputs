@@ -143,7 +143,7 @@ default:
         pre-op_days:
           pre-op_los_1-day: 1
           pre-op_los_2-day: 2
-    mitigators_bads:
+    mitigators_day_procedures_daycase:
       activity_type: ip
       mitigators_type: efficiencies
       y_axis_title: "% of Procedures Performed in Non-Target Setting"
@@ -153,12 +153,24 @@ default:
       slider_scale: 100
       slider_step: 0.1
       strategy_subset:
-        bads_daycase_occasional: "Elective surgery - recommended occasional day case"
-        bads_daycase: "Elective surgery - recommended mainly day case"
-        bads_outpatients: "Elective surgery - recommended mainly outpatient procedure"
-        bads_outpatients_or_daycase: "Elective surgery - recommended mainly outpatient procedure or day case"
+        day_procedures_occasionally_dc: "Day Procedures: Occasionally performed as a Daycase"
+        day_procedures_usually_dc: "Day Procedures: Usually performed as a Daycase"
       params_items:
-        type: "bads"
+        type: "day_procedures_daycase"
+    mitigators_day_procedures_outpatients:
+      activity_type: ip
+      mitigators_type: efficiencies
+      y_axis_title: "% of Procedures Performed in Non-Target Setting"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::percent_format()
+      funnel_x_title: "Number of Procedures Performed"
+      slider_scale: 100
+      slider_step: 0.1
+      strategy_subset:
+        day_procedures_occasionally_op: "Day Procedures: Occasionally performed in Outpatients"
+        day_procedures_usually_op: "Day Procedures: Usually performed in Outpatients"
+      params_items:
+        type: "day_procedures_outpatients"
     mitigators_op_c2c_reduction:
       activity_type: op
       mitigators_type: activity_avoidance

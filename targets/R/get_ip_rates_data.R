@@ -199,28 +199,71 @@ get_preop_los_data <- function(ip_los_data, peers) {
     add_mean_rows()
 }
 
-get_bads_data <- function(ip_los_data, peers) {
+get_day_procedures_data <- function(ip_los_data, peers) {
+  force(ip_los_data) # purely to take a dependency in targets
+
   con <- get_con("HESData")
 
-  dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "bads_admission_type_breakdowns")) |>
+  tb_dp <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling_reference", "day_procedure_opcs_codes"))
+
+  tb_ipp <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients_procedures")) |>
+    dplyr::filter(.data[["OPORDER"]] == 1) |>
+    dplyr::select(-"FYEAR")
+
+  tb_ip <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients")) |>
+    dplyr::inner_join(tb_ipp, by = dplyr::join_by("EPIKEY")) |>
+    dplyr::inner_join(tb_dp, by = dplyr::join_by("OPCODE" == "procedure_code")) |>
+    dplyr::filter(
+      .data[["ADMIMETH"]] %LIKE% "1%",
+      .data[["CLASSPAT"]] %in% c("1", "2")
+    )
+
+  tb_opp <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "outpatients_procedures")) |>
+    dplyr::filter(.data[["oporder"]] == 1)
+
+  tb_op <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "outpatients")) |>
+    dplyr::inner_join(tb_opp, by = dplyr::join_by("attendkey")) |>
+    dplyr::inner_join(tb_dp, by = dplyr::join_by("opcode" == "procedure_code"))
+
+
+  ip <- tb_ip |>
+    dplyr::count(
+      .data[["FYEAR"]],
+      .data[["PROCODE3"]],
+      .data[["CLASSPAT"]],
+      .data[["type"]]
+    ) |>
+    dplyr::filter(
+      .data[["fyear"]] >= 201112
+    ) |>
     dplyr::collect() |>
-    janitor::clean_names() |>
+    janitor::clean_names()
+
+  op <- tb_op |>
+    dplyr::count(
+      .data[["fyear"]],
+      .data[["procode3"]],
+      .data[["type"]]
+    ) |>
+    dplyr::filter(
+      .data[["fyear"]] >= 201112
+    ) |>
+    dplyr::collect()
+
+  dplyr::bind_rows(
+    op,
     dplyr::mutate(
-      target_type = ifelse(
-        stringr::str_starts(.data[["strategy"]], "bads_daycase"),
-        "daycase",
-        "outpatients"
-      ),
+      ip,
       v = ifelse(
-        .data[["admission_type"]] == .data[["target_type"]],
+        stringr::str_ends(.data[["type"]], "dc") & .data[["classpat"]] == "2",
         0,
         .data[["n"]]
       )
-    ) |>
+    )
+  ) |>
     dplyr::summarise(
-      dplyr::across(c("n", "v"), sum),
-      rate = .data[["v"]] / .data[["n"]],
-      .by = c("fyear", "procode3", "strategy")
+      .by = c("fyear", "procode3", "type"),
+      dplyr::across(c("v", "n"), \(.x) sum(.x, na.rm = TRUE))
     ) |>
     # ensure there is no statistical disclosure
     dplyr::filter(
@@ -233,13 +276,13 @@ get_bads_data <- function(ip_los_data, peers) {
       by = c("peer"),
       relationship = "many-to-many"
     ) |>
-    dplyr::select(
-      "fyear",
-      "procode",
-      "strategy",
-      "peer",
-      "rate",
-      "n"
+    dplyr::transmute(
+      .data[["fyear"]],
+      .data[["procode"]],
+      strategy = paste0("day_procedures_", .data[["type"]]),
+      .data[["peer"]],
+      rate = .data[["v"]] / .data[["n"]],
+      .data[["n"]]
     ) |>
     add_mean_rows()
 }

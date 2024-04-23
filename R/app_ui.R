@@ -108,6 +108,14 @@ app_ui <- function(request) {
         bs4Dash::menuSubItem(
           "Pre-op LoS Reduction",
           tabName = "ip_am_preop_los_reduction"
+        ),
+        bs4Dash::menuSubItem(
+          "Day Procedures: Daycase",
+          tabName = "ip_am_mitigators_day_procedures_daycase"
+        ),
+        bs4Dash::menuSubItem(
+          "Day Procedures: Outpatients",
+          tabName = "ip_am_mitigators_day_procedures_outpatients"
         )
       ),
       bs4Dash::menuItem(
@@ -227,6 +235,14 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "ip_am_preop_los_reduction",
         mod_mitigators_ui("mitigators_preop_los_reduction", "Pre-op Length of Stay Reduction")
+      ),
+      bs4Dash::tabItem(
+        tabName = "ip_am_mitigators_day_procedures_daycase",
+        mod_mitigators_ui("mitigators_day_procedures_daycase", "Day Procedures: Daycase")
+      ),
+      bs4Dash::tabItem(
+        tabName = "ip_am_mitigators_day_procedures_outpatients",
+        mod_mitigators_ui("mitigators_day_procedures_outpatients", "Day Procedures: Outpatients")
       ),
       bs4Dash::tabItem(
         tabName = "op_am_c2c_referrals",
