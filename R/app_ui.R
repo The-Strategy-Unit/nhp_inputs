@@ -114,7 +114,7 @@ app_ui <- function(request) {
           tabName = "ip_am_mitigators_day_procedures_daycase"
         ),
         bs4Dash::menuSubItem(
-          "Day Procedures: Outpatients",
+          "Day Procedures: OP",
           tabName = "ip_am_mitigators_day_procedures_outpatients"
         )
       ),
