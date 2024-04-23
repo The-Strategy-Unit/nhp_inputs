@@ -21,6 +21,17 @@ mod_run_model_fix_params <- function(p) {
     )
   ] <- "none"
 
+  # check all the mitigators have a time profile
+  for (i in c("activity_avoidance", "efficiencies")) {
+    for (j in names(p[[i]])) {
+      for (k in names(p[[i]][[j]])) {
+        if (is.null(p$time_profile_mappings[[i]][[j]][[k]])) {
+          p$time_profile_mappings[[i]][[j]][[k]] <- "linear"
+        }
+      }
+    }
+  }
+
   # some of the items in our params will be lists of length 0.
   # jsonlite will serialize these as empty arrays
   #   toJSON(list()) == "[]"
