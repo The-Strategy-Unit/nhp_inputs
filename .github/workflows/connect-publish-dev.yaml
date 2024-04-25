@@ -27,7 +27,7 @@ jobs:
         with:
           url: ${{ secrets.RSCONNECT_URL }}
           api-key: ${{ secrets.RSCONNECT_API_KEY }}
-          access-type: acl
+          access-type: logged_in
           force: true
           dir: .:inputs
           namespace: nhp/dev

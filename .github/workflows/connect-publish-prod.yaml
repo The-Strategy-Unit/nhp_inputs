@@ -39,7 +39,16 @@ jobs:
         with:
           url: ${{ secrets.RSCONNECT_URL }}
           api-key: ${{ secrets.RSCONNECT_API_KEY }}
-          access-type: acl
+          access-type: logged_in
           force: true
           dir: .:inputs
           namespace: nhp/${{ env.VERSION }}
+      
+      # need to generate a SAS token in azure portal for the container
+      # permissions needed: Read/Add/Create/Write/Delete/List
+      - name: Download azcopy and sync folder
+        run: |
+          export EP=${{ secrets.AZ_STORAGE_EP }}/${{ secrets.AZ_STORAGE_CONTAINER }}
+          export SAS=${{ secrets.AZ_STORAGE_SAS }}
+          curl -s -L https://aka.ms/downloadazcopy-v10-linux | tar zx --strip-components 1
+          ./azcopy sync "$EP/dev/?$SAS" "$EP/$INPUTS_DATA_VERSION/?$SAS" --recursive
