@@ -1,3 +1,5 @@
+app_version_choices <- c("v1.1", "v1.0", "dev")
+
 "%||%" <- function(x, y) { # nolint
   if (is.null(x)) {
     y
@@ -142,7 +144,7 @@ ui_body <- function() {
       shiny::numericInput("seed", "Seed", sample(1:100000, 1)),
       shiny::selectInput("model_runs", "Model Runs", choices = c(256, 512, 1024), selected = 256),
       shinyjs::disabled(
-        shiny::selectInput("app_version", "Model Version", choices = c("v1.1", "v1.0", "dev"))
+        shiny::selectInput("app_version", "Model Version", choices = app_version_choices)
       )
     )
   )
@@ -433,6 +435,18 @@ server <- function(input, output, session) {
       input$scenario_type,
       input$previous_scenario
     )
+
+  # 'create new' radio button should force model version dropdown to latest
+  shiny::observe({
+    if (input$scenario_type == "Create new from scratch") {
+      shiny::updateSelectInput(
+        session,
+        "app_version",
+        selected = app_version_choices[1]
+      )
+    }
+  }) |>
+    shiny::bindEvent(input$scenario_type)
 
   # renders ----
   output$peers_list <- gt::render_gt({
