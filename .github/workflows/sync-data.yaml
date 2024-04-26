@@ -10,18 +10,32 @@ on:
         required: true
         type: string
         default: "vX.Y"
+        
+  workflow_call:
+    inputs:
+      from:
+        required: true
+        type: string
+      to:
+        required: true
+        type: string
+
 jobs:
   sync-data:
     name: "Sync Data"
     runs-on: ubuntu-latest
 
     steps:
-      
       # need to generate a SAS token in azure portal for the container
       # permissions needed: Read/Add/Create/Write/Delete/List
-      - name: Download azcopy and sync folder
+      - name: Download azcopy
         run: |
           curl -s -L https://aka.ms/downloadazcopy-v10-linux | tar zx --strip-components 1
+
+      # NOTE: storage ep should end in a /, so we do not need a slash between ep and container
+      - name: Sync Data
+        run: |
+          echo "Syncing from ${{ inputs.from }} to ${{ inputs.to }}"
           ./azcopy sync --recursive \
-            "${{ secrets.AZ_STORAGE_EP }}/${{ secrets.AZ_STORAGE_CONTAINER }}/${{ inputs.from }}/?${{ secrets.AZ_STORAGE_SAS }}" \
-            "${{ secrets.AZ_STORAGE_EP }}/${{ secrets.AZ_STORAGE_CONTAINER }}/${{ inputs.to }}/?${{ secrets.AZ_STORAGE_SAS }}"
+            "${{ secrets.AZ_STORAGE_EP }}${{ secrets.AZ_STORAGE_CONTAINER }}/${{ inputs.from }}/?${{ secrets.AZ_STORAGE_SAS }}" \
+            "${{ secrets.AZ_STORAGE_EP }}${{ secrets.AZ_STORAGE_CONTAINER }}/${{ inputs.to }}/?${{ secrets.AZ_STORAGE_SAS }}"
