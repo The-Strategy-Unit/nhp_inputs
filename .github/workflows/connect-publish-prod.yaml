@@ -11,16 +11,20 @@ jobs:
       # these get set later
       VERSION: ""
       INPUTS_DATA_VERSION: ""
+    outputs:
+      to: ${{ steps.set-variables.outputs.to }}
 
     steps:
       - uses: actions/checkout@v3
 
       - name: Get version
+        id: set-variables
         run: |
           VERSION=`echo ${{ github.ref_name }} | awk 'BEGIN { FS="."; } { print ""$1"-"$2; }'`
           INPUTS_DATA_VERSION=`echo $VERSION | sed 's/-/./'`
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "INPUTS_DATA_VERSION=$INPUTS_DATA_VERSION" >> $GITHUB_ENV
+          echo "to=$INPUTS_DATA_VERSION" >> $GITHUB_OUTPUT
 
       - name: Update manifest.json
         run: node update_manifest.js
@@ -43,12 +47,12 @@ jobs:
           force: true
           dir: .:inputs
           namespace: nhp/${{ env.VERSION }}
-      
-      # need to generate a SAS token in azure portal for the container
-      # permissions needed: Read/Add/Create/Write/Delete/List
-      - name: Download azcopy and sync folder
-        run: |
-          export EP=${{ secrets.AZ_STORAGE_EP }}/${{ secrets.AZ_STORAGE_CONTAINER }}
-          export SAS=${{ secrets.AZ_STORAGE_SAS }}
-          curl -s -L https://aka.ms/downloadazcopy-v10-linux | tar zx --strip-components 1
-          ./azcopy sync "$EP/dev/?$SAS" "$EP/$INPUTS_DATA_VERSION/?$SAS" --recursive
+
+  sync-data:
+    name: "Sync Data"
+    uses: ./.github/workflows/sync-data.yaml
+    needs: [connect-publish-prod]
+    with:
+      from: "dev"
+      to: ${{ needs.connect-publish-prod.outputs.to }}
+    secrets: inherit
