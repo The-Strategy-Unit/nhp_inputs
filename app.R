@@ -1,4 +1,4 @@
-app_version_choices <- c("v1.1", "v1.0", "dev")
+app_version_choices <- jsonlite::fromJSON(Sys.getenv("APP_VERSION_CHOICES", "[\"dev\"]"))
 
 "%||%" <- function(x, y) { # nolint
   if (is.null(x)) {
