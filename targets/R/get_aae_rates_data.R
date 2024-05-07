@@ -74,7 +74,6 @@ get_aae_data_with_ecds <- function(aae_data_raw) {
     purrr::map(arrow::read_parquet) |>
     purrr::discard(\(.x) nrow(.x) == 0) |>
     dplyr::bind_rows(.id = "procode3") |>
-    dplyr::mutate(procode3 = "RL4") |>
     dplyr::mutate(
       is_adult = .data$age >= 18
     ) |>
