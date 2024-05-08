@@ -1,9 +1,12 @@
 Package: inputs
 Title: NHP Model Inputs
 Version: 1.0.1
-Authors@R: person('Tom', 'Jemmett', email = 'thomas.jemmett@nhs.net', role = c('cre', 'aut'))
+Authors@R: 
+    person("Tom", "Jemmett", , "thomas.jemmett@nhs.net", role = c("cre", "aut"))
 Description: A shiny app for getting model input parameters.
 License: MIT + file LICENSE
+Depends: 
+    R (>= 4.1.0)
 Imports: 
     AzureAuth,
     AzureStor,
@@ -22,13 +25,13 @@ Imports:
     gt,
     htmltools,
     httr,
-    janitor, 
+    janitor,
     jsonlite,
     leaflet,
     markdown,
+    openssl,
     promises,
     purrr,
-    openssl,
     readr,
     rlang,
     scales,
@@ -44,9 +47,6 @@ Imports:
     tidyselect,
     viridis,
     zeallot
-Encoding: UTF-8
-LazyData: true
-RoxygenNote: 7.2.3
 Suggests: 
     covr,
     devtools,
@@ -57,17 +57,18 @@ Suggests:
     rcmdcheck,
     rsconnect,
     spelling,
-    testthat (>= 3.0.0),
     targets,
+    testthat (>= 3.0.0),
     usethis,
     vscDebugger,
     watchr (>= 0.0.0.9000),
     withr
-Config/testthat/edition: 3
-Language: en-US
 Remotes:
-    github::tomjemmett/watchr,
+    github::ManuelHentschel/vscDebugger,
     github::NHS-R-Community/NHSRtools,
-    github::ManuelHentschel/vscDebugger
-Depends: 
-    R (>= 3.5)
+    github::tomjemmett/watchr
+Config/testthat/edition: 3
+Encoding: UTF-8
+Language: en-US
+LazyData: true
+RoxygenNote: 7.2.3
