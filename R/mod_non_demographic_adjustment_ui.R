@@ -20,13 +20,13 @@ mod_non_demographic_adjustment_ui <- function(id) {
           width = 12,
           md_file_to_html("app", "text", "non_demographic_adjustment.md")
         ),
-        shinyjs::hidden(
-          shiny::tags$div(
-            id = ns("ndg_variant_box"),
-            bs4Dash::box(
-              title = "Non-demographic Variant",
-              md_file_to_html("app", "text", "non_demographic_adjustment_variants.md"),
-              width = 12,
+        bs4Dash::box(
+          title = "Non-demographic Variant",
+          md_file_to_html("app", "text", "non_demographic_adjustment_variants.md"),
+          width = 12,
+          shinyjs::hidden(
+            shiny::tags$div(
+              id = ns("ndg_variant_dropdown"),
               shiny::selectInput(
                 inputId = ns("ndg_variant"),
                 label = "Selection",
@@ -35,9 +35,9 @@ mod_non_demographic_adjustment_ui <- function(id) {
                   snakecase::to_title_case
                 ),
                 selected = "variant_2"
-              )
-            ),
-            mod_reasons_ui(ns("reasons"))
+              ),
+              md_file_to_html("app", "text", "non_demographic_adjustment_variants_hidden.md")
+            )
           )
         )
       ),
