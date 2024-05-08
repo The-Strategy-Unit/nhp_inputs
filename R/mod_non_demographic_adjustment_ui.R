@@ -33,7 +33,8 @@ mod_non_demographic_adjustment_ui <- function(id) {
                 choices = purrr::set_names(
                   c("variant_1", "variant_2"),
                   snakecase::to_title_case
-                )
+                ),
+                selected = "variant_2"
               )
             ),
             mod_reasons_ui(ns("reasons"))
