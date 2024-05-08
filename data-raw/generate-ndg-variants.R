@@ -1,3 +1,6 @@
+# This script creates the ndg_variants.rds file in inst/app/data/
+# It's presented in a table in the 'Non-demographic Adjustment' tab of the app
+
 ndg_variants <- list(
   variant_1 = list(
     aae = list(
@@ -23,7 +26,7 @@ ndg_variants <- list(
     ip = list(
       elective = c(1.0053, 1.0071),
       maternity = c(1, 1),
-      "non-elective" = c(0.9955, 1.0017)
+      "non-elective" = c(0.9955, 1.0017)  # only difference vs variant 1
     ),
     op = list(
       first = c(1.0228, 1.0270),
@@ -33,4 +36,4 @@ ndg_variants <- list(
   )
 )
 
-readr::write_rds(ndg_variants, "inst/app/data/ndg_variants.rds")
+readr::write_rds(ndg_variants, "inst/app/data/ndg_variants.Rds")
