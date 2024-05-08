@@ -21,8 +21,8 @@ mod_non_demographic_adjustment_table <- function(non_demographic_adjustment) {
       columns = c("low", "high")
     ) |>
     gt::cols_label(
-      "low" = "Low adjustment",
-      "high" = "High adjustment"
+      "low" = "10% CI",
+      "high" = "90% CI"
     ) |>
     gt::tab_options(
       row_group.border.top.width = gt::px(2),
