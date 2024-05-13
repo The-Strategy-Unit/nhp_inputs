@@ -2,24 +2,22 @@
 #'
 #' @noRd
 mod_non_demographic_adjustment_server <- function(id, params) {
-
   mod_reasons_server(shiny::NS(id, "reasons"), params, "non-demographic_adjustment")
 
   shiny::moduleServer(id, function(input, output, session) {
-
-    ndg_variants <- readr::read_rds(app_sys("app", "data", "ndg_variants.rds"))
+    ndg_variants <- jsonlite::read_json(app_sys("app", "data", "ndg_variants.json"), simplifyVector = TRUE)
 
     # reactives ----
 
     non_demographic_adjustment <- shiny::reactive({
-      ndg_variants[[input$ndg_variant]]
+      v <- shiny::req(input$ndg_variant)
+      ndg_variants[[v]]
     })
 
     # observers ----
 
     shiny::observe({
-      can_select_variant <-
-        is_local() || any(c("nhp_devs", "nhp_run_model") %in% session$groups)
+      can_select_variant <- is_local() || any(c("nhp_devs", "nhp_run_model") %in% session$groups)
       shinyjs::toggle("ndg_variant_dropdown", condition = can_select_variant)
     })
 
@@ -28,23 +26,23 @@ mod_non_demographic_adjustment_server <- function(id, params) {
     }) |>
       shiny::bindEvent(non_demographic_adjustment())
 
-    init <- shiny::observe({
+    init <- shiny::observe(
+      {
+        p_ndg <- shiny::isolate({
+          params[["non-demographic_adjustment"]]
+        })
 
-      p_ndg <- shiny::isolate({
-        params[["non-demographic_adjustment"]]
-      })
+        detected_ndg_variant <- detect_non_demographic_variant(p_ndg, ndg_variants)
 
-      detected_ndg_variant <- detect_non_demographic_variant(p_ndg, ndg_variants)
+        shiny::updateSelectInput(
+          session,
+          "ndg_variant",
+          selected = detected_ndg_variant
+        )
 
-      shiny::updateSelectInput(
-        session,
-        "ndg_variant",
-        selected = detected_ndg_variant
-      )
-
-      init$destroy()
-    },
-    priority = 10
+        init$destroy()
+      },
+      priority = 10
     )
 
     # renders ----
@@ -52,7 +50,5 @@ mod_non_demographic_adjustment_server <- function(id, params) {
     output$non_demographic_adjustment_table <- gt::render_gt({
       mod_non_demographic_adjustment_table(non_demographic_adjustment())
     })
-
   })
-
 }
