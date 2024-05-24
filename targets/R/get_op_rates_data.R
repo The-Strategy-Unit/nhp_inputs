@@ -12,6 +12,7 @@ get_op_data <- function(provider_successors_last_updated) {
       .data$age_group,
       .data$sex,
       .data$procode3,
+      .data$has_procedures,
       .data$is_surgical_specialty,
       .data$is_adult,
       .data$is_tele_appointment
@@ -85,11 +86,11 @@ get_op_diag_data <- function(op_age_sex_data) {
 get_op_procedures_data <- function(provider_successors_last_updated) {
   force(provider_successors_last_updated)
 
+  # ignore tele appointments - can't have a procedure on a tele appointment
   strategies <- tibble::tribble(
     ~name, ~strategy,
     "is_cons_cons_ref", "consultant_to_consultant_reduction",
     "is_first", "followup_reduction",
-    "is_tele_appointment", "convert_to_tele",
     "is_gp_ref", "gp_referred_first_attendance_reduction"
   )
 
@@ -170,21 +171,21 @@ get_op_age_sex_data <- function(op_data) {
 
   op_data |>
     dplyr::filter(.data$is_tele_appointment == 0) |>
-    dplyr::select(-"is_tele_appointment") |>
-    dplyr::rename("is_tele_appointment" = "n") |>
+    dplyr::mutate(is_tele_appointment = ifelse(.data[["has_procedures"]], 0, .data[["n"]])) |>
+    dplyr::select(-"n") |>
     tidyr::pivot_longer(
       tidyselect::starts_with("is_"),
       values_to = "n"
     ) |>
     dplyr::inner_join(strategies, by = "name") |>
     dplyr::arrange(.data$age_group) |>
-    dplyr::transmute(
+    dplyr::count(
       .data$fyear,
       procode = .data$procode3,
       strategy = glue::glue("{strategy}_{subgroup}"),
       dplyr::across("age_group", forcats::fct_inorder),
       .data$sex,
-      .data$n
+      wt = .data$n
     ) |>
     dplyr::arrange(.data$fyear, .data$procode, .data$strategy, .data$age_group, .data$sex) |>
     dplyr::filter(.data[["n"]] > 0)
@@ -192,6 +193,7 @@ get_op_age_sex_data <- function(op_data) {
 
 get_op_convert_to_tele_data <- function(op_data, peers) {
   op_data |>
+    dplyr::filter(!.data[["has_procedures"]]) |>
     dplyr::rename(peer = "procode3") |>
     dplyr::inner_join(
       peers,
