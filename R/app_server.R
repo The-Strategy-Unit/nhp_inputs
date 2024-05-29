@@ -76,8 +76,6 @@ app_server <- function(input, output, session) {
 
     mod_non_demographic_adjustment_server("non_demographic_adjustment", params)
 
-    mod_bed_occupancy_server("bed_occupancy", params)
-
     mod_mitigators_summary_server("mitigators_summary", provider_data, params)
 
     purrr::walk(
