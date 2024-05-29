@@ -1,13 +1,4 @@
 {
-  "user": null,
-  "dataset": null,
-  "scenario": null,
-  "seed": null,
-  "model_runs": 256,
-  "start_year": 2019,
-  "end_year": 2041,
-  "app_version": null,
-  "interval_type": 0.8,
   "demographic_factors": {
     "file": "demographic_factors.csv",
     "variant_probabilities": {
@@ -57,82 +48,9 @@
     "ip": {},
     "op": {}
   },
-  "bed_occupancy": {
-    "specialty_mapping": {
-      "General and Acute": {
-        "100": "Other",
-        "101": "Other",
-        "110": "Other",
-        "120": "Other",
-        "130": "Other",
-        "140": "Other",
-        "142": "Other",
-        "145": "Other",
-        "150": "Other",
-        "160": "Other",
-        "170": "Other",
-        "171": "Other",
-        "180": "Other",
-        "190": "Other",
-        "192": "Other",
-        "300": "Other",
-        "301": "Other",
-        "302": "Other",
-        "303": "Other",
-        "305": "Other",
-        "313": "Other",
-        "314": "Other",
-        "315": "Other",
-        "320": "Other",
-        "321": "Other",
-        "326": "Other",
-        "330": "Other",
-        "340": "Other",
-        "350": "Other",
-        "352": "Other",
-        "360": "Other",
-        "361": "Other",
-        "370": "Other",
-        "400": "Other",
-        "401": "Other",
-        "410": "Other",
-        "420": "Other",
-        "421": "Other",
-        "430": "Other",
-        "460": "Other",
-        "502": "Other",
-        "800": "Other",
-        "810": "Other",
-        "823": "Other",
-        "831": "Other",
-        "833": "Other",
-        "900": "Other"
-      },
-      "Maternity": {
-        "501": "Other"
-      },
-      "Mental Illness": {
-        "710": "Other",
-        "711": "Other",
-        "712": "Other",
-        "713": "Other",
-        "715": "Other"
-      },
-      "Learning Disabilities": {
-        "700": "Other"
-      }
-    },
-    "day+night": {
-      "Other": [
-        0.85,
-        0.95
-      ]
-    }
-  },
   "time_profile_mappings": {
     "covid_adjustment": "none",
     "baseline_adjustment": "none",
-    "bed_occupancy": "none",
     "activity_avoidance": {
       "ip": {},
       "op": {},
@@ -162,7 +80,6 @@
     "efficiencies": {
       "ip": {},
       "op": {}
-    },
-    "bed_occupancy": ""
+    }
   }
 }
