@@ -16,7 +16,6 @@ mod_run_model_fix_params <- function(p) {
     c(
       "covid_adjustment",
       "baseline_adjustment",
-      "bed_occupancy",
       "non-demographic_adjustment"
     )
   ] <- "none"
@@ -91,7 +90,6 @@ mod_run_model_fix_params <- function(p) {
     "non-demographic_adjustment",
     "activity_avoidance",
     "efficiencies",
-    "bed_occupancy",
     "time_profile_mappings",
     "reasons"
   )
