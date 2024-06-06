@@ -1,4 +1,12 @@
 {
+  "user": null,
+  "dataset": null,
+  "scenario": null,
+  "seed": null,
+  "model_runs": 256,
+  "start_year": 2019,
+  "end_year": 2041,
+  "app_version": null,
   "demographic_factors": {
     "file": "demographic_factors.csv",
     "variant_probabilities": {
