@@ -8,4 +8,17 @@ files <- c(
 
 files <- files[!files == "deploy.R"]
 
-rsconnect::deployApp(appId = 215, appFiles = files)
+Sys.setenv(
+  APP_VERSION_CHOICES = jsonlite::toJSON(
+    c("v1.2", "v1.1", "v1.0", "dev"),
+    auto_unbox = TRUE
+  )
+)
+
+rsconnect::deployApp(
+  appId = 215,
+  appFiles = files,
+  envVars = c(
+    "APP_VERSION_CHOICES"
+  )
+)
