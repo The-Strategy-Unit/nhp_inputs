@@ -13,6 +13,7 @@
       "principal_proj": 1
     }
   },
+  "health_status_adjustment": true,
   "covid_adjustment": {
     "aae": {},
     "ip": {},
