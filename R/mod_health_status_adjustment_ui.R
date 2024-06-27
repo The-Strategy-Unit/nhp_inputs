@@ -21,7 +21,7 @@ mod_health_status_adjustment_ui <- function(id) {
           shinyjs::disabled(
             shiny::checkboxInput(
               ns("enable_hsa"),
-              "Enabled Health Status Adjustment?",
+              "Enable Health Status Adjustment?",
               TRUE
             )
           )
