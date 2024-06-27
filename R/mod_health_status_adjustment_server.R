@@ -6,9 +6,7 @@ mod_health_status_adjustment_server <- function(id, params) {
     shiny::observe({
       g <- session$groups
 
-      cat("groups:", g, "\n")
       if ((is.null(g) || any(c("nhp_devs", "nhp_power_users") %in% g))) {
-        cat("enabling\n")
         shinyjs::show("enable_hsa")
         shinyjs::enable("enable_hsa")
       }
