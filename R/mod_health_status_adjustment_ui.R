@@ -16,7 +16,16 @@ mod_health_status_adjustment_ui <- function(id) {
         collapsible = FALSE,
         headerBorder = FALSE,
         width = 4,
-        md_file_to_html("app", "text", "health_status_adjustment.md")
+        md_file_to_html("app", "text", "health_status_adjustment.md"),
+        shinyjs::hidden(
+          shinyjs::disabled(
+            shiny::checkboxInput(
+              ns("enable_hsa"),
+              "Enabled Health Status Adjustment?",
+              TRUE
+            )
+          )
+        )
       )
     )
   )

@@ -80,6 +80,7 @@ mod_run_model_fix_params <- function(p) {
     "create_datetime",
     "interval_type",
     "demographic_factors",
+    "health_status_adjustment",
     "baseline_adjustment",
     "covid_adjustment",
     "waiting_list_adjustment",
