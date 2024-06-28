@@ -1,4 +1,4 @@
-Once you have set all of the parameters, you can submit these to for the model
+Once you have set all of the parameters, you can submit these to the model
 to be run.
 
 Pressing the submit button will disable the rest of the application, preventing
