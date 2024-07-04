@@ -11,15 +11,21 @@ app_version_choices <- jsonlite::fromJSON(Sys.getenv("APP_VERSION_CHOICES", "[\"
 load_params <- function(file) {
   p <- jsonlite::read_json(file, simplifyVector = TRUE)
 
-  # handle old non-demographic adjusment
-  if (!is.null(p[["non-demographic"]][["elective"]])) {
-    p[["non-demographic_adjustment"]] <- list(
-      ip = list(),
-      op = list(),
-      aae = list()
-    )
-  }
+  class(p) <- p$app_version
+  unclass(upgrade_params(p))
+}
 
+upgrade_params <- function(p) {
+  UseMethod("upgrade_params", p)
+}
+
+upgrade_params.default <- function(p) {
+  p
+}
+
+upgrade_params.v1.2 <- function(p) {
+  p$health_status_adjustment <- TRUE
+  p$app_version <- "v2.0"
   p
 }
 
