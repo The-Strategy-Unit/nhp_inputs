@@ -42,23 +42,8 @@ mod_run_model_fix_params <- function(p) {
   # need to convert financial year to calendar year
   p$start_year <- as.integer(stringr::str_sub(p$start_year, 1, 4))
 
-  # generate an id based on the dataset, scenario, and a hash of the params
-  # make sure to add the user after creating the hash
-  # the id must be at most 63 characters long, and must match the regex:
-  #   '[a-z0-9]([-a-z0-9]*[a-z0-9])?'
-  scenario_sanitized <- p$scenario |>
-    stringr::str_to_lower() |>
-    stringr::str_replace_all("[^a-z0-9]+", "-")
-  hash <- digest::digest(p, "crc32", serialize = TRUE)
-
-  p$id <- glue::glue("{p$dataset}-{scenario_sanitized}") |>
-    stringr::str_sub(1, 62 - stringr::str_length(hash)) |>
-    stringr::str_to_lower() |>
-    paste0("-", hash)
-
   # reorder the params
   p_order <- c(
-    "id",
     "user",
     "dataset",
     "scenario",
@@ -67,7 +52,6 @@ mod_run_model_fix_params <- function(p) {
     "start_year",
     "end_year",
     "app_version",
-    "create_datetime",
     "interval_type",
     "demographic_factors",
     "baseline_adjustment",

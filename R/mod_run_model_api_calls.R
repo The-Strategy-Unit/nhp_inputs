@@ -1,5 +1,5 @@
 # recursive future promise
-mod_run_model_submit <- function(params, status) {
+mod_run_model_submit <- function(params, status, results_url) {
   promises::future_promise(
     {
       httr::POST(
@@ -23,9 +23,29 @@ mod_run_model_submit <- function(params, status) {
           return(NULL)
         }
 
+        results <- httr::content(request)
+
         status("Submitted Model Run")
 
-        mod_run_model_check_container_status(params$id, status)
+        version <- results$app_version
+        # generate the results url
+        f <- encrypt_filename( # nolint
+          file.path(
+            "prod",
+            version,
+            results$dataset,
+            glue::glue("{results$scenario}-{results$create_datetime}.json.gz"),
+            fsep = "/"
+          )
+        )
+
+        # update version for the url
+        version <- stringr::str_replace(version, "^v(\\d)+\\.(\\d+).*", "v\\1-\\2")
+        results_url(
+          glue::glue(Sys.getenv("NHP_OUTPUTS_URI"), "?{utils::URLencode(f, TRUE)}")
+        )
+
+        mod_run_model_check_container_status(results[["id"]], status)
       }
     )
 }

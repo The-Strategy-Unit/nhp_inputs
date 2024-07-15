@@ -51,7 +51,6 @@ mod_run_model_server <- function(id, params) {
       # get the params and insert the current time for when the model run was
       # submitted
       p <- shiny::req(fixed_params())
-      p$create_datetime <- format(Sys.time(), "%Y%m%d_%H%M%S")
 
       # generate the results url
       version <- p$app_version
@@ -72,7 +71,7 @@ mod_run_model_server <- function(id, params) {
       )
 
       # submit the model run
-      mod_run_model_submit(p, status)
+      mod_run_model_submit(p, status, results_url)
 
       # do not return the promise
       invisible(NULL)
