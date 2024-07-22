@@ -141,6 +141,14 @@ ui_body <- function() {
         )
       ),
       shiny::textInput("scenario", "Name"),
+      shiny::div(
+        "Please follow",
+        shiny::a(
+          "the model-run naming guidelines.",
+          href = "https://connect.strategyunitwm.nhs.uk/nhp/project_information/user_guide/naming_scenarios.html"
+        ),
+        style = "margin-top: -5px; margin-bottom: 8px"
+      ),
       shiny::uiOutput("start_button")
     ),
     bs4Dash::box(
