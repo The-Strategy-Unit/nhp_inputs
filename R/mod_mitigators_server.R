@@ -351,6 +351,14 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
     # diagnoses ----
 
     output$diagnoses_table <- gt::render_gt({
+
+      shiny::validate(
+        shiny::need(
+          diagnoses_data(),
+          message = "Insufficient or suppressed data."
+        )
+      )
+
       data <- diagnoses_data() |>
         dplyr::filter(.data$fyear == params$start_year) |>
         dplyr::inner_join(diagnoses_lkup, by = c("diagnosis" = "diagnosis_code")) |>
@@ -425,6 +433,14 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
     # procedures ----
 
     output$procedures_table <- gt::render_gt({
+
+      shiny::validate(
+        shiny::need(
+          procedures_data(),
+          message = "Insufficient or suppressed data."
+        )
+      )
+
       pd <- procedures_data()
 
       shiny::validate(
