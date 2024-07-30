@@ -21,9 +21,6 @@ get_baseline_data_ip <- function() {
     purrr::keep(file.exists) |>
     purrr::map(\(.x) {
       arrow::read_parquet(.x) |>
-        dplyr::filter(
-          !.data[["bedday_rows"]]
-        ) |>
         dplyr::count(fyear = 201920, .data[["group"]], .data[["tretspef"]])
     }) |>
     dplyr::bind_rows(.id = "procode3")
