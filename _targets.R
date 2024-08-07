@@ -157,7 +157,8 @@ list(
   ),
   # aae data
   tar_target(aae_data_raw, get_aae_data(provider_successors_last_updated)),
-  tar_target(aae_data, get_aae_data_with_ecds(aae_data_raw)),
+  tar_target(ecds_data_raw, "../nhp_model/data/raw/ecds.parquet"),
+  tar_target(aae_data, get_aae_data_with_ecds(aae_data_raw, ecds_data_raw)),
   tar_target(aae_diag_data, get_aae_diag_data(provider_successors_last_updated)),
   tar_target(aae_procedures_data, get_aae_procedures_data(provider_successors_last_updated)),
   tar_target(aae_age_sex_data, get_aae_age_sex_data(aae_data)),
