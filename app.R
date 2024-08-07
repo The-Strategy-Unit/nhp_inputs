@@ -351,6 +351,14 @@ server <- function(input, output, session) {
     if (is_local() || is_power_user) {
       shinyjs::enable("app_version")
     }
+
+    if (is_local() || is_power_user || "nhp_allow_2022_data" %in% session$groups) {
+      shiny::updateSelectInput(
+        session,
+        "start_year",
+        choices = c("2019/22" = 201920, "2022/23" = 202223)
+      )
+    }
   })
 
   # when params change, update inputs
