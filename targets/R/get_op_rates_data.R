@@ -1,5 +1,6 @@
-get_op_data <- function(provider_successors_last_updated) {
+get_op_data <- function(provider_successors_last_updated, op_data_last_updated) {
   force(provider_successors_last_updated)
+  force(op_data_last_updated)
 
   con <- get_con("HESData")
 
@@ -37,8 +38,9 @@ get_op_data <- function(provider_successors_last_updated) {
     dplyr::select(-"is_surgical_specialty", -"is_adult")
 }
 
-get_op_wli_data <- function(provider_successors_last_updated, rtt_specialties) {
+get_op_wli_data <- function(provider_successors_last_updated, rtt_specialties, op_data_last_updated) {
   force(provider_successors_last_updated)
+  force(op_data_last_updated)
 
   con <- get_con("HESData")
 
@@ -83,8 +85,9 @@ get_op_diag_data <- function(op_age_sex_data) {
     )
 }
 
-get_op_procedures_data <- function(provider_successors_last_updated) {
+get_op_procedures_data <- function(provider_successors_last_updated, op_data_last_updated) {
   force(provider_successors_last_updated)
+  force(op_data_last_updated)
 
   # ignore tele appointments - can't have a procedure on a tele appointment
   strategies <- tibble::tribble(

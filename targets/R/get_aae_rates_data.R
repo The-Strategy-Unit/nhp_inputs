@@ -67,13 +67,19 @@ get_aae_data <- function(provider_successors_last_updated) {
     )
 }
 
-get_aae_data_with_ecds <- function(aae_data_raw) {
-  df_201920 <- fs::dir_ls("../nhp_model/data/2019/", glob = "*/aae.parquet", recurse = TRUE) |>
-    as.character() |>
-    purrr::set_names(\(.x) stringr::str_extract(.x, "\\w*(?=/aae.parquet)")) |>
-    purrr::map(arrow::read_parquet) |>
-    purrr::discard(\(.x) nrow(.x) == 0) |>
-    dplyr::bind_rows(.id = "procode3") |>
+get_aae_data_with_ecds <- function(aae_data_raw, ecds_data_raw) {
+  ecds_data <- arrow::read_parquet(ecds_data_raw) |>
+    dplyr::mutate(
+      dplyr::across(
+        "fyear",
+        \(.x) as.numeric(stringr::str_remove(.x, "/"))
+      )
+    ) |>
+    dplyr::filter(
+      .data[["fyear"]] >= 201920,
+      .data[["fyear"]] <= 202223
+    ) |>
+    dplyr::rename(procode3 = "procode") |>
     dplyr::mutate(
       is_adult = .data$age >= 18
     ) |>
@@ -100,7 +106,7 @@ get_aae_data_with_ecds <- function(aae_data_raw) {
       )
     ) |>
     dplyr::group_by(
-      fyear = 201920,
+      .data[["fyear"]],
       .data[["procode3"]],
       age_group = cut_age(.data[["age"]]),
       dplyr::across("sex", as.character),
@@ -130,8 +136,8 @@ get_aae_data_with_ecds <- function(aae_data_raw) {
 
   dplyr::bind_rows(
     aae_data_raw |>
-      dplyr::filter(.data[["fyear"]] != 201920),
-    df_201920
+      dplyr::filter(.data[["fyear"]] < 201920),
+    ecds_data
   )
 }
 

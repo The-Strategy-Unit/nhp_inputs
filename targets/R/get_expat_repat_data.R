@@ -25,9 +25,11 @@ get_expat_ip_data <- function(rtt_specialties, provider_successors_last_updated,
     dplyr::count(.data$fyear, procode = .data$procode3, .data$admigroup, .data$specialty, wt = .data$n)
 }
 
-get_expat_op_data <- function(rtt_specialties, provider_successors_last_updated, ccg_to_icb_last_updated) {
+get_expat_op_data <- function(rtt_specialties, provider_successors_last_updated, ccg_to_icb_last_updated, op_data_last_updated) {
   force(provider_successors_last_updated)
   force(ccg_to_icb_last_updated)
+  force(op_data_last_updated)
+
   con <- get_con("HESData")
 
   dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "outpatients")) |>
@@ -66,6 +68,7 @@ get_expat_aae_data <- function(provider_successors_last_updated, ccg_to_icb_last
 get_repat_local_ip_data <- function(rtt_specialties, provider_successors_last_updated, ccg_to_icb_last_updated) {
   force(provider_successors_last_updated)
   force(ccg_to_icb_last_updated)
+
   con <- get_con("HESData")
 
   df <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "inpatients")) |>
@@ -112,9 +115,11 @@ get_repat_local_ip_data <- function(rtt_specialties, provider_successors_last_up
     dplyr::ungroup()
 }
 
-get_repat_local_op_data <- function(rtt_specialties, provider_successors_last_updated, ccg_to_icb_last_updated) {
+get_repat_local_op_data <- function(rtt_specialties, provider_successors_last_updated, ccg_to_icb_last_updated, op_data_last_updated) {
   force(provider_successors_last_updated)
   force(ccg_to_icb_last_updated)
+  force(op_data_last_updated)
+
   con <- get_con("HESData")
 
   df <- dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "outpatients")) |>
@@ -230,9 +235,11 @@ get_repat_nonlocal_ip_data <- function(rtt_specialties, provider_successors_last
     dplyr::ungroup()
 }
 
-get_repat_nonlocal_op_data <- function(rtt_specialties, provider_successors_last_updated, ccg_to_icb_last_updated) {
+get_repat_nonlocal_op_data <- function(rtt_specialties, provider_successors_last_updated, ccg_to_icb_last_updated, op_data_last_updated) {
   force(provider_successors_last_updated)
   force(ccg_to_icb_last_updated)
+  force(op_data_last_updated)
+
   con <- get_con("HESData")
 
   dplyr::tbl(con, dbplyr::in_schema("nhp_modelling", "outpatients")) |>

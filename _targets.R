@@ -115,15 +115,17 @@ list(
     )
   ),
   # op data
-  tar_target(op_data, get_op_data(provider_successors_last_updated)),
-  tar_target(op_diag_data, get_op_diag_data(op_age_sex_data)),
-  tar_target(op_procedures_data, get_op_procedures_data(provider_successors_last_updated)),
+  tar_target(op_data_last_updated, Sys.time()),
+  tar_target(op_data, get_op_data(provider_successors_last_updated, op_data_last_updated)),
   tar_target(op_age_sex_data, get_op_age_sex_data(op_data)),
+  tar_target(op_diag_data, get_op_diag_data(op_age_sex_data)),
+  tar_target(op_procedures_data, get_op_procedures_data(provider_successors_last_updated, op_data_last_updated)),
   tar_target(
     op_wli_data,
     get_op_wli_data(
       provider_successors_last_updated,
-      rtt_specialties
+      rtt_specialties,
+      op_data_last_updated
     )
   ),
   tar_target(
@@ -131,7 +133,8 @@ list(
     get_expat_op_data(
       rtt_specialties,
       provider_successors_last_updated,
-      ccg_to_icb_last_updated
+      ccg_to_icb_last_updated,
+      op_data_last_updated
     )
   ),
   tar_target(
@@ -139,7 +142,8 @@ list(
     get_repat_local_op_data(
       rtt_specialties,
       provider_successors_last_updated,
-      ccg_to_icb_last_updated
+      ccg_to_icb_last_updated,
+      op_data_last_updated
     )
   ),
   tar_target(
@@ -147,12 +151,14 @@ list(
     get_repat_nonlocal_op_data(
       rtt_specialties,
       provider_successors_last_updated,
-      ccg_to_icb_last_updated
+      ccg_to_icb_last_updated,
+      op_data_last_updated
     )
   ),
   # aae data
   tar_target(aae_data_raw, get_aae_data(provider_successors_last_updated)),
-  tar_target(aae_data, get_aae_data_with_ecds(aae_data_raw)),
+  tar_target(ecds_data_raw, "../nhp_model/data/raw/ecds.parquet"),
+  tar_target(aae_data, get_aae_data_with_ecds(aae_data_raw, ecds_data_raw)),
   tar_target(aae_diag_data, get_aae_diag_data(provider_successors_last_updated)),
   tar_target(aae_procedures_data, get_aae_procedures_data(provider_successors_last_updated)),
   tar_target(aae_age_sex_data, get_aae_age_sex_data(aae_data)),
