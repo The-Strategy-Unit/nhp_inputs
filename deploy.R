@@ -1,3 +1,5 @@
+stopifnot("Need to run inside the inputs_selection_app folder" = file.exists("deploy.R"))
+
 files <- c(
   dir(".", ".R"),
   dir(".", ".yml"),
