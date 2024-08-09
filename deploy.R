@@ -1,5 +1,7 @@
-deploy <- function() {
+deploy <- function(...) {
   stopifnot("Need to run inside the inputs_selection_app folder" = file.exists("deploy.R"))
+
+  app_version_choices <- list(...)
 
   files <- c(
     dir(".", ".R"),
@@ -11,11 +13,8 @@ deploy <- function() {
 
   files <- files[!files == "deploy.R"]
 
-  Sys.setenv(
-    APP_VERSION_CHOICES = jsonlite::toJSON(
-      c("v2.1", "v2.0", "v1.2", "v1.1", "v1.0", "dev"),
-      auto_unbox = TRUE
-    )
+  withr::local_envvar(
+    APP_VERSION_CHOICES = jsonlite::toJSON(app_version_choices, auto_unbox = TRUE)
   )
 
   rsconnect::deployApp(
@@ -27,4 +26,4 @@ deploy <- function() {
   )
 }
 
-deploy()
+deploy("v2.1", "v2.0", "v1.2", "v1.1", "v1.0", "dev")
