@@ -1,4 +1,7 @@
 deploy <- function(...) {
+  if (!file.exists("deploy.R")) {
+    withr::local_dir("inputs_selection_app")
+  }
   stopifnot("Need to run inside the inputs_selection_app folder" = file.exists("deploy.R"))
 
   app_version_choices <- list(...)
