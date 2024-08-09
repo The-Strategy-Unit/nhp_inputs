@@ -26,7 +26,7 @@ upgrade_params.default <- function(p) {
 upgrade_params.v1.2 <- function(p) {
   p$health_status_adjustment <- TRUE
   p$app_version <- "v2.0"
-  p
+  upgrade_params(p)
 }
 
 upgrade_params.v2.0 <- function(p) {
