@@ -29,6 +29,11 @@ upgrade_params.v1.2 <- function(p) {
   p
 }
 
+upgrade_params.v2.0 <- function(p) {
+  p$app_version <- "v2.1"
+  p
+}
+
 params_path <- function(user, dataset) {
   path <- file.path(
     config::get("params_data_path"),
