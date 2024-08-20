@@ -20,6 +20,8 @@ has not yet started
 * "Completed: View Outputs" once the model engine has finished. Clicking the
 'View Outputs' link will take you directly to the results
 
+The app may time out if the model is taking slightly longer to run than usual. A timeout in the app does not mean that the run has been stopped. Please wait a short while and go to the NHP outputs app to confirm success and to retrieve the results of the run. 
+
 If anything goes wrong running the model then "Error" will appear in the status.
 
 ## View params
