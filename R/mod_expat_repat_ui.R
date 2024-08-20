@@ -19,7 +19,7 @@ mod_expat_repat_ui <- function(id) {
         shinyjs::disabled(
           shiny::sliderInput(
             ns(type),
-            "Confidence Interval",
+            "Prediction interval",
             min, max, values, 0.1,
             post = "%"
           )
