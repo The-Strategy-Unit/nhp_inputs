@@ -164,6 +164,11 @@ ui_body <- function() {
       shiny::selectInput("model_runs", "Model Runs", choices = c(256, 512, 1024), selected = 256),
       shinyjs::disabled(
         shiny::selectInput("app_version", "Model Version", choices = app_version_choices)
+      ),
+      shinyjs::disabled(
+        shinyjs::hidden(
+          shiny::selectInput("selected_user", "Selected User", choices = NULL)
+        )
       )
     )
   )
@@ -220,6 +225,10 @@ server <- function(input, output, session) {
 
   # reactives ----
 
+  current_user <- shiny::reactive({
+    session$user %||% "[development]"
+  })
+
   # each time the user connects we create a temporary file which is what is passed to the main inputs app
 
   tempfile_name <- shiny::reactive({
@@ -270,7 +279,7 @@ server <- function(input, output, session) {
   # the scenario must have some validation applied to it - the next few chunks handle this
   scenario_validation <- shiny::reactive({
     s <- input$scenario
-    f <- params_filename(session$user, input$dataset, input$scenario)
+    f <- params_filename(current_user(), input$dataset, input$scenario)
 
     shiny::validate(
       shiny::need(
@@ -304,7 +313,7 @@ server <- function(input, output, session) {
       default_params
     } else {
       params_filename(
-        session$user,
+        input$selected_user,
         input$dataset,
         input$previous_scenario
       )
@@ -318,7 +327,7 @@ server <- function(input, output, session) {
     if (file == default_params) {
       p$seed <- sample(1:100000, 1)
     }
-    p$user <- session$user %||% "[development]"
+    p$user <- current_user()
     # decide whether the results are viewable to all users: if this is false
     # then only nhp_devs/nhp_power_users can view the results
     p$viewable <- any(stringr::str_starts(session$groups, "nhp_provider"))
@@ -346,15 +355,38 @@ server <- function(input, output, session) {
 
   filename <- shiny::reactive({
     shiny::req(scenario_validation())
-    params_filename(session$user, input$dataset, input$scenario)
+    params_filename(input$selected_user, input$dataset, input$scenario)
   })
 
   # observers ----
 
   shiny::observe({
+    users <- c(
+      dir(
+        file.path(
+          config::get("params_data_path"),
+          "params"
+        )
+      ),
+      current_user()
+    ) |>
+      unique() |>
+      sort()
+
+    shiny::updateSelectInput(
+      session,
+      "selected_user",
+      choices = users,
+      selected = current_user()
+    )
+  })
+
+  shiny::observe({
     is_power_user <- any(c("nhp_devs", "nhp_power_users") %in% session$groups)
     if (is_local() || is_power_user) {
       shinyjs::enable("app_version")
+      shinyjs::enable("selected_user")
+      shinyjs::show("selected_user")
     }
 
     if (is_local() || is_power_user || "nhp_allow_2022_data" %in% session$groups) {
@@ -414,7 +446,7 @@ server <- function(input, output, session) {
   shiny::observe({
     ds <- shiny::req(input$dataset)
 
-    saved_params <- params_path(session$user, ds) |>
+    saved_params <- params_path(input$selected_user, ds) |>
       dir(pattern = "*.json") |>
       stringr::str_remove("\\.json$")
 
@@ -436,12 +468,22 @@ server <- function(input, output, session) {
       choices = saved_params
     )
   }) |>
-    shiny::bindEvent(input$dataset)
+    shiny::bindEvent(input$dataset, input$selected_user)
 
   # watch the scenario inputs
   # this shows/hides some of the inputs in the scenario box, depending on what is selected in the scenario_type radio
   # buttons
   shiny::observe({
+    if (input$selected_user != current_user()) {
+      shinyjs::disable("scenario_type")
+
+      shiny::updateCheckboxInput(
+        session,
+        "scenario_type",
+        value = "Create new from existing"
+      )
+    }
+
     if (input$scenario_type == "Create new from scratch") {
       shinyjs::show("scenario")
       shinyjs::hide("previous_scenario")
