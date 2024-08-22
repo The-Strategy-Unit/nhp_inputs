@@ -209,6 +209,7 @@ get_op_convert_to_tele_data <- function(op_data, peers) {
       .data$peer,
       strategy = glue::glue("convert_to_tele_{.data$subgroup}")
     ) |>
+    tidyr::drop_na("is_tele_appointment") |>
     dplyr::summarise(
       rate = 1 - sum(.data$n * .data$is_tele_appointment) / sum(.data$n),
       n = sum(.data$n),
