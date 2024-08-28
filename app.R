@@ -25,13 +25,13 @@ upgrade_params.default <- function(p) {
 
 upgrade_params.v1.2 <- function(p) {
   p$health_status_adjustment <- TRUE
-  p$app_version <- "v2.0"
+  class(p) <- p$app_version <- "v2.0"
   upgrade_params(p)
 }
 
 upgrade_params.v2.0 <- function(p) {
-  p$app_version <- "v2.1"
-  p
+  class(p) <- p$app_version <- "v2.1"
+  upgrade_params(p)
 }
 
 params_path <- function(user, dataset) {
