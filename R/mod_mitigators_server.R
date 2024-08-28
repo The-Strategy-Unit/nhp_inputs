@@ -551,7 +551,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
           ) +
           ggplot2::geom_point(ggplot2::aes(y = 1, x = mean), size = 5, colour = "#f9bf14") +
           ggplot2::xlim(0, 100) +
-          ggplot2::xlab("80% confidence interval (mean represented as a point)") +
+          ggplot2::xlab("80% prediction interval (mean represented as a point)") +
           ggplot2::theme_minimal() +
           ggplot2::theme(
             axis.title.y = ggplot2::element_blank(),

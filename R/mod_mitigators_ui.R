@@ -37,7 +37,7 @@ mod_mitigators_ui <- function(id, title) {
             shiny::p("Note that 100% means no change and 0% means all activity
                      mitigated"),
             shiny::plotOutput(ns("nee_result"), height = 80),
-            shiny::sliderInput(ns("slider"), "80% Confidence Interval", 0, 1, c(0, 1))
+            shiny::sliderInput(ns("slider"), "80% prediction interval", 0, 1, c(0, 1))
           ),
           mod_reasons_ui(ns("reasons")),
           mod_time_profile_ui(ns("time_profile")),
