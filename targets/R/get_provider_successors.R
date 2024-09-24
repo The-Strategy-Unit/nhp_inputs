@@ -14,7 +14,8 @@ get_provider_successors <- function(ods_successors, list_providers) {
       tibble::tribble(
         ~old_code, ~new_code,
         "RBA", "RH5", # missing row for Taunton and Somerset NHS FT -> Somerset NHS FT
-        "RA3", "RA7" # missing row for Weston Area Health NHS Trust -> Univesity Hospitals Bristol and Weston NHS FT
+        "RA3", "RA7", # missing row for Weston Area Health NHS Trust -> Univesity Hospitals Bristol and Weston NHS FT
+        "RBZ", "RH8" # missing row for Northern Devon Healthcare NHS Trust -> Royal Devon University Healthcare NHS FT
       ),
       by = "old_code"
     )
