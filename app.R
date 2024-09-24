@@ -393,7 +393,7 @@ server <- function(input, output, session) {
       shiny::updateSelectInput(
         session,
         "start_year",
-        choices = c("2019/22" = 201920, "2022/23" = 202223)
+        choices = c("2019/20" = 201920, "2022/23" = 202223)
       )
     }
   })
