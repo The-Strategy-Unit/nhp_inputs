@@ -52,24 +52,6 @@ mod_run_model_server <- function(id, params) {
       # submitted
       p <- shiny::req(fixed_params())
 
-      # generate the results url
-      version <- p$app_version
-      f <- encrypt_filename( # nolint
-        file.path(
-          "prod",
-          version,
-          p$dataset,
-          glue::glue("{p$scenario}-{p$create_datetime}.json.gz"),
-          fsep = "/"
-        )
-      )
-
-      # update version for the url
-      version <- stringr::str_replace(version, "^v(\\d)+\\.(\\d+).*", "v\\1-\\2")
-      results_url(
-        glue::glue(Sys.getenv("NHP_OUTPUTS_URI"), "?{utils::URLencode(f, TRUE)}")
-      )
-
       # submit the model run
       mod_run_model_submit(p, status, results_url)
 
