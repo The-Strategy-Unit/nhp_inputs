@@ -1564,6 +1564,12 @@
       ],
       "Hash": "0e2829df8cb74a98179c886b023ffea8"
     },
+    "rcmdcheck": {
+      "Package": "rcmdcheck",
+      "Version": "1.4.0",
+      "Source": "Repository",
+      "Repository": "CRAN"
+    },
     "reactR": {
       "Package": "reactR",
       "Version": "0.6.1",
