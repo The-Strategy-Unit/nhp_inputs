@@ -118,7 +118,6 @@ ui_body <- function() {
       title = "Select Provider and Baseline",
       collapsible = FALSE,
       width = 12,
-      shiny::selectInput("cohort", "Cohort", c("Current", "All Other Providers")),
       shiny::selectInput("dataset", "Provider", choices = NULL, selectize = TRUE),
       shiny::selectInput(
         "start_year",
@@ -226,7 +225,6 @@ ui <- bs4Dash::bs4DashPage(
 server <- function(input, output, session) {
   # static data ----
   peers <- readRDS("peers.Rds")
-  nhp_current_cohort <- readRDS("nhp_current_cohort.Rds")
 
   providers <- readRDS("providers.Rds")
   all_providers <- jsonlite::read_json("all_providers.json", simplifyVector = TRUE)
@@ -251,15 +249,7 @@ server <- function(input, output, session) {
   selected_providers <- shiny::reactive({
     g <- session$groups
 
-    cohort <- shiny::req(input$cohort)
-
-    p <- if (cohort == "Current") {
-      nhp_current_cohort
-    } else if (cohort == "All Other Providers") {
-      setdiff(all_providers, nhp_current_cohort)
-    } else {
-      stop("unrecognised option for cohort dropdown")
-    }
+    p <- all_providers
 
     if (!(is.null(g) || any(c("nhp_devs", "nhp_power_users") %in% g))) {
       a <- g |>
@@ -269,8 +259,7 @@ server <- function(input, output, session) {
     }
 
     p <- providers[providers %in% p]
-  }) |>
-    shiny::bindEvent(input$cohort)
+  })
 
   # when the user changes the provider (dataset), get the list of peers for that provider
   selected_peers <- shiny::reactive({
@@ -413,7 +402,7 @@ server <- function(input, output, session) {
     p <- shiny::req(params())
 
     y <- p$start_year * 100 + p$start_year %% 100 + 1
-    # we don't need to update dataset/cohort:
+    # we don't need to update dataset:
     # the parameters files that are listed in the previous scenario dropdown are already tied to that provider
     shiny::updateSelectInput(session, "start_year", selected = y)
     shiny::updateSelectInput(session, "end_year", selected = as.character(p$end_year))
