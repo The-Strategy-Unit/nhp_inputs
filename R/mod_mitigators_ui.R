@@ -12,9 +12,6 @@ mod_mitigators_ui <- function(id, title) {
   shiny::tagList(
     shiny::h1("Activity Mitigators"),
     shiny::h2(title),
-    shiny::h4("NB in the trend, funnel and boxplot charts, the yellow highlight
-              indicates the selected uncertainty interval.This defaults to
-              95% to 100% of the baseline value."),
     shiny::fluidRow(
       col_4(
         shiny::fluidRow(
