@@ -1,4 +1,4 @@
 app.R
 tests/testthat.R
-_scratch/*.R
+_scratch
 dev/*.R
