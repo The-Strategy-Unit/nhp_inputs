@@ -35,6 +35,9 @@ jobs:
 
       - uses: r-lib/actions/setup-renv@v2
 
+      - name: install rcmdcheck
+        run: Rscript -e "install.packages('rcmdcheck')"
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
