@@ -188,7 +188,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       include <- !is.null(params[[mitigators_type]][[activity_type]][[input$strategy]])
 
       shiny::updateCheckboxInput(session, "include", value = include)
-      shiny::updateRadioButtons(session, "slider_type", selected = "% rate")
+      # shiny::updateRadioButtons(session, "slider_type", selected = "% rate")  # TODO: remove
       update_slider("% change")
     }) |>
       shiny::bindEvent(input$strategy)
@@ -197,17 +197,17 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       strategy <- shiny::req(input$strategy)
       max_value <- provider_max_value()
 
-      if (type == "rate") {
-        scale <- config$slider_scale
-        range <- get_range(max_value, scale)
-        step <- config$slider_step
-        pc_fn <- param_conversion$absolute[[1]]
-      } else {
-        scale <- 100
-        range <- c(0, 100)
-        step <- 0.1
-        pc_fn <- param_conversion$relative[[1]]
-      }
+      # if (type == "rate") {
+      #   scale <- config$slider_scale
+      #   range <- get_range(max_value, scale)
+      #   step <- config$slider_step
+      #   pc_fn <- param_conversion$absolute[[1]]
+      # } else {
+      scale <- 100
+      range <- c(0, 100)
+      step <- 0.1
+      pc_fn <- param_conversion$relative[[1]]
+      # }
 
       values <- pc_fn(max_value, slider_values[[mitigators_type]][[strategy]]$interval) * scale
       shiny::updateSliderInput(
@@ -220,25 +220,26 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       )
     }
 
-    shiny::observe({
-      shiny::req(input$strategy)
-      update_slider(input$slider_type)
-    }) |>
-      shiny::bindEvent(input$slider_type)
+    # TODO: remove
+    # shiny::observe({
+    #   shiny::req(input$strategy)
+    #   update_slider(input$slider_type)
+    # }) |>
+    #   shiny::bindEvent(input$slider_type)
 
     shiny::observe({
       values <- input$slider
-      type <- shiny::req(input$slider_type)
+      # type <- shiny::req(input$slider_type)  # TODO: remove
       strategy <- shiny::req(input$strategy)
       max_value <- provider_max_value()
 
-      if (type == "rate") {
-        scale <- config$slider_scale
-        pc_fn <- param_conversion$absolute[[2]]
-      } else {
-        scale <- 100
-        pc_fn <- param_conversion$relative[[2]]
-      }
+      # if (type == "rate") {
+      #   scale <- config$slider_scale
+      #   pc_fn <- param_conversion$absolute[[2]]
+      # } else {
+      scale <- 100
+      pc_fn <- param_conversion$relative[[2]]
+      # }
 
       v <- pc_fn(max_value, values / scale)
 
@@ -270,7 +271,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
 
     shiny::observe({
       shinyjs::toggleState("slider", condition = input$include)
-      shinyjs::toggleState("slider_type", condition = input$include)
+      # shinyjs::toggleState("slider_type", condition = input$include)
     }) |>
       shiny::bindEvent(input$include)
 
@@ -532,7 +533,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       age_pyramid(age_data)
     })
 
-    # NEE result
+    # NEE result ----
 
     output$nee_result <- shiny::renderPlot(
       {
@@ -563,5 +564,29 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       width = "auto",
       height = 60
     )
+
+    # rate values ----
+
+    output$rate_slider_values <- shiny::renderText({
+
+      scale <- config$slider_scale
+      pc_fn1 <- param_conversion$absolute[[1]]
+      pc_fn2 <- param_conversion$absolute[[2]]
+      strategy <- shiny::req(input$strategy)
+
+      rate_max <- provider_max_value()
+      rate_denom <- config$y_axis_title
+
+      values <- pc_fn1(rate_max, slider_values[[mitigators_type]][[strategy]]$interval) * scale
+      rate <- pc_fn2(rate_max, values / scale)
+      rate_lo <- janitor::round_half_up(rate[1] * rate_max, 3)
+      rate_hi <- janitor::round_half_up(rate[2] * rate_max, 3)
+
+      glue::glue("This is equivalent to a rate of {v_lo} to {v_hi},
+                 given a baseline of {max_value}. The denominator is
+                 '{rate_denom}'.")
+
+    })
+
   })
 }

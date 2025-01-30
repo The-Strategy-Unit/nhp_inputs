@@ -28,16 +28,19 @@ mod_mitigators_ui <- function(id, title) {
               ns("include"),
               "Include?"
             ),
-            shiny::radioButtons(
-              ns("slider_type"),
-              "Display Type",
-              choices = c("Relative" = "% change", "Absolute" = "rate"),
-              selected = "% change"
-            ),
+            # TODO: remove
+            # shiny::radioButtons(
+            #   ns("slider_type"),
+            #   "Display Type",
+            #   choices = c("Relative" = "% change", "Absolute" = "rate"),
+            #   selected = "% change"
+            # ),
             shiny::p("Note that 100% means no change and 0% means all activity
                      mitigated"),
             shiny::plotOutput(ns("nee_result"), height = 80),
             shiny::sliderInput(ns("slider"), "80% prediction interval", 0, 1, c(0, 1)),
+            shiny::textOutput(ns("rate_slider_values")),
+            shiny::p(),
             shiny::p("Adjusting this slider will change the width of the
                      corresponding yellow-highlighted region in the trend, funnel
                      and boxplot charts above.")
