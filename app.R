@@ -122,12 +122,16 @@ ui_body <- function() {
       shiny::selectInput(
         "start_year",
         "Baseline Financial Year",
-        choices = c("2019/20" = 201920)
+        choices = c("2019/20" = 201920, "2023/24" = 202324),
+        selected = "202324"
       ),
       shiny::selectInput(
         "end_year",
         "Model Financial Year",
-        choices = setNames(as.character(0:21), paste(2020:2041, 21:42, sep = "/")),
+        choices = setNames(
+          as.character(3:21),  # 2020 to 2041 would be 0 to 21
+          paste(2023:2041, 24:42, sep = "/")
+        ),
         selected = "21"
       )
     ),
@@ -392,7 +396,8 @@ server <- function(input, output, session) {
       shiny::updateSelectInput(
         session,
         "start_year",
-        choices = c("2019/20" = 201920, "2022/23" = 202223)
+        choices = c("2019/20" = 201920, "2022/23" = 202223, "2023/24" = 202324),
+        selected =  "202324"
       )
     }
   })
