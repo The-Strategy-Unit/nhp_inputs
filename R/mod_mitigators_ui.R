@@ -39,7 +39,7 @@ mod_mitigators_ui <- function(id, title) {
                      mitigated"),
             shiny::plotOutput(ns("nee_result"), height = 80),
             shiny::sliderInput(ns("slider"), "80% prediction interval", 0, 1, c(0, 1)),
-            shiny::textOutput(ns("rate_slider_values")),
+            shiny::htmlOutput(ns("slider_absolute")),
             shiny::p(),
             shiny::p("Adjusting this slider will change the width of the
                      corresponding yellow-highlighted region in the trend, funnel

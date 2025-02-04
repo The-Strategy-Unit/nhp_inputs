@@ -188,7 +188,6 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       include <- !is.null(params[[mitigators_type]][[activity_type]][[input$strategy]])
 
       shiny::updateCheckboxInput(session, "include", value = include)
-      # shiny::updateRadioButtons(session, "slider_type", selected = "% rate")  # TODO: remove
       update_slider("% change")
     }) |>
       shiny::bindEvent(input$strategy)
@@ -220,16 +219,8 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       )
     }
 
-    # TODO: remove
-    # shiny::observe({
-    #   shiny::req(input$strategy)
-    #   update_slider(input$slider_type)
-    # }) |>
-    #   shiny::bindEvent(input$slider_type)
-
     shiny::observe({
       values <- input$slider
-      # type <- shiny::req(input$slider_type)  # TODO: remove
       strategy <- shiny::req(input$strategy)
       max_value <- provider_max_value()
 
@@ -271,7 +262,6 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
 
     shiny::observe({
       shinyjs::toggleState("slider", condition = input$include)
-      # shinyjs::toggleState("slider_type", condition = input$include)
     }) |>
       shiny::bindEvent(input$include)
 
@@ -567,24 +557,33 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
 
     # rate values ----
 
-    output$rate_slider_values <- shiny::renderText({
+    output$slider_absolute <- shiny::renderText({
 
       scale <- config$slider_scale
-      pc_fn1 <- param_conversion$absolute[[1]]
-      pc_fn2 <- param_conversion$absolute[[2]]
       strategy <- shiny::req(input$strategy)
+      max_value <- provider_max_value()
 
-      rate_max <- provider_max_value()
-      rate_denom <- config$y_axis_title
+      convert_params_a <- param_conversion$absolute[[1]]
+      convert_params_b <- param_conversion$absolute[[2]]
+      values <- convert_params_a(max_value, slider_values[[mitigators_type]][[strategy]]$interval) * scale
+      rate <- convert_params_b(max_value, values / scale)
 
-      values <- pc_fn1(rate_max, slider_values[[mitigators_type]][[strategy]]$interval) * scale
-      rate <- pc_fn2(rate_max, values / scale)
-      rate_lo <- janitor::round_half_up(rate[1] * rate_max, 3)
-      rate_hi <- janitor::round_half_up(rate[2] * rate_max, 3)
+      convert_number <- config$number_type
+      rate_lo <- convert_number(rate[1] * max_value)
+      rate_hi <- convert_number(rate[2] * max_value)
+      rate_max <- convert_number(max_value)
+      rate_meaning <- config$y_axis_title
 
-      glue::glue("This is equivalent to a rate of {v_lo} to {v_hi},
-                 given a baseline of {max_value}. The denominator is
-                 '{rate_denom}'.")
+      text <- glue::glue(
+        "This is equivalent to a rate of {rate_lo} to {rate_hi}
+        ('{rate_meaning}') given the baseline of {rate_max}."
+      )
+
+      if (!input$include) {
+        text <- glue::glue("<font color='#ADAEAF'>{text}</font>")  # grey out
+      }
+
+      text
 
     })
 
