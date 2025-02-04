@@ -195,18 +195,10 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
     update_slider <- function(type) {
       strategy <- shiny::req(input$strategy)
       max_value <- provider_max_value()
-
-      # if (type == "rate") {
-      #   scale <- config$slider_scale
-      #   range <- get_range(max_value, scale)
-      #   step <- config$slider_step
-      #   pc_fn <- param_conversion$absolute[[1]]
-      # } else {
       scale <- 100
       range <- c(0, 100)
       step <- 0.1
       pc_fn <- param_conversion$relative[[1]]
-      # }
 
       values <- pc_fn(max_value, slider_values[[mitigators_type]][[strategy]]$interval) * scale
       shiny::updateSliderInput(
@@ -223,14 +215,8 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       values <- input$slider
       strategy <- shiny::req(input$strategy)
       max_value <- provider_max_value()
-
-      # if (type == "rate") {
-      #   scale <- config$slider_scale
-      #   pc_fn <- param_conversion$absolute[[2]]
-      # } else {
       scale <- 100
       pc_fn <- param_conversion$relative[[2]]
-      # }
 
       v <- pc_fn(max_value, values / scale)
 
@@ -562,21 +548,27 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       scale <- config$slider_scale
       strategy <- shiny::req(input$strategy)
       max_value <- provider_max_value()
+      rate_meaning <- config$y_axis_title
 
       convert_params_a <- param_conversion$absolute[[1]]
       convert_params_b <- param_conversion$absolute[[2]]
       values <- convert_params_a(max_value, slider_values[[mitigators_type]][[strategy]]$interval) * scale
       rate <- convert_params_b(max_value, values / scale)
 
-      convert_number <- config$number_type
+      if (stringr::str_detect(rate_meaning, "%")) {
+        # config$number_type is too rounded for display of percentages
+        convert_number <- \(x) scales::number(x, 0.1, 100, suffix = "%")
+      } else {
+        convert_number <- config$number_type
+      }
+
       rate_lo <- convert_number(rate[1] * max_value)
       rate_hi <- convert_number(rate[2] * max_value)
       rate_max <- convert_number(max_value)
-      rate_meaning <- config$y_axis_title
 
       text <- glue::glue(
-        "This is equivalent to a rate of {rate_lo} to {rate_hi}
-        ('{rate_meaning}') given the baseline of {rate_max}."
+        "This is equivalent to a rate interval of {rate_lo} to {rate_hi}
+        ({rate_meaning}) given the baseline of {rate_max}."
       )
 
       if (!input$include) {
