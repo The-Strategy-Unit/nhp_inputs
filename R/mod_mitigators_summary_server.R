@@ -1,7 +1,7 @@
 #' mitigator_summary Server Functions
 #'
 #' @noRd
-mod_mitigators_summary_server <- function(id, provider_data, params) {
+mod_mitigators_summary_server <- function(id, age_sex_data, params) {
   shiny::moduleServer(id, function(input, output, session) {
     mitigators_summary <- shiny::reactive({
       year <- as.character(shiny::req(params$start_year))
@@ -24,14 +24,13 @@ mod_mitigators_summary_server <- function(id, provider_data, params) {
         ) |>
         dplyr::select(-"mitigator_code")
 
-      provider_data() |>
-        purrr::map("age_sex") |>
-        dplyr::bind_rows(.id = "strategy") |>
+      age_sex_data |>
         dplyr::filter(.data[["fyear"]] == year) |>
         dplyr::count(.data[["strategy"]], wt = .data[["n"]], name = "total", sort = TRUE) |>
         dplyr::slice(1:20) |>
         dplyr::inner_join(strategy_names, by = dplyr::join_by("strategy")) |>
         dplyr::select(-"strategy")
+
     })
 
     output$diagnoses_table <- gt::render_gt({
