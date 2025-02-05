@@ -183,16 +183,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       floor(r * m) / m
     })
 
-    shiny::observe({
-      shiny::req(input$strategy)
-      include <- !is.null(params[[mitigators_type]][[activity_type]][[input$strategy]])
-
-      shiny::updateCheckboxInput(session, "include", value = include)
-      update_slider("% change")
-    }) |>
-      shiny::bindEvent(input$strategy)
-
-    update_slider <- function(type) {
+    shiny::observe({  # update slider
       strategy <- shiny::req(input$strategy)
       max_value <- provider_max_value()
       scale <- 100
@@ -209,7 +200,8 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       update_time_profile(
         time_profile_mappings$mappings[[strategy]] %||% "linear"
       )
-    }
+    }) |>
+      shiny::bindEvent(input$strategy)
 
     shiny::observe({
       values <- input$slider

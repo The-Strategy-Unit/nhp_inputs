@@ -28,13 +28,6 @@ mod_mitigators_ui <- function(id, title) {
               ns("include"),
               "Include?"
             ),
-            # TODO: remove
-            # shiny::radioButtons(
-            #   ns("slider_type"),
-            #   "Display Type",
-            #   choices = c("Relative" = "% change", "Absolute" = "rate"),
-            #   selected = "% change"
-            # ),
             shiny::p("Note that 100% means no change and 0% means all activity
                      mitigated"),
             shiny::plotOutput(ns("nee_result"), height = 80),
