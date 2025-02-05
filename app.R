@@ -122,16 +122,13 @@ ui_body <- function() {
       shiny::selectInput(
         "start_year",
         "Baseline Financial Year",
-        choices = c("2019/20" = 201920, "2023/24" = 202324),
-        selected = "202324"
+        choices = c("2019/20" = 201920, "2023/24" = 202324)
       ),
+      shiny::htmlOutput("baseline_202324_warning"),
       shiny::selectInput(
         "end_year",
         "Model Financial Year",
-        choices = setNames(
-          as.character(3:21),  # 2020 to 2041 would be 0 to 21
-          paste(2023:2041, 24:42, sep = "/")
-        ),
+        choices = setNames(as.character(0:21), paste(2020:2041, 21:42, sep = "/")),
         selected = "21"
       )
     ),
@@ -396,8 +393,7 @@ server <- function(input, output, session) {
       shiny::updateSelectInput(
         session,
         "start_year",
-        choices = c("2019/20" = 201920, "2022/23" = 202223, "2023/24" = 202324),
-        selected =  "202324"
+        choices = c("2019/20" = 201920, "2022/23" = 202223, "2023/24" = 202324)
       )
     }
   })
@@ -549,6 +545,19 @@ server <- function(input, output, session) {
     }
   }) |>
     shiny::bindEvent(filename(), params_with_inputs())
+
+  output$baseline_202324_warning <- shiny::renderText({
+    if (input$start_year == "202324") {
+      "<font color='red'>You must request and review your 2023/24 baseline data
+      before selecting 2023/24 as the baseline year. Please contact
+      <a href='mailto:mlcsu.su.datascience@nhs.net?subject=NHP request:
+      2023/24 baseline data&body=I am requesting the 2023/24 baseline data for
+      [insert scheme name].'>mlcsu.su.datascience@nhs.net</a> to request your
+      2023/24 baseline data.</font><br><br>"
+    }
+  }) |>
+    shiny::bindEvent(input$start_year)
+
 
   # return ----
   NULL
