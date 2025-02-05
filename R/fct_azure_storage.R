@@ -10,6 +10,25 @@ load_rds_from_adls <- function(file, inputs_data_version = Sys.getenv("NHP_INPUT
   AzureStor::storage_load_rds(fs, glue::glue("{inputs_data_version}/{file}"))
 }
 
+#' Get Provider Data
+#'
+#' Read the parquet file containing a selected tupe of provider data.
+#'
+#' @return A tibble.
+load_provider_data <- function(
+    file,
+    inputs_data_version = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")
+) {
+  fs <- get_adls_fs()
+  fs |>
+    AzureStor::download_adls_file(
+      glue::glue("{inputs_data_version}/{file}.parquet"),
+      dest = NULL
+    ) |>
+    arrow::read_parquet() |>
+    tibble::as_tibble()
+}
+
 #' Get ADLS Filesystem
 #'
 #' try to use a managed token, this will only work if run in an Azure data centre
