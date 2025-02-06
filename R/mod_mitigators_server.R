@@ -352,23 +352,24 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
 
       data <- diagnoses_data |>
         dplyr::filter(
+          .data$provider == params$dataset,
           .data$strategy == .env$strategy,
           .data$fyear == params$start_year
         ) |>
         dplyr::inner_join(diagnoses_lkup, by = c("diagnosis" = "diagnosis_code")) |>
-        dplyr::select("diagnosis_description", "n", "p")
+        dplyr::select("diagnosis_description", "n", "pcnt")
 
       n_total <- sum(data$n)
-      p_total <- sum(data$p)
+      pcnt_total <- sum(data$pcnt)
 
       # if we need to include an other row
-      if (p_total < 1) {
+      if (pcnt_total < 1) {
         data <- dplyr::bind_rows(
           data,
           tibble::tibble(
             diagnosis_description = "Other",
-            n = n_total * (1 - p_total) / p_total,
-            p = 1 - p_total
+            n = n_total * (1 - pcnt_total) / pcnt_total,
+            pcnt = 1 - pcnt_total
           )
         )
       }
@@ -377,7 +378,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
         gt::cols_label(
           "diagnosis_description" = "Diagnosis",
           "n" = "Count of Activity (spells)",
-          "p" = "% of Total Activity"
+          "pcnt" = "% of Total Activity"
         ) |>
         gt::tab_stubhead("Diagnosis") |>
         gt::fmt_number(
@@ -386,7 +387,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
           use_seps = TRUE
         ) |>
         gt::fmt_percent(
-          c("p"),
+          c("pcnt"),
           decimals = 1
         ) |>
         gt::grand_summary_rows(
@@ -444,29 +445,29 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
         )
       )
 
-
       strategy <- shiny::req(input$strategy)
 
       data <- pd |>
         dplyr::filter(
+          .data$provider == params$dataset,
           .data$strategy == .env$strategy,
           .data$fyear == params$start_year
         ) |>
-        dplyr::left_join(procedures_lkup, by = c("procedure" = "code")) |>
+        dplyr::left_join(procedures_lkup, by = c("procedure_code" = "code")) |>
         tidyr::replace_na(list(description = "Unknown/Invalid Procedure Code")) |>
-        dplyr::select("procedure_description" = "description", "n", "p")
+        dplyr::select("procedure_description" = "description", "n", "pcnt")
 
       n_total <- sum(data$n)
-      p_total <- sum(data$p)
+      pcnt_total <- sum(data$pcnt)
 
       # if we need to include an other row
-      if (p_total < 1) {
+      if (pcnt_total < 1) {
         data <- dplyr::bind_rows(
           data,
           tibble::tibble(
             procedure_description = "Other",
-            n = n_total * (1 - p_total) / p_total,
-            p = 1 - p_total
+            n = n_total * (1 - pcnt_total) / pcnt_total,
+            pcnt = 1 - pcnt_total
           )
         )
       }
@@ -475,7 +476,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
         gt::cols_label(
           "procedure_description" = "Procedure",
           "n" = "Count of Activity (spells)",
-          "p" = "% of Total Activity"
+          "pcnt" = "% of Total Activity"
         ) |>
         gt::tab_stubhead("Procedure") |>
         gt::fmt_number(
@@ -484,7 +485,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
           use_seps = TRUE
         ) |>
         gt::fmt_percent(
-          c("p"),
+          c("pcnt"),
           decimals = 1
         ) |>
         gt::grand_summary_rows(
