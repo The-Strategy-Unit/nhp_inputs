@@ -28,6 +28,10 @@ app_server <- function(input, output, session) {
     readRDS(app_sys("app", "data", "providers.Rds"))
   })
 
+  peers <- shiny::reactive({
+    readRDS(app_sys("app", "data", "peers.Rds"))
+  })
+
   params <- mod_home_server(
     "home",
     providers(),
@@ -119,7 +123,8 @@ app_server <- function(input, output, session) {
       available_strategies,
       diagnoses_lkup(),
       procedures_lkup(),
-      mitigator_codes_lkup()
+      mitigator_codes_lkup(),
+      peers()
     )
 
     # enable the run_model page for certain users/running locally

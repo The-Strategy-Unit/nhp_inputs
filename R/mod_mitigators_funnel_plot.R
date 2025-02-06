@@ -8,14 +8,7 @@
 #'
 #' @noRd
 generate_rates_funnel_data <- function(data) {
-  # peer_rates <- data |>
-  #   dplyr::filter(is.na(.data$peer)) |>
-  #   dplyr::select("fyear", mean = "rate")
-
   funnel_data <- data |>
-    # tidyr::drop_na(.data$peer) |>
-    # dplyr::inner_join(peer_rates, by = c("fyear")) |>
-    # dplyr::group_by(.data$fyear) |>
     dplyr::mutate(
       sdev_pop_i = sqrt(abs(.data$national_rate) / .data$numerator),
       z = (.data$rate - .data$national_rate) / .data$sdev_pop_i,
@@ -27,8 +20,6 @@ generate_rates_funnel_data <- function(data) {
       upper2 = .data$national_rate + .data$cl2,
       upper3 = .data$national_rate + .data$cl3
     )
-  # ) |>
-  # dplyr::ungroup()
 
   structure(funnel_data, class = c("nhp_funnel_plot", class(funnel_data)))
 }
@@ -44,7 +35,6 @@ plot.nhp_funnel_plot <- function(x, plot_range, interval, x_axis_title, ...) {
     tidyr::pivot_longer(-.data$numerator, values_to = "rate")
 
   x |>
-    dplyr::arrange(dplyr::desc(.data$is_peer)) |>  # focal scheme (FALSE) will be plotted last
     ggplot2::ggplot(ggplot2::aes(.data$numerator, .data$rate)) +
     interval +
     ggplot2::geom_line(
@@ -55,10 +45,14 @@ plot.nhp_funnel_plot <- function(x, plot_range, interval, x_axis_title, ...) {
     ) +
     ggplot2::geom_point(ggplot2::aes(colour = .data$is_peer), shape = 21) +
     ggrepel::geom_text_repel(
-      data = dplyr::filter(x, !.data$is_peer),  # label focal scheme only
-      ggplot2::aes(label = .data$provider, colour = .data$is_peer)
+      data = dplyr::filter(x, !is.na(.data$is_peer)),
+      ggplot2::aes(label = .data$provider, colour = .data$is_peer),
+      max.overlaps = Inf  # include all labels
     ) +
-    ggplot2::scale_colour_manual(values = c("TRUE" = "lightgrey", "FALSE" = "red")) +
+    ggplot2::scale_colour_manual(
+      values = c("TRUE" = "black", "FALSE" = "red"),
+      na.value = "lightgrey",
+    ) +
     ggplot2::theme(legend.position = "none") +
     ggplot2::scale_x_continuous(labels = scales::comma_format()) +
     ggplot2::coord_cartesian(ylim = plot_range) +

@@ -1,0 +1,95 @@
+{
+  "user": "[development]",
+  "dataset": "RCF",
+  "scenario": "hgf",
+  "seed": 91263,
+  "model_runs": 256,
+  "start_year": "201920",
+  "end_year": 2041,
+  "app_version": "dev",
+  "demographic_factors": {
+    "file": "demographic_factors.csv",
+    "variant_probabilities": {
+      "principal_proj": 1
+    }
+  },
+  "health_status_adjustment": true,
+  "covid_adjustment": {
+    "aae": {},
+    "ip": {},
+    "op": {}
+  },
+  "expat": {
+    "ip": {},
+    "op": {},
+    "aae": {}
+  },
+  "repat_local": {
+    "ip": {},
+    "op": {},
+    "aae": {}
+  },
+  "repat_nonlocal": {
+    "ip": {},
+    "op": {},
+    "aae": {}
+  },
+  "baseline_adjustment": {
+    "ip": {},
+    "op": {},
+    "aae": {}
+  },
+  "waiting_list_adjustment": {
+    "ip": {},
+    "op": {}
+  },
+  "non-demographic_adjustment": {
+    "ip": {},
+    "op": {},
+    "aae": {}
+  },
+  "activity_avoidance": {
+    "ip": {},
+    "op": {},
+    "aae": {}
+  },
+  "efficiencies": {
+    "ip": {},
+    "op": {}
+  },
+  "time_profile_mappings": {
+    "covid_adjustment": "none",
+    "baseline_adjustment": "none",
+    "activity_avoidance": {
+      "ip": {},
+      "op": {},
+      "aae": {}
+    },
+    "efficiencies": {
+      "ip": {},
+      "op": {}
+    },
+    "expat": "linear",
+    "repat_local": "linear",
+    "repat_nonlocal": "linear",
+    "non-demographic_adjustment": "none",
+    "waiting_list_adjustment": "linear"
+  },
+  "reasons": {
+    "baseline_adjustment": "",
+    "demographic_factors": "",
+    "waiting_list_adjustment": "",
+    "expat_repat": "",
+    "non-demographic_adjustment": "",
+    "activity_avoidance": {
+      "ip": {},
+      "op": {},
+      "aae": {}
+    },
+    "efficiencies": {
+      "ip": {},
+      "op": {}
+    }
+  },
+  "viewable": false
+}

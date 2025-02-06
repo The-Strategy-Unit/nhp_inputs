@@ -10,7 +10,8 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
                                   available_strategies,
                                   diagnoses_lkup,
                                   procedures_lkup,
-                                  mitigator_codes_lkup) {
+                                  mitigator_codes_lkup,
+                                  peers) {
   selected_time_profile <- update_time_profile <- NULL
   c(selected_time_profile, update_time_profile) %<-% mod_time_profile_server(
     shiny::NS(id, "time_profile"),
@@ -149,12 +150,23 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
 
     rates_baseline_data <- shiny::reactive({
       strategy <- shiny::req(input$strategy)
+      scheme_peers <- peers |>
+        dplyr::filter(.data$procode == params$dataset & .data$peer != params$dataset) |>
+        dplyr::pull(peer)
+
       rates_data |>
         dplyr::filter(
           .data$strategy == .env$strategy,
           .data$fyear == params$start_year
         ) |>
-        dplyr::mutate(is_peer = .data$provider != params$dataset)
+        dplyr::mutate(
+          is_peer = dplyr::case_when(
+            .data$provider == params$dataset ~ FALSE,
+            .data$provider %in% .env$scheme_peers ~ TRUE,
+            .default = NA
+          )
+        ) |>
+        dplyr::arrange(!is.na(is_peer), dplyr::desc(is_peer))  # order for plotting
     })
 
     # params controls ----
@@ -332,7 +344,6 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
 
     output$boxplot <- shiny::renderPlot({
       rates_baseline_data() |>
-        tidyr::drop_na(.data$is_peer) |>
         rates_boxplot(plot_range(), plot_ribbon())
     })
 
