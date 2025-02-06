@@ -8,26 +8,27 @@
 #'
 #' @noRd
 generate_rates_funnel_data <- function(data) {
-  peer_rates <- data |>
-    dplyr::filter(is.na(.data$peer)) |>
-    dplyr::select("fyear", mean = "rate")
+  # peer_rates <- data |>
+  #   dplyr::filter(is.na(.data$peer)) |>
+  #   dplyr::select("fyear", mean = "rate")
 
   funnel_data <- data |>
-    tidyr::drop_na(.data$peer) |>
-    dplyr::inner_join(peer_rates, by = c("fyear")) |>
-    dplyr::group_by(.data$fyear) |>
+    # tidyr::drop_na(.data$peer) |>
+    # dplyr::inner_join(peer_rates, by = c("fyear")) |>
+    # dplyr::group_by(.data$fyear) |>
     dplyr::mutate(
-      sdev_pop_i = sqrt(abs(.data$mean) / .data$n),
-      z = (.data$rate - .data$mean) / .data$sdev_pop_i,
+      sdev_pop_i = sqrt(abs(.data$national_rate) / .data$numerator),
+      z = (.data$rate - .data$national_rate) / .data$sdev_pop_i,
       sigz = stats::sd(.data$z, na.rm = TRUE),
       cl2 = 2 * .data$sdev_pop_i * .data$sigz,
       cl3 = 3 * .data$sdev_pop_i * .data$sigz,
-      lower2 = .data$mean - .data$cl2,
-      lower3 = .data$mean - .data$cl3,
-      upper2 = .data$mean + .data$cl2,
-      upper3 = .data$mean + .data$cl3
-    ) |>
-    dplyr::ungroup()
+      lower2 = .data$national_rate - .data$cl2,
+      lower3 = .data$national_rate - .data$cl3,
+      upper2 = .data$national_rate + .data$cl2,
+      upper3 = .data$national_rate + .data$cl3
+    )
+  # ) |>
+  # dplyr::ungroup()
 
   structure(funnel_data, class = c("nhp_funnel_plot", class(funnel_data)))
 }
@@ -35,15 +36,29 @@ generate_rates_funnel_data <- function(data) {
 #' @export
 plot.nhp_funnel_plot <- function(x, plot_range, interval, x_axis_title, ...) {
   lines_data <- x |>
-    dplyr::select("n", tidyselect::matches("^(lower|upper)"), "mean") |>
-    tidyr::pivot_longer(-.data$n, values_to = "rate")
+    dplyr::select(
+      "numerator",
+      tidyselect::matches("^(lower|upper)"),
+      "national_rate"
+    ) |>
+    tidyr::pivot_longer(-.data$numerator, values_to = "rate")
 
-  ggplot2::ggplot(x, ggplot2::aes(.data$n, .data$rate)) +
+  x |>
+    dplyr::arrange(dplyr::desc(.data$is_peer)) |>  # focal scheme (FALSE) will be plotted last
+    ggplot2::ggplot(ggplot2::aes(.data$numerator, .data$rate)) +
     interval +
-    ggplot2::geom_line(data = lines_data, ggplot2::aes(group = .data$name), linetype = "dashed", na.rm = TRUE) +
-    ggplot2::geom_point(ggplot2::aes(colour = .data$is_peer)) +
-    ggrepel::geom_text_repel(ggplot2::aes(label = .data$peer, colour = .data$is_peer)) +
-    ggplot2::scale_colour_manual(values = c("TRUE" = "black", "FALSE" = "red")) +
+    ggplot2::geom_line(
+      data = lines_data,
+      ggplot2::aes(group = .data$name),
+      linetype = "dashed",
+      na.rm = TRUE
+    ) +
+    ggplot2::geom_point(ggplot2::aes(colour = .data$is_peer), shape = 21) +
+    ggrepel::geom_text_repel(
+      data = dplyr::filter(x, !.data$is_peer),  # label focal scheme only
+      ggplot2::aes(label = .data$provider, colour = .data$is_peer)
+    ) +
+    ggplot2::scale_colour_manual(values = c("TRUE" = "lightgrey", "FALSE" = "red")) +
     ggplot2::theme(legend.position = "none") +
     ggplot2::scale_x_continuous(labels = scales::comma_format()) +
     ggplot2::coord_cartesian(ylim = plot_range) +
