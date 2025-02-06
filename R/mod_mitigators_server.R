@@ -529,6 +529,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       strategy <- shiny::req(input$strategy)
       age_data <- age_sex_data |>
         dplyr::filter(
+          .data$provider == params$dataset,
           .data$strategy == .env$strategy,
           .data$fyear == params$start_year
         )
