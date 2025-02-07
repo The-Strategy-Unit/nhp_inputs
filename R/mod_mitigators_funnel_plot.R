@@ -10,15 +10,16 @@
 generate_rates_funnel_data <- function(data) {
   funnel_data <- data |>
     dplyr::mutate(
-      sdev_pop_i = sqrt(abs(.data$national_rate) / .data$numerator),
-      z = (.data$rate - .data$national_rate) / .data$sdev_pop_i,
+      mean = mean(data$rate),  # mean of focus scheme and peers
+      sdev_pop_i = sqrt(abs(.data$mean) / .data$numerator),
+      z = (.data$rate - .data$mean) / .data$sdev_pop_i,
       sigz = stats::sd(.data$z, na.rm = TRUE),
       cl2 = 2 * .data$sdev_pop_i * .data$sigz,
       cl3 = 3 * .data$sdev_pop_i * .data$sigz,
-      lower2 = .data$national_rate - .data$cl2,
-      lower3 = .data$national_rate - .data$cl3,
-      upper2 = .data$national_rate + .data$cl2,
-      upper3 = .data$national_rate + .data$cl3
+      lower2 = .data$mean - .data$cl2,
+      lower3 = .data$mean - .data$cl3,
+      upper2 = .data$mean + .data$cl2,
+      upper3 = .data$mean + .data$cl3
     )
 
   structure(funnel_data, class = c("nhp_funnel_plot", class(funnel_data)))
@@ -30,7 +31,7 @@ plot.nhp_funnel_plot <- function(x, plot_range, interval, x_axis_title, ...) {
     dplyr::select(
       "numerator",
       tidyselect::matches("^(lower|upper)"),
-      "national_rate"
+      "mean"
     ) |>
     tidyr::pivot_longer(-.data$numerator, values_to = "rate")
 
@@ -43,7 +44,7 @@ plot.nhp_funnel_plot <- function(x, plot_range, interval, x_axis_title, ...) {
       linetype = "dashed",
       na.rm = TRUE
     ) +
-    ggplot2::geom_point(ggplot2::aes(colour = .data$is_peer), shape = 21) +
+    ggplot2::geom_point(ggplot2::aes(colour = .data$is_peer)) +
     ggrepel::geom_text_repel(
       data = dplyr::filter(x, !is.na(.data$is_peer)),
       ggplot2::aes(label = .data$provider, colour = .data$is_peer),
@@ -51,7 +52,7 @@ plot.nhp_funnel_plot <- function(x, plot_range, interval, x_axis_title, ...) {
     ) +
     ggplot2::scale_colour_manual(
       values = c("TRUE" = "black", "FALSE" = "red"),
-      na.value = "lightgrey",
+      na.value = "lightgrey"
     ) +
     ggplot2::theme(legend.position = "none") +
     ggplot2::scale_x_continuous(labels = scales::comma_format()) +

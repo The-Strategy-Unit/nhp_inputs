@@ -4,10 +4,10 @@ rates_boxplot <- function(trend_data, plot_range, interval) {
     ggplot2::ggplot(ggplot2::aes(x = "", y = .data$rate)) +
     interval +
     ggplot2::geom_boxplot(alpha = 0.2, outlier.shape = NA) +
-    ggbeeswarm::geom_quasirandom(ggplot2::aes(colour = .data$is_peer), shape = 21) +
+    ggbeeswarm::geom_quasirandom(ggplot2::aes(colour = .data$is_peer)) +
     ggplot2::scale_colour_manual(
       values = c("TRUE" = "black", "FALSE" = "red"),
-      na.value = "lightgrey",
+      na.value = "lightgrey"
     ) +
     ggplot2::coord_cartesian(ylim = plot_range) +
     ggplot2::labs(x = "") +

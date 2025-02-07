@@ -150,6 +150,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
 
     rates_baseline_data <- shiny::reactive({
       strategy <- shiny::req(input$strategy)
+
       scheme_peers <- peers |>
         dplyr::filter(.data$procode == params$dataset & .data$peer != params$dataset) |>
         dplyr::pull(peer)
@@ -163,10 +164,11 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
           is_peer = dplyr::case_when(
             .data$provider == params$dataset ~ FALSE,
             .data$provider %in% .env$scheme_peers ~ TRUE,
-            .default = NA
+            .default = NA  # if scheme is neither focal nor a peer
           )
         ) |>
-        dplyr::arrange(!is.na(is_peer), dplyr::desc(is_peer))  # order for plotting
+        dplyr::filter(!is.na(is_peer)) |>  # only focal scheme and peers
+        dplyr::arrange(dplyr::desc(is_peer))  # to plot focal scheme last
     })
 
     # params controls ----
