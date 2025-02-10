@@ -182,31 +182,13 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       floor(r * m) / m
     })
 
-    shiny::observe({
-      shiny::req(input$strategy)
-      include <- !is.null(params[[mitigators_type]][[activity_type]][[input$strategy]])
-
-      shiny::updateCheckboxInput(session, "include", value = include)
-      shiny::updateRadioButtons(session, "slider_type", selected = "% rate")
-      update_slider("% change")
-    }) |>
-      shiny::bindEvent(input$strategy)
-
-    update_slider <- function(type) {
+    shiny::observe({  # update slider
       strategy <- shiny::req(input$strategy)
       max_value <- provider_max_value()
-
-      if (type == "rate") {
-        scale <- config$slider_scale
-        range <- get_range(max_value, scale)
-        step <- config$slider_step
-        pc_fn <- param_conversion$absolute[[1]]
-      } else {
-        scale <- 100
-        range <- c(0, 100)
-        step <- 0.1
-        pc_fn <- param_conversion$relative[[1]]
-      }
+      scale <- 100
+      range <- c(0, 100)
+      step <- 0.1
+      pc_fn <- param_conversion$relative[[1]]
 
       values <- pc_fn(max_value, slider_values[[mitigators_type]][[strategy]]$interval) * scale
       shiny::updateSliderInput(
@@ -217,27 +199,15 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       update_time_profile(
         time_profile_mappings$mappings[[strategy]] %||% "linear"
       )
-    }
-
-    shiny::observe({
-      shiny::req(input$strategy)
-      update_slider(input$slider_type)
     }) |>
-      shiny::bindEvent(input$slider_type)
+      shiny::bindEvent(input$strategy)
 
     shiny::observe({
       values <- input$slider
-      type <- shiny::req(input$slider_type)
       strategy <- shiny::req(input$strategy)
       max_value <- provider_max_value()
-
-      if (type == "rate") {
-        scale <- config$slider_scale
-        pc_fn <- param_conversion$absolute[[2]]
-      } else {
-        scale <- 100
-        pc_fn <- param_conversion$relative[[2]]
-      }
+      scale <- 100
+      pc_fn <- param_conversion$relative[[2]]
 
       v <- pc_fn(max_value, values / scale)
 
@@ -269,7 +239,6 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
 
     shiny::observe({
       shinyjs::toggleState("slider", condition = input$include)
-      shinyjs::toggleState("slider_type", condition = input$include)
     }) |>
       shiny::bindEvent(input$include)
 
@@ -551,7 +520,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       age_pyramid(age_data)
     })
 
-    # NEE result
+    # NEE result ----
 
     output$nee_result <- shiny::renderPlot(
       {
@@ -582,5 +551,44 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       width = "auto",
       height = 60
     )
+
+    # rate values ----
+
+    output$slider_absolute <- shiny::renderText({
+
+      scale <- config$slider_scale
+      strategy <- shiny::req(input$strategy)
+      max_value <- provider_max_value()
+      rate_meaning <- config$y_axis_title
+
+      convert_params_a <- param_conversion$absolute[[1]]
+      convert_params_b <- param_conversion$absolute[[2]]
+      values <- convert_params_a(max_value, slider_values[[mitigators_type]][[strategy]]$interval) * scale
+      rate <- convert_params_b(max_value, values / scale)
+
+      if (stringr::str_detect(rate_meaning, "%")) {
+        # config$number_type is too rounded for display of percentages
+        convert_number <- \(x) scales::number(x, 0.1, 100, suffix = "%")
+      } else {
+        convert_number <- config$number_type
+      }
+
+      rate_lo <- convert_number(rate[1] * max_value)
+      rate_hi <- convert_number(rate[2] * max_value)
+      rate_max <- convert_number(max_value)
+
+      text <- glue::glue(
+        "This is equivalent to a rate interval of {rate_lo} to {rate_hi}
+        ({rate_meaning}) given the baseline of {rate_max}."
+      )
+
+      if (!input$include) {
+        text <- glue::glue("<font color='#ADAEAF'>{text}</font>")  # grey out
+      }
+
+      text
+
+    })
+
   })
 }
