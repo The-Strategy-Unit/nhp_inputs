@@ -11,7 +11,7 @@ generate_rates_funnel_data <- function(data) {
   funnel_data <- data |>
     dplyr::mutate(
       mean = mean(data$rate),  # mean of focus scheme and peers
-      sdev_pop_i = sqrt(abs(.data$mean) / .data$numerator),
+      sdev_pop_i = sqrt(abs(.data$mean) / .data$denominator),
       z = (.data$rate - .data$mean) / .data$sdev_pop_i,
       sigz = stats::sd(.data$z, na.rm = TRUE),
       cl2 = 2 * .data$sdev_pop_i * .data$sigz,
@@ -29,14 +29,14 @@ generate_rates_funnel_data <- function(data) {
 plot.nhp_funnel_plot <- function(x, plot_range, interval, x_axis_title, ...) {
   lines_data <- x |>
     dplyr::select(
-      "numerator",
+      "denominator",
       tidyselect::matches("^(lower|upper)"),
       "mean"
     ) |>
-    tidyr::pivot_longer(-.data$numerator, values_to = "rate")
+    tidyr::pivot_longer(-.data$denominator, values_to = "rate")
 
   x |>
-    ggplot2::ggplot(ggplot2::aes(.data$numerator, .data$rate)) +
+    ggplot2::ggplot(ggplot2::aes(.data$denominator, .data$rate)) +
     interval +
     ggplot2::geom_line(
       data = lines_data,
