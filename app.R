@@ -548,12 +548,12 @@ server <- function(input, output, session) {
 
   output$baseline_202324_warning <- shiny::renderText({
     if (input$start_year == "202324") {
-      "<font color='red'>You must request and review your 2023/24 baseline data
-      before selecting 2023/24 as the baseline year. Please contact
-      <a href='mailto:mlcsu.su.datascience@nhs.net?subject=NHP request:
-      2023/24 baseline data&body=I am requesting the 2023/24 baseline data for
-      [insert scheme name].'>mlcsu.su.datascience@nhs.net</a> to request your
-      2023/24 baseline data.</font><br><br>"
+      "<font color='red'>You must request and review your 2023/24 detailed
+      baseline data before selecting 2023/24 as the baseline year. Please
+      contact <a href='mailto:mlcsu.su.datascience@nhs.net?subject=NHP request:
+      2023/24 baseline data&body=I am requesting the 2023/24 detailed baseline
+      data for [insert scheme name].'>mlcsu.su.datascience@nhs.net</a> to
+      request your 2023/24 detailed baseline data.</font><br><br>"
     }
   }) |>
     shiny::bindEvent(input$start_year)
