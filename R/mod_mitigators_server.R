@@ -551,8 +551,6 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
         converted
       }
 
-      # rate_lo <- convert_number(rate[1] * max_value, config)
-      # rate_hi <- convert_number(rate[2] * max_value, config)
       rate_lo <- convert_number(rate[1], config)
       rate_hi <- convert_number(rate[2], config)
       rate_max <- convert_number(max_value * scale, config)
