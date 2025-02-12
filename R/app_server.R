@@ -77,7 +77,14 @@ app_server <- function(input, output, session) {
       year <- as.character(shiny::req(params$start_year))
 
       rates_data() |>
-        dplyr::filter(provider == dataset, fyear == year) |>
+        dplyr::filter(
+          .data[["provider"]] == .env[["dataset"]],
+          .data[["fyear"]] == .env[["year"]]
+        ) |>
+        dplyr::filter(
+          .by = "strategy",
+          sum(.data[["denominator"]]) > 5
+        ) |>
         _$strategy |>
         unique()
     }) |>
