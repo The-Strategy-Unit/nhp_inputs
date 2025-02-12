@@ -28,10 +28,19 @@ mod_covid_adjustment_server <- function(id, params) {
         )
       }
 
-      ds <- shiny::req(params$dataset)
+      dataset <- shiny::req(params$dataset)
 
-      glue::glue("{ds}/covid_adjustment.rds") |>
-        load_rds_from_adls() |>
+      load_provider_data("covid_adjustment") |>
+        dplyr::filter(.data[["provider"]] == .env[["dataset"]]) |>
+        dplyr::select(-"provider", -"fyear") |>
+        dplyr::group_nest(.data[["activity_type"]]) |>
+        dplyr::mutate(
+          dplyr::across(
+            "data",
+            \(.x) purrr::map(.x, purrr::compose(as.list, tibble::deframe))
+          )
+        ) |>
+        tibble::deframe() |>
         purrr::map_depth(2, `*`, 1 + c(-1, 1) * 0.025 / 12) |>  # 5% either side, but adjusted to be for 1 month
         purrr::map_depth(2, janitor::round_half_up, 4)  # 4dp used for model, so present 4dp too
     }) |>
