@@ -58,7 +58,7 @@ mod_expat_repat_local_split_plot <- function(df, providers, dataset, start_year)
   colour <- NULL
 
   df |>
-    dplyr::left_join(providers_df, by = c("provider")) |>
+    dplyr::left_join(providers_df, by = "provider") |>
     dplyr::arrange(.data$provider_name) |>
     dplyr::mutate(
       dplyr::across(
@@ -73,14 +73,14 @@ mod_expat_repat_local_split_plot <- function(df, providers, dataset, start_year)
       label = glue::glue(
         .sep = "\n",
         "{.data$provider_name}",
-        "{scales::comma(.data$n)} ({scales::percent(.data$pcnt)})"
+        "{scales::comma(.data$count)} ({scales::percent(.data$pcnt)})"
       ),
     ) |>
     dplyr::arrange(dplyr::desc(.data$provider_name)) |>
     dplyr::mutate(
-      label_pos = cumsum(.data$n) - .data$n / 2
+      label_pos = cumsum(.data$count) - .data$count / 2
     ) |>
-    ggplot2::ggplot(ggplot2::aes(1, .data$n)) +
+    ggplot2::ggplot(ggplot2::aes(1, .data$count)) +
     ggplot2::geom_col(
       ggplot2::aes(
         colour = .data$provider_name,
@@ -137,6 +137,6 @@ mod_expat_repat_nonlocal_icb_map <- function(df) {
       weight = 1,
       opacity = 1,
       fillColor = ~ pal(pcnt),
-      popup = ~ glue::glue("{icb22nm}: {n} ({scales::percent(pcnt)})")
+      popup = ~ glue::glue("{icb22nm}: {count} ({scales::percent(pcnt)})")
     )
 }

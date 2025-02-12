@@ -16,60 +16,55 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
     icb_boundaries <- sf::read_sf(app_sys("app", "data", "icb_boundaries.geojson"))
 
     # helpers ----
-    extract_expat_repat_data <- function(k) {
+
+    extract_expat_repat_data <- function(dat) {
       at <- shiny::req(input$activity_type)
       st <- shiny::req(input$ip_subgroup)
       t <- shiny::req(input$type)
 
-      expat_repat_data()[[k]][[at]] |>
+      dat |>
         dplyr::filter(
-          if (at == "ip") .data$admigroup == st else TRUE,
-          if (at == "aae") .data$is_ambulance == (t == "ambulance") else .data$specialty == t
+          .data$activity_type == .env$at,
+          if (at == "ip") .data$group == st else TRUE,
+          if (at == "aae") .data$is_ambulance == (t == "ambulance") else .data$tretspef == t
         )
     }
 
     # reactives ----
 
-    # load all of the expat repat data for this dataset
-    expat_repat_data <- shiny::reactive({
-      ds <- shiny::req(params$dataset)
-      load_rds_from_adls(glue::glue("{ds}/expat_repat.rds"))
-    }) |>
-      shiny::bindCache(params$dataset)
-
     # extract the expat data for the current selection
     expat <- shiny::reactive({
-      extract_expat_repat_data("expat") |>
-        dplyr::select("fyear", "n")
+      ds <- shiny::req(params$dataset)
+      load_provider_data("expat") |>
+        dplyr::filter(.data$provider == ds) |>
+        extract_expat_repat_data() |>
+        dplyr::select("fyear", "count")
+
     })
 
     # extract the repat local data for the current selection
     repat_local <- shiny::reactive({
-      extract_expat_repat_data("repat_local") |>
-        dplyr::select("fyear", "provider", "n", "pcnt")
+      load_provider_data("repat_local") |>
+        extract_expat_repat_data() |>
+        dplyr::select("fyear", "icb", "provider", "count", "pcnt")
     })
 
     # extract the repat nonlocal data for the current selection
     repat_nonlocal <- shiny::reactive({
-      extract_expat_repat_data("repat_nonlocal") |>
-        dplyr::filter(
-          .data$fyear > 201415 # DQ issue: no rows prior to 15/16 have CCG
-        ) |>
-        dplyr::group_by(dplyr::across(-c("n", "icb22cdh"))) |>
-        dplyr::mutate(pcnt = .data$n / sum(.data$n)) |>
-        dplyr::ungroup() |>
-        dplyr::select("fyear", "icb22cdh", "n", "pcnt")
+      load_provider_data("repat_nonlocal") |>
+        extract_expat_repat_data() |>
+        dplyr::select("fyear", "provider", "icb", "is_main_icb", "count", "pcnt")
     })
 
     # calculate the split between local and non-local activity by year
     repat_local_nonlocal_split <- shiny::reactive({
       repat_local() |>
         dplyr::filter(.data$provider == params$dataset) |>
-        dplyr::count(.data$fyear, wt = .data$n, name = "d") |>
+        dplyr::count(.data$fyear, wt = .data$count, name = "d") |>
         dplyr::inner_join(expat(), by = "fyear") |>
         dplyr::transmute(
           .data$fyear,
-          local = .data$d / .data$n,
+          local = .data$d / .data$count,
           nonlocal = 1 - .data$local
         )
     })
@@ -254,8 +249,18 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
     })
 
     output$repat_local_split_plot <- shiny::renderPlot({
+      focus_icb <- repat_local() |>
+        dplyr::filter(
+          .data$fyear == params$start_year,
+          .data$provider == params$dataset
+        ) |>
+        dplyr::pull(.data$icb)
+
       df <- repat_local() |>
-        dplyr::filter(.data$fyear == params$start_year)
+        dplyr::filter(
+          .data$fyear == params$start_year,
+          .data$icb == focus_icb
+        )
 
       shiny::req(nrow(df) > 0)
 
@@ -285,7 +290,11 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
 
     output$repat_nonlocal_n <- shiny::renderPlot({
       df <- repat_nonlocal() |>
-        dplyr::count(.data[["fyear"]], wt = .data[["n"]])
+        dplyr::filter(
+          .data[["provider"]] == params$dataset,
+          !.data[["is_main_icb"]]
+        ) |>
+        dplyr::count(.data[["fyear"]], wt = .data[["count"]])
 
       shiny::req(nrow(df) > 0)
 
@@ -293,11 +302,18 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
     })
 
     output$repat_nonlocal_icb_map <- leaflet::renderLeaflet({
+      dat <- repat_nonlocal() |>
+        dplyr::filter(
+          .data$count > 5,
+          .data$fyear == params$start_year,
+          .data[["provider"]] == params$dataset,
+          !.data[["is_main_icb"]]
+        )
+
       df <- icb_boundaries |>
         dplyr::inner_join(
-          repat_nonlocal() |>
-            dplyr::filter(.data$fyear == params$start_year),
-          by = "icb22cdh"
+          dat,
+          by = dplyr::join_by("icb22cdh" == "icb")
         )
 
       shiny::req(nrow(df) > 0)
