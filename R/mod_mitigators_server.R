@@ -540,27 +540,24 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       scale <- config$slider_scale
       strategy <- shiny::req(input$strategy)
       max_value <- provider_max_value()
-      rate_meaning <- config$y_axis_title
 
       convert_params_a <- param_conversion$absolute[[1]]
-      convert_params_b <- param_conversion$absolute[[2]]
-      values <- convert_params_a(max_value, slider_values[[mitigators_type]][[strategy]]$interval) * scale
-      rate <- convert_params_b(max_value, values / scale)
+      rate <- convert_params_a(max_value, slider_values[[mitigators_type]][[strategy]]$interval) * scale
 
-      if (stringr::str_detect(rate_meaning, "%")) {
-        # config$number_type is too rounded for display of percentages
-        convert_number <- \(x) scales::number(x, 0.1, 100, suffix = "%")
-      } else {
-        convert_number <- config$number_type
+      convert_number <- function(value, config) {
+        converted <- scales::number(value, 0.01)
+        is_percent <- stringr::str_detect(config$y_axis_title, "%")
+        if (is_percent) converted <- scales::number(value, 0.1, suffix = "%")
+        converted
       }
 
-      rate_lo <- convert_number(rate[1] * max_value)
-      rate_hi <- convert_number(rate[2] * max_value)
-      rate_max <- convert_number(max_value)
+      rate_lo <- convert_number(rate[1], config)
+      rate_hi <- convert_number(rate[2], config)
+      rate_max <- convert_number(max_value * scale, config)
 
       text <- glue::glue(
         "This is equivalent to a rate interval of {rate_lo} to {rate_hi}
-        ({rate_meaning}) given the baseline of {rate_max}."
+        ({config$y_axis_title}) given the baseline of {rate_max}."
       )
 
       if (!input$include) {

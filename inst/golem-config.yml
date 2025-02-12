@@ -220,7 +220,7 @@ default:
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
       funnel_x_title: "Number of Appointments"
-      slider_scale: 1
+      slider_scale: 100
       slider_step: 0.1
       strategy_subset:
         gp_referred_first_attendance_reduction_adult_non-surgical: "Outpatient GP Referred First Attendance Reduction (Adult, Non-Surgical)"
