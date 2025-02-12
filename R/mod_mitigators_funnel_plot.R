@@ -10,7 +10,7 @@
 generate_rates_funnel_data <- function(data) {
   funnel_data <- data |>
     dplyr::mutate(
-      mean = mean(data$rate),  # mean of focus scheme and peers
+      mean = data$national_rate,
       sdev_pop_i = sqrt(abs(.data$mean) / .data$denominator),
       z = (.data$rate - .data$mean) / .data$sdev_pop_i,
       sigz = stats::sd(.data$z, na.rm = TRUE),
