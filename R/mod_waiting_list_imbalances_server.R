@@ -103,7 +103,9 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
     # renders ----
 
     output$table <- gt::render_gt({
-      mod_waiting_list_imbalances_table(baseline_data())
+      baseline_data() |>
+        dplyr::filter(.data$count > 5) |>
+        mod_waiting_list_imbalances_table()
     })
   })
 }

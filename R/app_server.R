@@ -53,7 +53,7 @@ app_server <- function(input, output, session) {
     rates_data <- shiny::reactive({
       load_provider_data("rates")
     }) |>
-      shiny::bindCache()
+      shiny::bindCache(params$dataset)
 
     age_sex_data <- shiny::reactive({
       age_sex <- load_provider_data("age_sex")
