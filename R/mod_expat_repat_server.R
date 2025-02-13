@@ -50,7 +50,7 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
         dplyr::filter(.data$provider == ds)
     })
     expat <- shiny::reactive({
-      expat_raw |>
+      expat_raw() |>
         extract_expat_repat_data() |>
         dplyr::select("fyear", "count")
     })
@@ -60,7 +60,7 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
       load_provider_data("repat_local")
     })
     repat_local <- shiny::reactive({
-      repat_local_raw
+      repat_local_raw() |>
         extract_expat_repat_data() |>
         dplyr::select("fyear", "icb", "provider", "count", "pcnt")
     })
@@ -70,7 +70,7 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
       load_provider_data("repat_nonlocal")
     })
     repat_nonlocal <- shiny::reactive({
-      repat_nonlocal_raw |>
+      repat_nonlocal_raw() |>
         extract_expat_repat_data() |>
         dplyr::select("fyear", "provider", "icb", "is_main_icb", "count", "pcnt")
     })
