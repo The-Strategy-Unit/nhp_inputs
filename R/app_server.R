@@ -28,6 +28,10 @@ app_server <- function(input, output, session) {
     readRDS(app_sys("app", "data", "providers.Rds"))
   })
 
+  peers <- shiny::reactive({
+    readRDS(app_sys("app", "data", "peers.Rds"))
+  })
+
   params <- mod_home_server(
     "home",
     providers(),
@@ -46,11 +50,25 @@ app_server <- function(input, output, session) {
   init <- shiny::observe({
     shiny::req(start() > 0)
 
-    provider_data <- shiny::reactive({
-      dataset <- shiny::req(params$dataset)
-      file <- glue::glue("{dataset}/data.rds")
+    rates_data <- shiny::reactive({
+      load_provider_data("rates")
+    }) |>
+      shiny::bindCache(params$dataset)
 
-      load_rds_from_adls(file)
+    age_sex_data <- shiny::reactive({
+      age_sex <- load_provider_data("age_sex")
+      age_fct <- age_sex |> _[["age_group"]] |> unique() |> sort()
+      age_sex |> dplyr::mutate(age_group = factor(age_group, levels = age_fct))
+    }) |>
+      shiny::bindCache(params$dataset)
+
+    diagnoses_data <- shiny::reactive({
+      load_provider_data("diagnoses")
+    }) |>
+      shiny::bindCache(params$dataset)
+
+    procedures_data <- shiny::reactive({
+      load_provider_data("procedures")
     }) |>
       shiny::bindCache(params$dataset)
 
@@ -58,7 +76,17 @@ app_server <- function(input, output, session) {
       dataset <- shiny::req(params$dataset)
       year <- as.character(shiny::req(params$start_year))
 
-      load_rds_from_adls(glue::glue("{dataset}/available_strategies.rds"))[[year]]
+      rates_data() |>
+        dplyr::filter(
+          .data[["provider"]] == .env[["dataset"]],
+          .data[["fyear"]] == .env[["year"]]
+        ) |>
+        dplyr::filter(
+          .by = "strategy",
+          sum(.data[["denominator"]]) > 5
+        ) |>
+        _$strategy |>
+        unique()
     }) |>
       shiny::bindCache(params$dataset, params$start_year)
 
@@ -76,7 +104,7 @@ app_server <- function(input, output, session) {
 
     mod_non_demographic_adjustment_server("non_demographic_adjustment", params)
 
-    mod_mitigators_summary_server("mitigators_summary", provider_data, params)
+    mod_mitigators_summary_server("mitigators_summary", age_sex_data(), params)
 
     purrr::walk(
       c(
@@ -97,11 +125,15 @@ app_server <- function(input, output, session) {
       ),
       mod_mitigators_server,
       params,
-      provider_data,
+      rates_data(),
+      age_sex_data(),
+      diagnoses_data(),
+      procedures_data(),
       available_strategies,
       diagnoses_lkup(),
       procedures_lkup(),
-      mitigator_codes_lkup()
+      mitigator_codes_lkup(),
+      peers()
     )
 
     # enable the run_model page for certain users/running locally

@@ -7,6 +7,10 @@ rates_trend_plot <- function(trend_data, baseline_year, plot_range, y_axis_title
       data = \(.x) dplyr::filter(.x, .data$fyear == baseline_year),
       colour = "red"
     ) +
+    ggrepel::geom_text_repel(
+      data = \(.x) dplyr::filter(.x, .data$fyear == baseline_year),
+      ggplot2::aes(label = "baseline", colour = "red")
+    ) +
     ggplot2::scale_y_continuous(
       name = y_axis_title,
       labels = number_format

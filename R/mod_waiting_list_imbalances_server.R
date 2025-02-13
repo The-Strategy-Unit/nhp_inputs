@@ -28,9 +28,12 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
       dataset <- shiny::req(params$dataset)
       year <- as.character(shiny::req(params$start_year))
 
-      glue::glue("{dataset}/waiting_list_adjustment.rds") |>
-        load_rds_from_adls() |>
-        purrr::pluck(year) |>
+      load_provider_data("wli") |>
+        dplyr::filter(
+          .data[["provider"]] == .env[["dataset"]],
+          .data[["fyear"]] == .env[["year"]]
+        ) |>
+        dplyr::select(-"provider", -"fyear") |>
         tidyr::pivot_longer(c("ip", "op"), names_to = "activity_type", values_to = "count") |>
         dplyr::filter(.data[["count"]] > 0) |>
         dplyr::inner_join(
@@ -100,7 +103,9 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
     # renders ----
 
     output$table <- gt::render_gt({
-      mod_waiting_list_imbalances_table(baseline_data())
+      baseline_data() |>
+        dplyr::filter(.data$count > 5) |>
+        mod_waiting_list_imbalances_table()
     })
   })
 }

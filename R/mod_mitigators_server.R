@@ -3,11 +3,15 @@
 #' @noRd
 mod_mitigators_server <- function(id, # nolint: object_usage_linter.
                                   params,
-                                  provider_data,
+                                  rates_data,
+                                  age_sex_data,
+                                  diagnoses_data,
+                                  procedures_data,
                                   available_strategies,
                                   diagnoses_lkup,
                                   procedures_lkup,
-                                  mitigator_codes_lkup) {
+                                  mitigator_codes_lkup,
+                                  peers) {
   selected_time_profile <- update_time_profile <- NULL
   c(selected_time_profile, update_time_profile) %<-% mod_time_profile_server(
     shiny::NS(id, "time_profile"),
@@ -84,9 +88,10 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
           purrr::set_names() |>
           purrr::walk(\(i) {
             # get the rates data for this strategy (for the provider in the baseline year)
-            r <- provider_data()[[i]]$rates |>
+            r <- rates_data |>
               dplyr::filter(
-                .data$peer == params$dataset,
+                .data$strategy == strategies[i],
+                .data$provider == params$dataset,
                 .data$fyear == params$start_year
               )
 
@@ -141,35 +146,29 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       )
     })
 
-    # load data files ----
-    selected_data <- shiny::reactive({
-      strategy <- shiny::req(input$strategy)
-      provider_data()[[strategy]]
-    })
-    rates_data <- shiny::reactive({
-      d <- shiny::req(selected_data())
-
-      d$rates
-    })
-    age_sex_data <- shiny::reactive({
-      d <- shiny::req(selected_data())
-      d$age_sex
-    })
-    diagnoses_data <- shiny::reactive({
-      d <- shiny::req(selected_data())
-      d$diagnoses
-    })
-    procedures_data <- shiny::reactive({
-      d <- shiny::req(selected_data())
-      d$procedures
-    })
-
     # rates data baseline year ----
 
     rates_baseline_data <- shiny::reactive({
-      rates_data() |>
-        dplyr::filter(.data$fyear == params$start_year) |>
-        dplyr::mutate(is_peer = .data$peer != params$dataset)
+      strategy <- shiny::req(input$strategy)
+
+      scheme_peers <- peers |>
+        dplyr::filter(.data$procode == params$dataset & .data$peer != params$dataset) |>
+        dplyr::pull(peer)
+
+      rates_data |>
+        dplyr::filter(
+          .data$strategy == .env$strategy,
+          .data$fyear == params$start_year
+        ) |>
+        dplyr::mutate(
+          is_peer = dplyr::case_when(
+            .data$provider == params$dataset ~ FALSE,
+            .data$provider %in% .env$scheme_peers ~ TRUE,
+            .default = NA  # if scheme is neither focal nor a peer
+          )
+        ) |>
+        dplyr::filter(!is.na(is_peer)) |>  # only focal scheme and peers
+        dplyr::arrange(dplyr::desc(is_peer))  # to plot focal scheme last
     })
 
     # params controls ----
@@ -265,8 +264,12 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
     # use the rates data, filtered to the provider that has been selected
 
     trend_data <- shiny::reactive({
-      rates_data() |>
-        dplyr::filter(.data$peer == params$dataset)
+      strategy <- shiny::req(input$strategy)
+      rates_data |>
+        dplyr::filter(
+          .data$strategy == .env$strategy,
+          .data$provider == params$dataset
+        )
     })
 
     output$trend_plot <- shiny::renderPlot({
@@ -312,7 +315,6 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
 
     output$boxplot <- shiny::renderPlot({
       rates_baseline_data() |>
-        tidyr::drop_na(.data$is_peer) |>
         rates_boxplot(plot_range(), plot_ribbon())
     })
 
@@ -323,27 +325,33 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
 
       shiny::validate(
         shiny::need(
-          diagnoses_data(),
+          diagnoses_data,
           message = "Insufficient or suppressed data."
         )
       )
 
-      data <- diagnoses_data() |>
-        dplyr::filter(.data$fyear == params$start_year) |>
+      strategy <- shiny::req(input$strategy)
+
+      data <- diagnoses_data |>
+        dplyr::filter(
+          .data$provider == params$dataset,
+          .data$strategy == .env$strategy,
+          .data$fyear == params$start_year
+        ) |>
         dplyr::inner_join(diagnoses_lkup, by = c("diagnosis" = "diagnosis_code")) |>
-        dplyr::select("diagnosis_description", "n", "p")
+        dplyr::select("diagnosis_description", "n", "pcnt")
 
       n_total <- sum(data$n)
-      p_total <- sum(data$p)
+      pcnt_total <- sum(data$pcnt)
 
       # if we need to include an other row
-      if (p_total < 1) {
+      if (pcnt_total < 1) {
         data <- dplyr::bind_rows(
           data,
           tibble::tibble(
             diagnosis_description = "Other",
-            n = n_total * (1 - p_total) / p_total,
-            p = 1 - p_total
+            n = n_total * (1 - pcnt_total) / pcnt_total,
+            pcnt = 1 - pcnt_total
           )
         )
       }
@@ -352,7 +360,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
         gt::cols_label(
           "diagnosis_description" = "Diagnosis",
           "n" = "Count of Activity (spells)",
-          "p" = "% of Total Activity"
+          "pcnt" = "% of Total Activity"
         ) |>
         gt::tab_stubhead("Diagnosis") |>
         gt::fmt_number(
@@ -361,7 +369,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
           use_seps = TRUE
         ) |>
         gt::fmt_percent(
-          c("p"),
+          c("pcnt"),
           decimals = 1
         ) |>
         gt::grand_summary_rows(
@@ -405,12 +413,12 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
 
       shiny::validate(
         shiny::need(
-          procedures_data(),
+          procedures_data,
           message = "Insufficient or suppressed data."
         )
       )
 
-      pd <- procedures_data()
+      pd <- procedures_data
 
       shiny::validate(
         shiny::need(
@@ -419,23 +427,29 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
         )
       )
 
+      strategy <- shiny::req(input$strategy)
+
       data <- pd |>
-        dplyr::filter(.data$fyear == params$start_year) |>
-        dplyr::left_join(procedures_lkup, by = c("procedure" = "code")) |>
+        dplyr::filter(
+          .data$provider == params$dataset,
+          .data$strategy == .env$strategy,
+          .data$fyear == params$start_year
+        ) |>
+        dplyr::left_join(procedures_lkup, by = c("procedure_code" = "code")) |>
         tidyr::replace_na(list(description = "Unknown/Invalid Procedure Code")) |>
-        dplyr::select("procedure_description" = "description", "n", "p")
+        dplyr::select("procedure_description" = "description", "n", "pcnt")
 
       n_total <- sum(data$n)
-      p_total <- sum(data$p)
+      pcnt_total <- sum(data$pcnt)
 
       # if we need to include an other row
-      if (p_total < 1) {
+      if (pcnt_total < 1) {
         data <- dplyr::bind_rows(
           data,
           tibble::tibble(
             procedure_description = "Other",
-            n = n_total * (1 - p_total) / p_total,
-            p = 1 - p_total
+            n = n_total * (1 - pcnt_total) / pcnt_total,
+            pcnt = 1 - pcnt_total
           )
         )
       }
@@ -444,7 +458,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
         gt::cols_label(
           "procedure_description" = "Procedure",
           "n" = "Count of Activity (spells)",
-          "p" = "% of Total Activity"
+          "pcnt" = "% of Total Activity"
         ) |>
         gt::tab_stubhead("Procedure") |>
         gt::fmt_number(
@@ -453,7 +467,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
           use_seps = TRUE
         ) |>
         gt::fmt_percent(
-          c("p"),
+          c("pcnt"),
           decimals = 1
         ) |>
         gt::grand_summary_rows(
@@ -494,8 +508,13 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
     # age group ----
 
     output$age_grp_plot <- shiny::renderPlot({
-      age_data <- age_sex_data() |>
-        dplyr::filter(.data$fyear == params$start_year)
+      strategy <- shiny::req(input$strategy)
+      age_data <- age_sex_data |>
+        dplyr::filter(
+          .data$provider == params$dataset,
+          .data$strategy == .env$strategy,
+          .data$fyear == params$start_year
+        )
 
       shiny::req(nrow(age_data) > 0)
       age_pyramid(age_data)

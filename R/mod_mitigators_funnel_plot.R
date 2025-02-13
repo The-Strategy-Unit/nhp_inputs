@@ -8,16 +8,10 @@
 #'
 #' @noRd
 generate_rates_funnel_data <- function(data) {
-  peer_rates <- data |>
-    dplyr::filter(is.na(.data$peer)) |>
-    dplyr::select("fyear", mean = "rate")
-
   funnel_data <- data |>
-    tidyr::drop_na(.data$peer) |>
-    dplyr::inner_join(peer_rates, by = c("fyear")) |>
-    dplyr::group_by(.data$fyear) |>
     dplyr::mutate(
-      sdev_pop_i = sqrt(abs(.data$mean) / .data$n),
+      mean = data$national_rate,
+      sdev_pop_i = sqrt(abs(.data$mean) / .data$denominator),
       z = (.data$rate - .data$mean) / .data$sdev_pop_i,
       sigz = stats::sd(.data$z, na.rm = TRUE),
       cl2 = 2 * .data$sdev_pop_i * .data$sigz,
@@ -26,8 +20,7 @@ generate_rates_funnel_data <- function(data) {
       lower3 = .data$mean - .data$cl3,
       upper2 = .data$mean + .data$cl2,
       upper3 = .data$mean + .data$cl3
-    ) |>
-    dplyr::ungroup()
+    )
 
   structure(funnel_data, class = c("nhp_funnel_plot", class(funnel_data)))
 }
@@ -35,15 +28,32 @@ generate_rates_funnel_data <- function(data) {
 #' @export
 plot.nhp_funnel_plot <- function(x, plot_range, interval, x_axis_title, ...) {
   lines_data <- x |>
-    dplyr::select("n", tidyselect::matches("^(lower|upper)"), "mean") |>
-    tidyr::pivot_longer(-.data$n, values_to = "rate")
+    dplyr::select(
+      "denominator",
+      tidyselect::matches("^(lower|upper)"),
+      "mean"
+    ) |>
+    tidyr::pivot_longer(-.data$denominator, values_to = "rate")
 
-  ggplot2::ggplot(x, ggplot2::aes(.data$n, .data$rate)) +
+  x |>
+    ggplot2::ggplot(ggplot2::aes(.data$denominator, .data$rate)) +
     interval +
-    ggplot2::geom_line(data = lines_data, ggplot2::aes(group = .data$name), linetype = "dashed", na.rm = TRUE) +
+    ggplot2::geom_line(
+      data = lines_data,
+      ggplot2::aes(group = .data$name),
+      linetype = "dashed",
+      na.rm = TRUE
+    ) +
     ggplot2::geom_point(ggplot2::aes(colour = .data$is_peer)) +
-    ggrepel::geom_text_repel(ggplot2::aes(label = .data$peer, colour = .data$is_peer)) +
-    ggplot2::scale_colour_manual(values = c("TRUE" = "black", "FALSE" = "red")) +
+    ggrepel::geom_text_repel(
+      data = dplyr::filter(x, !is.na(.data$is_peer)),
+      ggplot2::aes(label = .data$provider, colour = .data$is_peer),
+      max.overlaps = Inf  # include all labels
+    ) +
+    ggplot2::scale_colour_manual(
+      values = c("TRUE" = "black", "FALSE" = "red"),
+      na.value = "lightgrey"
+    ) +
     ggplot2::theme(legend.position = "none") +
     ggplot2::scale_x_continuous(labels = scales::comma_format()) +
     ggplot2::coord_cartesian(ylim = plot_range) +

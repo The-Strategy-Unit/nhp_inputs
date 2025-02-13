@@ -43,9 +43,18 @@ mod_baseline_adjustment_server <- function(id, params) {
       dataset <- shiny::req(params$dataset)
       year <- as.character(shiny::req(params$start_year))
 
-      glue::glue("{dataset}/baseline_data.rds") |>
-        load_rds_from_adls() |>
-        purrr::pluck(year)
+      load_provider_data("baseline") |>
+        dplyr::filter(
+          .data[["fyear"]] == .env[["year"]],
+          .data[["provider"]] == .env[["dataset"]]
+        ) |>
+        dplyr::select(
+          "activity_type",
+          "group",
+          "tretspef",
+          "n" = "count"
+        )
+
     })
 
     baseline_counts <- shiny::reactive({
