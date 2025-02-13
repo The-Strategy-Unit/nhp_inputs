@@ -18,40 +18,59 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
     # helpers ----
 
     extract_expat_repat_data <- function(dat) {
+      # TODO: techdebt
+      # we should rename the dropdowns
+      # when op, set the group dropdown to ""
+      # when aae, set the tretspef dropdown to "Other"
       at <- shiny::req(input$activity_type)
-      st <- shiny::req(input$ip_subgroup)
-      t <- shiny::req(input$type)
+      st <- shiny::req(input$ip_subgroup) # < this should become tretspef
+      t <- shiny::req(input$type) # < this should become group
 
+      dat <- dplyr::filter(dat, .data[["activity_type"]] == .env[["at"]])
+
+      if (at == "op") {
+        return (dplyr::filter(dat, .data[["tretspef"]] == .env[["t"]]))
+      }
+      if (at == "aae") {
+        return (dplyr::filter(dat, .data[["group"]] == .env[["t"]]))
+      }
       dat |>
         dplyr::filter(
-          .data$activity_type == .env$at,
-          if (at == "ip") .data$group == st else TRUE,
-          if (at == "aae") .data$is_ambulance == (t == "ambulance") else .data$tretspef == t
+          .data$group == st,
+          .data$tretspef == t
         )
     }
 
     # reactives ----
 
     # extract the expat data for the current selection
-    expat <- shiny::reactive({
+    expat_raw <- shiny::reactive({
       ds <- shiny::req(params$dataset)
       load_provider_data("expat") |>
-        dplyr::filter(.data$provider == ds) |>
+        dplyr::filter(.data$provider == ds)
+    })
+    expat <- shiny::reactive({
+      expat_raw |>
         extract_expat_repat_data() |>
         dplyr::select("fyear", "count")
-
     })
 
     # extract the repat local data for the current selection
+    repat_local_raw <- shiny::reactive({
+      load_provider_data("repat_local")
+    })
     repat_local <- shiny::reactive({
-      load_provider_data("repat_local") |>
+      repat_local_raw
         extract_expat_repat_data() |>
         dplyr::select("fyear", "icb", "provider", "count", "pcnt")
     })
 
     # extract the repat nonlocal data for the current selection
+    repat_nonlocal_raw <- shiny::reactive({
+      load_provider_data("repat_nonlocal")
+    })
     repat_nonlocal <- shiny::reactive({
-      load_provider_data("repat_nonlocal") |>
+      repat_nonlocal_raw |>
         extract_expat_repat_data() |>
         dplyr::select("fyear", "provider", "icb", "is_main_icb", "count", "pcnt")
     })
@@ -187,6 +206,8 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
           }
           sp <- sp[[t]]
           p <- p[[t]]
+
+          shiny::req(sp)
 
           shiny::updateCheckboxInput(session, glue::glue("include_{type}"), value = !is.null(p))
           shiny::updateSliderInput(session, type, value = sp * 100)
