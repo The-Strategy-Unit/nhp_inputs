@@ -5,6 +5,13 @@
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
+  # in fct_create_data_cache, we utilise this env var to invalidate the cache
+  # we can use it's value to allow us to cache all of the reactive data without
+  # having to bind to some other input which might change
+  cache_version <- shiny::reactive({
+    Sys.getenv("CACHE_VERSION", 0)
+  })
+
   diagnoses_lkup <- shiny::reactive({
     readRDS(app_sys("app", "data", "diagnoses.Rds"))
   })
@@ -14,14 +21,12 @@ app_server <- function(input, output, session) {
   })
 
   mitigator_codes_lkup <- shiny::reactive({
-
     lkup <- readRDS(app_sys("app", "data", "mitigator-codes.Rds"))
 
     purrr::set_names(
       paste0(lkup[["strategy_name"]], " (", lkup[["mitigator_code"]], ")"),
       lkup[["strategy"]]
     )
-
   })
 
   providers <- shiny::reactive({
@@ -53,24 +58,27 @@ app_server <- function(input, output, session) {
     rates_data <- shiny::reactive({
       load_provider_data("rates")
     }) |>
-      shiny::bindCache(params$dataset)
+      shiny::bindCache(cache_version())
 
     age_sex_data <- shiny::reactive({
       age_sex <- load_provider_data("age_sex")
-      age_fct <- age_sex |> _[["age_group"]] |> unique() |> sort()
+      age_fct <- age_sex |>
+        _[["age_group"]] |>
+        unique() |>
+        sort()
       age_sex |> dplyr::mutate(age_group = factor(age_group, levels = age_fct))
     }) |>
-      shiny::bindCache(params$dataset)
+      shiny::bindCache(cache_version())
 
     diagnoses_data <- shiny::reactive({
       load_provider_data("diagnoses")
     }) |>
-      shiny::bindCache(params$dataset)
+      shiny::bindCache(cache_version())
 
     procedures_data <- shiny::reactive({
       load_provider_data("procedures")
     }) |>
-      shiny::bindCache(params$dataset)
+      shiny::bindCache(cache_version())
 
     available_strategies <- shiny::reactive({
       dataset <- shiny::req(params$dataset)
@@ -87,8 +95,7 @@ app_server <- function(input, output, session) {
         ) |>
         _$strategy |>
         unique()
-    }) |>
-      shiny::bindCache(params$dataset, params$start_year)
+    })
 
     mod_baseline_adjustment_server("baseline_adjustment", params)
     mod_covid_adjustment_server("covid_adjustment", params)

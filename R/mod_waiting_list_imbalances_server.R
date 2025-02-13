@@ -47,7 +47,7 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
           param = 1 + .data[["avg_change"]] * .data[["multiplier"]] / .data[["count"]]
         )
     }) |>
-      shiny::bindCache(params$dataset, params$start_year)
+      shiny::bindCache(params$start_year)
 
     # observers ----
 
