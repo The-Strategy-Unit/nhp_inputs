@@ -161,63 +161,69 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
 
     # update the options in the type drop down based on the activity type dropdown
     # also, toggle whether the ip_subgroup is visible or not
-    shiny::observe({
-      at <- shiny::req(input$activity_type)
+    shiny::observe(
+      {
+        at <- shiny::req(input$activity_type)
 
-      shinyjs::toggle("ip_subgroup", condition = at == "ip")
+        shinyjs::toggle("ip_subgroup", condition = at == "ip")
 
-      if (at == "aae") {
-        type_label <- "Attendance Type"
-        type_values <- c(
-          "Ambulance" = "ambulance",
-          "Walk-In" = "walk-in"
-        )
-      } else {
-        type_label <- "Specialty"
-        # if the subgroup is maternity, just show the one specialty
-        type_values <- if (at == "ip" && input$ip_subgroup == "maternity") {
-          "Other (Medical)"
+        if (at == "aae") {
+          type_label <- "Attendance Type"
+          type_values <- c(
+            "Ambulance" = "ambulance",
+            "Walk-In" = "walk-in"
+          )
         } else {
-          rtt_specialties
+          type_label <- "Specialty"
+          # if the subgroup is maternity, just show the one specialty
+          type_values <- if (at == "ip" && input$ip_subgroup == "maternity") {
+            "Other (Medical)"
+          } else {
+            rtt_specialties
+          }
         }
-      }
-      shiny::updateSelectInput(session, "type", type_label, type_values)
+        shiny::updateSelectInput(session, "type", type_label, type_values)
 
-      # reset the subgroup selection if we aren't on inpatients
-      if (at != "ip") {
-        shiny::updateSelectInput(session, "ip_subgroup", selected = "elective")
-      }
-    }) |>
+        # reset the subgroup selection if we aren't on inpatients
+        if (at != "ip") {
+          shiny::updateSelectInput(session, "ip_subgroup", selected = "elective")
+        }
+      },
+      priority = 100
+    ) |>
       shiny::bindEvent(input$activity_type, input$ip_subgroup)
 
 
     # watch for changes to the dropdowns
     # update the sliders to the values for the combination of the drop downs in shadow_params
     # set the include checkboxes value if a value exists in params or not
-    shiny::observe({
-      purrr::walk(
-        c("expat", "repat_local", "repat_nonlocal"),
-        \(type) {
-          at <- shiny::req(input$activity_type)
-          st <- shiny::req(input$ip_subgroup)
-          t <- shiny::req(input$type)
+    shiny::observe(
+      {
+        purrr::walk(
+          c("expat", "repat_local", "repat_nonlocal"),
+          \(type) {
+            at <- shiny::req(input$activity_type)
+            st <- shiny::req(input$ip_subgroup)
+            t <- shiny::req(input$type)
 
-          sp <- shadow_params[[type]][[at]]
-          p <- params[[type]][[at]]
-          if (at == "ip") {
-            sp <- sp[[st]]
-            p <- p[[st]]
+            sp <- shadow_params[[type]][[at]]
+            p <- params[[type]][[at]]
+            if (at == "ip") {
+              sp <- sp[[st]]
+              p <- p[[st]]
+            }
+            sp <- sp[[t]]
+            p <- p[[t]]
+
+            shiny::req(sp)
+
+            shiny::updateCheckboxInput(session, glue::glue("include_{type}"), value = !is.null(p))
+            shiny::updateSliderInput(session, type, value = sp * 100)
           }
-          sp <- sp[[t]]
-          p <- p[[t]]
-
-          shiny::req(sp)
-
-          shiny::updateCheckboxInput(session, glue::glue("include_{type}"), value = !is.null(p))
-          shiny::updateSliderInput(session, type, value = sp * 100)
-        }
-      )
-    }) |>
+        )
+      },
+      priority = 10
+    ) |>
       shiny::bindEvent(input$activity_type, input$ip_subgroup, input$type)
 
     # set up the observers for the sliders/checkboxes
