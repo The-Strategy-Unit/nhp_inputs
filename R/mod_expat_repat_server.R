@@ -29,10 +29,10 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
       dat <- dplyr::filter(dat, .data[["activity_type"]] == .env[["at"]])
 
       if (at == "op") {
-        return (dplyr::filter(dat, .data[["tretspef"]] == .env[["t"]]))
+        return(dplyr::filter(dat, .data[["tretspef"]] == .env[["t"]]))
       }
       if (at == "aae") {
-        return (dplyr::filter(dat, .data[["group"]] == .env[["t"]]))
+        return(dplyr::filter(dat, .data[["group"]] == .env[["t"]]))
       }
       dat |>
         dplyr::filter(
@@ -140,8 +140,12 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
           ) |>
             tidyr::unnest("activity_type") |>
             purrr::pmap(purrr::compose(unname, c)),
-          list(c("expat", "aae", "ambulance")),
-          list(c("expat", "aae", "walk-in"))
+          tidyr::expand_grid(
+            a = c("expat", "repat_local", "repat_nonlocal"),
+            b = "aae",
+            c = c("ambulance", "walk-in")
+          ) |>
+            purrr::pmap(purrr::compose(unname, c))
         ) |>
           purrr::walk(\(.x) {
             # if a value does exist in the params fallback to the default values
