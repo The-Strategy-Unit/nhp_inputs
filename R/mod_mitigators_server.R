@@ -564,9 +564,9 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       rate <- convert_params_a(max_value, slider_values[[mitigators_type]][[strategy]]$interval) * scale
 
       convert_number <- function(value, config) {
-        converted <- scales::number(value, 0.01)
+        converted <- scales::number(value, 0.001)
         is_percent <- stringr::str_detect(config$y_axis_title, "%")
-        if (is_percent) converted <- scales::number(value, 0.1, suffix = "%")
+        if (is_percent) converted <- scales::number(value, 0.01, suffix = "%")
         converted
       }
 
