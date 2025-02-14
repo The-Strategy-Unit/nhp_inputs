@@ -143,6 +143,16 @@ app_server <- function(input, output, session) {
       peers()
     )
 
+    # enable covid adjusment tab for 2019/20 baseline only
+    output$tab_covid_adjustment <- bs4Dash::renderMenu({
+      if(params$start_year == "201920") {
+        bs4Dash::menuItem(
+          "Covid Adjustment",
+          tabName = "tab_covid_adjustment"
+        )
+      }
+    })
+
     # enable the run_model page for certain users/running locally
 
     can_run_model <- any(c("nhp_devs", "nhp_power_users", "nhp_run_model") %in% session$groups)

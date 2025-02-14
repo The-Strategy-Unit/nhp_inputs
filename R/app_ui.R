@@ -42,10 +42,7 @@ app_ui <- function(request) {
         "Baseline Adjustment",
         tabName = "tab_baseline_adjustment"
       ),
-      bs4Dash::menuItem(
-        "Covid Adjustment",
-        tabName = "tab_covid_adjustment"
-      ),
+      bs4Dash::menuItemOutput("tab_covid_adjustment"),  # only enable for 2019/20
       shiny::tags$hr(),
       bs4Dash::sidebarHeader("Population Changes"),
       bs4Dash::menuItem(
