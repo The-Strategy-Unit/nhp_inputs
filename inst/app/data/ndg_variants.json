@@ -1,122 +1,62 @@
 {
   "variant_1": {
-    "aae": {
-      "ambulance": [
-        1.0121,
-        1.0142
-      ],
-      "walk-in": [
-        1.0121,
-        1.0142
-      ]
-    },
-    "ip": {
-      "elective": [
-        1.0053,
-        1.0071
-      ],
-      "maternity": [
-        1,
-        1
-      ],
-      "non-elective": [
-        1.0194,
-        1.024
-      ]
-    },
-    "op": {
-      "first": [
-        1.0228,
-        1.027
-      ],
-      "followup": [
-        1.0228,
-        1.027
-      ],
-      "procedure": [
-        1.0228,
-        1.027
-      ]
+    "variant": 1,
+    "value_type": "year-on-year-growth",
+    "values": {
+      "aae": {
+        "ambulance": [1.0121, 1.0142],
+        "walk-in": [1.0121, 1.0142]
+      },
+      "ip": {
+        "elective": [1.0053, 1.0071],
+        "maternity": [1, 1],
+        "non-elective": [1.0194, 1.024]
+      },
+      "op": {
+        "first": [1.0228, 1.027],
+        "followup": [1.0228, 1.027],
+        "procedure": [1.0228, 1.027]
+      }
     }
   },
   "variant_2": {
-    "aae": {
-      "ambulance": [
-        1.0121,
-        1.0142
-      ],
-      "walk-in": [
-        1.0121,
-        1.0142
-      ]
-    },
-    "ip": {
-      "elective": [
-        1.0053,
-        1.0071
-      ],
-      "maternity": [
-        1,
-        1
-      ],
-      "non-elective": [
-        0.9955,
-        1.0017
-      ]
-    },
-    "op": {
-      "first": [
-        1.0228,
-        1.027
-      ],
-      "followup": [
-        1.0228,
-        1.027
-      ],
-      "procedure": [
-        1.0228,
-        1.027
-      ]
+    "variant": 2,
+    "value_type": "year-on-year-growth",
+    "values": {
+      "aae": {
+        "ambulance": [1.0121, 1.0142],
+        "walk-in": [1.0121, 1.0142]
+      },
+      "ip": {
+        "elective": [1.0053, 1.0071],
+        "maternity": [1, 1],
+        "non-elective": [0.9955, 1.0017]
+      },
+      "op": {
+        "first": [1.0228, 1.027],
+        "followup": [1.0228, 1.027],
+        "procedure": [1.0228, 1.027]
+      }
     }
   },
   "variant_3": {
-    "aae": {
-      "ambulance": [
-        0.9946,
-        1.0352
-      ],
-      "walk-in": [
-        0.9946,
-        1.0352
-      ]
-    },
-    "ip": {
-      "elective": [
-        0.9999,
-        1.0271
-      ],
-      "maternity": [
-        1,
-        1
-      ],
-      "non-elective": [
-        0.9963,
-        1.0268
-      ]
-    },
-    "op": {
-      "first": [
-        1.0002,
-        1.0487
-      ],
-      "followup": [
-        1.0002,
-        1.0487
-      ],
-      "procedure": [
-        1.0002,
-        1.0487
-      ]
+    "variant": 3,
+    "value_type": "year-on-year-growth",
+    "values": {
+      "aae": {
+        "ambulance": [0.9946, 1.0352],
+        "walk-in": [0.9946, 1.0352]
+      },
+      "ip": {
+        "elective": [0.9999, 1.0271],
+        "maternity": [1, 1],
+        "non-elective": [0.9963, 1.0268]
+      },
+      "op": {
+        "first": [1.0002, 1.0487],
+        "followup": [1.0002, 1.0487],
+        "procedure": [1.0002, 1.0487]
+      }
     }
   }
 }

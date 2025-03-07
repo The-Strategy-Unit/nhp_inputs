@@ -13,7 +13,7 @@ mod_non_demographic_adjustment_server <- function(id, params) {
 
     non_demographic_adjustment <- shiny::reactive({
       v <- shiny::req(input$ndg_variant)
-      ndg_variants[[v]]
+      ndg_variants[[v]]  # list including variant, type and values
     })
 
     # observers ----
@@ -31,10 +31,13 @@ mod_non_demographic_adjustment_server <- function(id, params) {
     init <- shiny::observe(
       {
         p_ndg <- shiny::isolate({
-          params[["non-demographic_adjustment"]]
+          params[["non-demographic_adjustment"]][["values"]]
         })
 
-        detected_ndg_variant <- detect_non_demographic_variant(p_ndg, ndg_variants)
+        detected_ndg_variant <- detect_non_demographic_variant(
+          p_ndg,
+          ndg_variants |> purrr::map(\(x) x[["values"]])
+        )
 
         shiny::updateSelectInput(
           session,
@@ -50,7 +53,7 @@ mod_non_demographic_adjustment_server <- function(id, params) {
     # renders ----
 
     output$non_demographic_adjustment_table <- gt::render_gt({
-      mod_non_demographic_adjustment_table(non_demographic_adjustment())
+      mod_non_demographic_adjustment_table(non_demographic_adjustment()[["values"]])
     })
   })
 }
