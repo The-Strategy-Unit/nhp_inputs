@@ -31,7 +31,7 @@ mod_non_demographic_adjustment_ui <- function(id) {
                 inputId = ns("ndg_variant"),
                 label = "Selection",
                 choices = purrr::set_names(
-                  c("variant_1", "variant_2"),
+                  c("variant_2", "variant_3"),
                   snakecase::to_title_case
                 ),
                 selected = "variant_2"

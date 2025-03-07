@@ -5,13 +5,15 @@ mod_non_demographic_adjustment_server <- function(id, params) {
   mod_reasons_server(shiny::NS(id, "reasons"), params, "non-demographic_adjustment")
 
   shiny::moduleServer(id, function(input, output, session) {
-    ndg_variants <- jsonlite::read_json(app_sys("app", "data", "ndg_variants.json"), simplifyVector = TRUE)
+    ndg_variants <- app_sys("app", "data", "ndg_variants.json") |>
+      jsonlite::read_json(simplifyVector = TRUE) |>
+      purrr::keep_at(c("variant_2", "variant_3"))
 
     # reactives ----
 
     non_demographic_adjustment <- shiny::reactive({
       v <- shiny::req(input$ndg_variant)
-      ndg_variants[[v]]
+      ndg_variants[[v]]  # list including variant, type and values
     })
 
     # observers ----
@@ -28,16 +30,10 @@ mod_non_demographic_adjustment_server <- function(id, params) {
 
     init <- shiny::observe(
       {
-        p_ndg <- shiny::isolate({
-          params[["non-demographic_adjustment"]]
-        })
-
-        detected_ndg_variant <- detect_non_demographic_variant(p_ndg, ndg_variants)
-
         shiny::updateSelectInput(
           session,
           "ndg_variant",
-          selected = detected_ndg_variant
+          selected = non_demographic_adjustment()[["variant"]]
         )
 
         init$destroy()
@@ -48,7 +44,7 @@ mod_non_demographic_adjustment_server <- function(id, params) {
     # renders ----
 
     output$non_demographic_adjustment_table <- gt::render_gt({
-      mod_non_demographic_adjustment_table(non_demographic_adjustment())
+      mod_non_demographic_adjustment_table(non_demographic_adjustment()[["values"]])
     })
   })
 }

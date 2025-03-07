@@ -57,26 +57,3 @@ nda_groups <- list(
     )
   )
 )
-
-detect_non_demographic_variant <- function(p_ndg, ndg_variants) {
-
-  detected_ndg_variant <- "variant_2"  # default
-
-  current_ndg_values <- unlist(p_ndg)  # NULL if new scenario
-
-  if (!is.null(current_ndg_values)) {
-
-    ndg_variant_sets <- purrr::map(ndg_variants, unlist)
-
-    detected_ndg_variant <- purrr::map(
-      ndg_variant_sets,
-      \(x) all(current_ndg_values == x)
-    ) |>
-      purrr::keep(isTRUE) |>
-      names()
-
-  }
-
-  detected_ndg_variant
-
-}
