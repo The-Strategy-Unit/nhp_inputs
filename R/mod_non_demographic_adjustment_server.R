@@ -30,19 +30,10 @@ mod_non_demographic_adjustment_server <- function(id, params) {
 
     init <- shiny::observe(
       {
-        p_ndg <- shiny::isolate({
-          params[["non-demographic_adjustment"]][["values"]]
-        })
-
-        detected_ndg_variant <- detect_non_demographic_variant(
-          p_ndg,
-          ndg_variants |> purrr::map(\(x) x[["values"]])
-        )
-
         shiny::updateSelectInput(
           session,
           "ndg_variant",
-          selected = detected_ndg_variant
+          selected = non_demographic_adjustment()[["variant"]]
         )
 
         init$destroy()

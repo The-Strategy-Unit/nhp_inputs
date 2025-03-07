@@ -1,6 +1,6 @@
 {
   "variant_1": {
-    "variant": 1,
+    "variant": "variant_1",
     "value_type": "year-on-year-growth",
     "values": {
       "aae": {
@@ -20,7 +20,7 @@
     }
   },
   "variant_2": {
-    "variant": 2,
+    "variant": "variant_2",
     "value_type": "year-on-year-growth",
     "values": {
       "aae": {
@@ -40,7 +40,7 @@
     }
   },
   "variant_3": {
-    "variant": 3,
+    "variant": "variant_3",
     "value_type": "year-on-year-growth",
     "values": {
       "aae": {
