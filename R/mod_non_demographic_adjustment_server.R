@@ -5,7 +5,9 @@ mod_non_demographic_adjustment_server <- function(id, params) {
   mod_reasons_server(shiny::NS(id, "reasons"), params, "non-demographic_adjustment")
 
   shiny::moduleServer(id, function(input, output, session) {
-    ndg_variants <- jsonlite::read_json(app_sys("app", "data", "ndg_variants.json"), simplifyVector = TRUE)
+    ndg_variants <- app_sys("app", "data", "ndg_variants.json") |>
+      jsonlite::read_json(simplifyVector = TRUE) |>
+      purrr::keep_at(c("variant_2", "variant_3"))
 
     # reactives ----
 
