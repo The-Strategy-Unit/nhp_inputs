@@ -153,7 +153,7 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
 
       scheme_peers <- peers |>
         dplyr::filter(.data$procode == params$dataset & .data$peer != params$dataset) |>
-        dplyr::pull(peer)
+        dplyr::pull(.data$peer)
 
       rates_data |>
         dplyr::filter(
@@ -167,8 +167,8 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
             .default = NA  # if scheme is neither focal nor a peer
           )
         ) |>
-        dplyr::filter(!is.na(is_peer)) |>  # only focal scheme and peers
-        dplyr::arrange(dplyr::desc(is_peer))  # to plot focal scheme last
+        dplyr::filter(!is.na(.data$is_peer)) |>  # only focal scheme and peers
+        dplyr::arrange(dplyr::desc(.data$is_peer))  # to plot focal scheme last
     })
 
     # params controls ----
