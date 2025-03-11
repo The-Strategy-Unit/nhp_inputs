@@ -22,8 +22,3 @@ By default, these are hidden. There are two options that can be adjusted here:
 time, but can be set to a specific value to repeat a prior model run
 * The number of iterations to use within the monte-carlo simulation. This
 defaults to 256 runs, but can be set to 512 or 1024 runs.
-
-## Uploading previous parameters
-
-If you wish to use a previous set of parameters (which can be downloaded on the
-"Run Model" page), you can do so under this section.
