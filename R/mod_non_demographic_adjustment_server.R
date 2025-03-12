@@ -44,7 +44,7 @@ mod_non_demographic_adjustment_server <- function(id, params) {
     # renders ----
 
     output$non_demographic_adjustment_table <- gt::render_gt({
-      mod_non_demographic_adjustment_table(non_demographic_adjustment()[["values"]])
+      mod_non_demographic_adjustment_table(non_demographic_adjustment())
     })
   })
 }
