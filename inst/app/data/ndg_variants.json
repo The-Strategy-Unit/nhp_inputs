@@ -1,7 +1,7 @@
 {
   "variant_1": {
     "variant": "variant_1",
-    "value_type": "year-on-year-growth",
+    "value-type": "year-on-year-growth",
     "values": {
       "aae": {
         "ambulance": [1.0121, 1.0142],
@@ -21,7 +21,7 @@
   },
   "variant_2": {
     "variant": "variant_2",
-    "value_type": "year-on-year-growth",
+    "value-type": "year-on-year-growth",
     "values": {
       "aae": {
         "ambulance": [1.0121, 1.0142],
@@ -41,7 +41,7 @@
   },
   "variant_3": {
     "variant": "variant_3",
-    "value_type": "year-on-year-growth",
+    "value-type": "year-on-year-growth",
     "values": {
       "aae": {
         "ambulance": [0.9946, 1.0352],

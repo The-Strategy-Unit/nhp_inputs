@@ -62,11 +62,14 @@ app_server <- function(input, output, session) {
 
     age_sex_data <- shiny::reactive({
       age_sex <- load_provider_data("age_sex")
-      age_fct <- age_sex |>
-        _[["age_group"]] |>
-        unique() |>
-        sort()
-      age_sex |> dplyr::mutate(age_group = factor(age_group, levels = age_fct))
+      age_fct <- age_sex |> _[["age_group"]] |> unique() |> sort()
+      age_sex |>
+        dplyr::mutate(
+          age_group = factor(
+            .data[["age_group"]],
+            levels = .env[["age_fct"]]
+          )
+        )
     }) |>
       shiny::bindCache(cache_version())
 
