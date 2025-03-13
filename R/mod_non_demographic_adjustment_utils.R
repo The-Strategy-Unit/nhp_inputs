@@ -1,5 +1,12 @@
 mod_non_demographic_adjustment_table <- function(non_demographic_adjustment) {
-  non_demographic_adjustment |>
+
+  title <- switch(
+    non_demographic_adjustment[["variant"]],
+    "variant_2" = "Variant 2 (primary rate)",
+    "variant_3" = "Variant 3 (for sensitivity only)"
+  )
+
+  non_demographic_adjustment[["values"]] |>
     purrr::map_depth(2, ~ purrr::set_names(.x, c("low", "high"))) |>
     purrr::map(tibble::enframe) |>
     dplyr::bind_rows(.id = "activity_type") |>
@@ -29,7 +36,8 @@ mod_non_demographic_adjustment_table <- function(non_demographic_adjustment) {
       row_group.border.top.color = "black",
       row_group.border.bottom.color = "black",
       row_group.background.color = "#686f73"
-    )
+    ) |>
+    gt::tab_header(title)
 }
 
 nda_groups <- list(
