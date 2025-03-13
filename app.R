@@ -54,6 +54,25 @@ upgrade_params.v3.1 <- function(p) {
   upgrade_params(p)
 }
 
+upgrade_params.v3.2 <- function(p) {
+
+  ndg_values <- p[["non-demographic_adjustment"]]
+
+  # Build new key-value format, assume NDG variant 2
+  p[["non-demographic_adjustment"]] <- list(
+    "variant" = "variant_2",
+    "value-type" = "year-on-year-growth",
+    "values" = ndg_values
+  )
+
+  # Overwrite variant if variant 1
+  is_ndg1 <- identical(ndg_values[["ip"]][["non-elective"]], c(1.0194, 1.0240))
+  if (is_ndg1) p[["non-demographic_adjustment"]][["variant"]] <- "variant_1"
+
+  class(p) <- p$app_version <- "v3.3"
+  upgrade_params(p)
+}
+
 params_path <- function(user, dataset) {
   path <- file.path(
     config::get("params_data_path"),
@@ -166,6 +185,12 @@ ui_body <- function() {
         )
       ),
       shiny::textInput("scenario", "Name"),
+      shinyjs::hidden(
+        shiny::div(
+          id = "ndg1_warning",
+          "It isn't possible to upgrade a scenario that uses variant 1 of the non-demographic growth adjustment."
+        )
+      ),
       shiny::div(
         "Please follow",
         shiny::a(
@@ -294,7 +319,7 @@ server <- function(input, output, session) {
     shiny::validate(
       shiny::need(
         s != "",
-        "Scenario must be completed in order to proceed",
+        "Scenario name must be completed in order to proceed",
         "Scenario"
       ),
       shiny::need(
@@ -523,6 +548,26 @@ server <- function(input, output, session) {
         "app_version",
         selected = app_version_choices[1]
       )
+    }
+  }) |>
+    shiny::bindEvent(input$scenario_type)
+
+  # If scenario has NDG variant 1 then it cannot be updated because model v3.3
+  # does not accept variant 1.
+  shiny::observe({
+    if (stringr::str_detect(input$scenario_type, "existing")) {
+
+      p <- shiny::req(params())
+      is_ndg1 <- p[["non-demographic_adjustment"]][["variant"]] == "variant_1"
+
+      if (is_ndg1) {
+        shinyjs::show("ndg1_warning")
+        shinyjs::disable("scenario")
+      } else {
+        shinyjs::hide("ndg1_warning")
+        shinyjs::enable("scenario")
+      }
+
     }
   }) |>
     shiny::bindEvent(input$scenario_type)
