@@ -187,7 +187,8 @@ ui_body <- function() {
       shinyjs::hidden(
         shiny::div(
           id = "ndg_warning",
-          "It isn't possible to upgrade a scenario that uses variant 1 of the non-demographic growth adjustment."
+          "You cannot upgrade a scenario that contains Variant 1 of the
+          non-demographic growth (NDG) adjustment."
         )
       ),
       shiny::textInput("scenario", "Name"),
