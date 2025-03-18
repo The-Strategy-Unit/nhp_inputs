@@ -175,7 +175,7 @@ app_server <- function(input, output, session) {
 
     file <- params_filename(
       # if running locally, then user will be NULL
-      session$user %||% ".",
+      session$user %||% "[development]",
       params$dataset,
       params$scenario
     )
