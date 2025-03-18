@@ -4,15 +4,16 @@ on:
     types: [published]
 
 jobs:
-  connect-publish-prod:
-    name: "Connect Publish: Production"
+  get-variables:
+    name: "Get Variables"
     runs-on: ubuntu-latest
     env:
       # these get set later
       VERSION: ""
       INPUTS_DATA_VERSION: ""
     outputs:
-      to: ${{ steps.set-variables.outputs.to }}
+      NAMESPACE: ${{ steps.set-variables.outputs.NAMESPACE }}
+      INPUTS_DATA_VERSION: ${{ steps.set-variables.outputs.INPUTS_DATA_VERSION }}
 
     steps:
       - uses: actions/checkout@v3
@@ -20,39 +21,38 @@ jobs:
       - name: Get version
         id: set-variables
         run: |
-          VERSION=`echo ${{ github.ref_name }} | awk 'BEGIN { FS="."; } { print ""$1"-"$2; }'`
-          INPUTS_DATA_VERSION=`echo $VERSION | sed 's/-/./'`
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          NAMESPACE=`echo ${{ github.ref_name }} | awk 'BEGIN { FS="."; } { print ""$1"-"$2; }'`
+          INPUTS_DATA_VERSION=`echo $NAMESPACE | sed 's/-/./'`
+          echo "NAMESPACE=$NAMESPACE" >> $GITHUB_ENV
+          echo "NAMESPACE=$NAMESPACE" >> $GITHUB_OUTPUT
           echo "INPUTS_DATA_VERSION=$INPUTS_DATA_VERSION" >> $GITHUB_ENV
-          echo "to=$INPUTS_DATA_VERSION" >> $GITHUB_OUTPUT
+          echo "INPUTS_DATA_VERSION=$INPUTS_DATA_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Update manifest.json
-        run: node update_manifest.js
+  publish-production:
+    name: "Publish (to production server)"
+    uses: ./.github/workflows/connect-publish-manual.yaml
+    needs: [get-variables]
+    with:
+      namespace: ${{ needs.get-variables.outputs.INPUTS_DATA_VERSION }}
+      inputs_data_version: ${{ needs.get-variables.outputs.INPUTS_DATA_VERSION }}
+      environment: "production"
+    secrets: inherit
         
-      - name: Publish Connect content
-        uses: rstudio/actions/connect-publish@main
-        env:
-          CONNECT_ENV_SET_AZ_STORAGE_CONTAINER: ${{ secrets.AZ_STORAGE_CONTAINER }}
-          CONNECT_ENV_SET_AZ_STORAGE_EP: ${{ secrets.AZ_STORAGE_EP }}
-          CONNECT_ENV_SET_NHP_API_KEY: ${{ secrets.NHP_API_KEY }}
-          CONNECT_ENV_SET_NHP_API_URI: ${{ secrets.NHP_API_URI }}
-          CONNECT_ENV_SET_NHP_ENCRYPT_KEY: ${{ secrets.NHP_ENCRYPT_KEY }}
-          CONNECT_ENV_SET_NHP_INPUTS_DATA_VERSION: ${{ env.INPUTS_DATA_VERSION }}
-          CONNECT_ENV_SET_NHP_OUTPUTS_URI: ${{ secrets.NHP_OUTPUTS_URI }}
-          CONNECT_ENV_SET_GOLEM_CONFIG_ACTIVE: "production"
-        with:
-          url: ${{ secrets.RSCONNECT_URL }}
-          api-key: ${{ secrets.RSCONNECT_API_KEY }}
-          access-type: logged_in
-          force: true
-          dir: .:inputs
-          namespace: nhp/${{ env.VERSION }}
+  publish-new-production:
+    name: "Publish (to new production server)"
+    uses: ./.github/workflows/connect-publish-manual.yaml
+    needs: [get-variables]
+    with:
+      namespace: ${{ needs.get-variables.outputs.INPUTS_DATA_VERSION }}
+      inputs_data_version: ${{ needs.get-variables.outputs.INPUTS_DATA_VERSION }}
+      environment: "new-production"
+    secrets: inherit
 
   sync-data:
     name: "Sync Data"
     uses: ./.github/workflows/sync-data.yaml
-    needs: [connect-publish-prod]
+    needs: [get-variables, publish-production]
     with:
       from: "dev"
-      to: ${{ needs.connect-publish-prod.outputs.to }}
+      to: ${{ needs.get-variables.outputs.INPUTS_DATA_VERSION }}
     secrets: inherit

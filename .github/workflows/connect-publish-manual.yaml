@@ -8,11 +8,32 @@ on:
       inputs_data_version:
         required: true
         type: string
-
+      environment:
+        description: "The environment to deploy to"
+        required: true
+        type: choice
+        default: "production"
+        options:
+          - "production"
+          - "new-production"
+  workflow_call:
+    inputs:
+      namespace:
+        required: true
+        type: string
+      inputs_data_version:
+        required: true
+        type: string
+      environment:
+        description: "The environment to deploy to"
+        required: true
+        type: string
+        default: "production"
 jobs:
-  connect-publish-manual:
-    name: "Connect Publish: Manual"
+  connect-publish:
+    name: "Connect Publish: ${{ inputs.namespace }} [${{ inputs.environment }}]"
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     steps:
       - uses: actions/checkout@v3
 

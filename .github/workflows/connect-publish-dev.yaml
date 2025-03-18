@@ -2,32 +2,23 @@ name: "Connect Publish (dev)"
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
-  connect-publish-dev:
-    name: "Connect Publish: Dev"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Update manifest.json
-        run: node update_manifest.js
-
-      - name: Publish Connect content
-        uses: rstudio/actions/connect-publish@main
-        env:
-          CONNECT_ENV_SET_AZ_STORAGE_CONTAINER: ${{ secrets.AZ_STORAGE_CONTAINER }}
-          CONNECT_ENV_SET_AZ_STORAGE_EP: ${{ secrets.AZ_STORAGE_EP }}
-          CONNECT_ENV_SET_NHP_API_KEY: ${{ secrets.NHP_API_KEY }}
-          CONNECT_ENV_SET_NHP_API_URI: ${{ secrets.NHP_API_URI }}
-          CONNECT_ENV_SET_NHP_ENCRYPT_KEY: ${{ secrets.NHP_ENCRYPT_KEY }}
-          CONNECT_ENV_SET_NHP_INPUTS_DATA_VERSION: "dev"
-          CONNECT_ENV_SET_NHP_OUTPUTS_URI: ${{ secrets.NHP_OUTPUTS_URI }}
-          CONNECT_ENV_SET_GOLEM_CONFIG_ACTIVE: "production"
-        with:
-          url: ${{ secrets.RSCONNECT_URL }}
-          api-key: ${{ secrets.RSCONNECT_API_KEY }}
-          access-type: logged_in
-          force: true
-          dir: .:inputs
-          namespace: nhp/dev
+  publish-production:
+    name: "Publish (to production server)"
+    uses: ./.github/workflows/connect-publish-manual.yaml
+    with:
+      namespace: "dev"
+      inputs_data_version: "dev"
+      environment: "production"
+    secrets: inherit
+        
+  publish-new-production:
+    name: "Publish (to new production server)"
+    uses: ./.github/workflows/connect-publish-manual.yaml
+    with:
+      namespace: "dev"
+      inputs_data_version: "dev"
+      environment: "new-production"
+    secrets: inherit
