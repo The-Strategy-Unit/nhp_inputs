@@ -182,6 +182,13 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       floor(r * m) / m
     })
 
+    shiny::observe({  # ensure include checkbox is on or off given param value
+      shiny::req(input$strategy)
+      include <- !is.null(params[[mitigators_type]][[activity_type]][[input$strategy]])
+      shiny::updateCheckboxInput(session, "include", value = include)
+    }) |>
+      shiny::bindEvent(input$strategy)
+
     shiny::observe({  # update slider
       strategy <- shiny::req(input$strategy)
       max_value <- provider_max_value()
