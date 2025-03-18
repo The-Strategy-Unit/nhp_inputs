@@ -19,11 +19,6 @@ mod_non_demographic_adjustment_server <- function(id, params) {
     # observers ----
 
     shiny::observe({
-      can_select_variant <- is_local() || any(c("nhp_devs", "nhp_run_model") %in% session$groups)
-      shinyjs::toggle("ndg_variant_dropdown", condition = can_select_variant)
-    })
-
-    shiny::observe({
       params[["non-demographic_adjustment"]] <- non_demographic_adjustment()
     }) |>
       shiny::bindEvent(non_demographic_adjustment())
@@ -44,7 +39,7 @@ mod_non_demographic_adjustment_server <- function(id, params) {
     # renders ----
 
     output$non_demographic_adjustment_table <- gt::render_gt({
-      mod_non_demographic_adjustment_table(non_demographic_adjustment()[["values"]])
+      mod_non_demographic_adjustment_table(non_demographic_adjustment())
     })
   })
 }
