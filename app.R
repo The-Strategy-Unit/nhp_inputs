@@ -54,11 +54,30 @@ upgrade_params.v3.1 <- function(p) {
   upgrade_params(p)
 }
 
+upgrade_params.v3.2 <- function(p) {
+
+  ndg_values <- p[["non-demographic_adjustment"]]
+
+  # Build new key-value format, assume NDG variant 2
+  p[["non-demographic_adjustment"]] <- list(
+    "variant" = "variant_2",
+    "value-type" = "year-on-year-growth",
+    "values" = ndg_values
+  )
+
+  # Overwrite variant if variant 1
+  is_ndg1 <- identical(ndg_values[["ip"]][["non-elective"]], c(1.0194, 1.0240))
+  if (is_ndg1) p[["non-demographic_adjustment"]][["variant"]] <- "variant_1"
+
+  class(p) <- p$app_version <- "v3.3"
+  upgrade_params(p)
+}
+
 params_path <- function(user, dataset) {
   path <- file.path(
     config::get("params_data_path"),
     "params",
-    user %||% ".",
+    user %||% "[development]",
     dataset
   )
 
@@ -165,8 +184,20 @@ ui_body <- function() {
           NULL
         )
       ),
+      shinyjs::hidden(
+        shiny::div(
+          id = "ndg_warning",
+          shiny::HTML(
+            "<font color='red'>You cannot upgrade a scenario that contains
+            Variant 1 of the non-demographic growth (NDG) adjustment. See
+            <a href='https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/model_updates.html#v3.3'>
+            the model updates page</a> for details.</font>"
+          )
+        )
+      ),
       shiny::textInput("scenario", "Name"),
       shiny::div(
+        id = "naming_guidance",
         "Please follow",
         shiny::a(
           "the model-run naming guidelines.",
@@ -294,7 +325,7 @@ server <- function(input, output, session) {
     shiny::validate(
       shiny::need(
         s != "",
-        "Scenario must be completed in order to proceed",
+        "Scenario name must be completed in order to proceed",
         "Scenario"
       ),
       shiny::need(
@@ -495,19 +526,60 @@ server <- function(input, output, session) {
     }
 
     if (input$scenario_type == "Create new from scratch") {
+
       shinyjs::show("scenario")
+      shinyjs::enable("scenario")
       shinyjs::hide("previous_scenario")
+      shinyjs::hide("ndg_warning")
+      shinyjs::show("naming_guidance")
+      shiny::updateTextInput(session, "scenario", value = "")
+
     } else if (input$scenario_type == "Create new from existing") {
+
       shinyjs::show("scenario")
       shinyjs::show("previous_scenario")
+      shinyjs::show("naming_guidance")
+      shiny::updateTextInput(session, "scenario", value = "")
+
     } else if (input$scenario_type == "Edit existing") {
+
       shinyjs::hide("scenario")
       shinyjs::show("previous_scenario")
+      shinyjs::hide("naming_guidance")
       shiny::updateTextInput(
         session,
         "scenario",
         value = input$previous_scenario
       )
+
+    }
+
+  }) |>
+    shiny::bindEvent(
+      input$scenario_type,
+      input$previous_scenario
+    )
+
+  # If scenario has NDG variant 1 then it cannot be updated because model v3.3
+  # does not accept variant 1.
+  shiny::observe({
+    if (stringr::str_detect(input$scenario_type, "existing")) {
+
+      p <- shiny::req(params())
+
+      is_ndg1 <- p[["non-demographic_adjustment"]][["variant"]] == "variant_1"
+
+      if (is_ndg1) {
+        shinyjs::show("ndg_warning")
+        shinyjs::hide("scenario")
+        shinyjs::hide("start_button")
+        shinyjs::hide("naming_guidance")
+      } else {  # allow state reversal if subsequent scenario choice is non-NDG1
+        shinyjs::hide("ndg_warning")
+        shinyjs::enable("scenario")
+        shinyjs::show("start_button")
+      }
+
     }
   }) |>
     shiny::bindEvent(
