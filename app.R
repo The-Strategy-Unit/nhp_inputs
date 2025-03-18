@@ -187,8 +187,12 @@ ui_body <- function() {
       shinyjs::hidden(
         shiny::div(
           id = "ndg_warning",
-          "You cannot upgrade a scenario that contains Variant 1 of the
-          non-demographic growth (NDG) adjustment."
+          shiny::HTML(
+            "<font color='red'>You cannot upgrade a scenario that contains
+            Variant 1 of the non-demographic growth (NDG) adjustment. See
+            <a href='https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/model_updates.html#v3.3'>
+            the model updates page</a> for details.</font>"
+          )
         )
       ),
       shiny::textInput("scenario", "Name"),
