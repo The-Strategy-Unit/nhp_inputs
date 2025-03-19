@@ -33,7 +33,7 @@ jobs:
     uses: ./.github/workflows/connect-publish-manual.yaml
     needs: [get-variables]
     with:
-      namespace: ${{ needs.get-variables.outputs.INPUTS_DATA_VERSION }}
+      namespace: ${{ needs.get-variables.outputs.NAMESPACE }}
       inputs_data_version: ${{ needs.get-variables.outputs.INPUTS_DATA_VERSION }}
       environment: "production"
     secrets: inherit
@@ -43,7 +43,7 @@ jobs:
     uses: ./.github/workflows/connect-publish-manual.yaml
     needs: [get-variables]
     with:
-      namespace: ${{ needs.get-variables.outputs.INPUTS_DATA_VERSION }}
+      namespace: ${{ needs.get-variables.outputs.NAMESPACE }}
       inputs_data_version: ${{ needs.get-variables.outputs.INPUTS_DATA_VERSION }}
       environment: "new-production"
     secrets: inherit
