@@ -563,6 +563,7 @@ server <- function(input, output, session) {
   # If scenario has NDG variant 1 then it cannot be updated because model v3.3
   # does not accept variant 1.
   shiny::observe({
+    # Toggle element visibility if selecting existing scenarios
     if (stringr::str_detect(input$scenario_type, "existing")) {
 
       p <- shiny::req(params())
@@ -580,6 +581,13 @@ server <- function(input, output, session) {
         shinyjs::show("start_button")
       }
 
+    }
+
+    # Reset element visibility if starting from scratch
+    if (input$scenario_type == "Create new from scratch") {
+      shinyjs::hide("ndg_warning")
+      shinyjs::enable("scenario")
+      shinyjs::show("start_button")
     }
   }) |>
     shiny::bindEvent(
