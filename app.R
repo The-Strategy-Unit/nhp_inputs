@@ -464,22 +464,33 @@ server <- function(input, output, session) {
   }) |>
     shiny::bindEvent(selected_providers())
 
-  # the end-year range should be 1 year after the start year to the year 2043,
-  # which will also be the default.
+  # the end-year range should be 1 year after the start year to the year 2041/42,
+  # which will also be the default if starting from scratch.
   shiny::observe({
-    x <- as.numeric(stringr::str_sub(input$start_year, 1, 4))
+    start_yr <- as.numeric(stringr::str_sub(input$start_year, 1, 4))  #
 
-    fy_yyyy <- seq(x + 1, 2041) # 2043 fixed as latest possible end year
+    fy_yyyy <- seq(start_yr + 1, 2041)  # sequence from start+1 to end year
     fy_yy <- stringr::str_sub(fy_yyyy + 1, 3, 4)
     fy_choices <- paste(fy_yyyy, fy_yy, sep = "/")
     fy_choices_num <- setNames(fy_yyyy, fy_choices)
 
-    shiny::updateSelectInput(
-      session,
-      "end_year",
-      choices = fy_choices_num,
-      selected = max(fy_choices_num)
-    )
+    # Set end year to latest year, otherwise the year stored in existing params
+    if (input$scenario_type == "Create new from scratch") {
+      shiny::updateSelectInput(
+        session,
+        "end_year",
+        choices = fy_choices_num,
+        selected = max(fy_choices_num)
+      )
+    } else {
+      p <- shiny::req(params())
+      shiny::updateSelectInput(
+        session,
+        "end_year",
+        choices = fy_choices_num,
+        selected = p$end_year
+      )
+    }
   }) |>
     shiny::bindEvent(input$start_year)
 
@@ -562,7 +573,7 @@ server <- function(input, output, session) {
 
   # If scenario has NDG variant 1 then it cannot be updated because model v3.3
   # does not accept variant 1.
-  shiny::observe({
+shiny::observe({
     # Toggle element visibility if selecting existing scenarios
     if (stringr::str_detect(input$scenario_type, "existing")) {
 
