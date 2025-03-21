@@ -25,10 +25,14 @@ mod_non_demographic_adjustment_server <- function(id, params) {
 
     init <- shiny::observe(
       {
+        p_ndg_variant <- shiny::isolate({
+          params[["non-demographic_adjustment"]][["variant"]]
+        })
+
         shiny::updateSelectInput(
           session,
           "ndg_variant",
-          selected = non_demographic_adjustment()[["variant"]]
+          selected = p_ndg_variant
         )
 
         init$destroy()
