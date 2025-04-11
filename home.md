@@ -3,7 +3,6 @@ are aware of the implications of setting the model parameters, and have
 completed any relevant training. If this is not the case, please contact
 your Model Relationship Manager, or contact [the data science
 team](mlcsu.su.datascience@nhs.net) before proceeding.
-:::
 
 Changing the provider will update all of the information shown within
 the inputs application. You will immediately see the map update showing
