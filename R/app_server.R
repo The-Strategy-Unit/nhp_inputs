@@ -121,7 +121,7 @@ app_server <- function(input, output, session) {
       c(
         "mitigators_admission_avoidance",
         "mitigators_mean_los_reduction",
-        "mitigators_sdec_los_reduction",
+        "mitigators_sdec_conversion",
         "mitigators_preop_los_reduction",
         "mitigators_day_procedures_daycase",
         "mitigators_day_procedures_outpatients",

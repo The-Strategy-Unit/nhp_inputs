@@ -110,13 +110,14 @@ default:
         virtual_wards_efficiencies_heart_failure: "Virtual Wards LoS Reduction (Heart Failure)"
       params_items:
         type: "all"
-    mitigators_sdec_los_reduction:
+    mitigators_sdec_conversion:
       activity_type: ip
       mitigators_type: efficiencies
-      y_axis_title: "% admissions with a greater than 0-day length of stay"
+      y_axis_title: "Admissions per 1,000 population"
       x_axis_title: "Financial Year"
       number_type: !expr scales::percent_format()
-      funnel_x_title: "Number of Admissions"
+      funnel_x_title: "Catchment Population of Trust"
+      funnel_number_type: !expr scales::comma_format()
       slider_scale: 100
       slider_step: 0.1
       strategy_subset:
