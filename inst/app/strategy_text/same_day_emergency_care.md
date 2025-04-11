@@ -1,4 +1,4 @@
-The Directory of Ambulatory Emergency Care for Adults published by the NHS Institute for Innovation and Improvement identified 49 emergency conditions that have the potential to be managed as an emergency day case that could be delivered in a Same-Day Emergency Care (SDEC) unit.
+The Directory of Ambulatory Emergency Care for Adults published by the NHS Institute for Innovation and Improvement identified 58 emergency conditions that have the potential to be managed as an emergency day case that could be delivered in a Same-Day Emergency Care (SDEC) unit.
 We have grouped these conditions into four mitigator cohorts, those that the institute suggest have a:
 
 * low potential to be managed on an ambulatory basis (10-30% of cases)
