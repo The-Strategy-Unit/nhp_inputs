@@ -1,16 +1,8 @@
----
-editor_options: 
-  markdown: 
-    wrap: 72
----
-
-::: callout-note
 **Please Note**: By accessing this model you are acknowledging that you
 are aware of the implications of setting the model parameters, and have
 completed any relevant training. If this is not the case, please contact
 your Model Relationship Manager, or contact [the data science
 team](mlcsu.su.datascience@nhs.net) before proceeding.
-:::
 
 Changing the provider will update all of the information shown within
 the inputs application. You will immediately see the map update showing
@@ -36,14 +28,11 @@ relevant Posit Connect Group to enable the 'Run Model' button to appear.
 
 Much evidence exists in published literature of the efficacy of various
 methods to reduce or avoid acute hospital demand. Although difficult to
-summarise, this evidence has been mapped to provide an overview,
+summarise, we have mapped this evidence in [an interactive app](https://connect.strategyunitwm.nhs.uk/nhp_evidence_map/) to provide an overview,
 categorised by setting, evidence type, outcomes and effect. This map is
 provided to enable exploration of the current evidence landscape,
 identify gaps in knowledge, and allow searching of evidence by a range
 of parameters.
-
-To explore the interactive map, please [click
-here](https://connect.strategyunitwm.nhs.uk/nhp_evidence_map/).
 
 ## Advanced Options
 
