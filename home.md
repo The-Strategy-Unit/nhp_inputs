@@ -34,9 +34,6 @@ provided to enable exploration of the current evidence landscape,
 identify gaps in knowledge, and allow searching of evidence by a range
 of parameters.
 
-To explore the interactive map, please [click
-here](https://connect.strategyunitwm.nhs.uk/nhp_evidence_map/).
-
 ## Advanced Options
 
 By default, these are hidden. There are two options that can be adjusted
