@@ -28,9 +28,9 @@ horizon. This defaults to 15 years from the baseline.
 Finally, you must specify a scenario name - this will be how the results
 are identified in the inputs app.
 
-To run a model with your given parameters, you must contact [the data science
-team](mlcsu.su.datascience@nhs.net) who will add you to the relevant Posit Connect 
-Group to enable the 'Run Model' button to appear.
+To run a model with your given parameters, you must contact [the data
+science team](mlcsu.su.datascience@nhs.net) who will add you to the
+relevant Posit Connect Group to enable the 'Run Model' button to appear.
 
 ## Evidence Map
 
