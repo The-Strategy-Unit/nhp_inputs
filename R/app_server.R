@@ -21,7 +21,8 @@ app_server <- function(input, output, session) {
   })
 
   mitigator_codes_lkup <- shiny::reactive({
-    lkup <- readRDS(app_sys("app", "data", "mitigator-codes.Rds"))
+    lkup <- app_sys("app", "data", "mitigator-codes.csv") |>
+      readr::read_csv(show_col_types = FALSE)
 
     purrr::set_names(
       paste0(lkup[["strategy_name"]], " (", lkup[["mitigator_code"]], ")"),
@@ -120,7 +121,7 @@ app_server <- function(input, output, session) {
       c(
         "mitigators_admission_avoidance",
         "mitigators_mean_los_reduction",
-        "mitigators_aec_los_reduction",
+        "mitigators_sdec_los_reduction",
         "mitigators_preop_los_reduction",
         "mitigators_day_procedures_daycase",
         "mitigators_day_procedures_outpatients",

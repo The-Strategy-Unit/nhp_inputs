@@ -110,7 +110,7 @@ default:
         virtual_wards_efficiencies_heart_failure: "Virtual Wards LoS Reduction (Heart Failure)"
       params_items:
         type: "all"
-    mitigators_aec_los_reduction:
+    mitigators_sdec_los_reduction:
       activity_type: ip
       mitigators_type: efficiencies
       y_axis_title: "% admissions with a greater than 0-day length of stay"
@@ -120,12 +120,12 @@ default:
       slider_scale: 100
       slider_step: 0.1
       strategy_subset:
-        ambulatory_emergency_care_low: "Ambulatory Emergency Care (Low Potential)"
-        ambulatory_emergency_care_moderate: "Ambulatory Emergency Care (Moderate Potential)"
-        ambulatory_emergency_care_high: "Ambulatory Emergency Care (High Potential)"
-        ambulatory_emergency_care_very_high: "Ambulatory Emergency Care (Very High Potential)"
+        same_day_emergency_care_low: "Same Day Emergency Care (Low Potential)"
+        same_day_emergency_care_moderate: "Same Day Emergency Care (Moderate Potential)"
+        same_day_emergency_care_high: "Same Day Emergency Care (High Potential)"
+        same_day_emergency_care_very_high: "Same Day Emergency Care (Very High Potential)"
       params_items:
-        type: "aec"
+        type: "sdec"
     mitigators_preop_los_reduction:
       activity_type: ip
       mitigators_type: efficiencies
