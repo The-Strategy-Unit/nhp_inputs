@@ -1,9 +1,3 @@
----
-editor_options: 
-  markdown: 
-    wrap: 72
----
-
 ::: callout-note
 **Please Note**: By accessing this model you are acknowledging that you
 are aware of the implications of setting the model parameters, and have
