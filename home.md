@@ -28,7 +28,7 @@ Group to enable the 'Run Model' button to appear.
 
 Much evidence exists in published literature of the efficacy of various
 methods to reduce or avoid acute hospital demand. Although difficult to
-summarise, this evidence has been mapped to provide an overview,
+summarise, we have mapped this evidence in [an interactive app](https://connect.strategyunitwm.nhs.uk/nhp_evidence_map/) to provide an overview,
 categorised by setting, evidence type, outcomes and effect. This map is
 provided to enable exploration of the current evidence landscape,
 identify gaps in knowledge, and allow searching of evidence by a range
