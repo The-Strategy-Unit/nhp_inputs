@@ -6,7 +6,7 @@ Once you have chosen a provider, you can pick from one of the baseline years, an
 
 Finally, you must specify a scenario name - this will be how the results are identified in the inputs app.
 
-To run a model with your given parameters, you must contact [the data science team](mlcsu.su.datascience@nhs.net) who will add you to the relevant Posit Connect Group to enable the 'Run Model' button to appear, provided you have completed the relevant training.
+To run a model with your given parameters, you must contact [the data science team](mlcsu.su.datascience@nhs.net), or (preferably), your Model Relationship Manager (if you have one), who will add you to the relevant Posit Connect Group to enable the 'Run Model' button to appear, provided you have completed the relevant training.
 
 ## Evidence Map
 
