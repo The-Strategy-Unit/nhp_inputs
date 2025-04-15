@@ -55,6 +55,7 @@ upgrade_params.v3.1 <- function(p) {
 }
 
 upgrade_params.v3.2 <- function(p) {
+  # Change NDG params structure
 
   ndg_values <- p[["non-demographic_adjustment"]]
 
@@ -70,6 +71,24 @@ upgrade_params.v3.2 <- function(p) {
   if (is_ndg1) p[["non-demographic_adjustment"]][["variant"]] <- "variant_1"
 
   class(p) <- p$app_version <- "v3.3"
+  upgrade_params(p)
+}
+
+upgrade_params.v3.3 <- function(p) {
+  # Remove deprecated AEC mitigators
+
+  aec_mitigators <- paste0(
+    "ambulatory_emergency_care_",
+    c("low", "moderate", "high", "very_high")
+  )
+
+  for (mitigator in aec_mitigators) {
+    p[["efficiencies"]][["ip"]][[mitigator]] <- NULL
+    p[["time_profile_mappings"]][["efficiencies"]][["ip"]][[mitigator]] <- NULL
+    p[["reasons"]][["efficiencies"]][["ip"]][[mitigator]] <- NULL
+  }
+
+  class(p) <- p$app_version <- "v3.4"
   upgrade_params(p)
 }
 
@@ -573,7 +592,7 @@ server <- function(input, output, session) {
 
   # If scenario has NDG variant 1 then it cannot be updated because model v3.3
   # does not accept variant 1.
-shiny::observe({
+  shiny::observe({
     # Toggle element visibility if selecting existing scenarios
     if (stringr::str_detect(input$scenario_type, "existing")) {
 
