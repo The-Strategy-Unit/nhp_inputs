@@ -8,6 +8,7 @@ mod_population_growth_server <- function(id, params) {
     projections <- get_population_growth_options(params$dataset)
 
     changeable_projections <- names(projections)[-1]
+    default_projection <- names(projections)[[1]]
 
     # when the module loads, run this observer once, and only once
     init <- shiny::observe(
@@ -39,7 +40,7 @@ mod_population_growth_server <- function(id, params) {
 
           shiny::updateSliderInput(
             session,
-            "principal_proj",
+            default_projection,
             value = (1 - sum(new_values)) * 100
           )
         }) |>
