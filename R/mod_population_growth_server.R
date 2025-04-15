@@ -5,12 +5,10 @@ mod_population_growth_server <- function(id, params) {
   mod_reasons_server(shiny::NS(id, "reasons"), params, "demographic_factors")
 
   shiny::moduleServer(id, function(input, output, session) {
-    projections <- get_golem_config("population_projections")
-    changeable_projections <- names(projections)[-1]
+    projections <- get_population_growth_options(params$dataset)
 
-    stopifnot(
-      "Principal Projection should be the base case" = names(projections)[[1]] == "principal_proj"
-    )
+    changeable_projections <- names(projections)[-1]
+    default_projection <- names(projections)[[1]]
 
     # when the module loads, run this observer once, and only once
     init <- shiny::observe(
@@ -40,7 +38,11 @@ mod_population_growth_server <- function(id, params) {
             \(.x, .i) shiny::updateSliderInput(session, .i, value = .x * 100)
           )
 
-          shiny::updateSliderInput(session, "principal_proj", value = (1 - sum(new_values)) * 100)
+          shiny::updateSliderInput(
+            session,
+            default_projection,
+            value = (1 - sum(new_values)) * 100
+          )
         }) |>
           shiny::bindEvent(input[[.x]])
       }
@@ -62,7 +64,9 @@ mod_population_growth_server <- function(id, params) {
       }
       v <- values()
 
-      params[["demographic_factors"]][["variant_probabilities"]] <- as.list(v[v > 0])
+      params[["demographic_factors"]][["variant_probabilities"]] <- as.list(v[
+        v > 0
+      ])
     }) |>
       shiny::bindEvent(values())
   })
