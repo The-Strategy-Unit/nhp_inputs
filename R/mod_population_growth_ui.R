@@ -8,18 +8,20 @@
 #'
 #' @importFrom shiny NS tagList
 
-mod_population_growth_ui <- function(id) {
+mod_population_growth_ui <- function(id, dataset) {
   ns <- shiny::NS(id)
 
-  projections <- get_golem_config("population_projections")
+  projections <- get_population_growth_options(dataset)
 
-  slider <- \(name, id, value = 0) shiny::sliderInput(
-    ns(id),
-    name,
-    min = 0,
-    max = 100,
-    value = value
-  )
+  slider <- function(name, id, value = 0) {
+    shiny::sliderInput(
+      ns(id),
+      name,
+      min = 0,
+      max = 100,
+      value = value
+    )
+  }
 
   shiny::tagList(
     shiny::tags$h1("Population Growth"),
@@ -37,7 +39,11 @@ mod_population_growth_ui <- function(id) {
         collapsible = FALSE,
         headerBorder = FALSE,
         width = 8,
-        shinyjs::disabled(slider(projections[[1]], names(projections)[[1]], 100)),
+        shinyjs::disabled(slider(
+          projections[[1]],
+          names(projections)[[1]],
+          100
+        )),
         purrr::imap(projections[-1], slider)
       )
     )
