@@ -96,8 +96,8 @@ app_ui <- function(request) {
           tabName = "ip_am_mean_los_reduction"
         ),
         bs4Dash::menuSubItem(
-          "AEC LoS Reduction",
-          tabName = "ip_am_aec_los_reduction"
+          "SDEC conversion",
+          tabName = "ip_am_sdec_conversion"
         ),
         bs4Dash::menuSubItem(
           "Pre-op LoS Reduction",
@@ -218,8 +218,8 @@ app_ui <- function(request) {
         mod_mitigators_ui("mitigators_mean_los_reduction", "Mean Length of Stay Reduction")
       ),
       bs4Dash::tabItem(
-        tabName = "ip_am_aec_los_reduction",
-        mod_mitigators_ui("mitigators_aec_los_reduction", "AEC Length of Stay Reduction")
+        tabName = "ip_am_sdec_conversion",
+        mod_mitigators_ui("mitigators_sdec_conversion", "SDEC conversion")
       ),
       bs4Dash::tabItem(
         tabName = "ip_am_preop_los_reduction",
