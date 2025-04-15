@@ -75,9 +75,9 @@ ip,efficiencies,raid_ip,Admissions with Mental Health Comorbidities,IP-EF-024,v0
 ip,efficiencies,stroke_early_supported_discharge,Stroke Early Supported Discharge,IP-EF-025,v0.6.0,NA
 ip,efficiencies,virtual_wards_efficiencies_ari,Virtual Wards LoS Reduction (Acute Respiratory Infection),IP-EF-026,v0.6.0,NA
 ip,efficiencies,virtual_wards_efficiencies_heart_failure,Virtual Wards LoS Reduction (Heart Failure),IP-EF-027,v0.6.0,NA
-ip,efficiencies,same_day_emergency_care_high,Same Day Emergency Care (High Potential),IP-EF-028,v3.4.0,NA
-ip,efficiencies,same_day_emergency_care_low,Same Day Emergency Care (Low Potential),IP-EF-029,v3.4.0,NA
-ip,efficiencies,same_day_emergency_care_moderate,Same Day Emergency Care (Moderate Potential),IP-EF-030,v3.4.0,NA
+ip,efficiencies,same_day_emergency_care_low,Same Day Emergency Care (Low Potential),IP-EF-028,v3.4.0,NA
+ip,efficiencies,same_day_emergency_care_moderate,Same Day Emergency Care (Moderate Potential),IP-EF-029,v3.4.0,NA
+ip,efficiencies,same_day_emergency_care_high,Same Day Emergency Care (High Potential),IP-EF-030,v3.4.0,NA
 ip,efficiencies,same_day_emergency_care_very_high,Same Day Emergency Care (Very High Potential),IP-EF-031,v3.4.0,NA
 op,activity_avoidance,consultant_to_consultant_reduction_adult_non-surgical,"Outpatient Consultant to Consultant Referrals (Adult, Non-Surgical)",OP-AA-001,v0.6.0,NA
 op,activity_avoidance,consultant_to_consultant_reduction_adult_surgical,"Outpatient Consultant to Consultant Referrals (Adult, Surgical)",OP-AA-002,v0.6.0,NA
