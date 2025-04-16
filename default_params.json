@@ -8,7 +8,6 @@
   "end_year": 2041,
   "app_version": null,
   "demographic_factors": {
-    "file": "demographic_factors.csv",
     "variant_probabilities": {
       "principal_proj": 1
     }
