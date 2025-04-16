@@ -6,9 +6,11 @@ mod_mitigators_summary_server <- function(id, age_sex_data, params) {
     mitigators_summary <- shiny::reactive({
       year <- as.character(shiny::req(params$start_year))
 
-      strategy_codes <- app_sys("app", "data", "mitigator-codes.Rds") |>
-        readr::read_rds() |>
-        dplyr::select("strategy", "strategy_name", "mitigator_code")
+      strategy_codes <- readr::read_csv(
+        app_sys("app", "data", "mitigator-codes.csv"),
+        col_select = c("strategy", "strategy_name", "mitigator_code"),
+        col_types = "c"
+      )
 
       strategy_names <- get_golem_config("mitigators_config") |>
         purrr::map("strategy_subset") |>
