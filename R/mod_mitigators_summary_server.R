@@ -9,7 +9,7 @@ mod_mitigators_summary_server <- function(id, age_sex_data, params) {
       strategy_codes <- readr::read_csv(
         app_sys("app", "data", "mitigator-codes.csv"),
         col_select = c("strategy", "strategy_name", "mitigator_code"),
-        show_col_types = FALSE
+        col_types = "c"
       )
 
       strategy_names <- get_golem_config("mitigators_config") |>
