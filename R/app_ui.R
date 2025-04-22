@@ -16,11 +16,13 @@ app_ui <- function(request) {
       shiny::httpResponse(
         302L,
         headers = list(
-          Location = get_golem_config("inputs_selection_app") %||% "http://localhost:9080/"
+          Location = get_golem_config("inputs_selection_app") %||%
+            "http://localhost:9080/"
         )
       )
     )
   }
+  dataset <- jsonlite::read_json(file)$dataset
 
   header <- bs4Dash::dashboardHeader(title = "NHP Model Inputs")
 
@@ -42,7 +44,7 @@ app_ui <- function(request) {
         "Baseline Adjustment",
         tabName = "tab_baseline_adjustment"
       ),
-      bs4Dash::menuItemOutput("tab_covid_adjustment"),  # only enable for 2019/20
+      bs4Dash::menuItemOutput("tab_covid_adjustment"), # only enable for 2019/20
       shiny::tags$hr(),
       bs4Dash::sidebarHeader("Population Changes"),
       bs4Dash::menuItem(
@@ -183,7 +185,7 @@ app_ui <- function(request) {
       ),
       bs4Dash::tabItem(
         tabName = "tab_population_growth",
-        mod_population_growth_ui("population_growth")
+        mod_population_growth_ui("population_growth", dataset)
       ),
       # bs4Dash::tabItem(
       #   tabName = "tab_inequalities",
@@ -211,11 +213,17 @@ app_ui <- function(request) {
       ),
       bs4Dash::tabItem(
         tabName = "ip_am_admission_avoidance",
-        mod_mitigators_ui("mitigators_admission_avoidance", "Admission Avoidance")
+        mod_mitigators_ui(
+          "mitigators_admission_avoidance",
+          "Admission Avoidance"
+        )
       ),
       bs4Dash::tabItem(
         tabName = "ip_am_mean_los_reduction",
-        mod_mitigators_ui("mitigators_mean_los_reduction", "Mean Length of Stay Reduction")
+        mod_mitigators_ui(
+          "mitigators_mean_los_reduction",
+          "Mean Length of Stay Reduction"
+        )
       ),
       bs4Dash::tabItem(
         tabName = "ip_am_sdec_conversion",
@@ -223,23 +231,38 @@ app_ui <- function(request) {
       ),
       bs4Dash::tabItem(
         tabName = "ip_am_preop_los_reduction",
-        mod_mitigators_ui("mitigators_preop_los_reduction", "Pre-op Length of Stay Reduction")
+        mod_mitigators_ui(
+          "mitigators_preop_los_reduction",
+          "Pre-op Length of Stay Reduction"
+        )
       ),
       bs4Dash::tabItem(
         tabName = "ip_am_mitigators_day_procedures_daycase",
-        mod_mitigators_ui("mitigators_day_procedures_daycase", "Day Procedures: Daycase")
+        mod_mitigators_ui(
+          "mitigators_day_procedures_daycase",
+          "Day Procedures: Daycase"
+        )
       ),
       bs4Dash::tabItem(
         tabName = "ip_am_mitigators_day_procedures_outpatients",
-        mod_mitigators_ui("mitigators_day_procedures_outpatients", "Day Procedures: Outpatients")
+        mod_mitigators_ui(
+          "mitigators_day_procedures_outpatients",
+          "Day Procedures: Outpatients"
+        )
       ),
       bs4Dash::tabItem(
         tabName = "op_am_c2c_referrals",
-        mod_mitigators_ui("mitigators_op_c2c_reduction", "Consultant to Consultant Reduction")
+        mod_mitigators_ui(
+          "mitigators_op_c2c_reduction",
+          "Consultant to Consultant Reduction"
+        )
       ),
       bs4Dash::tabItem(
         tabName = "op_am_convert_tele",
-        mod_mitigators_ui("mitigators_op_convert_tele", "Convert to Tele Appointment")
+        mod_mitigators_ui(
+          "mitigators_op_convert_tele",
+          "Convert to Tele Appointment"
+        )
       ),
       bs4Dash::tabItem(
         tabName = "op_am_fup_reduction",
@@ -247,15 +270,24 @@ app_ui <- function(request) {
       ),
       bs4Dash::tabItem(
         tabName = "op_gp_referred_first_attendance_reduction",
-        mod_mitigators_ui("mitigators_op_gp_referred_first_attendance_reduction", "GP Referred First Attendances")
+        mod_mitigators_ui(
+          "mitigators_op_gp_referred_first_attendance_reduction",
+          "GP Referred First Attendances"
+        )
       ),
       bs4Dash::tabItem(
         tabName = "aae_discharged_no_treatment",
-        mod_mitigators_ui("mitigators_aae_discharged_no_treatment", "Discharged with No Investigations or Treatments")
+        mod_mitigators_ui(
+          "mitigators_aae_discharged_no_treatment",
+          "Discharged with No Investigations or Treatments"
+        )
       ),
       bs4Dash::tabItem(
         tabName = "aae_frequent_attenders",
-        mod_mitigators_ui("mitigators_aae_frequent_attenders", "Frequent Attenders")
+        mod_mitigators_ui(
+          "mitigators_aae_frequent_attenders",
+          "Frequent Attenders"
+        )
       ),
       bs4Dash::tabItem(
         tabName = "aae_left_before_seen",
@@ -263,7 +295,10 @@ app_ui <- function(request) {
       ),
       bs4Dash::tabItem(
         tabName = "aae_low_cost_discharged",
-        mod_mitigators_ui("mitigators_aae_low_cost_discharged", "Low Cost Discharged")
+        mod_mitigators_ui(
+          "mitigators_aae_low_cost_discharged",
+          "Low Cost Discharged"
+        )
       ),
       bs4Dash::tabItem(
         tabName = "tab_run_model",
@@ -275,7 +310,10 @@ app_ui <- function(request) {
   shiny::tagList(
     golem_add_external_resources(),
     shinyjs::useShinyjs(),
-    shiny::conditionalPanel("false", shiny::textInput("params_file", NULL, file)),
+    shiny::conditionalPanel(
+      "false",
+      shiny::textInput("params_file", NULL, file)
+    ),
     bs4Dash::dashboardPage(
       help = NULL,
       dark = NULL,
