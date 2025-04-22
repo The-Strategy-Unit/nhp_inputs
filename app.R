@@ -1,12 +1,18 @@
-app_version_choices <- jsonlite::fromJSON(Sys.getenv("APP_VERSION_CHOICES", "[\"dev\"]"))
+app_version_choices <- jsonlite::fromJSON(Sys.getenv(
+  "APP_VERSION_CHOICES",
+  "[\"dev\"]"
+))
 
-"%||%" <- function(x, y) { # nolint
+# until https://github.com/posit-dev/air/issues/256 is resolved, use nolint start/end
+# nolint start
+"%||%" <- function(x, y) {
   if (is.null(x)) {
     y
   } else {
     x
   }
 }
+# nolint end
 
 load_params <- function(file) {
   p <- jsonlite::read_json(file, simplifyVector = TRUE)
@@ -88,6 +94,11 @@ upgrade_params.v3.3 <- function(p) {
     p[["reasons"]][["efficiencies"]][["ip"]][[mitigator]] <- NULL
   }
 
+  # remove the unused demographics file key
+  if ("demographic_factors" %in% names(p$demographic_factors)) {
+    p$demographic_factors$file <- NULL
+  }
+
   class(p) <- p$app_version <- "v3.4"
   upgrade_params(p)
 }
@@ -126,8 +137,16 @@ peers_table <- function(selected_peers) {
 }
 
 providers_map <- function(selected_peers) {
-  peer_marker <- leaflet::makeAwesomeIcon(icon = "medkit", library = "fa", markerColor = "blue")
-  provider_marker <- leaflet::makeAwesomeIcon(icon = "medkit", library = "fa", markerColor = "orange")
+  peer_marker <- leaflet::makeAwesomeIcon(
+    icon = "medkit",
+    library = "fa",
+    markerColor = "blue"
+  )
+  provider_marker <- leaflet::makeAwesomeIcon(
+    icon = "medkit",
+    library = "fa",
+    markerColor = "orange"
+  )
 
   selected_peers |>
     leaflet::leaflet() |>
@@ -155,7 +174,11 @@ ui_body <- function() {
       collapsible = FALSE,
       headerBorder = FALSE,
       width = 12,
-      shiny::HTML(markdown::mark_html("home.md", output = FALSE, template = FALSE))
+      shiny::HTML(markdown::mark_html(
+        "home.md",
+        output = FALSE,
+        template = FALSE
+      ))
     )
   )
 
@@ -166,7 +189,12 @@ ui_body <- function() {
       title = "Select Provider and Baseline",
       collapsible = FALSE,
       width = 12,
-      shiny::selectInput("dataset", "Provider", choices = NULL, selectize = TRUE),
+      shiny::selectInput(
+        "dataset",
+        "Provider",
+        choices = NULL,
+        selectize = TRUE
+      ),
       shiny::selectInput(
         "start_year",
         "Baseline Financial Year",
@@ -176,7 +204,10 @@ ui_body <- function() {
       shiny::selectInput(
         "end_year",
         "Model Financial Year",
-        choices = setNames(as.character(0:21), paste(2020:2041, 21:42, sep = "/")),
+        choices = setNames(
+          as.character(0:21),
+          paste(2020:2041, 21:42, sep = "/")
+        ),
         selected = "21"
       )
     ),
@@ -231,9 +262,18 @@ ui_body <- function() {
       width = 12,
       collapsed = TRUE,
       shiny::numericInput("seed", "Seed", sample(1:100000, 1)),
-      shiny::selectInput("model_runs", "Model Runs", choices = c(256, 512, 1024), selected = 256),
+      shiny::selectInput(
+        "model_runs",
+        "Model Runs",
+        choices = c(256, 512, 1024),
+        selected = 256
+      ),
       shinyjs::disabled(
-        shiny::selectInput("app_version", "Model Version", choices = app_version_choices)
+        shiny::selectInput(
+          "app_version",
+          "Model Version",
+          choices = app_version_choices
+        )
       ),
       shinyjs::disabled(
         shinyjs::hidden(
@@ -288,7 +328,10 @@ server <- function(input, output, session) {
   peers <- readRDS("peers.Rds")
 
   providers <- readRDS("providers.Rds")
-  all_providers <- jsonlite::read_json("all_providers.json", simplifyVector = TRUE)
+  all_providers <- jsonlite::read_json(
+    "all_providers.json",
+    simplifyVector = TRUE
+  )
 
   provider_locations <- sf::read_sf("provider_locations.geojson")
 
@@ -449,7 +492,9 @@ server <- function(input, output, session) {
       shinyjs::show("selected_user")
     }
 
-    if (is_local() || is_power_user || "nhp_allow_2022_data" %in% session$groups) {
+    if (
+      is_local() || is_power_user || "nhp_allow_2022_data" %in% session$groups
+    ) {
       shiny::updateSelectInput(
         session,
         "start_year",
@@ -466,7 +511,11 @@ server <- function(input, output, session) {
     # we don't need to update dataset:
     # the parameters files that are listed in the previous scenario dropdown are already tied to that provider
     shiny::updateSelectInput(session, "start_year", selected = y)
-    shiny::updateSelectInput(session, "end_year", selected = as.character(p$end_year))
+    shiny::updateSelectInput(
+      session,
+      "end_year",
+      selected = as.character(p$end_year)
+    )
     shiny::updateNumericInput(session, "seed", value = p$seed)
     shiny::updateSelectInput(session, "model_runs", selected = p$model_runs)
     shiny::updateSelectInput(session, "app_version", selected = p$app_version)
@@ -486,9 +535,9 @@ server <- function(input, output, session) {
   # the end-year range should be 1 year after the start year to the year 2041/42,
   # which will also be the default if starting from scratch.
   shiny::observe({
-    start_yr <- as.numeric(stringr::str_sub(input$start_year, 1, 4))  #
+    start_yr <- as.numeric(stringr::str_sub(input$start_year, 1, 4))
 
-    fy_yyyy <- seq(start_yr + 1, 2041)  # sequence from start+1 to end year
+    fy_yyyy <- seq(start_yr + 1, 2041) # sequence from start+1 to end year
     fy_yy <- stringr::str_sub(fy_yyyy + 1, 3, 4)
     fy_choices <- paste(fy_yyyy, fy_yy, sep = "/")
     fy_choices_num <- setNames(fy_yyyy, fy_choices)
@@ -556,23 +605,18 @@ server <- function(input, output, session) {
     }
 
     if (input$scenario_type == "Create new from scratch") {
-
       shinyjs::show("scenario")
       shinyjs::enable("scenario")
       shinyjs::hide("previous_scenario")
       shinyjs::hide("ndg_warning")
       shinyjs::show("naming_guidance")
       shiny::updateTextInput(session, "scenario", value = "")
-
     } else if (input$scenario_type == "Create new from existing") {
-
       shinyjs::show("scenario")
       shinyjs::show("previous_scenario")
       shinyjs::show("naming_guidance")
       shiny::updateTextInput(session, "scenario", value = "")
-
     } else if (input$scenario_type == "Edit existing") {
-
       shinyjs::hide("scenario")
       shinyjs::show("previous_scenario")
       shinyjs::hide("naming_guidance")
@@ -581,9 +625,7 @@ server <- function(input, output, session) {
         "scenario",
         value = input$previous_scenario
       )
-
     }
-
   }) |>
     shiny::bindEvent(
       input$scenario_type,
@@ -595,7 +637,6 @@ server <- function(input, output, session) {
   shiny::observe({
     # Toggle element visibility if selecting existing scenarios
     if (stringr::str_detect(input$scenario_type, "existing")) {
-
       p <- shiny::req(params())
 
       is_ndg1 <- p[["non-demographic_adjustment"]][["variant"]] == "variant_1"
@@ -605,12 +646,12 @@ server <- function(input, output, session) {
         shinyjs::hide("scenario")
         shinyjs::hide("start_button")
         shinyjs::hide("naming_guidance")
-      } else {  # allow state reversal if subsequent scenario choice is non-NDG1
+      } else {
+        # allow state reversal if subsequent scenario choice is non-NDG1
         shinyjs::hide("ndg_warning")
         shinyjs::enable("scenario")
         shinyjs::show("start_button")
       }
-
     }
 
     # Reset element visibility if starting from scratch
@@ -677,7 +718,6 @@ server <- function(input, output, session) {
     }
   }) |>
     shiny::bindEvent(input$start_year)
-
 
   # return ----
   NULL

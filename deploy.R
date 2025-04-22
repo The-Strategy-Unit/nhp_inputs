@@ -55,9 +55,16 @@ app_version_choices <- c(
 )
 
 deploy(
-  server = "connect.strategunitwm.nhs.uk",
+  server = "connect.strategyunitwm.nhs.uk",
   app_id = 215,
   app_version_choices
+)
+
+# only use the versions that are deployed to the new server currently
+app_version_choices <- c(
+  "v3.4",
+  "v3.3",
+  "dev"
 )
 
 deploy(
