@@ -60,6 +60,13 @@ deploy(
   app_version_choices
 )
 
+# only use the versions that are deployed to the new server currently
+app_version_choices <- c(
+  "v3.4",
+  "v3.3",
+  "dev"
+)
+
 deploy(
   server = "connect.su.mlcsu.org",
   app_id = 71,
