@@ -95,8 +95,8 @@ upgrade_params.v3.3 <- function(p) {
   }
 
   # remove the unused demographics file key
-  if ("demographic_factors" %in% names(p$demographic_factors)) {
-    p$demographic_factors$file <- NULL
+  if ("file" %in% names(p[["demographic_factors"]])) {
+    p[["demographic_factors"]][["file"]] <- NULL
   }
 
   class(p) <- p$app_version <- "v3.4"
