@@ -5,7 +5,10 @@
 #' @return The return value, if any, from executing the function.
 #'
 #' @noRd
-load_rds_from_adls <- function(file, inputs_data_version = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")) {
+load_rds_from_adls <- function(
+  file,
+  inputs_data_version = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")
+) {
   fs <- get_adls_fs()
   AzureStor::storage_load_rds(fs, glue::glue("{inputs_data_version}/{file}"))
 }
@@ -16,8 +19,8 @@ load_rds_from_adls <- function(file, inputs_data_version = Sys.getenv("NHP_INPUT
 #'
 #' @return A tibble.
 load_provider_data <- function(
-    file,
-    inputs_data_version = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")
+  file,
+  inputs_data_version = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")
 ) {
   fs <- get_adls_fs()
   fs |>

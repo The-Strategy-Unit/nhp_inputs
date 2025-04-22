@@ -1,5 +1,4 @@
 rates_boxplot <- function(trend_data, plot_range, interval) {
-
   trend_data |>
     ggplot2::ggplot(ggplot2::aes(x = "", y = .data$rate)) +
     interval +

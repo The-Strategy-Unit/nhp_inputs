@@ -31,7 +31,12 @@ mod_mitigators_summary_server <- function(id, age_sex_data, params) {
           .data[["fyear"]] == year,
           .data[["provider"]] == params$dataset
         ) |>
-        dplyr::count(.data[["strategy"]], wt = .data[["n"]], name = "total", sort = TRUE) |>
+        dplyr::count(
+          .data[["strategy"]],
+          wt = .data[["n"]],
+          name = "total",
+          sort = TRUE
+        ) |>
         dplyr::slice(1:20) |>
         dplyr::inner_join(strategy_names, by = dplyr::join_by("strategy")) |>
         dplyr::select(-"strategy")

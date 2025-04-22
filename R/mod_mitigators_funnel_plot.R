@@ -48,7 +48,7 @@ plot.nhp_funnel_plot <- function(x, plot_range, interval, x_axis_title, ...) {
     ggrepel::geom_text_repel(
       data = dplyr::filter(x, !is.na(.data$is_peer)),
       ggplot2::aes(label = .data$provider, colour = .data$is_peer),
-      max.overlaps = Inf  # include all labels
+      max.overlaps = Inf # include all labels
     ) +
     ggplot2::scale_colour_manual(
       values = c("TRUE" = "black", "FALSE" = "red"),

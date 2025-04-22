@@ -2,7 +2,11 @@
 #'
 #' @noRd
 mod_non_demographic_adjustment_server <- function(id, params) {
-  mod_reasons_server(shiny::NS(id, "reasons"), params, "non-demographic_adjustment")
+  mod_reasons_server(
+    shiny::NS(id, "reasons"),
+    params,
+    "non-demographic_adjustment"
+  )
 
   shiny::moduleServer(id, function(input, output, session) {
     ndg_variants <- app_sys("app", "data", "ndg_variants.json") |>
@@ -13,7 +17,7 @@ mod_non_demographic_adjustment_server <- function(id, params) {
 
     non_demographic_adjustment <- shiny::reactive({
       v <- shiny::req(input$ndg_variant)
-      ndg_variants[[v]]  # list including variant, type and values
+      ndg_variants[[v]] # list including variant, type and values
     })
 
     # observers ----

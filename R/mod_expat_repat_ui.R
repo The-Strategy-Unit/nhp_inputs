@@ -20,7 +20,10 @@ mod_expat_repat_ui <- function(id) {
           shiny::sliderInput(
             ns(type),
             "Prediction interval",
-            min, max, values, 0.1,
+            min,
+            max,
+            values,
+            0.1,
             post = "%"
           )
         )

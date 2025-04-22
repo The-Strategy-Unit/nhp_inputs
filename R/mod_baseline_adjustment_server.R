@@ -18,7 +18,9 @@ mod_baseline_adjustment_server <- function(id, params) {
           .id = "at"
         )
       ) |>
-      dplyr::filter(.data[["g"]] != "maternity" | .data[["code"]] == "Other (Medical)") |>
+      dplyr::filter(
+        .data[["g"]] != "maternity" | .data[["code"]] == "Other (Medical)"
+      ) |>
       dplyr::bind_rows(
         tibble::tibble(
           at = "aae",
@@ -54,7 +56,6 @@ mod_baseline_adjustment_server <- function(id, params) {
           "tretspef",
           "n" = "count"
         )
-
     })
 
     baseline_counts <- shiny::reactive({
@@ -120,7 +121,6 @@ mod_baseline_adjustment_server <- function(id, params) {
       )
     }) |>
       shiny::bindEvent(baseline_counts())
-
 
     output$download_baseline <- shiny::downloadHandler(
       \() paste0(params[["dataset"]], "_baseline.csv"),

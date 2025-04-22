@@ -73,7 +73,10 @@ mod_baseline_adjustment_ui <- function(id) {
           width = 12,
           md_file_to_html("app", "text", "baseline_adjustment.md"),
           shinyjs::hidden(
-            shiny::downloadButton(ns("download_baseline"), "Download Baseline Values (excel)")
+            shiny::downloadButton(
+              ns("download_baseline"),
+              "Download Baseline Values (excel)"
+            )
           )
         ),
         mod_reasons_ui(ns("reasons"))
@@ -96,7 +99,11 @@ mod_baseline_adjustment_ui <- function(id) {
               ),
               shiny::tabPanel(
                 "Maternity",
-                create_table("ip", "maternity", specs |> dplyr::filter(.data[["code"]] == "Other (Medical)"))
+                create_table(
+                  "ip",
+                  "maternity",
+                  specs |> dplyr::filter(.data[["code"]] == "Other (Medical)")
+                )
               )
             )
           ),

@@ -1,5 +1,4 @@
 mod_non_demographic_adjustment_table <- function(non_demographic_adjustment) {
-
   title <- switch(
     non_demographic_adjustment[["variant"]],
     "variant_2" = "Variant 2 (primary rate)",

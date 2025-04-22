@@ -3,10 +3,13 @@
 #' @noRd
 mod_inequalities_server <- function(id, params) {
   selected_time_profile <- update_time_profile <- NULL
-  c(selected_time_profile, update_time_profile) %<-% mod_time_profile_server(
-    shiny::NS(id, "time_profile"),
-    params
-  )
+  # nolint start: object_usage_linter
+  c(selected_time_profile, update_time_profile) %<-%
+    mod_time_profile_server(
+      shiny::NS(id, "time_profile"),
+      params
+    )
+  # nolint end
 
   mod_reasons_server(shiny::NS(id, "reasons"), params, "inequalities")
 
