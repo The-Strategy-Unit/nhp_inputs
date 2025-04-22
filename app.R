@@ -3,14 +3,16 @@ app_version_choices <- jsonlite::fromJSON(Sys.getenv(
   "[\"dev\"]"
 ))
 
+# until https://github.com/posit-dev/air/issues/256 is resolved, use nolint start/end
+# nolint start
 "%||%" <- function(x, y) {
-  # nolint
   if (is.null(x)) {
     y
   } else {
     x
   }
 }
+# nolint end
 
 load_params <- function(file) {
   p <- jsonlite::read_json(file, simplifyVector = TRUE)
@@ -533,7 +535,7 @@ server <- function(input, output, session) {
   # the end-year range should be 1 year after the start year to the year 2041/42,
   # which will also be the default if starting from scratch.
   shiny::observe({
-    start_yr <- as.numeric(stringr::str_sub(input$start_year, 1, 4)) #
+    start_yr <- as.numeric(stringr::str_sub(input$start_year, 1, 4))
 
     fy_yyyy <- seq(start_yr + 1, 2041) # sequence from start+1 to end year
     fy_yy <- stringr::str_sub(fy_yyyy + 1, 3, 4)
