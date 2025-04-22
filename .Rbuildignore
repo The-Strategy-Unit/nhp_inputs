@@ -1,6 +1,6 @@
-^renv$
-^renv\.lock$
-^.renvignore$
+^CODEOWNERS$
+^remove_files_from_manifest.js$
+^update_manifest.js$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
@@ -24,3 +24,5 @@ $run_dev.*
 ^params/$
 ^update_manifest.js$
 ^manifest.json$
+
+^inputs_selection_app/

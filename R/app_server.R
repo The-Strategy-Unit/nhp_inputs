@@ -63,7 +63,9 @@ app_server <- function(input, output, session) {
 
     age_sex_data <- shiny::reactive({
       age_sex <- load_provider_data("age_sex")
+      # nolint start: object_usage_linter
       age_fct <- age_sex |> _[["age_group"]] |> unique() |> sort()
+      # nolint end
       age_sex |>
         dplyr::mutate(
           age_group = factor(
@@ -85,8 +87,10 @@ app_server <- function(input, output, session) {
       shiny::bindCache(cache_version())
 
     available_strategies <- shiny::reactive({
+      # nolint start: object_usage_linter
       dataset <- shiny::req(params$dataset)
       year <- as.character(shiny::req(params$start_year))
+      # nolint end
 
       rates_data() |>
         dplyr::filter(
@@ -105,8 +109,6 @@ app_server <- function(input, output, session) {
     mod_covid_adjustment_server("covid_adjustment", params)
 
     mod_population_growth_server("population_growth", params)
-
-    # mod_inequalities_server("inequalities", params)
 
     mod_health_status_adjustment_server("health_status_adjustment", params)
 

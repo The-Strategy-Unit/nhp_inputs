@@ -165,11 +165,13 @@ mod_mitigators_server <- function(
     rates_baseline_data <- shiny::reactive({
       strategy <- shiny::req(input$strategy)
 
+      # nolint start: object_usage_linter
       scheme_peers <- peers |>
         dplyr::filter(
           .data$procode == params$dataset & .data$peer != params$dataset
         ) |>
         dplyr::pull(.data$peer)
+      # nolint end
 
       rates_data |>
         dplyr::filter(
@@ -188,9 +190,6 @@ mod_mitigators_server <- function(
     })
 
     # params controls ----
-    get_range <- function(max_value, scale) {
-      c(0, max_value, 1) * scale
-    }
 
     provider_max_value <- shiny::reactive({
       r <- dplyr::filter(rates_baseline_data(), !.data$is_peer)$rate

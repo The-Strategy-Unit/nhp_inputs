@@ -42,8 +42,10 @@ mod_baseline_adjustment_server <- function(id, params) {
 
     # reactives ----
     baseline_data <- shiny::reactive({
+      # nolint start: object_usage_linter
       dataset <- shiny::req(params$dataset)
       year <- as.character(shiny::req(params$start_year))
+      # nolint end
 
       load_provider_data("baseline") |>
         dplyr::filter(

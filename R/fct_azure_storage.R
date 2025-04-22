@@ -17,6 +17,8 @@ load_rds_from_adls <- function(
 #'
 #' Read the parquet file containing a selected tupe of provider data.
 #'
+#' @param file The name of the file to read.
+#' @param inputs_data_version The version of the inputs data to use.
 #' @return A tibble.
 load_provider_data <- function(
   file,

@@ -66,14 +66,6 @@ app_ui <- function(request) {
         "Expat/Repat",
         tabName = "tab_er"
       ),
-      #
-      # shiny::tags$hr(),
-      # bs4Dash::sidebarHeader("Need-supply Imbalances"),
-      # bs4Dash::menuItem(
-      #   "Inequalities",
-      #   tabName = "tab_inequalities"
-      # ),
-      #
       shiny::tags$hr(),
       bs4Dash::sidebarHeader("Non-demographic Changes"),
       bs4Dash::menuItem(
@@ -187,10 +179,6 @@ app_ui <- function(request) {
         tabName = "tab_population_growth",
         mod_population_growth_ui("population_growth", dataset)
       ),
-      # bs4Dash::tabItem(
-      #   tabName = "tab_inequalities",
-      #   mod_inequalities_ui("inequalities")
-      # ),
       bs4Dash::tabItem(
         tabName = "tab_health_status_adjustment",
         mod_health_status_adjustment_ui("health_status_adjustment")

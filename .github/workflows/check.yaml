@@ -1,0 +1,107 @@
+on:
+  pull_request:
+    branches: [main]
+
+name: Check package
+
+jobs:
+  setup-r:
+    runs-on: ubuntu-latest
+    name: Setup R and check/document/lint package
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: release
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        id: setup-deps
+        with:
+          cache: always
+          extra-packages: |
+            any::lintr
+            any::cyclocomp
+            any::rcmdcheck
+            any::devtools
+            local::.
+
+      - name: Lint
+        id: lint
+        if: ${{ !cancelled() && steps.setup-deps.outcome != 'failure' }}
+        run: lintr::lint_package()
+        shell: Rscript {0}
+        env:
+          LINTR_ERROR_ON_LINT: true
+
+      - uses: r-lib/actions/check-r-package@v2
+        if: ${{ !cancelled() && steps.setup-deps.outcome != 'failure' }}
+        id: check
+        with:
+          upload-snapshots: true
+          error-on: '"error"'
+        env:
+          _R_CHECK_EXCESSIVE_IMPORTS_: 0
+
+      - name: Run devtools::document()
+        if: ${{ !cancelled() && steps.setup-deps.outcome != 'failure' }}
+        id: document
+        run: |
+          # ensure repo in clean state (after check step)
+          git clean -fd
+          # ensure we have updated NAMESPACE/man etc
+          Rscript -e "devtools::document()"
+          # show the git status
+          echo "::group:: git status"
+          git status --porcelain
+          echo "::endgroup::"
+          # if the repo isn't in a clean state, error
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::\`devtools::document()\` has not been run"
+            exit 1
+          fi
+        shell: bash
+
+      - name: Report errors
+        if: failure()
+        run: |
+          echo "Errors in the workflow"
+          exit 1
+
+  check-readme-rendered:
+    runs-on: ubuntu-latest
+    name: Check README rendered
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Check that README.Rmd has been rendered if changed
+        run: |
+          RMD_COMMIT=$(git log -1 --format=%ct -- README.Rmd)
+          MD_COMMIT=$(git log -1 --format=%ct -- README.md)
+
+          if [ "$RMD_COMMIT" -gt "$MD_COMMIT" ]; then
+            echo "::error file=README.Rmd,line=1::README.Rmd has not been rendered"
+            exit 1
+          else
+            echo "README.md is up-to-date."
+          fi
+
+  air-format:
+    runs-on: ubuntu-latest
+    name: Check formatting of code with air
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install air (latest, Mac/Linux)
+        shell: bash
+        run: |
+          curl -LsSf https://github.com/posit-dev/air/releases/latest/download/air-installer.sh | sh
+      
+      - name: Check R code formatting
+        shell: bash
+        run: air format --check .

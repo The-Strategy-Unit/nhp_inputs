@@ -56,11 +56,9 @@ mod_time_profile_server <- function(id, params) {
     }) |>
       shiny::bindEvent(input$time_profile, input$step_year)
 
-    return(
-      list(
-        selected_time_profile = selected_time_profile,
-        update_time_profile = update_time_profile
-      )
+    list(
+      selected_time_profile = selected_time_profile,
+      update_time_profile = update_time_profile
     )
   })
 }

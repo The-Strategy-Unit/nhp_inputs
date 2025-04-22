@@ -86,13 +86,14 @@ mod_run_model_server <- function(id, params) {
     # until the params are ready
     output$download_params <- shiny::downloadHandler(
       filename = \() paste0(fixed_params()$id, ".json"),
-      content = \(file)
+      content = \(file) {
         jsonlite::write_json(
           fixed_params(),
           file,
           pretty = TRUE,
           auto_unbox = TRUE
         )
+      }
     )
   })
 }
