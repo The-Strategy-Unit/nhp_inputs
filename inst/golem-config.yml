@@ -115,7 +115,7 @@ default:
       activity_type: ip
       mitigators_type: efficiencies
       y_axis_title: "Admissions per 1,000 population"
-      x_axis_title: "Financial Year
+      x_axis_title: "Financial Year"
       number_type: !expr scales::comma_format(accuracy = 0.001)
       funnel_x_title: "Catchment Population of Trust"
       funnel_number_type: !expr scales::comma_format()
