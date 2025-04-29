@@ -31,8 +31,8 @@ ip,activity_avoidance,evidence_based_interventions_msk,Interventions with Limite
 ip,activity_avoidance,evidence_based_interventions_urology,Interventions with Limited Evidence (Urology),IP-AA-014,v0.6.0,NA
 ip,activity_avoidance,evidence_based_interventions_vascular_varicose_veins,Interventions with Limited Evidence (Vascular Varicose Veins),IP-AA-015,v0.6.0,NA
 ip,activity_avoidance,falls_related_admissions,Falls Related Admissions,IP-AA-016,v0.6.0,NA
-ip,activity_avoidance,frail_elderly_high,Frail Elderly Admissions (High Frailty Risk),IP-AA-017,v0.6.0,NA
-ip,activity_avoidance,frail_elderly_intermediate,Frail Elderly Admissions (Intermediate Frailty Risk),IP-AA-018,v0.6.0,NA
+ip,activity_avoidance,frail_elderly_high,Older People with Frailty Admissions (High Frailty Risk),IP-AA-017,v0.6.0,NA
+ip,activity_avoidance,frail_elderly_intermediate,Older People with Frailty Admissions (Intermediate Frailty Risk),IP-AA-018,v0.6.0,NA
 ip,activity_avoidance,intentional_self_harm,Intentional Self Harm Admissions,IP-AA-019,v0.6.0,NA
 ip,activity_avoidance,medically_unexplained_related_admissions,Medically Unexplained Symptoms Admissions,IP-AA-020,v0.6.0,NA
 ip,activity_avoidance,medicines_related_admissions_explicit,Medicines Related Admissions (Explicit),IP-AA-021,v0.6.0,NA
