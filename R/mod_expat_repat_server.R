@@ -1,19 +1,26 @@
 #' expat_repat Server Functions
 #'
 #' @noRd
-mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usage_linter.
+mod_expat_repat_server <- function(id, params, providers) {
   selected_time_profile <- update_time_profile <- NULL
-  c(selected_time_profile, update_time_profile) %<-% mod_time_profile_server(
-    shiny::NS(id, "time_profile"),
-    params
-  )
+  # nolint start: object_usage_linter.
+  c(selected_time_profile, update_time_profile) %<-%
+    mod_time_profile_server(
+      shiny::NS(id, "time_profile"),
+      params
+    )
+  # nolint end
 
   mod_reasons_server(shiny::NS(id, "reasons"), params, "expat_repat")
 
   shiny::moduleServer(id, function(input, output, session) {
     # static data ----
     rtt_specialties <- readRDS(app_sys("app", "data", "rtt_specialties.Rds"))
-    icb_boundaries <- sf::read_sf(app_sys("app", "data", "icb_boundaries.geojson"))
+    icb_boundaries <- sf::read_sf(app_sys(
+      "app",
+      "data",
+      "icb_boundaries.geojson"
+    ))
 
     # helpers ----
 
@@ -72,7 +79,14 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
     repat_nonlocal <- shiny::reactive({
       repat_nonlocal_raw() |>
         extract_expat_repat_data() |>
-        dplyr::select("fyear", "provider", "icb", "is_main_icb", "count", "pcnt")
+        dplyr::select(
+          "fyear",
+          "provider",
+          "icb",
+          "is_main_icb",
+          "count",
+          "pcnt"
+        )
     })
 
     # calculate the split between local and non-local activity by year
@@ -186,13 +200,16 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
 
         # reset the subgroup selection if we aren't on inpatients
         if (at != "ip") {
-          shiny::updateSelectInput(session, "ip_subgroup", selected = "elective")
+          shiny::updateSelectInput(
+            session,
+            "ip_subgroup",
+            selected = "elective"
+          )
         }
       },
       priority = 100
     ) |>
       shiny::bindEvent(input$activity_type, input$ip_subgroup)
-
 
     # watch for changes to the dropdowns
     # update the sliders to the values for the combination of the drop downs in shadow_params
@@ -217,7 +234,11 @@ mod_expat_repat_server <- function(id, params, providers) { # nolint: object_usa
 
             shiny::req(sp)
 
-            shiny::updateCheckboxInput(session, glue::glue("include_{type}"), value = !is.null(p))
+            shiny::updateCheckboxInput(
+              session,
+              glue::glue("include_{type}"),
+              value = !is.null(p)
+            )
             shiny::updateSliderInput(session, type, value = sp * 100)
           }
         )

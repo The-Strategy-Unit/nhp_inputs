@@ -23,7 +23,11 @@ mod_non_demographic_adjustment_ui <- function(id) {
         bs4Dash::box(
           title = "Non-demographic Variant",
           width = 12,
-          md_file_to_html("app", "text", "non_demographic_adjustment_variants_pt1.md"),
+          md_file_to_html(
+            "app",
+            "text",
+            "non_demographic_adjustment_variants_pt1.md"
+          ),
           shiny::selectInput(
             inputId = ns("ndg_variant"),
             label = "Selection",
@@ -33,7 +37,11 @@ mod_non_demographic_adjustment_ui <- function(id) {
             ),
             selected = "variant_2"
           ),
-          md_file_to_html("app", "text", "non_demographic_adjustment_variants_pt2.md")
+          md_file_to_html(
+            "app",
+            "text",
+            "non_demographic_adjustment_variants_pt2.md"
+          )
         )
       ),
       bs4Dash::box(

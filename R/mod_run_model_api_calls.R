@@ -29,7 +29,8 @@ mod_run_model_submit <- function(params, status, results_url) {
 
         version <- results$app_version
         # generate the results url
-        f <- encrypt_filename( # nolint
+        # nolint start: object_usage_linter
+        f <- encrypt_filename(
           file.path(
             "prod",
             version,
@@ -38,11 +39,19 @@ mod_run_model_submit <- function(params, status, results_url) {
             fsep = "/"
           )
         )
+        # nolint end
 
         # update version for the url
-        version <- stringr::str_replace(version, "^v(\\d)+\\.(\\d+).*", "v\\1-\\2")
+        version <- stringr::str_replace(
+          version,
+          "^v(\\d)+\\.(\\d+).*",
+          "v\\1-\\2"
+        )
         results_url(
-          glue::glue(Sys.getenv("NHP_OUTPUTS_URI"), "?{utils::URLencode(f, TRUE)}")
+          glue::glue(
+            Sys.getenv("NHP_OUTPUTS_URI"),
+            "?{utils::URLencode(f, TRUE)}"
+          )
         )
 
         mod_run_model_check_container_status(results[["id"]], status)

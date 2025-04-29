@@ -28,15 +28,25 @@ mod_mitigators_ui <- function(id, title) {
               ns("include"),
               "Include?"
             ),
-            shiny::p("Note that 100% means no change and 0% means all activity
-                     mitigated"),
+            shiny::p(
+              "Note that 100% means no change and 0% means all activity
+                     mitigated"
+            ),
             shiny::plotOutput(ns("nee_result"), height = 80),
-            shiny::sliderInput(ns("slider"), "80% prediction interval", 0, 1, c(0, 1)),
+            shiny::sliderInput(
+              ns("slider"),
+              "80% prediction interval",
+              0,
+              1,
+              c(0, 1)
+            ),
             shiny::htmlOutput(ns("slider_absolute")),
             shiny::p(),
-            shiny::p("Adjusting this slider will change the width of the
+            shiny::p(
+              "Adjusting this slider will change the width of the
                      corresponding yellow-highlighted region in the trend, funnel
-                     and boxplot charts above.")
+                     and boxplot charts above."
+            )
           ),
           mod_reasons_ui(ns("reasons")),
           mod_time_profile_ui(ns("time_profile")),

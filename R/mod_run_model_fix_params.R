@@ -31,12 +31,14 @@ mod_run_model_fix_params <- function(p) {
     }
   }
 
+  # nolint start: commented_code_linter
   # some of the items in our params will be lists of length 0.
   # jsonlite will serialize these as empty arrays
   #   toJSON(list()) == "[]"
   # we need to have these serialize as empty objects, so we need to replace
   # these with NULL's as
   #   toJSON(NULL) == "{}"
+  # nolint end
   recursive_nullify <- function(.x) {
     for (i in names(.x)) {
       if (length(.x[[i]]) == 0) {

@@ -14,7 +14,11 @@ mod_reasons_server <- function(id, params, ..., key = NULL) {
     })
 
     shiny::observe({
-      shiny::updateTextAreaInput(session, "value", value = purrr::pluck(params$reasons, !!!k()) %||% "")
+      shiny::updateTextAreaInput(
+        session,
+        "value",
+        value = purrr::pluck(params$reasons, !!!k()) %||% ""
+      )
     }) |>
       shiny::bindEvent(k())
 

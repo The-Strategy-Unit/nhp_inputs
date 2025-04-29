@@ -1,19 +1,19 @@
 Package: inputs
 Title: NHP Model Inputs
-Version: 1.0.1
+Version: 3.4.0
 Authors@R: 
     person("Tom", "Jemmett", , "thomas.jemmett@nhs.net", role = c("cre", "aut"))
 Description: A shiny app for getting model input parameters.
 License: MIT + file LICENSE
 Depends: 
-    R (>= 4.1.0)
+    R (>= 4.4.0)
 Imports: 
+    arrow,
     AzureAuth,
     AzureStor,
     bs4Dash,
     cachem,
     config (>= 0.3.1),
-    digest,
     dplyr,
     forcats,
     future,
@@ -63,4 +63,4 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2

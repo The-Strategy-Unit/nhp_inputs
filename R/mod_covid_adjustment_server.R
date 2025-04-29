@@ -28,7 +28,7 @@ mod_covid_adjustment_server <- function(id, params) {
         )
       }
 
-      dataset <- shiny::req(params$dataset)
+      dataset <- shiny::req(params$dataset) # nolint: object_usage_linter
 
       load_provider_data("covid_adjustment") |>
         dplyr::filter(.data[["provider"]] == .env[["dataset"]]) |>

@@ -1,4 +1,11 @@
-mod_expat_repat_trend_plot <- function(df, include, values, start_year, title, scale = 10) {
+mod_expat_repat_trend_plot <- function(
+  df,
+  include,
+  values,
+  start_year,
+  title,
+  scale = 10
+) {
   v <- dplyr::filter(df, .data$fyear == start_year)$pcnt
 
   ymax_ci <- values[[2]] * v / 100
@@ -17,7 +24,11 @@ mod_expat_repat_trend_plot <- function(df, include, values, start_year, title, s
   }
 
   df |>
-    ggplot2::ggplot(ggplot2::aes(as.factor(.data$fyear), .data$pcnt, group = 1)) +
+    ggplot2::ggplot(ggplot2::aes(
+      as.factor(.data$fyear),
+      .data$pcnt,
+      group = 1
+    )) +
     interval +
     ggplot2::geom_line() +
     ggplot2::geom_point(
@@ -42,7 +53,12 @@ mod_expat_repat_trend_plot <- function(df, include, values, start_year, title, s
     )
 }
 
-mod_expat_repat_local_split_plot <- function(df, providers, dataset, start_year) {
+mod_expat_repat_local_split_plot <- function(
+  df,
+  providers,
+  dataset,
+  start_year
+) {
   providers_df <- tibble::enframe(
     providers,
     value = "provider",
@@ -105,7 +121,11 @@ mod_expat_repat_nonlocal_n <- function(df) {
         .data$n
       )
     ) +
-    ggplot2::geom_col(position = "stack", colour = "#f9bf07", fill = "#fef2cd") +
+    ggplot2::geom_col(
+      position = "stack",
+      colour = "#f9bf07",
+      fill = "#fef2cd"
+    ) +
     ggplot2::scale_x_discrete(
       labels = \(.x) stringr::str_replace(.x, "^(\\d{4})(\\d{2})$", "\\1/\\2")
     ) +
@@ -125,10 +145,12 @@ mod_expat_repat_nonlocal_n <- function(df) {
 
 
 mod_expat_repat_nonlocal_icb_map <- function(df) {
-  pal <- leaflet::colorNumeric( # nolint
+  # nolint start: object_usage_linter
+  pal <- leaflet::colorNumeric(
     viridis::viridis_pal()(3),
     df$pcnt
   )
+  # nolint end
 
   leaflet::leaflet(df) |>
     leaflet::addProviderTiles("CartoDB.Positron") |>

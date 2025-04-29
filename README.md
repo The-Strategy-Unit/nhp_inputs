@@ -16,8 +16,9 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 An app to input the parameters needed to run scenarios through the New
 Hospital Programme (NHP) demand model.
 
-The app is deployed to Posit Connect. You must have an account and
-sufficient permissions to view it.
+The app is [deployed to Posit
+Connect](https://connect.strategyunitwm.nhs.uk/nhp/inputs/). You must
+have an account and sufficient permissions to view it.
 
 You can find more information on [the NHP model project information
 site](https://connect.strategyunitwm.nhs.uk/nhp/project_information/),
@@ -36,8 +37,9 @@ The app is built primarily with [Shiny](https://shiny.posit.co/) and
 [the {golem} package](https://thinkr-open.github.io/golem/). Server and
 UI modules can be found in `R/`, configuration in
 `inst/golem-config.yml` and supporting data and text in `inst/app/`.
-[The {renv} package](https://rstudio.github.io/renv/index.html) is used
-for dependency management.
+
+Packages used in the app are listed in `DESCRIPTION`, and can be
+installed with `devtools::install_deps(dependencies = TRUE)`.
 
 ### Run locally
 

@@ -1,22 +1,27 @@
 #' mitigators_admission_avoidance Server Functions
 #'
 #' @noRd
-mod_mitigators_server <- function(id, # nolint: object_usage_linter.
-                                  params,
-                                  rates_data,
-                                  age_sex_data,
-                                  diagnoses_data,
-                                  procedures_data,
-                                  available_strategies,
-                                  diagnoses_lkup,
-                                  procedures_lkup,
-                                  mitigator_codes_lkup,
-                                  peers) {
+mod_mitigators_server <- function(
+  id, # nolint: object_usage_linter.
+  params,
+  rates_data,
+  age_sex_data,
+  diagnoses_data,
+  procedures_data,
+  available_strategies,
+  diagnoses_lkup,
+  procedures_lkup,
+  mitigator_codes_lkup,
+  peers
+) {
   selected_time_profile <- update_time_profile <- NULL
-  c(selected_time_profile, update_time_profile) %<-% mod_time_profile_server(
-    shiny::NS(id, "time_profile"),
-    params
-  )
+  # nolint start: object_usage_linter
+  c(selected_time_profile, update_time_profile) %<-%
+    mod_time_profile_server(
+      shiny::NS(id, "time_profile"),
+      params
+    )
+  # nolint end
 
   config <- get_golem_config("mitigators_config")[[id]]
 
@@ -55,13 +60,15 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
 
       # need to invert this list (flip names -> values)
       strats_subset <- config$strategy_subset
-      available_subset <- intersect(names(strats_subset), available_strategies())
+      available_subset <- intersect(
+        names(strats_subset),
+        available_strategies()
+      )
 
       purrr::set_names(
         available_subset,
-        mitigator_codes_lkup[available_subset]  # e.g. 'IP-EF-017: Enhanced Recovery (Hip)'
+        mitigator_codes_lkup[available_subset] # e.g. 'IP-EF-017: Enhanced Recovery (Hip)'
       )
-
     })
 
     get_default <- function(rate) {
@@ -107,9 +114,13 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
               )
             )
 
-            output_conversions[[mitigators_type]][[i]] <- (config$param_output %||% \(...) identity)(r$rate)
+            output_conversions[[mitigators_type]][[
+              i
+            ]] <- (config$param_output %||% \(...) identity)(r$rate)
 
-            params[[mitigators_type]][[activity_type]][[i]] <- if (!is.null(loaded_values[[i]])) {
+            params[[mitigators_type]][[activity_type]][[i]] <- if (
+              !is.null(loaded_values[[i]])
+            ) {
               fn <- output_conversions[[mitigators_type]][[i]]
 
               v <- slider_values[[mitigators_type]][[i]]
@@ -125,7 +136,9 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
         shiny::updateCheckboxInput(
           session,
           "include",
-          value = !is.null(params[[mitigators_type]][[activity_type]][[strategies[[1]]]])
+          value = !is.null(params[[mitigators_type]][[
+            activity_type
+          ]][[strategies[[1]]]])
         )
 
         init$destroy()
@@ -141,7 +154,8 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
         stringr::str_remove("\\.md$")
 
       md_file_to_html(
-        "app", "strategy_text",
+        "app",
+        "strategy_text",
         paste0(files[stringr::str_detect(strategy, files)], ".md")
       )
     })
@@ -151,9 +165,13 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
     rates_baseline_data <- shiny::reactive({
       strategy <- shiny::req(input$strategy)
 
+      # nolint start: object_usage_linter
       scheme_peers <- peers |>
-        dplyr::filter(.data$procode == params$dataset & .data$peer != params$dataset) |>
+        dplyr::filter(
+          .data$procode == params$dataset & .data$peer != params$dataset
+        ) |>
         dplyr::pull(.data$peer)
+      # nolint end
 
       rates_data |>
         dplyr::filter(
@@ -164,17 +182,14 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
           is_peer = dplyr::case_when(
             .data$provider == params$dataset ~ FALSE,
             .data$provider %in% .env$scheme_peers ~ TRUE,
-            .default = NA  # if scheme is neither focal nor a peer
+            .default = NA # if scheme is neither focal nor a peer
           )
         ) |>
-        dplyr::filter(!is.na(.data$is_peer)) |>  # only focal scheme and peers
-        dplyr::arrange(dplyr::desc(.data$is_peer))  # to plot focal scheme last
+        dplyr::filter(!is.na(.data$is_peer)) |> # only focal scheme and peers
+        dplyr::arrange(dplyr::desc(.data$is_peer)) # to plot focal scheme last
     })
 
     # params controls ----
-    get_range <- function(max_value, scale) {
-      c(0, max_value, 1) * scale
-    }
 
     provider_max_value <- shiny::reactive({
       r <- dplyr::filter(rates_baseline_data(), !.data$is_peer)$rate
@@ -182,14 +197,18 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       floor(r * m) / m
     })
 
-    shiny::observe({  # ensure include checkbox is on or off given param value
+    shiny::observe({
+      # ensure include checkbox is on or off given param value
       shiny::req(input$strategy)
-      include <- !is.null(params[[mitigators_type]][[activity_type]][[input$strategy]])
+      include <- !is.null(params[[mitigators_type]][[activity_type]][[
+        input$strategy
+      ]])
       shiny::updateCheckboxInput(session, "include", value = include)
     }) |>
       shiny::bindEvent(input$strategy)
 
-    shiny::observe({  # update slider
+    shiny::observe({
+      # update slider
       strategy <- shiny::req(input$strategy)
       max_value <- provider_max_value()
       scale <- 100
@@ -197,10 +216,18 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       step <- 0.1
       pc_fn <- param_conversion$relative[[1]]
 
-      values <- pc_fn(max_value, slider_values[[mitigators_type]][[strategy]]$interval) * scale
+      values <- pc_fn(
+        max_value,
+        slider_values[[mitigators_type]][[strategy]]$interval
+      ) *
+        scale
       shiny::updateSliderInput(
-        session, "slider",
-        value = values, min = range[[1]], max = range[[2]], step = step
+        session,
+        "slider",
+        value = values,
+        min = range[[1]],
+        max = range[[2]],
+        step = step
       )
 
       update_time_profile(
@@ -222,7 +249,6 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       mt <- mitigators_type
       slider_values[[mt]][[strategy]]$interval <- v
 
-
       params[[mt]][[at]][[strategy]] <- if (input$include) {
         fn <- output_conversions[[mitigators_type]][[strategy]]
 
@@ -240,7 +266,9 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
 
       time_profile_mappings$mappings[[strategy]] <- tp
 
-      params$time_profile_mappings[[mitigators_type]][[activity_type]][[strategy]] <- if (input$include) tp
+      params$time_profile_mappings[[mitigators_type]][[activity_type]][[
+        strategy
+      ]] <- if (input$include) tp
     }) |>
       shiny::bindEvent(selected_time_profile(), input$include)
 
@@ -253,7 +281,10 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
 
     plot_ribbon <- shiny::reactive({
       max_value <- provider_max_value()
-      values <- param_conversion$absolute[[1]](max_value, slider_values[[mitigators_type]][[input$strategy]]$interval)
+      values <- param_conversion$absolute[[1]](
+        max_value,
+        slider_values[[mitigators_type]][[input$strategy]]$interval
+      )
 
       ggplot2::annotate(
         "rect",
@@ -297,7 +328,6 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
         generate_rates_funnel_data()
     })
 
-
     # calculate thge range across our plots
     plot_range <- shiny::reactive({
       range(c(
@@ -325,11 +355,9 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
         rates_boxplot(plot_range(), plot_ribbon())
     })
 
-
     # diagnoses ----
 
     output$diagnoses_table <- gt::render_gt({
-
       shiny::validate(
         shiny::need(
           diagnoses_data,
@@ -345,7 +373,10 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
           .data$strategy == .env$strategy,
           .data$fyear == params$start_year
         ) |>
-        dplyr::inner_join(diagnoses_lkup, by = c("diagnosis" = "diagnosis_code")) |>
+        dplyr::inner_join(
+          diagnoses_lkup,
+          by = c("diagnosis" = "diagnosis_code")
+        ) |>
         dplyr::select("diagnosis_description", "n", "pcnt")
 
       n_total <- sum(data$n)
@@ -417,7 +448,6 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
     # procedures ----
 
     output$procedures_table <- gt::render_gt({
-
       shiny::validate(
         shiny::need(
           procedures_data,
@@ -443,7 +473,9 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
           .data$fyear == params$start_year
         ) |>
         dplyr::left_join(procedures_lkup, by = c("procedure_code" = "code")) |>
-        tidyr::replace_na(list(description = "Unknown/Invalid Procedure Code")) |>
+        tidyr::replace_na(list(
+          description = "Unknown/Invalid Procedure Code"
+        )) |>
         dplyr::select("procedure_description" = "description", "n", "pcnt")
 
       n_total <- sum(data$n)
@@ -539,14 +571,22 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
           ggplot2::ggplot() +
           ggplot2::geom_segment(
             ggplot2::aes(
-              y = 1, yend = 1,
-              x = .data[["percentile10"]], xend = .data[["percentile90"]]
+              y = 1,
+              yend = 1,
+              x = .data[["percentile10"]],
+              xend = .data[["percentile90"]]
             ),
             size = 2
           ) +
-          ggplot2::geom_point(ggplot2::aes(y = 1, x = mean), size = 5, colour = "#f9bf14") +
+          ggplot2::geom_point(
+            ggplot2::aes(y = 1, x = mean),
+            size = 5,
+            colour = "#f9bf14"
+          ) +
           ggplot2::xlim(0, 100) +
-          ggplot2::xlab("80% prediction interval (mean represented as a point)") +
+          ggplot2::xlab(
+            "80% prediction interval (mean represented as a point)"
+          ) +
           ggplot2::theme_minimal() +
           ggplot2::theme(
             axis.title.y = ggplot2::element_blank(),
@@ -562,13 +602,16 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
     # rate values ----
 
     output$slider_absolute <- shiny::renderText({
-
       scale <- config$slider_scale
       strategy <- shiny::req(input$strategy)
       max_value <- provider_max_value()
 
       convert_params_a <- param_conversion$absolute[[1]]
-      rate <- convert_params_a(max_value, slider_values[[mitigators_type]][[strategy]]$interval) * scale
+      rate <- convert_params_a(
+        max_value,
+        slider_values[[mitigators_type]][[strategy]]$interval
+      ) *
+        scale
 
       convert_number <- function(value, config) {
         converted <- scales::number(value, 0.001)
@@ -587,12 +630,10 @@ mod_mitigators_server <- function(id, # nolint: object_usage_linter.
       )
 
       if (!input$include) {
-        text <- glue::glue("<font color='#ADAEAF'>{text}</font>")  # grey out
+        text <- glue::glue("<font color='#ADAEAF'>{text}</font>") # grey out
       }
 
       text
-
     })
-
   })
 }
