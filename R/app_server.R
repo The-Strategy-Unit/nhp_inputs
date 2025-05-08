@@ -13,7 +13,7 @@ app_server <- function(input, output, session) {
   })
 
   diagnoses_lkup <- shiny::reactive({
-    readRDS(app_sys("app", "data", "diagnoses.Rds"))
+    readr::read_csv(app_sys("app", "data", "diagnoses.csv"), col_types = "ccc")
   })
 
   procedures_lkup <- shiny::reactive({
