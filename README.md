@@ -65,7 +65,7 @@ selections in the app remain local to you.
 If you need to remove the selection-app folder at any point, you can do
 that with:
 
-    git worktree remove inputs_selection_app 
+    git worktree remove inputs_selection_app
 
 ### Data extraction
 
