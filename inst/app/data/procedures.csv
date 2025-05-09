@@ -1,0 +1,1996 @@
+type,code,description
+OPCS,A01,Major excision of tissue of brain
+OPCS,A02,Excision of lesion of tissue of brain
+OPCS,A03,Stereotactic ablation of tissue of brain
+OPCS,A04,Open biopsy of lesion of tissue of brain
+OPCS,A05,Drainage of lesion of tissue of brain
+OPCS,A06,Other excision of lesion of tissue of brain
+OPCS,A07,Other open operations on tissue of brain
+OPCS,A08,Other biopsy of lesion of tissue of brain
+OPCS,B28,Other excision of breast
+OPCS,B29,Reconstruction of breast
+OPCS,B36,Reconstruction of nipple and areola
+OPCS,B37,Other operations on breast
+OPCS,B38,Reconstruction of breast using flap of skin of buttock
+OPCS,B39,Reconstruction of breast using abdominal flap
+OPCS,B40,Destruction of lesion of breast
+OPCS,B41,Excision of breast
+OPCS,C01,Excision of eye
+OPCS,C02,Extirpation of lesion of orbit
+OPCS,C03,Insertion of prosthesis of eye
+OPCS,C04,Attention to prosthesis of eye
+OPCS,C05,Plastic repair of orbit
+OPCS,C06,Incision of orbit
+OPCS,C08,Other operations on orbit
+OPCS,A10,Other operations on tissue of brain
+OPCS,A11,Operations on tissue of brain
+OPCS,A12,Creation of connection from ventricle of brain
+OPCS,A13,Attention to component of connection from ventricle of brain
+OPCS,A14,Other operations on connection from ventricle of brain
+OPCS,A16,Other open operations on ventricle of brain
+OPCS,A17,Therapeutic endoscopic operations on ventricle of brain
+OPCS,A18,Diagnostic endoscopic examination of ventricle of brain
+OPCS,A20,Other operations on ventricle of brain
+OPCS,A22,Operations on subarachnoid space of brain
+OPCS,A24,Graft to cranial nerve
+OPCS,A25,Intracranial transection of cranial nerve
+OPCS,C15,Correction of deformity of eyelid
+OPCS,C16,Other plastic repair of eyelid
+OPCS,C17,Other repair of eyelid
+OPCS,C18,Correction of ptosis of eyelid
+OPCS,C19,Incision of eyelid
+OPCS,C20,Protective suture of eyelid
+OPCS,C22,Other operations on eyelid
+OPCS,C23,Operations on eyelid
+OPCS,C24,Operations on lacrimal gland
+OPCS,C25,Connection between lacrimal apparatus and nose
+OPCS,C26,Other operations on lacrimal sac
+OPCS,A29,Excision of lesion of cranial nerve
+OPCS,A30,Repair of cranial nerve
+OPCS,A31,Intracranial stereotactic release of cranial nerve
+OPCS,A32,Other decompression of cranial nerve
+OPCS,A33,Neurostimulation of cranial nerve
+OPCS,A34,Exploration of cranial nerve
+OPCS,A36,Other operations on cranial nerve
+OPCS,A38,Extirpation of lesion of meninges of brain
+OPCS,A39,Repair of dura
+OPCS,A47,Other destruction of spinal cord
+OPCS,A48,Other operations on spinal cord
+OPCS,A49,Repair of spina bifida
+OPCS,A51,Other operations on meninges of spinal cord
+OPCS,A52,Therapeutic epidural injection
+OPCS,A53,Drainage of spinal canal
+OPCS,A54,Therapeutic spinal puncture
+OPCS,A55,Diagnostic spinal puncture
+OPCS,A57,Operations on spinal nerve root
+OPCS,A59,Excision of peripheral nerve
+OPCS,A60,Destruction of peripheral nerve
+OPCS,A65,Release of entrapment of peripheral nerve at wrist
+OPCS,A66,Release of entrapment of peripheral nerve at ankle
+OPCS,A67,Release of entrapment of peripheral nerve at other site
+OPCS,A68,Other release of peripheral nerve
+OPCS,A69,Revision of release of peripheral nerve
+OPCS,A70,Neurostimulation of peripheral nerve
+OPCS,A73,Other operations on peripheral nerve
+OPCS,A75,Excision of sympathetic nerve
+OPCS,A76,Chemical destruction of sympathetic nerve
+OPCS,A77,Cryotherapy to sympathetic nerve
+OPCS,A78,Radiofrequency controlled thermal destruction of sympathetic nerve
+OPCS,B01,Excision of pituitary gland
+OPCS,B02,Destruction of pituitary gland
+OPCS,B04,Other operations on pituitary gland
+OPCS,B06,Operations on pineal gland
+OPCS,B08,Excision of thyroid gland
+OPCS,B09,Operations on aberrant thyroid tissue
+OPCS,B10,Operations on thyroglossal tissue
+OPCS,B12,Other operations on thyroid gland
+OPCS,B14,Excision of parathyroid gland
+OPCS,B16,Other operations on parathyroid gland
+OPCS,B17,Transplantation of thymus gland
+OPCS,B18,Excision of thymus gland
+OPCS,B20,Other operations on thymus gland
+OPCS,B22,Excision of adrenal gland
+OPCS,C55,Incision of sclera
+OPCS,C57,Other operations on sclera
+OPCS,C59,Excision of iris
+OPCS,C60,Filtering operations on iris
+OPCS,C61,Other operations on trabecular meshwork of eye
+OPCS,C62,Incision of iris
+OPCS,C64,Other operations on iris
+OPCS,C65,Operations following glaucoma surgery
+OPCS,C66,Extirpation of ciliary body
+OPCS,C67,Other operations on ciliary body
+OPCS,C69,Other operations on anterior chamber of eye
+OPCS,C71,Extracapsular extraction of lens
+OPCS,C72,Intracapsular extraction of lens
+OPCS,C80,Operations on retinal membrane
+OPCS,C81,Photocoagulation of retina for detachment
+OPCS,C82,Destruction of lesion of retina
+OPCS,C83,Translocation of retina
+OPCS,C84,Other operations on retina
+OPCS,C85,Fixation of retina
+OPCS,C86,Other operations on eye
+OPCS,C87,Evaluation of retina
+OPCS,C88,Destruction of subretinal lesion
+OPCS,C89,Operations on posterior segment of eye
+OPCS,C90,Local anaesthetics for ophthalmology procedures
+OPCS,D01,Excision of external ear
+OPCS,D07,Clearance of external auditory canal
+OPCS,D08,Other operations on external auditory canal
+OPCS,D10,Exenteration of mastoid air cells
+OPCS,D12,Other operations on mastoid
+OPCS,D13,Attachment of bone anchored hearing prosthesis
+OPCS,D14,Repair of eardrum
+OPCS,D15,Drainage of middle ear
+OPCS,D16,Reconstruction of ossicular chain
+OPCS,D17,Other operations on ossicle of ear
+OPCS,D19,Extirpation of lesion of middle ear
+OPCS,D20,Other operations on middle ear
+OPCS,D22,Operations on eustachian canal
+OPCS,E03,Operations on septum of nose
+OPCS,E04,Operations on turbinate of nose
+OPCS,E05,Surgical arrest of bleeding from internal nose
+OPCS,E06,Packing of cavity of nose
+OPCS,E07,Other plastic operations on nose
+OPCS,E08,Other operations on internal nose
+OPCS,E09,Operations on external nose
+OPCS,E10,Other operations on nose
+OPCS,E11,Operations on fixtures for nasal prosthesis
+OPCS,E12,Operations on maxillary antrum using sublabial approach
+OPCS,E13,Other operations on maxillary antrum
+OPCS,E41,Open placement of prosthesis in trachea
+OPCS,E42,Exteriorisation of trachea
+OPCS,E43,Other open operations on trachea
+OPCS,E44,Open operations on carina
+OPCS,E45,Code deleted
+OPCS,E46,Partial extirpation of bronchus
+OPCS,E47,Other open operations on bronchus
+OPCS,E48,Therapeutic fibreoptic endoscopic operations on lower respiratory tract
+OPCS,E49,Diagnostic fibreoptic endoscopic examination of lower respiratory tract
+OPCS,E50,Therapeutic endoscopic operations on lower respiratory tract using rigid bronchoscope
+OPCS,C34,Partial division of tendon of muscle of eye
+OPCS,C35,Other adjustment to muscle of eye
+OPCS,C37,Other operations on muscle of eye
+OPCS,C39,Extirpation of lesion of conjunctiva
+OPCS,C40,Repair of conjunctiva
+OPCS,C41,Incision of conjunctiva
+OPCS,C43,Other operations on conjunctiva
+OPCS,C44,Other plastic operations on cornea
+OPCS,C45,Extirpation of lesion of cornea
+OPCS,C46,Plastic operations on cornea
+OPCS,C47,Closure of cornea
+OPCS,E20,Operations on adenoid
+OPCS,E21,Repair of pharynx
+OPCS,E23,Other open operations on pharynx
+OPCS,E24,Therapeutic endoscopic operations on pharynx
+OPCS,E25,Diagnostic endoscopic examination of pharynx
+OPCS,E27,Other operations on pharynx
+OPCS,E28,Operations on cricopharyngeus muscle
+OPCS,E29,Excision of larynx
+OPCS,E30,Open extirpation of lesion of larynx
+OPCS,E31,Reconstruction of larynx
+OPCS,E33,Other open operations on larynx
+OPCS,E34,Microtherapeutic endoscopic operations on larynx
+OPCS,E57,Other open operations on lung
+OPCS,E59,Other operations on lung
+OPCS,E61,Open operations on mediastinum
+OPCS,E62,Therapeutic endoscopic operations on mediastinum
+OPCS,E63,Diagnostic endoscopic examination of mediastinum
+OPCS,E64,Therapeutic endoscopic operations on nasal cavity
+OPCS,E65,Diagnostic endoscopic examination of nasal cavity
+OPCS,E66,Other operations on external nose
+OPCS,E67,Other therapeutic fibreoptic endoscopic operations on lower respiratory tract
+OPCS,E85,Ventilation support
+OPCS,E87,Oxygen therapy support
+OPCS,E89,Other respiratory support
+OPCS,E91,Oximetry testing
+OPCS,E92,Respiratory tests
+OPCS,F01,Partial excision of lip
+OPCS,F02,Extirpation of lesion of lip
+OPCS,F03,Correction of deformity of lip
+OPCS,F04,Other reconstruction of lip
+OPCS,F05,Other repair of lip
+OPCS,F06,Other operations on lip
+OPCS,F08,Implantation of tooth
+OPCS,F09,Surgical removal of tooth
+OPCS,F10,Simple extraction of tooth
+OPCS,F11,Preprosthetic oral surgery
+OPCS,F12,Surgery on apex of tooth
+OPCS,F13,Restoration of tooth
+OPCS,F14,Orthodontic operations
+OPCS,F22,Excision of tongue
+OPCS,F23,Extirpation of lesion of tongue
+OPCS,F24,Incision of tongue
+OPCS,F26,Other operations on tongue
+OPCS,F28,Extirpation of lesion of palate
+OPCS,F29,Correction of deformity of palate
+OPCS,F30,Other repair of palate
+OPCS,F32,Other operations on palate
+OPCS,F34,Excision of tonsil
+OPCS,F36,Other operations on tonsil
+OPCS,F38,Extirpation of lesion of other part of mouth
+OPCS,F39,Reconstruction of other part of mouth
+OPCS,F40,Other repair of other part of mouth
+OPCS,G10,Open operations on varices of oesophagus
+OPCS,G11,Open placement of prosthesis in oesophagus
+OPCS,G12,Other fibreoptic endoscopic extirpation of lesion of oesophagus
+OPCS,G13,Other open operations on oesophagus
+OPCS,G14,Fibreoptic endoscopic extirpation of lesion of oesophagus
+OPCS,G15,Other therapeutic fibreoptic endoscopic operations on oesophagus
+OPCS,G16,Diagnostic fibreoptic endoscopic examination of oesophagus
+OPCS,G17,Endoscopic extirpation of lesion of oesophagus using rigid oesophagoscope
+OPCS,G18,Other therapeutic endoscopic operations on oesophagus using rigid oesophagoscope
+OPCS,G42,Other fibreoptic endoscopic extirpation of lesion of upper gastrointestinal tract
+OPCS,G43,Fibreoptic endoscopic extirpation of lesion of upper gastrointestinal tract
+OPCS,G44,Other therapeutic fibreoptic endoscopic operations on upper gastrointestinal tract
+OPCS,G45,Diagnostic fibreoptic endoscopic examination of upper gastrointestinal tract
+OPCS,G46,Therapeutic fibreoptic endoscopic operations on upper gastrointestinal tract
+OPCS,G47,Intubation of stomach
+OPCS,G48,Other operations on stomach
+OPCS,G49,Excision of duodenum
+OPCS,G50,Open extirpation of lesion of duodenum
+OPCS,F50,Transposition of salivary duct
+OPCS,F51,Open extraction of calculus from salivary duct
+OPCS,F52,Ligation of salivary duct
+OPCS,F53,Other open operations on salivary duct
+OPCS,F55,Dilation of salivary duct
+OPCS,F56,Manipulative removal of calculus from salivary duct
+OPCS,F58,Other operations on salivary duct
+OPCS,F63,Insertion of dental prosthesis
+OPCS,G01,Excision of oesophagus and stomach
+OPCS,G02,Total excision of oesophagus
+OPCS,G03,Partial excision of oesophagus
+OPCS,G04,Open extirpation of lesion of oesophagus
+OPCS,G05,Bypass of oesophagus
+OPCS,G25,Revision of antireflux operations
+OPCS,G26,Transplantation of stomach
+OPCS,G27,Total excision of stomach
+OPCS,G28,Partial excision of stomach
+OPCS,G29,Open extirpation of lesion of stomach
+OPCS,G30,Plastic operations on stomach
+OPCS,G31,Connection of stomach to duodenum
+OPCS,G32,Connection of stomach to transposed jejunum
+OPCS,G33,Other connection of stomach to jejunum
+OPCS,G57,Other operations on duodenum
+OPCS,G58,Excision of jejunum
+OPCS,G59,Extirpation of lesion of jejunum
+OPCS,G60,Artificial opening into jejunum
+OPCS,G61,Bypass of jejunum
+OPCS,G62,Open endoscopic operations on jejunum
+OPCS,G63,Other open operations on jejunum
+OPCS,G64,Therapeutic endoscopic operations on jejunum
+OPCS,G65,Diagnostic endoscopic examination of jejunum
+OPCS,G67,Other operations on jejunum
+OPCS,G68,Transplantation of ileum
+OPCS,G69,Excision of ileum
+OPCS,G70,Open extirpation of lesion of ileum
+OPCS,G71,Bypass of ileum
+OPCS,H27,Other therapeutic endoscopic operations on sigmoid colon using rigid sigmoidoscope
+OPCS,H28,Diagnostic endoscopic examination of sigmoid colon using rigid sigmoidoscope
+OPCS,H29,Subtotal excision of colon
+OPCS,H30,Other operations on colon
+OPCS,H31,Image guided colorectal therapeutic operations
+OPCS,H32,Exteriorisation of colon
+OPCS,H33,Excision of rectum
+OPCS,H34,Open extirpation of lesion of rectum
+OPCS,H35,Fixation of rectum for prolapse
+OPCS,H44,Manipulation of rectum
+OPCS,H46,Other operations on rectum
+OPCS,H47,Excision of anus
+OPCS,H48,Excision of lesion of anus
+OPCS,H49,Destruction of lesion of anus
+OPCS,H50,Repair of anus
+OPCS,H51,Excision of haemorrhoid
+OPCS,H52,Destruction of haemorrhoid
+OPCS,H53,Other operations on haemorrhoid
+OPCS,H54,Dilation of anal sphincter
+OPCS,H55,Other operations on perianal region
+OPCS,H56,Other operations on anus
+OPCS,G78,Other open operations on ileum
+OPCS,G79,Therapeutic endoscopic operations on ileum
+OPCS,G80,Diagnostic endoscopic examination of ileum
+OPCS,G82,Other operations on ileum
+OPCS,H01,Emergency excision of appendix
+OPCS,H02,Other excision of appendix
+OPCS,H03,Other operations on appendix
+OPCS,H04,Total excision of colon and rectum
+OPCS,H05,Total excision of colon
+OPCS,H06,Extended excision of right hemicolon
+OPCS,H07,Other excision of right hemicolon
+OPCS,H12,Extirpation of lesion of colon
+OPCS,H13,Bypass of colon
+OPCS,H14,Exteriorisation of caecum
+OPCS,H15,Other exteriorisation of colon
+OPCS,H16,Incision of colon
+OPCS,H17,Intra-abdominal manipulation of colon
+OPCS,H18,Open endoscopic operations on colon
+OPCS,H19,Other open operations on colon
+OPCS,H20,Endoscopic extirpation of lesion of colon
+OPCS,H21,Other therapeutic endoscopic operations on colon
+OPCS,H22,Diagnostic endoscopic examination of colon
+OPCS,H23,Endoscopic extirpation of lesion of lower bowel using fibreoptic sigmoidoscope
+OPCS,H66,Therapeutic operations on ileoanal pouch
+OPCS,H68,Diagnostic endoscopic examination of enteric pouch using colonoscope
+OPCS,H69,Diagnostic endoscopic examination of enteric pouch using fibreoptic sigmoidoscope
+OPCS,H70,Diagnostic endoscopic examination of enteric pouch using rigid sigmoidoscope
+OPCS,J01,Transplantation of liver
+OPCS,J02,Partial excision of liver
+OPCS,J03,Extirpation of lesion of liver
+OPCS,J04,Repair of liver
+OPCS,J05,Incision of liver
+OPCS,J06,Other transjugular intrahepatic operations on blood vessel of liver
+OPCS,J07,Other open operations on liver
+OPCS,J12,Other therapeutic percutaneous operations on liver
+OPCS,J13,Diagnostic percutaneous operations on liver
+OPCS,J14,Other puncture of liver
+OPCS,J15,Transluminal insertion of prosthesis into blood vessel of liver
+OPCS,J16,Other operations on liver
+OPCS,J17,Endoscopic ultrasound examination of liver
+OPCS,J18,Excision of gall bladder
+OPCS,J19,Connection of gall bladder
+OPCS,J20,Repair of gall bladder
+OPCS,J21,Incision of gall bladder
+OPCS,J23,Other open operations on gall bladder
+OPCS,B30,Prosthesis for breast
+OPCS,B31,Other plastic operations on breast
+OPCS,B32,Biopsy of breast
+OPCS,B33,Incision of breast
+OPCS,B34,Operations on duct of breast
+OPCS,B35,Operations on nipple and areola
+OPCS,J44,Diagnostic endoscopic retrograde examination of bile duct
+OPCS,J45,Diagnostic endoscopic retrograde examination of pancreatic duct
+OPCS,J46,Therapeutic percutaneous attention to connection of bile duct
+OPCS,J47,Therapeutic percutaneous insertion of prosthesis into bile duct
+OPCS,J48,Other therapeutic percutaneous operations on bile duct
+OPCS,C27,Operations on nasolacrimal duct
+OPCS,C29,Other operations on lacrimal apparatus
+OPCS,C31,Combined operations on muscles of eye
+OPCS,A09,Neurostimulation of brain
+OPCS,K05,Atrial inversion operations for transposition of great arteries
+OPCS,K06,Other repair of transposition of great arteries
+OPCS,K07,Correction of total anomalous pulmonary venous connection
+OPCS,K08,Repair of double outlet ventricle
+OPCS,K09,Repair of defect of atrioventricular septum
+OPCS,K10,Repair of defect of interatrial septum
+OPCS,A26,Other intracranial destruction of cranial nerve
+OPCS,A27,Extracranial extirpation of vagus nerve (x)
+OPCS,A28,Extracranial extirpation of other cranial nerve
+OPCS,J60,Other open operations on pancreatic duct
+OPCS,J61,Open drainage of lesion of pancreas
+OPCS,J62,Incision of pancreas
+OPCS,J63,Open examination of pancreas
+OPCS,J65,Other open operations on pancreas
+OPCS,J66,Therapeutic percutaneous operations on pancreas
+OPCS,J67,Diagnostic percutaneous operations on pancreas
+OPCS,C09,Replacement of canthal tendon
+OPCS,C10,Operations on eyebrow
+OPCS,C11,Operations on canthus
+OPCS,C12,Extirpation of lesion of eyelid
+OPCS,C13,Excision of redundant skin of eyelid
+OPCS,C14,Reconstruction of eyelid
+OPCS,K18,Creation of valved cardiac conduit
+OPCS,K19,Creation of other cardiac conduit
+OPCS,K20,Refashioning of atrium
+OPCS,K22,Other operations on wall of atrium
+OPCS,A61,Extirpation of lesion of peripheral nerve
+OPCS,A62,Microsurgical repair of peripheral nerve
+OPCS,A63,Other graft to peripheral nerve
+OPCS,A64,Other repair of peripheral nerve
+OPCS,K32,Closed incision of valve of heart
+OPCS,K33,Operations on aortic root
+OPCS,K34,Other open operations on valve of heart
+OPCS,K35,Therapeutic transluminal operations on valve of heart
+OPCS,K36,Excision of valve of heart
+OPCS,K37,Removal of obstruction from structure adjacent to valve of heart
+OPCS,B23,Operations on aberrant adrenal tissue
+OPCS,B25,Other operations on adrenal gland
+OPCS,B27,Total excision of breast
+OPCS,C32,Recession of muscle of eye
+OPCS,C33,Resection of muscle of eye
+OPCS,K60,Cardiac pacemaker system introduced through vein
+OPCS,K61,Other cardiac pacemaker system
+OPCS,K62,Therapeutic transluminal operations on heart
+OPCS,K63,Contrast radiology of heart
+OPCS,K64,Percutaneous operations on heart
+OPCS,A40,Drainage of extradural space
+OPCS,A41,Drainage of subdural space
+OPCS,A42,Other operations on meninges of brain
+OPCS,A43,Other extirpation of lesion of meninges of brain
+OPCS,A44,Partial extirpation of spinal cord
+OPCS,A45,Other open operations on spinal cord
+OPCS,K47,Repair of coronary artery
+OPCS,K48,Other open operations on coronary artery
+OPCS,K49,Transluminal balloon angioplasty of coronary artery
+OPCS,K50,Other therapeutic transluminal operations on coronary artery
+OPCS,K51,Diagnostic transluminal operations on coronary artery
+OPCS,K52,Open operations on conducting system of heart
+OPCS,J29,Connection of hepatic duct
+OPCS,J30,Connection of common bile duct
+OPCS,J31,Open introduction of prosthesis into bile duct
+OPCS,J32,Repair of bile duct
+OPCS,J33,Incision of bile duct
+OPCS,J34,Plastic repair of sphincter of Oddi using duodenal approach
+OPCS,J35,Incision of sphincter of Oddi using duodenal approach
+OPCS,J36,Other operations on ampulla of Vater using duodenal approach
+OPCS,J37,Other open operations on bile duct
+OPCS,J38,Endoscopic incision of sphincter of Oddi
+OPCS,J39,Other therapeutic endoscopic operations on ampulla of Vater
+OPCS,J40,Endoscopic retrograde placement of prosthesis in bile duct
+OPCS,C73,Incision of capsule of lens
+OPCS,C74,Other extraction of lens
+OPCS,C75,Prosthesis of lens
+OPCS,C77,Other operations on lens
+OPCS,C79,Operations on vitreous body
+OPCS,L16,Extra-anatomic bypass of aorta
+OPCS,L18,Emergency replacement of aneurysmal segment of aorta
+OPCS,L19,Other replacement of aneurysmal segment of aorta
+OPCS,L20,Other emergency bypass of segment of aorta
+OPCS,A79,Other destruction of sympathetic nerve
+OPCS,A81,Other operations on sympathetic nerve
+OPCS,A82,Other neurophysiological operations
+OPCS,A83,Electroconvulsive therapy
+OPCS,A84,Neurophysiological operations
+OPCS,K78,Transluminal operations on internal mammary artery side branch
+OPCS,L01,Open operations for combined abnormality of great vessels
+OPCS,L02,Open correction of patent ductus arteriosus
+OPCS,L03,Transluminal operations on abnormality of great vessel
+OPCS,L04,Open operations on pulmonary arterial tree
+OPCS,L05,Creation of shunt to pulmonary artery from aorta using interposition tube prosthesis
+OPCS,L06,Other connection to pulmonary artery from aorta
+OPCS,D23,Operations on inner ear
+OPCS,D24,Operations on cochlea
+OPCS,D26,Operations on vestibular apparatus
+OPCS,D28,Other operations on ear
+OPCS,E01,Excision of nose
+OPCS,E02,Plastic operations on nose
+OPCS,L46,Other open operations on other visceral branch of abdominal aorta
+OPCS,L47,Transluminal operations on other visceral branch of abdominal aorta
+OPCS,L48,Emergency replacement of aneurysmal iliac artery
+OPCS,L49,Other replacement of aneurysmal iliac artery
+OPCS,D02,Extirpation of lesion of external ear
+OPCS,D03,Plastic operations on external ear
+OPCS,D04,Drainage of external ear
+OPCS,D05,Attachment of auricular prosthesis
+OPCS,D06,Other operations on external ear
+OPCS,L29,Reconstruction of carotid artery
+OPCS,L30,Other open operations on carotid artery
+OPCS,L31,Transluminal operations on carotid artery
+OPCS,L33,Operations on aneurysm of cerebral artery
+OPCS,E51,Diagnostic endoscopic examination of lower respiratory tract using rigid bronchoscope
+OPCS,E52,Other operations on bronchus
+OPCS,E53,Transplantation of lung
+OPCS,E54,Excision of lung
+OPCS,E55,Open extirpation of lesion of lung
+OPCS,L58,Other emergency bypass of femoral artery
+OPCS,L59,Other bypass of femoral artery
+OPCS,L60,Reconstruction of femoral artery
+OPCS,L62,Other open operations on femoral artery
+OPCS,E14,Operations on frontal sinus
+OPCS,E15,Operations on sphenoid sinus
+OPCS,E16,Other operations on frontal sinus
+OPCS,E17,Operations on unspecified nasal sinus
+OPCS,E19,Excision of pharynx
+OPCS,L72,Diagnostic transluminal operations on other artery
+OPCS,L73,Mechanical embolic protection of blood vessel
+OPCS,L74,Arteriovenous shunt
+OPCS,L75,Other arteriovenous operations
+OPCS,E35,Other therapeutic endoscopic operations on larynx
+OPCS,E36,Diagnostic endoscopic examination of larynx
+OPCS,E37,Diagnostic microendoscopic examination of larynx
+OPCS,E38,Other operations on larynx
+OPCS,E39,Partial excision of trachea
+OPCS,E40,Plastic operations on trachea
+OPCS,O02,Transluminal balloon assisted coil embolisation of aneurysm of artery
+OPCS,O03,Transluminal stent assisted coil embolisation of aneurysm of artery
+OPCS,O04,Other transluminal embolisation of aneurysm of artery
+OPCS,O05,Operations on dural arteriovenous fistula
+OPCS,O15,Operations on blood vessel
+OPCS,O20,Endovascular placement of stent graft
+OPCS,C48,Removal of foreign body from cornea
+OPCS,C49,Incision of cornea
+OPCS,C51,Other operations on cornea
+OPCS,C52,Excision of sclera
+OPCS,C53,Extirpation of lesion of sclera
+OPCS,C54,Buckling operations for attachment of retina
+OPCS,L87,Other operations on varicose vein of leg
+OPCS,L88,Transluminal operations on varicose vein of leg
+OPCS,L89,Other endovascular placement of stent
+OPCS,L90,Open removal of thrombus from vein
+OPCS,L91,Other vein related operations
+OPCS,F15,Other orthodontic operations
+OPCS,F16,Other operations on tooth
+OPCS,F17,Operations on teeth using dental crown or bridge
+OPCS,F18,Excision of dental lesion of jaw
+OPCS,F20,Operations on gingiva
+OPCS,M30,Diagnostic endoscopic examination of ureter
+OPCS,M31,Extracorporeal fragmentation of calculus of ureter
+OPCS,M32,Operations on ureteric orifice
+OPCS,M33,Percutaneous ureteric stent procedures
+OPCS,E93,Respiratory measurements
+OPCS,E94,Bronchial reaction studies
+OPCS,E95,Tuberculosis support
+OPCS,E97,Respiratory education
+OPCS,E98,Smoking cessation therapy
+OPCS,M12,Percutaneous studies of upper urinary tract
+OPCS,M13,Percutaneous puncture of kidney
+OPCS,M14,Extracorporeal fragmentation of calculus of kidney
+OPCS,M15,Operations on kidney along nephrostomy tube track
+OPCS,M16,Other operations on kidney
+OPCS,M17,Interventions associated with transplantation of kidney
+OPCS,F42,Other operations on mouth
+OPCS,F43,Other examinations of mouth
+OPCS,F44,Excision of salivary gland
+OPCS,F45,Extirpation of lesion of salivary gland
+OPCS,F46,Incision of salivary gland
+OPCS,F48,Other operations on salivary gland
+OPCS,M65,Endoscopic resection of outlet of male bladder
+OPCS,M66,Other therapeutic endoscopic operations on outlet of male bladder
+OPCS,M67,Other therapeutic endoscopic operations on prostate
+OPCS,M68,Endoscopic insertion of prosthesis into prostate
+OPCS,M70,Other operations on outlet of male bladder
+OPCS,G19,Diagnostic endoscopic examination of oesophagus using rigid oesophagoscope
+OPCS,G20,Therapeutic fibreoptic endoscopic operations on oesophagus
+OPCS,G21,Other operations on oesophagus
+OPCS,G23,Repair of diaphragmatic hernia
+OPCS,G24,Antireflux operations
+OPCS,M48,Operations on bladder
+OPCS,M49,Other operations on bladder
+OPCS,M51,Combined abdominal and vaginal operations to support outlet of female bladder
+OPCS,M52,Abdominal operations to support outlet of female bladder
+OPCS,M53,Vaginal operations to support outlet of female bladder
+OPCS,M54,Open operations on outlet of female bladder
+OPCS,M55,Other open operations on outlet of female bladder
+OPCS,G51,Bypass of duodenum
+OPCS,G52,Operations on ulcer of duodenum
+OPCS,G53,Other open operations on duodenum
+OPCS,G54,Therapeutic endoscopic operations on duodenum
+OPCS,G55,Diagnostic endoscopic examination of duodenum
+OPCS,N03,Other operations on scrotum
+OPCS,N05,Bilateral excision of testes
+OPCS,N06,Other excision of testis
+OPCS,N07,Extirpation of lesion of testis
+OPCS,N08,Bilateral placement of testes in scrotum
+OPCS,N09,Other placement of testis in scrotum
+OPCS,N10,Prosthesis of testis
+OPCS,N11,Operations on hydrocele sac
+OPCS,H36,Other abdominal operations for prolapse of rectum
+OPCS,H37,Other endoscopic extirpation of lesion of sigmoid colon using rigid sigmoidoscope
+OPCS,H40,Operations on rectum through anal sphincter
+OPCS,H41,Other operations on rectum through anus
+OPCS,H42,Perineal operations for prolapse of rectum
+OPCS,Q05,Other operations on cervix uteri
+OPCS,Q07,Abdominal excision of uterus
+OPCS,Q08,Vaginal excision of uterus
+OPCS,Q09,Other open operations on uterus
+OPCS,Q10,Curettage of uterus
+OPCS,Q11,Other evacuation of contents of uterus
+OPCS,Q12,Intrauterine contraceptive device
+OPCS,G34,Artificial opening into stomach
+OPCS,G35,Operations on ulcer of stomach
+OPCS,G36,Other repair of stomach
+OPCS,G38,Other open operations on stomach
+OPCS,G40,Incision of pylorus
+OPCS,G41,Other operations on pylorus
+OPCS,P20,Extirpation of lesion of vagina
+OPCS,P21,Plastic operations on vagina
+OPCS,P22,Repair of prolapse of vagina and amputation of cervix uteri
+OPCS,P23,Other repair of prolapse of vagina
+OPCS,P24,Repair of vault of vagina
+OPCS,G06,Attention to connection of oesophagus
+OPCS,G07,Repair of oesophagus
+OPCS,G08,Artificial opening into oesophagus
+OPCS,G09,Incision of oesophagus
+OPCS,N29,Prosthesis of penis
+OPCS,N30,Operations on prepuce
+OPCS,N32,Other operations on penis
+OPCS,N34,Other operations on male genital tract
+OPCS,N35,Non-operative interventions to male genitalia
+OPCS,P01,Operations on clitoris
+OPCS,P03,Operations on Bartholin gland
+OPCS,H57,Other operations on the anal sphincter to control continence
+OPCS,H58,Drainage through perineal region
+OPCS,H59,Excision of pilonidal sinus
+OPCS,H60,Other operations on pilonidal sinus
+OPCS,H62,Other operations on bowel
+OPCS,Q21,Other introduction of gametes into uterine cavity
+OPCS,Q22,Bilateral excision of adnexa of uterus
+OPCS,Q23,Unilateral excision of adnexa of uterus
+OPCS,Q24,Other excision of adnexa of uterus
+OPCS,Q25,Partial excision of fallopian tube
+OPCS,Q26,Placement of prosthesis in fallopian tube
+OPCS,Q27,Open bilateral occlusion of fallopian tubes
+OPCS,H24,Other therapeutic endoscopic operations on lower bowel using fibreoptic sigmoidoscope
+OPCS,H25,Diagnostic endoscopic examination of lower bowel using fibreoptic sigmoidoscope
+OPCS,H26,Endoscopic extirpation of lesion of sigmoid colon using rigid sigmoidoscope
+OPCS,R07,Therapeutic endoscopic operations for twin to twin transfusion syndrome
+OPCS,R08,Therapeutic percutaneous operations for twin to twin transfusion syndrome
+OPCS,R10,Other operations on amniotic cavity
+OPCS,R12,Operations on gravid uterus
+OPCS,R14,Surgical induction of labour
+OPCS,R15,Other induction of labour
+OPCS,R17,Elective caesarean delivery
+OPCS,R18,Other caesarean delivery
+OPCS,G72,Other connection of ileum
+OPCS,G73,Attention to connection of ileum
+OPCS,G74,Creation of artificial opening into ileum
+OPCS,G75,Attention to artificial opening into ileum
+OPCS,G76,Intra-abdominal manipulation of ileum
+OPCS,Q43,Partial excision of ovary
+OPCS,Q44,Open destruction of lesion of ovary
+OPCS,Q45,Repair of ovary
+OPCS,Q47,Other open operations on ovary
+OPCS,Q48,Oocyte recovery
+OPCS,Q49,Therapeutic endoscopic operations on ovary
+OPCS,Q50,Diagnostic endoscopic examination of ovary
+OPCS,H08,Excision of transverse colon
+OPCS,H09,Excision of left hemicolon
+OPCS,H10,Excision of sigmoid colon
+OPCS,H11,Other excision of colon
+OPCS,R36,Routine obstetric scan
+OPCS,R37,Non-routine obstetric scan for fetal observations
+OPCS,R38,Other non-routine obstetric scan
+OPCS,R40,Other maternal physiological assessments
+OPCS,R42,Obstetric Doppler ultrasound
+OPCS,R43,Ultrasound monitoring
+OPCS,S01,Plastic excision of skin of head or neck
+OPCS,S02,Plastic excision of skin of abdominal wall
+OPCS,J08,Therapeutic endoscopic operations on liver using laparoscope
+OPCS,J09,Diagnostic endoscopic examination of liver using laparoscope
+OPCS,J10,Transluminal operations on blood vessel of liver
+OPCS,J11,Transjugular intrahepatic operations on blood vessel of liver
+OPCS,S12,Phototherapy to skin
+OPCS,S13,Punch biopsy of skin
+OPCS,S14,Shave biopsy of skin
+OPCS,S15,Other biopsy of skin
+OPCS,S17,Distant flap of skin and muscle
+OPCS,S18,Distant flap of skin and fascia
+OPCS,S19,Distant pedicle flap of skin
+OPCS,S20,Other distant flap of skin
+OPCS,S21,Hair bearing flap of skin
+OPCS,S33,Hair bearing graft of skin to scalp
+OPCS,S34,Hair bearing graft of skin to other site
+OPCS,S35,Split autograft of skin
+OPCS,S36,Other autograft of skin
+OPCS,S37,Other graft of skin
+OPCS,S38,Graft of mucosa
+OPCS,S39,Graft of other tissue to skin
+OPCS,S40,Other closure of skin
+OPCS,S41,Suture of skin of head or neck
+OPCS,S42,Suture of skin of other site
+OPCS,S43,Removal of repair material from skin
+OPCS,S44,Removal of other inorganic substance from skin
+OPCS,S45,Removal of other substance from skin
+OPCS,S51,Introduction of destructive substance into subcutaneous tissue
+OPCS,S52,Introduction of therapeutic substance into subcutaneous tissue
+OPCS,S53,Introduction of substance into skin
+OPCS,S54,Exploration of burnt skin of head or neck
+OPCS,S55,Exploration of burnt skin of other site
+OPCS,S56,Exploration of other skin of head or neck
+OPCS,S57,Exploration of other skin of other site
+OPCS,S58,Larvae therapy of skin
+OPCS,S59,Leech therapy of skin
+OPCS,S60,Other operations on skin
+OPCS,J49,Therapeutic operations on bile duct along T tube track
+OPCS,J50,Percutaneous examination of bile duct
+OPCS,J51,Laparoscopic ultrasound examination of bile duct
+OPCS,J52,Other operations on bile duct
+OPCS,J53,Endoscopic ultrasound examination of bile duct
+OPCS,J54,Transplantation of pancreas
+OPCS,J55,Total excision of pancreas
+OPCS,J56,Excision of head of pancreas
+OPCS,J57,Other partial excision of pancreas
+OPCS,J58,Extirpation of lesion of pancreas
+OPCS,J59,Connection of pancreatic duct
+OPCS,T22,Primary repair of femoral hernia
+OPCS,T23,Repair of recurrent femoral hernia
+OPCS,K11,Repair of defect of interventricular septum
+OPCS,K12,Repair of defect of unspecified septum of heart
+OPCS,K13,Transluminal repair of defect of septum
+OPCS,K14,Other open operations on septum of heart
+OPCS,K15,Closed operations on septum of heart
+OPCS,K16,Other therapeutic transluminal operations on septum of heart
+OPCS,K17,Repair of univentricular heart
+OPCS,T38,Operations on mesentery of colon
+OPCS,T39,Operations on posterior peritoneum
+OPCS,T41,Other open operations on peritoneum
+OPCS,J24,Therapeutic percutaneous operations on gall bladder
+OPCS,J25,Diagnostic percutaneous operations on gall bladder
+OPCS,J26,Other operations on gall bladder
+OPCS,J27,Excision of bile duct
+OPCS,J28,Extirpation of lesion of bile duct
+OPCS,S70,Other operations on nail
+OPCS,T01,Partial excision of chest wall
+OPCS,T02,Reconstruction of chest wall
+OPCS,T03,Opening of chest
+OPCS,T05,Other operations on chest wall
+OPCS,T07,Open excision of pleura
+OPCS,T08,Open drainage of pleural cavity
+OPCS,T09,Other open operations on pleura
+OPCS,J68,Other operations on pancreas
+OPCS,J69,Total excision of spleen
+OPCS,J70,Other excision of spleen
+OPCS,J72,Other operations on spleen
+OPCS,J73,Laparoscopic ultrasound examination of pancreas
+OPCS,J74,Endoscopic ultrasound examination of pancreas
+OPCS,J76,Therapeutic percutaneous operations on bile duct
+OPCS,J77,Other transluminal operations on blood vessel of liver
+OPCS,K01,Transplantation of heart and lung
+OPCS,K02,Other transplantation of heart
+OPCS,K04,Repair of tetralogy of Fallot
+OPCS,T61,Other operations on ganglion
+OPCS,T62,Operations on bursa
+OPCS,T64,Transposition of tendon
+OPCS,K23,Other operations of wall of heart
+OPCS,K24,Other operations on ventricles of heart
+OPCS,K25,Plastic repair of mitral valve
+OPCS,K26,Plastic repair of aortic valve
+OPCS,K27,Plastic repair of tricuspid valve
+OPCS,K28,Plastic repair of pulmonary valve
+OPCS,K29,Plastic repair of unspecified valve of heart
+OPCS,K30,Revision of plastic repair of valve of heart
+OPCS,K31,Open incision of valve of heart
+OPCS,T87,Excision or biopsy of lymph node
+OPCS,K65,Catheterisation of heart
+OPCS,K66,Other operations on heart
+OPCS,K67,Excision of pericardium
+OPCS,K68,Drainage of pericardium
+OPCS,K69,Incision of pericardium
+OPCS,K71,Other operations on pericardium
+OPCS,K72,Other cardioverter defibrillator
+OPCS,K73,Other cardiac pacemaker system introduced through vein
+OPCS,K74,Cardiac pacemaker system
+OPCS,K75,Percutaneous transluminal balloon angioplasty and insertion of stent into coronary artery
+OPCS,K76,Transluminal operations on cardiac conduit
+OPCS,K77,Transluminal drainage of pericardium
+OPCS,U10,Diagnostic imaging of heart
+OPCS,L34,Other open operations on cerebral artery
+OPCS,L35,Transluminal operations on cerebral artery
+OPCS,L37,Reconstruction of subclavian artery
+OPCS,L38,Other open operations on subclavian artery
+OPCS,L39,Transluminal operations on subclavian artery
+OPCS,L41,Reconstruction of renal artery
+OPCS,L42,Other open operations on renal artery
+OPCS,L43,Transluminal operations on renal artery
+OPCS,L45,Reconstruction of other visceral branch of abdominal aorta
+OPCS,U26,Diagnostic testing of genitourinary system
+OPCS,U27,Diagnostic application tests on skin
+OPCS,M01,Transplantation of kidney
+OPCS,M02,Total excision of kidney
+OPCS,M03,Partial excision of kidney
+OPCS,M04,Open extirpation of lesion of kidney
+OPCS,M05,Open repair of kidney
+OPCS,M06,Incision of kidney
+OPCS,M08,Other open operations on kidney
+OPCS,M09,Therapeutic endoscopic operations on calculus of kidney
+OPCS,M10,Other therapeutic endoscopic operations on kidney
+OPCS,M11,Diagnostic endoscopic examination of kidney
+OPCS,V01,Plastic repair of cranium
+OPCS,V02,Other plastic repair of cranium
+OPCS,L92,Unblocking of access catheter
+OPCS,L93,Other open operations on vein
+OPCS,L94,Therapeutic transluminal operations on vein
+OPCS,L95,Diagnostic transluminal operations on vein
+OPCS,L96,Percutaneous removal of thrombus from vein
+OPCS,L97,Other operations on blood vessel
+OPCS,L98,Operations on microvascular vessel
+OPCS,L99,Other therapeutic transluminal operations on vein
+OPCS,O01,Transluminal coil embolisation of aneurysm of artery
+OPCS,V18,Distraction osteogenesis of bones of skull
+OPCS,K53,Other incision of heart
+OPCS,K54,Open heart assist operations
+OPCS,K55,Other open operations on heart
+OPCS,K56,Transluminal heart assist operations
+OPCS,K57,Other therapeutic transluminal operations on heart
+OPCS,K58,Diagnostic transluminal operations on heart
+OPCS,K59,Cardioverter defibrillator introduced through the vein
+OPCS,V42,Other correction of deformity of spine
+OPCS,Q28,Other open occlusion of fallopian tube
+OPCS,Q29,Open reversal of female sterilisation
+OPCS,Q30,Other repair of fallopian tube
+OPCS,Q31,Incision of fallopian tube
+OPCS,Q32,Operations on fimbria
+OPCS,Q34,Other open operations on fallopian tube
+OPCS,Q35,Endoscopic bilateral occlusion of fallopian tubes
+OPCS,Q36,Other endoscopic occlusion of fallopian tube
+OPCS,Q37,Endoscopic reversal of female sterilisation
+OPCS,Q38,Other therapeutic endoscopic operations on fallopian tube
+OPCS,Q39,Diagnostic endoscopic examination of fallopian tube
+OPCS,Q41,Other operations on fallopian tube
+OPCS,V30,Revisional excision of cervical intervertebral disc
+OPCS,L76,Endovascular placement of stent
+OPCS,L77,Connection of vena cava or branch of vena cava
+OPCS,L79,Other operations on vena cava
+OPCS,L80,Operations on individual pulmonary veins
+OPCS,L81,Other bypass operations on vein
+OPCS,L82,Repair of valve of vein
+OPCS,L83,Other operations for venous insufficiency
+OPCS,L84,Combined operations on varicose vein of leg
+OPCS,L85,Ligation of varicose vein of leg
+OPCS,L86,Injection into varicose vein of leg
+OPCS,W05,Prosthetic replacement of bone
+OPCS,W06,Total excision of bone
+OPCS,L63,Transluminal operations on femoral artery
+OPCS,L65,Revision of reconstruction of artery
+OPCS,L66,Other therapeutic transluminal operations on artery
+OPCS,L67,Excision of other artery
+OPCS,L68,Repair of other artery
+OPCS,L69,Operations on major systemic to pulmonary collateral arteries
+OPCS,L70,Other open operations on other artery
+OPCS,L71,Therapeutic transluminal operations on other artery
+OPCS,W20,Primary open reduction of fracture of bone and extramedullary fixation
+OPCS,W21,Primary open reduction of intra-articular fracture of bone
+OPCS,L07,Creation of shunt to pulmonary artery from subclavian artery using interposition tube prosthesis
+OPCS,L08,Other connection to pulmonary artery from subclavian artery
+OPCS,L09,Other connection to pulmonary artery
+OPCS,L10,Repair of pulmonary artery
+OPCS,L12,Other open operations on pulmonary artery
+OPCS,L13,Transluminal operations on pulmonary artery
+OPCS,W32,Other graft of bone
+OPCS,W33,Other open operations on bone
+OPCS,W34,Graft of bone marrow
+OPCS,S03,Plastic excision of skin of other site
+OPCS,S04,Other excision of skin
+OPCS,S05,Microscopically controlled excision of lesion of skin
+OPCS,S06,Other excision of lesion of skin
+OPCS,S07,Photodynamic therapy of skin
+OPCS,S08,Curettage of lesion of skin
+OPCS,S09,Photodestruction of lesion of skin
+OPCS,S10,Other destruction of lesion of skin of head or neck
+OPCS,S11,Other destruction of lesion of skin of other site
+OPCS,V58,Primary automated percutaneous mechanical excision of intervertebral disc
+OPCS,N13,Other operations on testis
+OPCS,N15,Operations on epididymis
+OPCS,N17,Excision of vas deferens
+OPCS,N18,Repair of spermatic cord
+OPCS,N19,Operations on varicocele
+OPCS,N20,Other operations on spermatic cord
+OPCS,N22,Operations on seminal vesicle
+OPCS,N24,Operations on male perineum
+OPCS,N26,Amputation of penis
+OPCS,N27,Extirpation of lesion of penis
+OPCS,N28,Plastic operations on penis
+OPCS,W44,Total prosthetic replacement of other joint not using cement
+OPCS,Q13,Introduction of gametes into uterine cavity
+OPCS,Q14,Introduction of abortifacient into uterine cavity
+OPCS,Q15,Introduction of other substance into uterine cavity
+OPCS,Q16,Other vaginal operations on uterus
+OPCS,Q17,Therapeutic endoscopic operations on uterus
+OPCS,Q18,Diagnostic endoscopic examination of uterus
+OPCS,Q19,Plastic operations on uterus
+OPCS,Q20,Other operations on uterus
+OPCS,W55,Prosthetic interposition reconstruction of joint
+OPCS,M71,Other operations on prostate
+OPCS,M72,Excision of urethra
+OPCS,M73,Repair of urethra
+OPCS,M75,Other open operations on urethra
+OPCS,M76,Therapeutic endoscopic operations on urethra
+OPCS,M77,Diagnostic endoscopic examination of urethra
+OPCS,M79,Other operations on urethra
+OPCS,M81,Operations on urethral orifice
+OPCS,M83,Other operations on urinary tract
+OPCS,M85,Diagnostic endoscopic examination of urinary diversion
+OPCS,M86,Therapeutic endoscopic operations on urinary diversion
+OPCS,N01,Extirpation of scrotum
+OPCS,L21,Other bypass of segment of aorta
+OPCS,L22,Attention to prosthesis of aorta
+OPCS,L23,Plastic repair of aorta
+OPCS,L25,Other open operations on aorta
+OPCS,L26,Transluminal operations on aorta
+OPCS,L27,Transluminal insertion of stent graft for aneurysmal segment of aorta
+OPCS,L28,Transluminal operations on aneurysmal segment of aorta
+OPCS,O21,Total prosthetic replacement of elbow joint using cement
+OPCS,K38,Other operations on structure adjacent to valve of heart
+OPCS,K40,Saphenous vein graft replacement of coronary artery
+OPCS,K41,Other autograft replacement of coronary artery
+OPCS,K42,Allograft replacement of coronary artery
+OPCS,K43,Prosthetic replacement of coronary artery
+OPCS,K44,Other replacement of coronary artery
+OPCS,K45,Connection of thoracic artery to coronary artery
+OPCS,K46,Other bypass of coronary artery
+OPCS,W97,Total prosthetic replacement of shoulder joint not using cement
+OPCS,M34,Total excision of bladder
+OPCS,M35,Partial excision of bladder
+OPCS,M36,Enlargement of bladder
+OPCS,M37,Other repair of bladder
+OPCS,M38,Open drainage of bladder
+OPCS,M39,Other open operations on contents of bladder
+OPCS,M41,Other open operations on bladder
+OPCS,M42,Endoscopic extirpation of lesion of bladder
+OPCS,M43,Endoscopic operations to increase capacity of bladder
+OPCS,M44,Other therapeutic endoscopic operations on bladder
+OPCS,M45,Diagnostic endoscopic examination of bladder
+OPCS,M47,Urethral catheterisation of bladder
+OPCS,W83,Therapeutic endoscopic operations on other articular cartilage
+OPCS,L50,Other emergency bypass of iliac artery
+OPCS,L51,Other bypass of iliac artery
+OPCS,L52,Reconstruction of iliac artery
+OPCS,L53,Other open operations on iliac artery
+OPCS,L54,Transluminal operations on iliac artery
+OPCS,L56,Emergency replacement of aneurysmal femoral artery
+OPCS,L57,Other replacement of aneurysmal femoral artery
+OPCS,X07,Amputation of arm
+OPCS,X08,Amputation of hand
+OPCS,X09,Amputation of leg
+OPCS,Q51,Other operations on ovary
+OPCS,Q52,Operations on broad ligament of uterus
+OPCS,Q54,Operations on other ligament of uterus
+OPCS,Q55,Other examination of female genital tract
+OPCS,Q56,Other operations on female genital tract
+OPCS,Q57,Other operations on other ligament of uterus
+OPCS,R01,Therapeutic endoscopic operations on fetus
+OPCS,R02,Diagnostic endoscopic examination of fetus
+OPCS,R03,Category retired - refer to introduction
+OPCS,R04,Therapeutic percutaneous operations on fetus
+OPCS,R05,Diagnostic percutaneous examination of fetus
+OPCS,R06,Destruction of fetus
+OPCS,X66,Cognitive behavioural therapy
+OPCS,X67,Preparation for external beam radiotherapy
+OPCS,R19,Breech extraction delivery
+OPCS,R20,Other breech delivery
+OPCS,R21,Forceps cephalic delivery
+OPCS,R22,Vacuum delivery
+OPCS,R23,Cephalic vaginal delivery with abnormal presentation of head at delivery without instrument
+OPCS,R24,Normal delivery
+OPCS,R25,Other methods of delivery
+OPCS,R27,Other operations to facilitate delivery
+OPCS,R28,Instrumental removal of products of conception from delivered uterus
+OPCS,R29,Manual removal of products of conception from delivered uterus
+OPCS,R30,Other operations on delivered uterus
+OPCS,R32,Repair of obstetric laceration
+OPCS,R34,Other obstetric operations
+OPCS,X42,Placement of other apparatus for compensation for renal failure
+OPCS,X43,Compensation for liver failure
+OPCS,M56,Therapeutic endoscopic operations on outlet of female bladder
+OPCS,M57,Other vaginal operations to support outlet of female bladder
+OPCS,M58,Other operations on outlet of female bladder
+OPCS,M60,Open operations on outlet of male bladder
+OPCS,M61,Open excision of prostate
+OPCS,M62,Other open operations on prostate
+OPCS,M64,Other open operations on outlet of male bladder
+OPCS,X25,Other correction of congenital deformity of foot
+OPCS,X27,Correction of minor congenital deformity of foot
+OPCS,X28,Intermittent infusion of therapeutic substance
+OPCS,T24,Primary repair of umbilical hernia
+OPCS,T25,Primary repair of incisional hernia
+OPCS,T26,Repair of recurrent incisional hernia
+OPCS,T27,Repair of other hernia of abdominal wall
+OPCS,T28,Other repair of anterior abdominal wall
+OPCS,T29,Operations on umbilicus
+OPCS,T30,Opening of abdomen
+OPCS,T31,Other operations on anterior abdominal wall
+OPCS,T32,Reconstruction of anterior abdominal wall
+OPCS,T33,Open extirpation of lesion of peritoneum
+OPCS,T42,Therapeutic endoscopic operations on peritoneum
+OPCS,T43,Diagnostic endoscopic examination of peritoneum
+OPCS,T45,Image controlled operations on abdominal cavity
+OPCS,T46,Other drainage of peritoneal cavity
+OPCS,T48,Other operations on peritoneum
+OPCS,T50,Transplantation of fascia
+OPCS,T51,Excision of fascia of abdomen
+OPCS,T52,Excision of other fascia
+OPCS,T53,Extirpation of lesion of fascia
+OPCS,T54,Division of fascia
+OPCS,T55,Release of fascia
+OPCS,T56,Other excision of other fascia
+OPCS,U11,Diagnostic imaging of vascular system
+OPCS,U12,Diagnostic imaging of genitourinary system
+OPCS,U13,Diagnostic imaging of musculoskeletal system
+OPCS,U14,Nuclear bone scan
+OPCS,U15,Diagnostic imaging of respiratory system
+OPCS,U16,Diagnostic imaging of hepatobiliary system
+OPCS,U17,Diagnostic imaging of digestive tract
+OPCS,U18,Diagnostic imaging of breast
+OPCS,U19,Diagnostic electrocardiography
+OPCS,U20,Diagnostic echocardiography
+OPCS,U21,Diagnostic imaging procedures
+OPCS,M18,Excision of ureter
+OPCS,M19,Urinary diversion
+OPCS,M20,Replantation of ureter
+OPCS,M21,Other connection of ureter
+OPCS,M22,Repair of ureter
+OPCS,M23,Incision of ureter
+OPCS,M25,Other open operations on ureter
+OPCS,M26,Therapeutic nephroscopic operations on ureter
+OPCS,M27,Therapeutic ureteroscopic operations on ureter
+OPCS,M28,Other endoscopic removal of calculus from ureter
+OPCS,M29,Other therapeutic endoscopic operations on ureter
+OPCS,X90,High cost haematology and nutrition drugs
+OPCS,T65,Excision of tendon
+OPCS,T67,Primary repair of tendon
+OPCS,T68,Secondary repair of tendon
+OPCS,T69,Freeing of tendon
+OPCS,T70,Adjustment to length of tendon
+OPCS,T71,Excision of sheath of tendon
+OPCS,T72,Other operations on sheath of tendon
+OPCS,T74,Other operations on tendon
+OPCS,T76,Transplantation of muscle
+OPCS,T77,Excision of muscle
+OPCS,T79,Repair of muscle
+OPCS,T80,Release of contracture of muscle
+OPCS,U28,Other diagnostic tests on skin
+OPCS,U29,Diagnostic endocrinology
+OPCS,U30,Autonomic cardiovascular testing
+OPCS,U31,Pacemaker testing
+OPCS,U32,Diagnostic blood tests
+OPCS,U33,Other diagnostic tests
+OPCS,U34,Other diagnostic electrocardiography
+OPCS,U35,Other diagnostic imaging of vascular system
+OPCS,U36,Other diagnostic imaging procedures
+OPCS,U37,Other diagnostic imaging of genitourinary system
+OPCS,U40,Diagnostic tests on skin
+OPCS,U50,Rehabilitation for musculoskeletal disorders
+OPCS,V43,Extirpation of lesion of spine
+OPCS,V44,Decompression of fracture of spine
+OPCS,V45,Other reduction of fracture of spine
+OPCS,V46,Fixation of fracture of spine
+OPCS,V47,Biopsy of spine
+OPCS,V48,Denervation of spinal facet joint of vertebra
+OPCS,V49,Exploration of spine
+OPCS,V50,Manipulation of spine
+OPCS,V51,Other primary excision of lumbar intervertebral disc
+OPCS,V52,Other operations on intervertebral disc
+OPCS,V54,Other operations on spine
+OPCS,W22,Other primary open reduction of fracture of bone
+OPCS,W23,Secondary open reduction of fracture of bone
+OPCS,W24,Closed reduction of fracture of bone and internal fixation
+OPCS,W25,Closed reduction of fracture of bone and external fixation
+OPCS,W26,Other closed reduction of fracture of bone
+OPCS,W27,Fixation of epiphysis
+OPCS,W28,Other internal fixation of bone
+OPCS,W29,Skeletal traction of bone
+OPCS,W30,Other external fixation of bone
+OPCS,W31,Other autograft of bone
+OPCS,W35,Therapeutic puncture of bone
+OPCS,W36,Diagnostic puncture of bone
+OPCS,W37,Total prosthetic replacement of hip joint using cement
+OPCS,W38,Total prosthetic replacement of hip joint not using cement
+OPCS,W39,Other total prosthetic replacement of hip joint
+OPCS,W40,Total prosthetic replacement of knee joint using cement
+OPCS,W41,Total prosthetic replacement of knee joint not using cement
+OPCS,W42,Other total prosthetic replacement of knee joint
+OPCS,T34,Open drainage of peritoneum
+OPCS,T36,Operations on omentum
+OPCS,T37,Operations on mesentery of small intestine
+OPCS,Y11,Other destruction of organ NOC
+OPCS,Y12,Chemical destruction of lesion of organ NOC
+OPCS,Y13,Other destruction of lesion of organ NOC
+OPCS,Y14,Placement of stent in organ NOC
+OPCS,Y15,Attention to stent in organ NOC
+OPCS,Y16,Connection of organ NOC
+OPCS,Y17,Destruction of lesion of organ NOC
+OPCS,Y18,Release of organ NOC
+OPCS,Y20,Biopsy of organ NOC
+OPCS,X10,Amputation of foot
+OPCS,X11,Amputation of toe
+OPCS,X12,Operations on amputation stump
+OPCS,X14,Clearance of pelvis
+OPCS,X15,Operations for sexual transformation
+OPCS,X16,Operations for disorders of sex development
+OPCS,X17,Separation of conjoined twins
+OPCS,X19,Correction of congenital deformity of shoulder or upper arm
+OPCS,X20,Correction of congenital deformity of forearm
+OPCS,X21,Correction of congenital deformity of hand
+OPCS,X22,Correction of congenital deformity of hip
+OPCS,P05,Excision of vulva
+OPCS,P06,Extirpation of lesion of vulva
+OPCS,P07,Repair of vulva
+OPCS,P09,Other operations on vulva
+OPCS,P11,Extirpation of lesion of female perineum
+OPCS,P13,Other operations on female perineum
+OPCS,P14,Incision of introitus of vagina
+OPCS,P15,Other operations on introitus of vagina
+OPCS,P17,Excision of vagina
+OPCS,P18,Other obliteration of vagina
+OPCS,P19,Excision of band of vagina
+OPCS,Y33,Puncture of organ NOC
+OPCS,P25,Other repair of vagina
+OPCS,P26,Introduction of supporting pessary into vagina
+OPCS,P27,Exploration of vagina
+OPCS,P28,Repair of prolapse of vagina
+OPCS,P29,Other operations on vagina
+OPCS,P30,Other repair of vault of vagina
+OPCS,P31,Operations on pouch of Douglas
+OPCS,P32,Other plastic operations on vagina
+OPCS,Q01,Excision of cervix uteri
+OPCS,Q02,Destruction of lesion of cervix uteri
+OPCS,Q03,Biopsy of cervix uteri
+OPCS,Y53,Approach to organ under image control
+OPCS,W98,Total prosthetic replacement of shoulder joint
+OPCS,W99,Graft of cord blood stem cells to bone marrow
+OPCS,O06,Hybrid prosthetic replacement of shoulder joint using cemented humeral component
+OPCS,O07,Hybrid prosthetic replacement of shoulder joint using cemented glenoid component
+OPCS,O08,Hybrid prosthetic replacement of shoulder joint using cement
+OPCS,O09,Placement of bone prosthesis
+OPCS,O10,Complex reconstruction of shoulder
+OPCS,O17,Secondary closed reduction of fracture of bone and internal fixation
+OPCS,W07,Excision of ectopic bone
+OPCS,W08,Other excision of bone
+OPCS,W09,Extirpation of lesion of bone
+OPCS,W10,Open surgical fracture of bone
+OPCS,W11,Other surgical fracture of bone
+OPCS,W12,Angulation periarticular division of bone
+OPCS,W13,Other periarticular division of bone
+OPCS,W14,Diaphyseal division of bone
+OPCS,W15,Division of bone of foot
+OPCS,W16,Other division of bone
+OPCS,S22,Sensory flap of skin
+OPCS,S23,Flap operations to relax contracture of skin
+OPCS,S24,Local flap of skin and muscle
+OPCS,S25,Local flap of skin and fascia
+OPCS,S26,Local subcutaneous pedicle flap of skin
+OPCS,S27,Other local flap of skin
+OPCS,S28,Flap of mucosa
+OPCS,S30,Other operations on flap of skin to head or neck
+OPCS,S31,Other operations on flap of skin to other site
+OPCS,Y69,Harvest of other tissue
+OPCS,Y70,Early operations NOC
+OPCS,O22,Total prosthetic replacement of elbow joint not using cement
+OPCS,O23,Total prosthetic replacement of elbow joint
+OPCS,O24,Prosthetic replacement of head of radius using cement
+OPCS,O25,Prosthetic replacement of head of radius not using cement
+OPCS,O26,Other prosthetic replacement of head of radius
+OPCS,O27,Other stabilising operations on joint
+OPCS,O29,Excision of bone
+OPCS,O32,Total prosthetic replacement of ankle joint
+OPCS,X01,Replantation of upper limb
+OPCS,X02,Replantation of lower limb
+OPCS,T57,Other operations on fascia
+OPCS,T59,Excision of ganglion
+OPCS,T60,Re-excision of ganglion
+OPCS,Y92,Support for preparation for radiotherapy
+OPCS,Y93,Gallium-67 imaging
+OPCS,Y94,Radiopharmaceutical imaging
+OPCS,Y95,Gestational age
+OPCS,Y96,In vitro fertilisation
+OPCS,Y97,Radiology with contrast
+OPCS,Y98,Radiology procedures
+OPCS,Y99,Donor status
+OPCS,Z01,Tissue of brain
+OPCS,U22,Neuropsychology tests
+OPCS,U23,Nuclear medicine haematological tests
+OPCS,U24,Diagnostic audiology
+OPCS,U25,Breath tests
+OPCS,Z12,Other nerve
+OPCS,Z13,Endocrine gland of neck
+OPCS,Z14,Other endocrine gland
+OPCS,Z15,Breast
+OPCS,Z16,External structure of eye
+OPCS,Z17,Muscle of eye
+OPCS,Z18,Anterior chamber of eye
+OPCS,Z19,Other part of eye
+OPCS,V03,Opening of cranium
+OPCS,V04,Reshaping of cranium
+OPCS,V05,Other operations on cranium
+OPCS,V06,Excision of maxilla
+OPCS,V07,Excision of bone of face
+OPCS,V08,Reduction of fracture of maxilla
+OPCS,V09,Reduction of fracture of other bone of face
+OPCS,V10,Division of bone of face
+OPCS,V11,Fixation of bone of face
+OPCS,V12,Operations on bones of skull
+OPCS,V13,Other operations on bone of face
+OPCS,W45,Other total prosthetic replacement of other joint
+OPCS,W46,Prosthetic replacement of head of femur using cement
+OPCS,W47,Prosthetic replacement of head of femur not using cement
+OPCS,W48,Other prosthetic replacement of head of femur
+OPCS,W49,Prosthetic replacement of head of humerus using cement
+OPCS,W50,Prosthetic replacement of head of humerus not using cement
+OPCS,W51,Other prosthetic replacement of head of humerus
+OPCS,W52,Prosthetic replacement of articulation of other bone using cement
+OPCS,Z33,Other part of heart
+OPCS,Z34,Aorta
+OPCS,Z35,Cerebral artery
+OPCS,Z36,Branch of thoracic aorta
+OPCS,Z37,Lateral branch of abdominal aorta
+OPCS,Z38,Terminal branch of aorta
+OPCS,Z39,Vein
+OPCS,Z40,Other vascular tissue
+OPCS,Z41,Upper urinary tract
+OPCS,Z42,Lower urinary tract
+OPCS,W43,Total prosthetic replacement of other joint using cement
+OPCS,Z54,Muscle of shoulder or upper arm
+OPCS,Z55,Muscle of forearm
+OPCS,Z56,Muscle of hand
+OPCS,Z57,Muscle of hip or thigh
+OPCS,Z58,Muscle of lower leg
+OPCS,Z59,Muscle of foot
+OPCS,Z60,Other muscle
+OPCS,Z61,Lymph node
+OPCS,Z62,Other soft tissue
+OPCS,Z63,Bone of cranium
+OPCS,J41,Other therapeutic endoscopic retrograde operations on bile duct
+OPCS,J42,Therapeutic endoscopic retrograde operations on pancreatic duct
+OPCS,J43,Diagnostic endoscopic retrograde examination of bile duct and pancreatic duct
+OPCS,Z75,Bone of pelvis
+OPCS,Z76,Femur
+OPCS,Z77,Tibia
+OPCS,Z78,Other bone of lower leg
+OPCS,Z79,Bone of tarsus
+OPCS,Z80,Other bone of foot
+OPCS,Z81,Joint of shoulder girdle or arm
+OPCS,Z82,Joint of wrist or hand
+OPCS,X23,Correction of congenital deformity of leg
+OPCS,X24,Primary correction of congenital deformity of foot
+OPCS,Z95,Other branch of thoracic aorta
+OPCS,Z96,Other lateral branch of abdominal aorta
+OPCS,Z97,Other terminal branch of aorta
+OPCS,Z98,Other veins of lower limb
+OPCS,Z99,Intervertebral disc
+OPCS,O11,Other upper digestive tract
+OPCS,O12,Branch of external carotid artery
+OPCS,O13,Other leg region
+OPCS,O14,Other lymph node
+OPCS,O16,Body region
+OPCS,O28,Other cerebral artery
+OPCS,O30,Other large intestine
+OPCS,V55,Levels of spine
+OPCS,V56,Primary foraminoplasty of spine
+OPCS,V57,Revisional formaminoplasty of spine
+OPCS,Y21,Cytology of organ NOC
+OPCS,Y22,Drainage of organ NOC
+OPCS,Y24,Microvascular repair of organ NOC
+OPCS,Y25,Suture of organ NOC
+OPCS,Y26,Other repair of organ NOC
+OPCS,Y27,Graft to organ NOC
+OPCS,Y29,Removal of foreign body from organ NOC
+OPCS,Y30,Incision of organ NOC
+OPCS,Y31,Exploration of organ NOC
+OPCS,Y32,Re-exploration of organ NOC
+OPCS,W17,Other reconstruction of bone
+OPCS,W18,Drainage of bone
+OPCS,W19,Primary open reduction of fracture of bone and intramedullary fixation
+OPCS,X03,Replantation of other organ
+OPCS,X04,Transplantation between systems
+OPCS,X05,Implantation of prosthesis for limb
+OPCS,X44,Administration of vaccine
+OPCS,X45,Donation of organ
+OPCS,X46,Donation of other tissue
+OPCS,X47,Other exchange blood transfusion
+OPCS,X48,Immobilisation using plaster cast
+OPCS,X49,Other external support of limb
+OPCS,X50,External resuscitation
+OPCS,X51,Change of body temperature
+OPCS,X52,Oxygen therapy
+OPCS,X53,Extirpation of unspecified organ
+OPCS,X55,Other operations on unspecified organ
+OPCS,X56,Intubation of trachea
+OPCS,X58,Artificial support for body system
+OPCS,X59,Anaesthetic without surgery
+OPCS,X60,Rehabilitation assessment
+OPCS,Z02,Ventricle of brain
+OPCS,Z03,Upper cranial nerve
+OPCS,Z04,Other cranial nerve
+OPCS,Z05,Meninges of brain
+OPCS,Z06,Spinal cord
+OPCS,Z07,Spinal nerve root
+OPCS,Z08,Brachial plexus
+OPCS,Z09,Peripheral nerve of arm
+OPCS,Z10,Lumbar plexus
+OPCS,Z11,Sacral plexus
+OPCS,V31,Primary excision of thoracic intervertebral disc
+OPCS,V32,Revisional excision of thoracic intervertebral disc
+OPCS,V33,Primary excision of lumbar intervertebral disc
+OPCS,V34,Revisional excision of lumbar intervertebral disc
+OPCS,V35,Excision of unspecified intervertebral disc
+OPCS,V36,Prosthetic replacement of intervertebral disc
+OPCS,V37,Primary fusion of joint of cervical spine
+OPCS,V38,Primary fusion of other joint of spine
+OPCS,V39,Revisional fusion of joint of spine
+OPCS,Z43,Male genital organ
+OPCS,Z44,Vagina
+OPCS,Z45,Uterus
+OPCS,Z46,Other female genital tract
+OPCS,Z47,Skin of face
+OPCS,Z48,Skin of other part of head or neck
+OPCS,Z49,Skin of trunk
+OPCS,Z50,Skin of other site
+OPCS,Z51,Nail
+OPCS,Z52,Chest wall
+OPCS,Z53,Abdominal wall
+OPCS,Z20,Outer ear
+OPCS,Z21,Other part of ear
+OPCS,Z22,Nose
+OPCS,Z23,Nasal sinus
+OPCS,Z24,Other respiratory tract
+OPCS,Z25,Mouth
+OPCS,Z26,Salivary apparatus
+OPCS,Z27,Upper digestive tract
+OPCS,Z28,Large intestine
+OPCS,Z29,Other part of bowel
+OPCS,Z30,Biliary tract
+OPCS,Z31,Other abdominal organ
+OPCS,Z32,Valve of heart
+OPCS,X68,Preparation for brachytherapy
+OPCS,X70,Procurement of drugs for chemotherapy for neoplasm in Bands 1-5
+OPCS,X71,Procurement of drugs for chemotherapy for neoplasm in Bands 6-10
+OPCS,X72,Delivery of chemotherapy for neoplasm
+OPCS,X73,Delivery of oral chemotherapy for neoplasm
+OPCS,X74,Other chemotherapy drugs
+OPCS,X81,High cost gastrointestinal drugs
+OPCS,X82,High cost hypertension drugs
+OPCS,X83,High cost other cardiovascular drugs
+OPCS,X84,High cost respiratory drugs
+OPCS,X85,High cost neurology drugs
+OPCS,X86,High cost anti-infective drugs
+OPCS,Y35,Introduction of removable radioactive material into organ NOC
+OPCS,Y36,Introduction of non-removable material into organ NOC
+OPCS,Y37,Introduction of other substance into organ NOC
+OPCS,Y38,Injection of therapeutic substance into organ NOC
+OPCS,Y39,Injection of other substance into organ NOC
+OPCS,Y40,Dilation of organ NOC
+OPCS,Y41,Examination of organ NOC
+OPCS,Y42,Manipulation of organ NOC
+OPCS,Y44,Other methods of operation on organ NOC
+OPCS,Y46,Open approach to contents of cranium
+OPCS,Y47,Burrhole approach to contents of cranium
+OPCS,Y48,Approach to spine through back
+OPCS,T88,Drainage of lesion of lymph node
+OPCS,T89,Operations on lymphatic duct
+OPCS,T90,Contrast radiology of lymphatic tissue
+OPCS,T91,Operations on sentinel lymph node
+OPCS,T92,Other operations on lymphatic tissue
+OPCS,T94,Operations on branchial cleft
+OPCS,T96,Other operations on soft tissue
+OPCS,T97,Repair of recurrent umbilical hernia
+OPCS,T98,Repair of recurrent other hernia of abdominal wall
+OPCS,U01,Diagnostic imaging of whole body
+OPCS,U04,Diagnostic imaging of mouth
+OPCS,U05,Diagnostic imaging of central nervous system
+OPCS,W84,Therapeutic endoscopic operations on other joint structure
+OPCS,W85,Therapeutic endoscopic operations on cavity of knee joint
+OPCS,W86,Therapeutic endoscopic operations on cavity of other joint
+OPCS,W87,Diagnostic endoscopic examination of knee joint
+OPCS,W88,Diagnostic endoscopic examination of other joint
+OPCS,W89,Other therapeutic endoscopic operations on other articular cartilage
+OPCS,W90,Puncture of joint
+OPCS,W91,Other manipulation of joint
+OPCS,W92,Other operations on joint
+OPCS,W93,Hybrid prosthetic replacement of hip joint using cemented acetabular component
+OPCS,W94,Hybrid prosthetic replacement of hip joint using cemented femoral component
+OPCS,Y54,Harvest of nerve
+OPCS,Y55,Harvest of random pattern flap of skin from limb
+OPCS,Y56,Harvest of random pattern flap of skin from other site
+OPCS,Y57,Harvest of axial pattern flap of skin
+OPCS,Y58,Harvest of skin for graft
+OPCS,Y59,Harvest of flap of skin and fascia
+OPCS,Y60,Other harvest of fascia
+OPCS,Y61,Harvest of flap of skin and muscle of trunk
+OPCS,Y62,Harvest of flap of skin and muscle of other site
+OPCS,Y63,Harvest of flap of muscle of trunk
+OPCS,O18,Hybrid prosthetic replacement of knee joint using cement
+OPCS,O19,Other therapeutic endoscopic operations on other joint structure
+OPCS,V59,Revisional automated percutaneous mechanical excision of intervertebral disc
+OPCS,V60,Primary percutaneous decompression using coblation to intervertebral disc
+OPCS,V61,Revisional percutaneous decompression using coblation to intervertebral disc
+OPCS,V62,Primary percutaneous intradiscal radiofrequency thermocoagulation to intervertebral disc
+OPCS,V63,Revisional percutaneous intradiscal radiofrequency thermocoagulation to intervertebral disc
+OPCS,V66,Other revisional fusion of joint of spine
+OPCS,V67,Other primary decompression operations on lumbar spine
+OPCS,V68,Other revisional decompression operations on lumbar spine
+OPCS,W01,Complex reconstruction of thumb
+OPCS,W02,Other complex reconstruction of hand
+OPCS,W03,Complex reconstruction of forefoot
+OPCS,V19,Other operations on mandible
+OPCS,V20,Reconstruction of temporomandibular joint
+OPCS,V21,Other operations on temporomandibular joint
+OPCS,V22,Primary decompression operations on cervical spine
+OPCS,V23,Revisional decompression operations on cervical spine
+OPCS,V24,Decompression operations on thoracic spine
+OPCS,V25,Primary decompression operations on lumbar spine
+OPCS,V26,Revisional decompression operations on lumbar spine
+OPCS,V14,Excision of mandible
+OPCS,V15,Reduction of fracture of mandible
+OPCS,V16,Division of mandible
+OPCS,V17,Fixation of mandible
+OPCS,T81,Biopsy of muscle
+OPCS,T83,Other operations on muscle
+OPCS,T85,Block dissection of lymph nodes
+OPCS,T86,Sampling of lymph nodes
+OPCS,Y71,Late operations NOC
+OPCS,Y73,Facilitating operations NOC
+OPCS,Y74,Minimal access to thoracic cavity
+OPCS,Y75,Minimal access to abdominal cavity
+OPCS,Y76,Minimal access to other body cavity
+OPCS,Y78,Arteriotomy approach to organ under image control
+OPCS,Y79,Approach to organ through artery
+OPCS,Y80,General anaesthetic
+OPCS,Y81,Spinal anaesthetic
+OPCS,Y82,Local anaesthetic
+OPCS,W53,Prosthetic replacement of articulation of other bone not using cement
+OPCS,W54,Other prosthetic replacement of articulation of other bone
+OPCS,W68,Primary reduction of injury to growth plate
+OPCS,W69,Open operations on synovial membrane of joint
+OPCS,W70,Open operations on meniscus of knee joint
+OPCS,W71,Other open operations on intra-articular structure
+OPCS,W72,Prosthetic replacement of ligament
+OPCS,W73,Prosthetic reinforcement of ligament
+OPCS,W74,Other reconstruction of ligament
+OPCS,W75,Other open repair of ligament
+OPCS,W76,Other operations on ligament
+OPCS,W77,Stabilising operations on joint
+OPCS,W78,Release of contracture of joint
+OPCS,U51,Rehabilitation for neurological disorders
+OPCS,U52,Rehabilitation for psychiatric disorders
+OPCS,U53,Rehabilitation for trauma and reconstructive surgery
+OPCS,U54,Rehabilitation for other disorders
+OPCS,Z64,Bone of face
+OPCS,Z65,Jaw
+OPCS,Z66,Vertebra
+OPCS,Z67,Intervertebral joint
+OPCS,Z68,Bone of shoulder girdle
+OPCS,Z69,Humerus
+OPCS,Z70,Radius
+OPCS,Z71,Ulna
+OPCS,Z72,Other bone of arm or wrist
+OPCS,Z73,Other bone of hand
+OPCS,Z74,Rib cage
+OPCS,O31,Other arm region
+OPCS,O33,Bone of skull
+OPCS,U06,Diagnostic imaging of face and neck
+OPCS,U07,Diagnostic imaging of chest
+OPCS,U08,Diagnostic imaging of abdomen
+OPCS,U09,Diagnostic imaging of pelvis
+OPCS,Z83,Joint of finger
+OPCS,Z84,Joint of pelvis or upper leg
+OPCS,Z85,Joint of lower leg or tarsus
+OPCS,Z86,Other joint of foot
+OPCS,Z87,Other part of musculoskeletal system
+OPCS,Z88,Respiratory tract
+OPCS,Z89,Arm region
+OPCS,Z90,Leg region
+OPCS,Z91,Other vein of upper body
+OPCS,Z92,Other region of body
+OPCS,Z93,Other veins of pelvis
+OPCS,Z94,Laterality of operation
+OPCS,X87,High cost endocrinology drugs
+OPCS,X88,High cost reproductive and urinary tract drugs
+OPCS,X89,High cost immunosuppressant drugs
+OPCS,V40,Stabilisation of spine
+OPCS,V41,Instrumental correction of deformity of spine
+OPCS,X61,Complementary therapy
+OPCS,X62,Assessment
+OPCS,X63,Category retired - refer to introduction
+OPCS,X64,Category retired - refer to introduction
+OPCS,X65,Radiotherapy delivery
+OPCS,Y49,Approach through thoracic cavity
+OPCS,Y50,Approach through abdominal cavity
+OPCS,Y51,Approach to organ through artificial opening into gastrointestinal tract
+OPCS,Y52,Approach to organ through other opening
+OPCS,Y64,Harvest of flap of muscle of other site
+OPCS,Y65,Harvest of tendon
+OPCS,Y66,Harvest of bone
+OPCS,Y67,Harvest of other multiple tissue
+OPCS,X29,Continuous Infusion of therapeutic substance
+OPCS,X30,Injection of therapeutic substance
+OPCS,X31,Injection of radiocontrast material
+OPCS,X32,Exchange blood transfusion
+OPCS,X33,Other blood transfusion
+OPCS,X34,Other intravenous transfusion
+OPCS,X35,Other intravenous injection
+OPCS,X36,Blood withdrawal
+OPCS,X37,Intramuscular injection
+OPCS,X38,Subcutaneous injection
+OPCS,X39,Other route of administration of therapeutic substance
+OPCS,Y84,Other anaesthetic
+OPCS,Y89,Brachytherapy
+OPCS,Y90,Other non-operations
+OPCS,Y91,External beam radiotherapy
+OPCS,W79,Soft tissue operations on joint of toe
+OPCS,W80,Debridement and irrigation of joint
+OPCS,W81,Other open operations on joint
+OPCS,W82,Therapeutic endoscopic operations on meniscus of knee joint
+OPCS,W56,Other interposition reconstruction of joint
+OPCS,W57,Excision reconstruction of joint
+OPCS,W58,Other reconstruction of joint
+OPCS,W59,Fusion of joint of toe
+OPCS,W60,Fusion of other joint and extra-articular bone graft
+OPCS,W61,Fusion of other joint and other articular bone graft
+OPCS,W62,Other primary fusion of other joint
+OPCS,W63,Revisional fusion of other joint
+OPCS,W64,Conversion to fusion of other joint
+OPCS,W65,Primary open reduction of traumatic dislocation of joint
+OPCS,W66,Primary closed reduction of traumatic dislocation of joint
+OPCS,W04,Complex reconstruction of hindfoot
+OPCS,W95,Hybrid prosthetic replacement of hip joint using cement
+OPCS,W96,Total prosthetic replacement of shoulder joint using cement
+OPCS,V27,Decompression operations on unspecified spine
+OPCS,V28,Insertion of lumbar interspinous process spacer
+OPCS,V29,Primary excision of cervical intervertebral disc
+OPCS,S62,Other operations on subcutaneous tissue
+OPCS,S63,Operations on subcutaneous tissue
+OPCS,S64,Extirpation of nail bed
+OPCS,S66,Other operations on nail bed
+OPCS,S68,Excision of nail
+OPCS,X40,Compensation for renal failure
+OPCS,X41,Placement of ambulatory apparatus for compensation for renal failure
+OPCS,W67,Secondary reduction of traumatic dislocation of joint
+OPCS,X91,High cost metabolic drugs
+OPCS,X92,High cost musculoskeletal drugs
+OPCS,X93,High cost ophthalmology drugs
+OPCS,X94,"High cost ear, nose and throat drugs"
+OPCS,X95,High cost dermatology drugs
+OPCS,X96,High cost immunology drugs
+OPCS,X97,High cost anaesthesia drugs
+OPCS,X98,Other high cost drugs
+OPCS,Y01,Replacement of organ NOC
+OPCS,Y02,Placement of prosthesis in organ NOC
+OPCS,Y03,Attention to prosthesis in organ NOC
+OPCS,Y04,Replantation of organ NOC
+OPCS,Y05,Excision of organ NOC
+OPCS,Y06,Excision of lesion of organ NOC
+OPCS,Y07,Obliteration of cavity of organ NOC
+OPCS,Y08,Laser therapy to organ NOC
+OPCS,Y09,Chemical destruction of organ NOC
+OPCS,Y10,Destruction of organ NOC
+OPCS,S47,Opening of skin
+OPCS,S48,Insertion of skin expander into subcutaneous tissue
+OPCS,S49,Attention to skin expander in subcutaneous tissue
+OPCS,S50,Introduction of other inert substance into subcutaneous tissue
+OPCS,T10,Therapeutic endoscopic operations on pleura
+OPCS,T11,Diagnostic endoscopic examination of pleura
+OPCS,T12,Puncture of pleura
+OPCS,T13,Introduction of substance into pleural cavity
+OPCS,T14,Other operations on pleura
+OPCS,T15,Repair of rupture of diaphragm
+OPCS,T16,Other repair of diaphragm
+OPCS,T17,Other operations on diaphragm
+OPCS,T19,Simple excision of inguinal hernial sac
+OPCS,T20,Primary repair of inguinal hernia
+OPCS,T21,Repair of recurrent inguinal hernia
+OPCS,C91,Operations on anterior segment of eye
+OPCS,H71,Therapeutic endoscopic operations on enteric pouch
+OPCS,M07,Therapeutic ureteroscopic operations on kidney
+OPCS,M24,Other urinary diversion
+OPCS,O34,Other biliary tract
+OPCS,O35,Open operations on joint
+OPCS,O36,Other mouth
+OPCS,O37,Reverse polarity total prosthetic replacement of shoulder joint using cement
+OPCS,O38,Reverse polarity total prosthetic replacement of shoulder joint not using cement
+OPCS,O39,Reverse polarity total prosthetic replacement of shoulder joint
+OPCS,O40,Reverse polarity hybrid prosthetic replacement of shoulder joint using cement
+OPCS,O43,Part of heart
+OPCS,O44,Other external beam radiotherapy
+OPCS,O45,Other aorta
+OPCS,Q58,Delivery of terminated fetus
+OPCS,R09,Open operations on fetus
+OPCS,R11,Other therapeutic percutaneous operations on fetus
+OPCS,R13,Other operations on fetus
+OPCS,S29,Distant flap of skin and bone
+OPCS,S32,Distant flap of skin and multiple tissues
+OPCS,U38,Other diagnostic endocrinology
+OPCS,U41,Provocation test
+OPCS,V69,Other primary decompression operations on cervical spine
+OPCS,V70,Other revisional decompression operations on cervical spine
+OPCS,X69,Other radiotherapy
+OPCS,Y28,Insertion of other material into organ NOC
+OPCS,Y45,Approach to organ under other control
+OPCS,Y68,Other approach to organ under image control
+OPCS,A71,Other microsurgical repair of peripheral nerve
+OPCS,B42,Reconstruction of breast using flap of thigh
+OPCS,B43,Other reconstruction of breast
+OPCS,B44,Reconstruction of breast using flap of chest wall
+OPCS,B45,Other prosthesis for breast
+OPCS,E32,Therapeutic endoscopic operations on larynx
+OPCS,F19,Other preprosthetic oral surgery
+OPCS,F21,Operations on tooth
+OPCS,F35,Intracapsular excision of tonsil
+OPCS,F64,Insertion of oral prosthesis
+OPCS,F65,Functional orthodontic operations
+OPCS,F66,Post-orthodontic operations
+OPCS,F67,Insertion of intraoral appliance
+OPCS,H38,Other endoscopic extirpation of lesion of colon
+OPCS,H72,Therapeutic operations on anus using high resolution anoscope
+OPCS,H73,Diagnostic operations on anus using high resolution anoscope
+OPCS,M78,Other therapeutic endoscopic operations on urethra
+OPCS,O41,Operations on cartilage of joint
+OPCS,O42,Medial branch of spinal nerve
+OPCS,O46,Other tissue of brain
+OPCS,O47,Other joint structure
+OPCS,O48,Other facilitating operations NOC
+OPCS,O49,Internal fixation of bone
+OPCS,O50,Joint of foot
+OPCS,O51,Prosthetic replacement of wrist joint
+OPCS,O52,Nerve
+OPCS,O53,Other lower urinary tract
+OPCS,T66,Other primary repair of tendon
+OPCS,T73,Other secondary repair of tendon
+OPCS,T75,Delayed primary repair of tendon
+OPCS,T78,Other delayed primary repair of tendon
+OPCS,T82,Operations on tendon
+OPCS,Y72,Other late operations NOC
+OPCS,Y77,Other approach to organ
+AAE,01,Dressing
+AAE,02,Bandage/support
+AAE,03,Sutures
+AAE,04,Wound closure (excluding sutures)
+AAE,05,Plaster of paris
+AAE,06,Splint
+AAE,08,Removal foreign body
+AAE,09,Physiotherapy
+AAE,10,Manipulation
+AAE,11,Incision & drainage
+AAE,12,Intravenous cannula
+AAE,13,Central line
+AAE,14,Lavage/emesis/charcoal/eye irrigation
+AAE,15,Intubation & endotracheal tubes/laryngeal mask airways/rapid sequence induction
+AAE,16,Chest drain
+AAE,17,Urinary catheter/suprapubic
+AAE,18,Defibrillation/pacing
+AAE,19,Resuscitation/cardiopulmonary resuscitation
+AAE,20,Minor surgery
+AAE,21,"Observation/electrocardiogram, pulse oximetry/head injury/trends"
+AAE,22,Guidance/advice only
+AAE,23,Anaesthesia
+AAE,24,Tetanus
+AAE,25,Nebuliser/spacer
+AAE,27,Other (consider alternatives)
+AAE,28,Parenteral thrombolysis
+AAE,29,Other parenteral drugs
+AAE,30,Recording vital signs
+AAE,31,Burns review
+AAE,32,Recall/X-ray review
+AAE,33,Fracture review
+AAE,34,Wound cleaning
+AAE,35,Dressing/wound review
+AAE,36,Sling/collar cuff/broad arm sling
+AAE,37,Epistaxis control
+AAE,38,Nasal airway
+AAE,39,Oral airway
+AAE,40,Supplemental oxygen
+AAE,41,Continuous positive airways pressure/nasal intermittent positive pressure ventilation/bag valve mask
+AAE,42,Arterial line
+AAE,43,Infusion fluids
+AAE,44,Blood product transfusion
+AAE,45,Pericardiocentesis
+AAE,46,Lumbar puncture
+AAE,47,Joint aspiration
+AAE,48,Minor plastic procedure/split skin graft
+AAE,49,Active rewarming of the hypothermic patient
+AAE,50,Cooling - control body temperature
+AAE,51,Medication administered
+AAE,52,Occupational therapy
+AAE,53,Loan of walking aid (crutches)
+AAE,54,Social work intervention
+AAE,55,Eye
+AAE,56,Dental treatment
+AAE,57,Prescription/medicines prepared to take away
+AAE,99,None (consider guidance/advice option)
+snomed,57485005,Oxygen therapy
+snomed,56251003,Nebuliser therapy
+snomed,243132000,Inhaled drug administration
+snomed,182692007,Nasopharyngeal airway insertion
+snomed,50697003,General anaesthesia
+snomed,428311008,Non-invasive ventilation
+snomed,112798008,Insertion of endotracheal tube
+snomed,264957007,Insertion of pleural tube drain
+snomed,88140007,Cardiac monitor surveillance
+snomed,392231009,Intravenous cannulation
+snomed,430824005,Intraosseous cannulation
+snomed,103744005,Administration of intravenous fluids
+snomed,116859006,Transfusion of blood product
+snomed,392247006,Insertion of catheter into artery
+snomed,233527006,Central venous cannula insertion
+snomed,18590009,Cardiac pacing
+snomed,250980009,Cardioversion
+snomed,428348004,Cardiopulmonary resuscitation not attempted
+snomed,439569004,Resuscitation
+snomed,241740008,Active warming of patient
+snomed,182660006,Cold therapy
+snomed,240943006,Percutaneous non-embolic vascular occlusion
+snomed,36936009,Major thoracotomy with cardiac massage
+snomed,386761002,Local anaesthesia
+snomed,427035008,Nitrous oxide and oxygen gas analgesia
+snomed,27372005,Regional anaesthesia
+snomed,398239001,MAC sedation
+snomed,18629005,Administration of medication
+snomed,433215005,Administration of drug or medicament by intravenous push
+snomed,281790008,Intravenous antibiotic therapy
+snomed,432054008,Infusion of drug or medicament via intravenous route
+snomed,266712008,New medication commenced
+snomed,226871000000103,Administration of activated charcoal
+snomed,307521008,Intravenous infusion of thrombolytic
+snomed,410024004,Insertion of catheter into urinary bladder
+snomed,87750000,Insertion of nasogastric tube
+snomed,711580002,Minor ambulatory surgery
+snomed,265232001,Diagnostic lumbar puncture
+snomed,10849003,Removal of foreign body
+snomed,91602002,Thoracentesis
+snomed,278296000,Drainage of pleural cavity
+snomed,178016006,Diagnostic aspiration of peritoneal cavity
+snomed,178012008,Percutaneous drainage of ascites
+snomed,6125005,Change of gastrostomy tube
+snomed,15631002,"Application of dressing, minor"
+snomed,71810007,Closure of skin wound by tape
+snomed,284182000,Glueing of wound
+snomed,50015006,Closure by staple
+snomed,18557009,Closure by suture
+snomed,71539001,Suture of fascia
+snomed,30549001,Removal of suture
+snomed,127786006,Administration of tetanus vaccine
+snomed,572261000119106,Administration of human tetanus immune globulin
+snomed,180289009,Application of plaster cast
+snomed,180291001,Removal of plaster cast
+snomed,79321009,Application of splint
+snomed,52037006,Application of sling
+snomed,243751002,Provision of mobility device
+snomed,267765006,Closed reduction of fracture of upper limb
+snomed,150617003,Closed reduction of fracture of lower limb
+snomed,122944000,Reduction of dislocation
+snomed,90131007,Arthrocentesis
+snomed,35807001,Control of haemorrhage of nose
+snomed,81733005,Dental surgical procedure
+snomed,49999004,Irrigation of eye
+snomed,266740003,Orthoptic treatment
+snomed,74004007,Epilation of eyelid by forceps
+snomed,35631009,Laser surgery
+snomed,74410004,Subconjunctival injection
+snomed,1217317000,Injection of substance into retrobulbar space
+snomed,413334001,Patient given written advice
+snomed,371585000,Psychosocial assessment
+snomed,304492001,Activities of daily living assessment
+snomed,410267000,"Mobility/transfers education, guidance, and counselling"
+snomed,391027005,Osteoporosis - falls prevention
+snomed,430481008,Assessment of mobility
+snomed,182836005,Review of medication
+snomed,406551008,Social assessment
+snomed,183964008,Treatment not indicated
+snomed,117092006,"Administration of Tetanus immune globulin, human"
+snomed,179208004,Apply Thomas splint traction
+snomed,170333009,Administration of booster dose of tetanus vaccine
+snomed,73152006,Administration of diphtheria and tetanus vaccine
+snomed,431695009,Administration of drug or medicament to skin via topical route
+snomed,16584000,Administration of hepatitis B vaccine
+snomed,431393006,Administration of intravenous fluid bolus
+snomed,712489002,Administration of sedative via rectal route
+snomed,433066006,Administration of substance via sublingual route
+snomed,418043000,Advice given
+snomed,239669006,Application of Colles plaster cast
+snomed,225153000,Application of adhesive skin closure
+snomed,239672004,Application of back slab
+snomed,182555002,Application of bandage
+snomed,239668003,Application of below elbow plaster cast
+snomed,239676001,Application of below knee plaster cast
+snomed,239694007,Application of collar and cuff sling
+snomed,282048008,Application of dentine adhesive to tooth
+snomed,7241007,"Application of dressing, major"
+snomed,9263008,Application of elastic bandage
+snomed,24191008,"Application of finger splint, dynamic"
+snomed,46223001,"Application of finger splint, static"
+snomed,239679008,Application of humeral cast brace
+snomed,433340000,Application of long arm splint
+snomed,433341001,Application of long leg splint
+snomed,239688004,Application of neighbour strapping
+snomed,373675000,Application of pressure bandage
+snomed,239670007,Application of scaphoid plaster cast
+snomed,439535000,Application of short arm splint
+snomed,430365002,Application of short leg splint
+snomed,239677005,Application of slipper plaster cast
+snomed,239673009,Application of thumb spica plaster cast
+snomed,239689007,Application of thumb spica strapping
+snomed,239693001,Application of triangular sling
+snomed,427996005,Application of vacuum splint
+snomed,281808001,Aspiration of elbow joint
+snomed,281809009,Aspiration of hip joint
+snomed,281810004,Aspiration of knee joint
+snomed,303806006,Assessment of burn injuries
+snomed,440363007,Assessment of swallowing
+snomed,425447009,Bag valve mask ventilation
+snomed,426961001,Biphasic cardioversion procedure
+snomed,428909008,Biphasic defibrillation procedure
+snomed,170408005,Booster diphtheria and tetanus double vaccination
+snomed,89666000,Cardiopulmonary resuscitation
+snomed,309468007,Cardiovascular observation regime
+snomed,384649001,Catheterisation of bladder by indwelling suprapubic catheter
+snomed,440142000,Chemical cardioversion
+snomed,225150002,Cleaning wound
+snomed,440627004,Closed manual reduction of fracture of distal lateral condyle of femur
+snomed,439425009,Closed manual reduction of fracture of distal medial condyle of femur
+snomed,439423002,Closed manual reduction of fracture of head of femur
+snomed,439988004,Closed manual reduction of fracture of phalanx of foot
+snomed,439365009,Closed manual reduction of fracture of posterior malleolus
+snomed,439937002,Closed manual reduction of fracture of shaft of femur and skeletal traction
+snomed,439217005,Closed manual reduction of fracture of shaft of femur and skin traction
+snomed,440361009,Closed manual reduction of intertrochanteric fracture of femur
+snomed,440572003,Closed manual reduction of peritrochanteric fracture of femur
+snomed,239288009,Closed reduction and internal fixation of proximal femoral fracture with Richard's cannulated hip screw
+snomed,179633008,Closed reduction of dislocation of nasal bone
+snomed,179634002,Closed reduction of dislocation of nasal septum
+snomed,440417002,Closed reduction of fracture of acetabulum
+snomed,179162008,Closed reduction of fracture of ankle
+snomed,699174008,Closed reduction of fracture of calcaneus with internal fixation
+snomed,439755001,Closed reduction of fracture of distal lateral condyle of femur
+snomed,440708003,Closed reduction of fracture of distal medial condyle of femur
+snomed,112777008,Closed reduction of fracture of femur
+snomed,708904001,Closed reduction of fracture of femur and internal fixation using bone nail
+snomed,708902002,Closed reduction of fracture of femur and internal fixation using bone plate
+snomed,708899000,Closed reduction of fracture of femur and internal fixation using dynamic condylar screw plate
+snomed,708905000,Closed reduction of fracture of femur and internal fixation using dynamic hip screw plate
+snomed,708906004,Closed reduction of fracture of femur and internal fixation using locking nail
+snomed,272300006,Closed reduction of fracture of femur with internal fixation
+snomed,22415008,Closed reduction of fracture of fibula
+snomed,4542005,Closed reduction of fracture of foot
+snomed,275094008,Closed reduction of fracture of foot with internal fixation
+snomed,439995008,Closed reduction of fracture of greater trochanter
+snomed,179165005,Closed reduction of fracture of hallux
+snomed,440304004,Closed reduction of fracture of head of femur
+snomed,179159005,Closed reduction of fracture of hip
+snomed,39706009,Closed reduction of fracture of humerus
+snomed,179160000,Closed reduction of fracture of knee
+snomed,440437003,Closed reduction of fracture of medial malleolus
+snomed,179163003,Closed reduction of fracture of metatarsus
+snomed,699175009,Closed reduction of fracture of patella with internal fixation
+snomed,699155000,Closed reduction of fracture of patella without internal fixation
+snomed,23253008,Closed reduction of fracture of phalanges of foot with internal fixation
+snomed,70060006,Closed reduction of fracture of phalanx of foot
+snomed,439938007,Closed reduction of fracture of plafond of tibia
+snomed,439364008,Closed reduction of fracture of posterior malleolus
+snomed,708903007,Closed reduction of fracture of proximal femur and internal fixation using bone nail
+snomed,708898008,Closed reduction of fracture of proximal femur and internal fixation using bone screw
+snomed,708900005,Closed reduction of fracture of proximal femur and internal fixation using bone wire
+snomed,87971000,Closed reduction of fracture of radius
+snomed,33630008,Closed reduction of fracture of radius and ulna
+snomed,440440003,Closed reduction of fracture of shaft of femur
+snomed,699173002,Closed reduction of fracture of talus with internal fixation
+snomed,6585004,Closed reduction of fracture of tarsal or metatarsal
+snomed,70315004,Closed reduction of fracture of tarsals and metatarsals
+snomed,274132004,Closed reduction of fracture of tarsals and metatarsals with internal fixation
+snomed,20278008,Closed reduction of fracture of tibia
+snomed,21929000,Closed reduction of fracture of tibia and fibula
+snomed,79670000,Closed reduction of fracture of tibia and fibula with internal fixation
+snomed,179161001,Closed reduction of fracture of tibia and/or fibula
+snomed,77882001,Closed reduction of fracture of ulna
+snomed,699172007,Closed reduction of fractured fibula with internal fixation
+snomed,440302000,Closed reduction of intertrochanteric fracture of femur
+snomed,239290005,Closed reduction of intracapsular fracture of neck of femur and fixation using Smith-Petersen nail
+snomed,313330006,Closed reduction of intracapsular fracture of neck of femur and internal fixation using a dynamic hip screw
+snomed,25060006,Closed reduction of nasal fracture
+snomed,440376001,Closed reduction of peritrochanteric fracture of femur
+snomed,21147007,Closure by clip
+snomed,448134000,Continuous positive airway pressure to nonventilated lung
+snomed,47545007,Continuous positive airway pressure ventilation treatment
+snomed,81828004,Control of epistaxis by packing of posterior and anterior nose
+snomed,85875009,Debridement of wound of skin
+snomed,231154009,Digital nerve block in hand
+snomed,180325003,Direct current cardioversion
+snomed,308842001,Direct current defibrillation
+snomed,274450004,Dislocated shoulder reduction
+snomed,236825001,Drainage of Bartholin's abscess
+snomed,397791003,Drainage of alveolar tooth abscess
+snomed,282043004,Drainage of dental abscess
+snomed,445348007,Drainage of furuncle of external ear
+snomed,241012007,Drainage of paronychia
+snomed,410379003,Dressing change/wound care surveillance
+snomed,243142003,Dual pressure spontaneous ventilation support
+snomed,443861000,Educating parent of subject
+snomed,287439000,Emergency tracheostomy
+snomed,91571003,Endoscopic removal of intraluminal foreign body from trachea
+snomed,118441006,Evacuation of haematoma
+snomed,88584000,Evacuation of subungual haematoma
+snomed,26119007,Extraction of deciduous tooth
+snomed,57703000,Extraction of permanent tooth
+snomed,386296001,Fall prevention
+snomed,385691007,Fracture care
+snomed,408488002,GTN prophylaxis
+snomed,74914000,Gait training procedure
+snomed,56783008,Incision AND drainage
+snomed,431419008,Incision and drainage of abscess of back
+snomed,430385003,Incision and drainage of abscess of chest
+snomed,430384004,Incision and drainage of abscess of face
+snomed,430988007,Incision and drainage of abscess of neck
+snomed,433342008,Incision and drainage of abscess of scalp
+snomed,275231009,Incision and drainage of anorectal abscess
+snomed,275235000,Incision and drainage of breast abscess
+snomed,307248008,Incision and drainage of buttock abscess
+snomed,53867008,Incision and drainage of furuncle
+snomed,238229006,Incision and drainage of lesion of abdominal wall
+snomed,48047006,Incision and drainage of perianal abscess
+snomed,133880003,Induction of emesis
+snomed,127784009,Inhaled bronchodilator therapy
+snomed,82036007,Injection of posterior segment of eye
+snomed,234715002,Insertion of dental pack
+snomed,397982008,Insertion of device into airway
+snomed,7443007,Insertion of oropharyngeal airway
+snomed,232172001,Instillation of ear drops or spray
+snomed,225698005,Instilling eye drops
+snomed,238356005,Intercostal drain removal
+snomed,229308003,Intermittent CPAP
+snomed,27813003,Intra-articular injection
+snomed,76601001,Intramuscular injection
+snomed,14152002,Intravenous infusion
+snomed,43060002,Intravenous injection
+snomed,278872003,Intravenous regional analgesia
+snomed,231246003,Intravenous regional block
+snomed,67889009,Irrigation
+snomed,424979004,Laryngeal mask airway insertion
+snomed,183258006,Loan of crutches
+snomed,265778005,Local anaesthetic nerve block
+snomed,304102003,Local rotation flap
+snomed,37332006,Magnet extraction of foreign body from sclera
+snomed,19207007,Manipulation
+snomed,229438005,Manipulation of joint - non-surgical
+snomed,386356001,Medication administration: intramuscular
+snomed,406172003,Medication administration: nasal
+snomed,386359008,Medication administration: oral
+snomed,386360003,Medication administration: rectal
+snomed,386362006,Medication administration: subcutaneous
+snomed,307271005,Nasal cautery
+snomed,708403000,Nebuliser treatment since last encounter
+snomed,309467002,Neurological observation regime
+snomed,310813001,Observational assessment
+snomed,410155007,Occupational therapy assessment
+snomed,40505001,Orthoptic training
+snomed,172819009,Packing of cavity of nose
+snomed,242906003,Packing of nose for anterior epistaxis
+snomed,199471000000102,"Patient advised about rest, ice, compression and elevation"
+snomed,413333007,Patient given verbal advice
+snomed,308400007,Patient recall procedure
+snomed,309849004,Pericardiocentesis
+snomed,229310001,Periodic CPAP
+snomed,33633005,Prescription of drug
+snomed,179138003,Primary closed reduction and external fixation of proximal femoral fracture
+snomed,179104006,Primary closed reduction and internal fixation of proximal femoral fracture with screw/nail and intramedullary device
+snomed,179105007,Primary closed reduction and internal fixation of proximal femoral fracture with screw/nail and plate device
+snomed,302410007,Primary suture of skin
+snomed,241689008,Rapid sequence induction
+snomed,406216001,Recommendation to carer
+snomed,306802002,Referral to stroke service
+snomed,240989004,Removal of adherent contaminant from skin
+snomed,175853000,Removal of central venous line
+snomed,302414003,Removal of clip from skin
+snomed,271280005,Removal of endotracheal tube
+snomed,398072007,Removal of eyelash
+snomed,429593000,Removal of foreign body from anus
+snomed,78362007,Removal of foreign body from conjunctiva
+snomed,172426003,Removal of foreign body from cornea
+snomed,9655003,Removal of foreign body from external auditory canal
+snomed,405706000,Removal of foreign body from hand
+snomed,37470006,Removal of foreign body from head
+snomed,172498005,Removal of foreign body from iris
+snomed,232574005,Removal of foreign body from larynx
+snomed,84016007,Removal of foreign body from lens
+snomed,300231003,Removal of foreign body from mouth
+snomed,172828005,Removal of foreign body from nose
+snomed,20632008,Removal of foreign body from pharynx
+snomed,302421003,Removal of foreign body from skin
+snomed,438303006,Removal of foreign body from soft tissue of ear
+snomed,62859007,Removal of foreign body from urethra without incision
+snomed,176738005,Removal of foreign body from vagina
+snomed,343973002,Removal of foreign body from vulva
+snomed,49619003,Removal of foreign body of penis
+snomed,4503005,Removal of foreign body of sclera without use of magnet
+snomed,86368008,Removal of foreign body of subcutaneous tissue
+snomed,225066003,Removal of intravenous cannula
+snomed,386018007,Removal of nail
+snomed,287785003,Removal of rectum foreign body
+snomed,426509009,Removal of ring from digit of hand
+snomed,35963001,Removal of staples
+snomed,286738000,Removal of urinary catheter
+snomed,225069005,Removing dentures
+snomed,239698005,Repair of plaster cast
+snomed,112861000,Replacement of nasogastric tube
+snomed,173281003,Repositioning of tooth
+snomed,229586001,"Rest, ice, compression and elevation treatment programme"
+snomed,179139006,Revision to closed reduction and external fixation of proximal femoral fracture
+snomed,179107004,Revision to closed reduction and internal fixation of proximal femoral fracture with screw/nail and intramedullary device
+snomed,80335005,Rotation flap graft of skin
+snomed,302412004,Secondary suture of skin
+snomed,72641008,Sedation
+snomed,59705002,Short wave diathermy
+snomed,243224001,Social therapy
+snomed,266689003,Splint teeth with orthodontic bands
+snomed,180316009,Splinting of knee
+snomed,431244003,Splinting of toe using adhesive tape
+snomed,118481004,Strapping procedure
+snomed,608849003,Surgical procedure on eye proper using laser
+snomed,308782003,Suture of labia
+snomed,89481001,Suture of mouth
+snomed,61746007,Taking patient vital signs
+snomed,281756004,Terminalisation of finger
+snomed,239594000,Terminalisation of hallux
+snomed,239596003,Terminalisation of lesser toe
+snomed,281757008,Terminalisation of thumb
+snomed,89002000,Therapeutic ultrasound
+snomed,85757003,Trephination
+snomed,815911000000106,Variable rate intravenous infusion of insulin
+snomed,39857003,Weighing patient
+snomed,121005,Retrobulbar injection of therapeutic agent
