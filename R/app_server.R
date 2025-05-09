@@ -13,11 +13,11 @@ app_server <- function(input, output, session) {
   })
 
   diagnoses_lkup <- shiny::reactive({
-    readRDS(app_sys("app", "data", "diagnoses.Rds"))
+    readr::read_csv(app_sys("app", "data", "diagnoses.csv"), col_types = "ccc")
   })
 
   procedures_lkup <- shiny::reactive({
-    readRDS(app_sys("app", "data", "procedures.Rds"))
+    readr::read_csv(app_sys("app", "data", "procedures.csv"), col_types = "ccc")
   })
 
   mitigator_codes_lkup <- shiny::reactive({
@@ -31,11 +31,13 @@ app_server <- function(input, output, session) {
   })
 
   providers <- shiny::reactive({
-    readRDS(app_sys("app", "data", "providers.Rds"))
+    app_sys("app", "data", "providers.csv") |>
+      readr::read_csv(col_types = "cc") |>
+      tibble::deframe() # convert tibble to named vector
   })
 
   peers <- shiny::reactive({
-    readRDS(app_sys("app", "data", "peers.Rds"))
+    readr::read_csv(app_sys("app", "data", "peers.csv"), col_types = "cc")
   })
 
   params <- mod_home_server(

@@ -15,7 +15,8 @@ mod_expat_repat_server <- function(id, params, providers) {
 
   shiny::moduleServer(id, function(input, output, session) {
     # static data ----
-    rtt_specialties <- readRDS(app_sys("app", "data", "rtt_specialties.Rds"))
+    rtt_specialties <- rtt_specialties() |>
+      tibble::deframe()
     icb_boundaries <- sf::read_sf(app_sys(
       "app",
       "data",
@@ -211,9 +212,10 @@ mod_expat_repat_server <- function(id, params, providers) {
     ) |>
       shiny::bindEvent(input$activity_type, input$ip_subgroup)
 
-    # watch for changes to the dropdowns
-    # update the sliders to the values for the combination of the drop downs in shadow_params
-    # set the include checkboxes value if a value exists in params or not
+    # Watch for changes to the dropdowns.
+    # Update the sliders to the values for the combination of the drop downs
+    # in shadow_params.
+    # Set the include checkboxes value if a value exists in params or not.
     shiny::observe(
       {
         purrr::walk(
