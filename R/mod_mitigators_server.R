@@ -563,8 +563,8 @@ mod_mitigators_server <- function(
 
     output$nee_result <- shiny::renderPlot(
       {
-        nee_params <- app_sys("app", "data", "nee_table.Rds") |>
-          readRDS() |>
+        nee_params <- app_sys("app", "data", "nee_table.csv") |>
+          readr::read_csv(col_types = "cddd") |>
           dplyr::filter(.data[["param_name"]] == input$strategy)
 
         nee_params |>
