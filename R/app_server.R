@@ -17,7 +17,7 @@ app_server <- function(input, output, session) {
   })
 
   procedures_lkup <- shiny::reactive({
-    readRDS(app_sys("app", "data", "procedures.Rds"))
+    readr::read_csv(app_sys("app", "data", "procedures.csv"), col_types = "ccc")
   })
 
   mitigator_codes_lkup <- shiny::reactive({
