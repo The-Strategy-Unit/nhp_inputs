@@ -35,7 +35,7 @@ app_server <- function(input, output, session) {
   })
 
   peers <- shiny::reactive({
-    readRDS(app_sys("app", "data", "peers.Rds"))
+    readr::read_csv(app_sys("app", "data", "peers.csv"), col_types = "cc")
   })
 
   params <- mod_home_server(
