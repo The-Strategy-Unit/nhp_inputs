@@ -57,10 +57,11 @@ your development branch:
 
 To run the app from RStudio, start up the selection app by opening the
 `dev/watch.R` script, go to the ‘Background Jobs’ tab of the console
-pane and click the ‘Start Background Job’ button. Hit ‘Start’ in the
-‘Run Script as Background Job’ dialog box. When ready, the app will tell
-you to visit `http://127.0.0.1:9081/` in your browser. Note that your
-selections in the app remain local to you.
+pane and click the ‘Start Background Job’ button. In the ‘Run Script as
+Background Job’ dialog box select the project root as the ‘Working
+Directory’, then hit ‘Start’. When ready, the app will tell you to visit
+`http://127.0.0.1:9081/` in your browser. Note that your selections in
+the app remain local to you.
 
 If you need to remove the selection-app folder at any point, you can do
 that with:
