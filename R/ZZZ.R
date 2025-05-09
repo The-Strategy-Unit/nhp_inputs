@@ -10,8 +10,8 @@ utils::globalVariables(c(
 ))
 
 rtt_specialties <- function() {
-  readRDS(app_sys("app", "data", "rtt_specialties.Rds")) |>
-    tibble::enframe("specialty", "code")
+  app_sys("app", "data", "rtt_specialties.csv") |>
+    readr::read_csv(col_types = "cc")
 }
 
 sanitize_input_name <- function(.x) {

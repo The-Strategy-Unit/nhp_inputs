@@ -1,13 +1,12 @@
 mod_waiting_list_imbalances_table <- function(df) {
-  readRDS(app_sys("app", "data", "rtt_specialties.Rds")) |>
-    tibble::enframe("description", "tretspef") |>
-    dplyr::inner_join(df, by = dplyr::join_by("tretspef")) |>
-    dplyr::select(-"tretspef") |>
+  rtt_specialties() |>
+    dplyr::inner_join(df, c(code = "tretspef")) |>
+    dplyr::select(-"code") |>
     tidyr::pivot_wider(
       names_from = "activity_type",
       values_from = c("count", "param")
     ) |>
-    gt::gt(rowname_col = "description") |>
+    gt::gt(rowname_col = "specialty") |>
     gt::tab_spanner(
       "Inpatients",
       columns = tidyselect::ends_with("ip")
