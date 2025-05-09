@@ -15,7 +15,8 @@ mod_expat_repat_server <- function(id, params, providers) {
 
   shiny::moduleServer(id, function(input, output, session) {
     # static data ----
-    rtt_specialties <- readRDS(app_sys("app", "data", "rtt_specialties.Rds"))
+    rtt_specialties <- rtt_specialties() |>
+      tibble::deframe()
     icb_boundaries <- sf::read_sf(app_sys(
       "app",
       "data",
