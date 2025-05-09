@@ -31,7 +31,9 @@ app_server <- function(input, output, session) {
   })
 
   providers <- shiny::reactive({
-    readRDS(app_sys("app", "data", "providers.Rds"))
+    app_sys("app", "data", "providers.csv") |>
+      readr::read_csv(col_types = "cc") |>
+      tibble::deframe() # convert tibble to named vector
   })
 
   peers <- shiny::reactive({
