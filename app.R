@@ -108,7 +108,7 @@ upgrade_params.v3.4 <- function(p) {
 
   p <- modifyList(
     p,
-    list(inequalities = NULL),  # model expects 'inequalities: null'
+    list(inequalities = NULL),  # model expects "inequalities": {}
     keep.null = TRUE  # NULL list elements are usually discarded
   )
 
