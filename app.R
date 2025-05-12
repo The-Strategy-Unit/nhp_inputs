@@ -103,6 +103,19 @@ upgrade_params.v3.3 <- function(p) {
   upgrade_params(p)
 }
 
+upgrade_params.v3.4 <- function(p) {
+  # Add (or overwrite) inequalities
+
+  p <- modifyList(
+    p,
+    list(inequalities = NULL),  # model expects 'inequalities: null'
+    keep.null = TRUE  # NULL list elements are usually discarded
+  )
+
+  class(p) <- p$app_version <- "v3.5"
+  upgrade_params(p)
+}
+
 params_path <- function(user, dataset) {
   path <- file.path(
     config::get("params_data_path"),
