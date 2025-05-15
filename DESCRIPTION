@@ -1,8 +1,10 @@
 Package: inputs
 Title: NHP Model Inputs
-Version: 3.4.0
-Authors@R: 
-    person("Tom", "Jemmett", , "thomas.jemmett@nhs.net", role = c("cre", "aut"))
+Version: 3.5.0
+Authors@R: c(
+    person("Tom", "Jemmett", , "thomas.jemmett@nhs.net", role = c("cre", "aut")),
+    person("Matt", "Dray", , "matt.dray@nhs.net", role = "aut")
+    )
 Description: A shiny app for getting model input parameters.
 License: MIT + file LICENSE
 Depends: 
