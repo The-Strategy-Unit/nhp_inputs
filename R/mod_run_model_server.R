@@ -48,11 +48,8 @@ mod_run_model_server <- function(id, params) {
       shinyjs::hide(selector = "#sidebarItemExpanded")
       status("Please Wait...")
 
-      # get the params and insert the current time for when the model run was
-      # submitted
+      # get the params
       p <- shiny::req(fixed_params())
-      t <- Sys.time()
-      attr(t, "tzone") <- "UTC"
 
       # submit the model run
       mod_run_model_submit(p, status, results_url)

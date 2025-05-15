@@ -24,7 +24,7 @@ Imports:
     golem (>= 0.3.3),
     gt,
     htmltools,
-    httr,
+    httr2,
     janitor,
     jsonlite,
     leaflet,
