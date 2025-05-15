@@ -1,29 +1,22 @@
 # recursive future promise
 mod_run_model_submit <- function(params, status, results_url) {
-  promises::future_promise(
-    {
-      httr::POST(
-        Sys.getenv("NHP_API_URI"),
-        path = c("api", "run_model"),
-        query = list(
-          app_version = params$app_version,
-          code = Sys.getenv("NHP_API_KEY")
-        ),
-        body = params,
-        encode = "json"
-      )
-    },
-    packages = character()
-  ) |>
-    promises::then(
-      \(request) {
-        response <- httr::status_code(request)
-        if (response != 200) {
-          status(paste("Error:", response))
-          return(NULL)
-        }
+  # for some reason, relying on the req_body_json does not work. it converts empty dictionaries
+  # into null. handle this manually.
+  params_json <- jsonlite::toJSON(params, auto_unbox = TRUE, pretty = TRUE)
 
-        results <- httr::content(request)
+  req <- httr2::request(Sys.getenv("NHP_API_URI")) |>
+    httr2::req_url_path("api", "run_model") |>
+    httr2::req_url_query(
+      app_version = params$app_version,
+      code = Sys.getenv("NHP_API_KEY")
+    ) |>
+    httr2::req_body_raw(params_json, "application/json") |>
+    httr2::req_method("POST")
+
+  httr2::req_perform_promise(req) |>
+    promises::then(
+      \(response) {
+        results <- httr2::resp_body_json(response)
 
         status("Submitted Model Run")
 
@@ -56,6 +49,12 @@ mod_run_model_submit <- function(params, status, results_url) {
 
         mod_run_model_check_container_status(results[["id"]], status)
       }
+    ) |>
+    promises::catch(
+      \(error) {
+        print(error$message)
+        status(error$message)
+      }
     )
 }
 
@@ -64,31 +63,35 @@ mod_run_model_check_container_status <- function(id, status) {
     {
       # wait 10 seconds before checking
       Sys.sleep(10)
-      httr::GET(
-        Sys.getenv("NHP_API_URI"),
-        path = c("api", "model_run_status", id),
-        query = list(
-          code = Sys.getenv("NHP_API_KEY")
-        )
-      )
+      req <- httr2::request(Sys.getenv("NHP_API_URI")) |>
+        httr2::req_url_path("api", "model_run_status", id) |>
+        httr2::req_url_query(code = Sys.getenv("NHP_API_KEY"))
+
+      httr2::req_perform(req)
     },
     packages = character()
   ) |>
     promises::then(
-      \(request) {
-        if (httr::status_code(request) == 200) {
-          res <- httr::content(request)
+      \(response) {
+        print(response)
+        res <- httr2::resp_body_json(response)
 
-          if (res$state == "Terminated") {
-            if (res$detail_status == "Completed") {
-              status("Success")
-            } else {
-              status("Error: running the model")
-            }
-            return(NULL)
+        if (res$state == "Terminated") {
+          if (res$detail_status == "Completed") {
+            status("Success")
+          } else {
+            status("Error: running the model")
           }
-          status("Modelling running")
+          return(NULL)
         }
+        status("Modelling running")
+
+        # recursive call
+        mod_run_model_check_container_status(id, status)
+      }
+    ) |>
+    promises::catch(
+      \(...) {
         # recursive call
         mod_run_model_check_container_status(id, status)
       }
