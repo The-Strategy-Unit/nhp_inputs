@@ -1,4 +1,4 @@
-The are two NDG 'Variants' that can be selected from the dropdown below:
+There are two NDG 'Variants' that can be selected from the dropdown below:
 
 * Variant 2 (NDG2) is the _primary_ non-demographic adjustment rate. 
 Demand projections described in the co-authored output report will be based on the use of Variant 2. 
