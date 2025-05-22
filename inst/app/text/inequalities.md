@@ -4,7 +4,7 @@ For each Healthcare Resource Group (HRG), the activity rate in the baseline year
 
 A. 'Level-up': by the horizon year, the activity rate for this HRG will have increased in all quintiles to match the fitted activity rate in quintile 5 (the least deprived group). In this situation, the rate in the least deprived quintile is not adjusted. 
 
-B.  ‘Level-down’: by the horizon year, the activity rate for this HRG will have reduced in all quintiles to the fitted rate of the most deprived quintile (quintile 1, with a minimum activity rate of zero). The rate in the least deprived quintile is not changed. 
+B. 'Level-down': by the horizon year, the activity rate for this HRG will have reduced in all quintiles to the fitted rate of the most deprived quintile (quintile 1, with a minimum activity rate of zero). The rate in the least deprived quintile is not changed. 
 
 C.  ‘Zero-sum redistribution’: by the horizon year, the activity rate for this HRG in all quintiles will have increased or decreased to match the mean activity rate across the whole HRG. This means that activity rates across all quintiles will be the same, and that total levels of activity remain the same as in the baseline year. 
 
