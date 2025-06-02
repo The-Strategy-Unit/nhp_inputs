@@ -1,7 +1,7 @@
 #' baseline_adjustment Server Functions
 #'
 #' @noRd
-mod_baseline_adjustment_server <- function(id, params) {
+mod_baseline_adjustment_server <- function(id, baseline_data, params) {
   mod_reasons_server(shiny::NS(id, "reasons"), params, "baseline_adjustment")
 
   shiny::moduleServer(id, function(input, output, session) {
@@ -41,13 +41,13 @@ mod_baseline_adjustment_server <- function(id, params) {
       dplyr::mutate(id = glue::glue("{at}_{g}_{sanitized_code}"))
 
     # reactives ----
-    baseline_data <- shiny::reactive({
+    baseline_data_filtered <- shiny::reactive({
       # nolint start: object_usage_linter
       dataset <- shiny::req(params$dataset)
       year <- as.character(shiny::req(params$start_year))
       # nolint end
 
-      load_provider_data("baseline") |>
+      baseline_data |>
         dplyr::filter(
           .data[["fyear"]] == .env[["year"]],
           .data[["provider"]] == .env[["dataset"]]
@@ -61,7 +61,7 @@ mod_baseline_adjustment_server <- function(id, params) {
     })
 
     baseline_counts <- shiny::reactive({
-      baseline_data() |>
+      baseline_data_filtered() |>
         tidyr::nest(.by = c("activity_type", "group")) |>
         dplyr::mutate(
           dplyr::across("data", \(.x) purrr::map(.x, tibble::deframe))
@@ -126,7 +126,7 @@ mod_baseline_adjustment_server <- function(id, params) {
 
     output$download_baseline <- shiny::downloadHandler(
       \() paste0(params[["dataset"]], "_baseline.csv"),
-      \(filename) readr::write_csv(baseline_data(), filename),
+      \(filename) readr::write_csv(baseline_data_filtered(), filename),
       "text/csv"
     )
 

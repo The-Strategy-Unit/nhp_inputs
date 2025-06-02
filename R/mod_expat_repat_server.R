@@ -1,7 +1,14 @@
 #' expat_repat Server Functions
 #'
 #' @noRd
-mod_expat_repat_server <- function(id, params, providers) {
+mod_expat_repat_server <- function(
+  id,
+  expat_data,
+  repat_local_data,
+  repat_nonlocal_data,
+  params,
+  providers
+) {
   selected_time_profile <- update_time_profile <- NULL
   # nolint start: object_usage_linter.
   c(selected_time_profile, update_time_profile) %<-%
@@ -52,34 +59,25 @@ mod_expat_repat_server <- function(id, params, providers) {
     # reactives ----
 
     # extract the expat data for the current selection
-    expat_raw <- shiny::reactive({
-      ds <- shiny::req(params$dataset)
-      load_provider_data("expat") |>
-        dplyr::filter(.data$provider == ds)
-    })
     expat <- shiny::reactive({
-      expat_raw() |>
+      ds <- shiny::req(params$dataset)
+      expat_data |>
+        dplyr::filter(.data$provider == ds) |>
         extract_expat_repat_data() |>
         dplyr::select("fyear", "count")
     })
 
     # extract the repat local data for the current selection
-    repat_local_raw <- shiny::reactive({
-      load_provider_data("repat_local")
-    })
     repat_local <- shiny::reactive({
-      repat_local_raw() |>
+      repat_local_data |>
         extract_expat_repat_data() |>
         dplyr::select("fyear", "icb", "provider", "count", "pcnt")
     })
 
     # extract the repat nonlocal data for the current selection
-    repat_nonlocal_raw <- shiny::reactive({
-      load_provider_data("repat_nonlocal")
-    })
     repat_nonlocal <- shiny::reactive({
-      repat_nonlocal_raw() |>
-        extract_expat_repat_data() |>
+      repat_nonlocal_data |>
+        extract_expat_repat_data |>
         dplyr::select(
           "fyear",
           "provider",
