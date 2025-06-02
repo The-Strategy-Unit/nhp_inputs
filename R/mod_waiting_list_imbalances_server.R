@@ -1,25 +1,41 @@
 #' wli Server Functions
 #'
 #' @noRd
-mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_usage_linter.
+mod_waiting_list_imbalances_server <- function(id, params) {
+  # nolint: object_usage_linter.
   selected_time_profile <- update_time_profile <- NULL
-  c(selected_time_profile, update_time_profile) %<-% mod_time_profile_server(
-    shiny::NS(id, "time_profile"),
-    params
-  )
+  c(selected_time_profile, update_time_profile) %<-%
+    mod_time_profile_server(
+      shiny::NS(id, "time_profile"),
+      params
+    )
 
-  mod_reasons_server(shiny::NS(id, "reasons"), params, "waiting_list_adjustment")
+  mod_reasons_server(
+    shiny::NS(id, "reasons"),
+    params,
+    "waiting_list_adjustment"
+  )
 
   shiny::moduleServer(id, function(input, output, session) {
     # static values ----
-    multipliers <- readr::read_csv("inst/app/data/waiting_list_params.csv", col_types = "cddddd") |>
+    multipliers <- readr::read_csv(
+      "inst/app/data/waiting_list_params.csv",
+      col_types = "cddddd"
+    ) |>
       dplyr::transmute(
         .data[["tretspef"]],
-        ip = .data[["mixed_split"]] * .data[["avg_ip_activity_per_pathway_mixed"]],
-        op = .data[["op_only_split"]] * .data[["avg_op_first_activity_per_pathway_op_only"]] +
-          .data[["mixed_split"]] * .data[["avg_op_first_activity_per_pathway_mixed"]]
+        ip = .data[["mixed_split"]] *
+          .data[["avg_ip_activity_per_pathway_mixed"]],
+        op = .data[["op_only_split"]] *
+          .data[["avg_op_first_activity_per_pathway_op_only"]] +
+          .data[["mixed_split"]] *
+            .data[["avg_op_first_activity_per_pathway_mixed"]]
       ) |>
-      tidyr::pivot_longer(c("ip", "op"), names_to = "activity_type", values_to = "multiplier")
+      tidyr::pivot_longer(
+        c("ip", "op"),
+        names_to = "activity_type",
+        values_to = "multiplier"
+      )
 
     # reactives ----
 
@@ -34,7 +50,11 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
           .data[["fyear"]] == .env[["year"]]
         ) |>
         dplyr::select(-"provider", -"fyear") |>
-        tidyr::pivot_longer(c("ip", "op"), names_to = "activity_type", values_to = "count") |>
+        tidyr::pivot_longer(
+          c("ip", "op"),
+          names_to = "activity_type",
+          values_to = "count"
+        ) |>
         dplyr::filter(.data[["count"]] > 0) |>
         dplyr::inner_join(
           multipliers,
@@ -44,16 +64,18 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
           .data[["tretspef"]],
           .data[["activity_type"]],
           .data[["count"]],
-          param = 1 + .data[["avg_change"]] * .data[["multiplier"]] / .data[["count"]]
+          param = 1 +
+            .data[["avg_change"]] * .data[["multiplier"]] / .data[["count"]]
         )
-    }) |>
-      shiny::bindCache(params$start_year)
+    })
 
     # observers ----
 
     # update the time profile
     shiny::observe({
-      params$time_profile_mappings[["waiting_list_adjustment"]] <- selected_time_profile()
+      params$time_profile_mappings[[
+        "waiting_list_adjustment"
+      ]] <- selected_time_profile()
     }) |>
       shiny::bindEvent(selected_time_profile())
 
@@ -65,7 +87,9 @@ mod_waiting_list_imbalances_server <- function(id, params) { # nolint: object_us
         })
 
         # update the selected time profile
-        update_time_profile(p$time_profile_mappings[["waiting_list_adjustment"]])
+        update_time_profile(p$time_profile_mappings[[
+          "waiting_list_adjustment"
+        ]])
 
         p <- p$waiting_list_adjustment
 
