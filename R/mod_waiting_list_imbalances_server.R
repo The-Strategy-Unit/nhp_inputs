@@ -70,8 +70,7 @@ mod_waiting_list_imbalances_server <- function(id, params) {
           param = 1 +
             .data[["avg_change"]] * .data[["multiplier"]] / .data[["count"]]
         )
-    }) |>
-      shiny::bindCache(params$start_year)
+    })
 
     # observers ----
 
