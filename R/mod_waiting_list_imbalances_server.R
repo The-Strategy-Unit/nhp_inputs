@@ -1,7 +1,7 @@
 #' wli Server Functions
 #'
 #' @noRd
-mod_waiting_list_imbalances_server <- function(id, params) {
+mod_waiting_list_imbalances_server <- function(id, wli_data, params) {
   selected_time_profile <- update_time_profile <- NULL
   # nolint start: object_usage_linter.
   c(selected_time_profile, update_time_profile) %<-%
@@ -47,7 +47,7 @@ mod_waiting_list_imbalances_server <- function(id, params) {
       year <- as.character(shiny::req(params$start_year))
       # nolint end
 
-      load_provider_data("wli") |>
+      wli_data |>
         dplyr::filter(
           .data[["provider"]] == .env[["dataset"]],
           .data[["fyear"]] == .env[["year"]]
@@ -70,8 +70,7 @@ mod_waiting_list_imbalances_server <- function(id, params) {
           param = 1 +
             .data[["avg_change"]] * .data[["multiplier"]] / .data[["count"]]
         )
-    }) |>
-      shiny::bindCache(params$start_year)
+    })
 
     # observers ----
 

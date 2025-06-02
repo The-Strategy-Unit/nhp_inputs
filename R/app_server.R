@@ -88,6 +88,36 @@ app_server <- function(input, output, session) {
     }) |>
       shiny::bindCache(cache_version())
 
+    baseline_data <- shiny::reactive({
+      load_provider_data("baseline")
+    }) |>
+      shiny::bindCache(cache_version())
+
+    covid_adjustment_data <- shiny::reactive({
+      load_provider_data("covid_adjustment")
+    }) |>
+      shiny::bindCache(cache_version())
+
+    wli_data <- shiny::reactive({
+      load_provider_data("wli")
+    }) |>
+      shiny::bindCache(cache_version())
+
+    expat_data <- shiny::reactive({
+      load_provider_data("expat")
+    }) |>
+      shiny::bindCache(cache_version())
+
+    repat_local_data <- shiny::reactive({
+      load_provider_data("repat_local")
+    }) |>
+      shiny::bindCache(cache_version())
+
+    repat_nonlocal_data <- shiny::reactive({
+      load_provider_data("repat_nonlocal")
+    }) |>
+      shiny::bindCache(cache_version())
+
     available_strategies <- shiny::reactive({
       # nolint start: object_usage_linter
       dataset <- shiny::req(params$dataset)
@@ -107,15 +137,36 @@ app_server <- function(input, output, session) {
         unique()
     })
 
-    mod_baseline_adjustment_server("baseline_adjustment", params)
-    mod_covid_adjustment_server("covid_adjustment", params)
+    mod_baseline_adjustment_server(
+      "baseline_adjustment",
+      baseline_data(),
+      params
+    )
+
+    mod_covid_adjustment_server(
+      "covid_adjustment",
+      covid_adjustment_data(),
+      params
+    )
 
     mod_population_growth_server("population_growth", params)
 
     mod_health_status_adjustment_server("health_status_adjustment", params)
 
-    mod_waiting_list_imbalances_server("waiting_list_imbalances", params)
-    mod_expat_repat_server("expat_repat", params, providers())
+    mod_waiting_list_imbalances_server(
+      "waiting_list_imbalances",
+      wli_data(),
+      params
+    )
+
+    mod_expat_repat_server(
+      "expat_repat",
+      expat_data(),
+      repat_local_data(),
+      repat_nonlocal_data(),
+      params,
+      providers()
+    )
 
     mod_non_demographic_adjustment_server("non_demographic_adjustment", params)
 
