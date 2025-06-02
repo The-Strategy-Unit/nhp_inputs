@@ -161,9 +161,9 @@ app_server <- function(input, output, session) {
 
     mod_expat_repat_server(
       "expat_repat",
-      expat_data,
-      repat_local_data,
-      repat_nonlocal_data,
+      expat_data(),
+      repat_local_data(),
+      repat_nonlocal_data(),
       params,
       providers()
     )

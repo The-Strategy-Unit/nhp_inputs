@@ -61,6 +61,7 @@ mod_expat_repat_server <- function(
     # extract the expat data for the current selection
     expat <- shiny::reactive({
       ds <- shiny::req(params$dataset)
+
       expat_data |>
         dplyr::filter(.data$provider == ds) |>
         extract_expat_repat_data() |>
@@ -77,7 +78,7 @@ mod_expat_repat_server <- function(
     # extract the repat nonlocal data for the current selection
     repat_nonlocal <- shiny::reactive({
       repat_nonlocal_data |>
-        extract_expat_repat_data |>
+        extract_expat_repat_data() |>
         dplyr::select(
           "fyear",
           "provider",
