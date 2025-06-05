@@ -7,11 +7,7 @@
   "start_year": 2019,
   "end_year": 2041,
   "app_version": null,
-  "demographic_factors": {
-    "variant_probabilities": {
-      "principal_proj": 1
-    }
-  },
+  "demographic_factors": {},
   "health_status_adjustment": true,
   "inequalities": {},
   "covid_adjustment": {
