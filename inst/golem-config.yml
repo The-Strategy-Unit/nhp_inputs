@@ -291,3 +291,55 @@ production:
   params_data_path: "/data/nhp/prod/inputs"
 dev:
   golem_wd: !expr here::here()
+dataset_R0A:
+  population_projections:
+    values:
+      custom_projection_R0A66: North Manchester Variant
+    subset:
+      - custom_projection_R0A66
+      - principal_proj
+      - var_proj_10_year_migration
+      - var_proj_alt_internal_migration
+      - var_proj_high_intl_migration
+      - var_proj_low_intl_migration
+      - const_fertility_no_mortality_improvement
+      - const_fertility
+      - high_population
+      - young_age_structure
+      - high_fertility
+      - old_age_structure
+      - low_population
+      - low_fertility
+      - high_life_expectancy
+      - low_life_expectancy
+      - no_mortality_improvement
+      - zero_eu_migration
+      - half_eu_migration
+      - zero_net_migration
+      - replacement_fertility
+dataset_RD8:
+  population_projections:
+    values:
+      custom_projection_RD8: Milton Keynes Variant
+    subset:
+      - custom_projection_RD8
+      - principal_proj
+      - var_proj_10_year_migration
+      - var_proj_alt_internal_migration
+      - var_proj_high_intl_migration
+      - var_proj_low_intl_migration
+      - const_fertility_no_mortality_improvement
+      - const_fertility
+      - high_population
+      - young_age_structure
+      - high_fertility
+      - old_age_structure
+      - low_population
+      - low_fertility
+      - high_life_expectancy
+      - low_life_expectancy
+      - no_mortality_improvement
+      - zero_eu_migration
+      - half_eu_migration
+      - zero_net_migration
+      - replacement_fertility
