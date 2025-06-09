@@ -118,6 +118,11 @@ app_server <- function(input, output, session) {
     }) |>
       shiny::bindCache(cache_version())
 
+    inequalities_data <- shiny::reactive({
+      load_provider_data("inequalities")
+    }) |>
+      shiny::bindCache(cache_version())
+
     available_strategies <- shiny::reactive({
       # nolint start: object_usage_linter
       dataset <- shiny::req(params$dataset)
@@ -167,6 +172,8 @@ app_server <- function(input, output, session) {
       params,
       providers()
     )
+
+    mod_inequalities_server("inequalities", inequalities_data(), params)
 
     mod_non_demographic_adjustment_server("non_demographic_adjustment", params)
 

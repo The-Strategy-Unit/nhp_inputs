@@ -1,47 +1,82 @@
 #' inequalities Server Functions
 #'
 #' @noRd
-mod_inequalities_server <- function(id, params) {
-  selected_time_profile <- update_time_profile <- NULL
-  # nolint start: object_usage_linter
-  c(selected_time_profile, update_time_profile) %<-%
-    mod_time_profile_server(
-      shiny::NS(id, "time_profile"),
-      params
-    )
-  # nolint end
+mod_inequalities_server <- function(id, inequalities_data, params) {
+  # TODO: load values from params
+  # TODO: dynamically generate accordions given scheme's data
 
-  mod_reasons_server(shiny::NS(id, "reasons"), params, "inequalities")
+  mod_reasons_server(
+    shiny::NS(id, "reasons"),
+    params,
+    "inequalities"
+  )
 
   shiny::moduleServer(id, function(input, output, session) {
-    shiny::observe({
-      params[["inequalities"]] <- shiny::req(input$change)
-    }) |>
-      shiny::bindEvent(input$change)
+    inequalities_data_filtered <- shiny::reactive({
+      # nolint start: object_usage_linter
+      dataset <- shiny::req(params$dataset)
+      year <- as.character(shiny::req(params$start_year))
+      # nolint end
 
-    shiny::observe({
-      params$time_profile_mappings[["inequalities"]] <- selected_time_profile()
-    }) |>
-      shiny::bindEvent(selected_time_profile())
-
-    # when the module is initialised, load the values from the loaded params file
-    init <- shiny::observe(
-      {
-        p <- shiny::isolate({
-          params
-        })
-
-        update_time_profile(p$time_profile_mappings[["inequalities"]])
-
-        shiny::updateSelectInput(
-          session,
-          "change",
-          selected = p$inequalities %||% "no_change"
+      inequalities_data |>
+        dplyr::filter(
+          .data[["provider"]] == .env[["dataset"]],
+          .data[["fyear"]] == .env[["year"]],
+          stringr::str_extract(sushrg_trimmed, "\\w{2}") == "LB"
+        ) |>
+        dplyr::select(
+          "fyear",
+          "provider",
+          tidyselect::starts_with("sushrg"),
+          tidyselect::everything()
         )
+    })
 
-        init$destroy()
+    output$btn_download <- downloadHandler(
+      filename = function() {
+        paste0("data-", Sys.Date(), ".csv") # TODO: better filename
       },
-      priority = 10 # this observer needs to trigger before the dropdown change observer
+      content = function(file) {
+        inequalities_data_filtered() |>
+          dplyr::select(-c(pvalue, slope, intercept, fitted_line)) |>
+          write.csv(file)
+      }
+    )
+
+    shiny::observe({
+      shiny::updateSelectInput(inputId = "option_lb42", selected = "zero_sum")
+      shiny::updateSelectInput(inputId = "option_lb72", selected = "zero_sum")
+    }) |>
+      shiny::bindEvent(input$btn_lb)
+
+    # shiny::observe({
+    #   if (input$option_lb42 == "zero_sum" & input$option_lb72 == "zero_sum") {
+    #     shinyjs::disable("btn_lb")
+    #   } else {
+    #     shinyjs::enable("btn_lb")
+    #   }
+    # })
+
+    output$plot_lb42 <- shiny::renderPlot(
+      {
+        mod_plot_rate_by_quintile(
+          inequalities_data_filtered(),
+          "LB42",
+          input$option_lb42
+        )
+      },
+      height = 100
+    )
+
+    output$plot_lb72 <- shiny::renderPlot(
+      {
+        mod_plot_rate_by_quintile(
+          inequalities_data_filtered(),
+          "LB72",
+          input$option_lb72
+        )
+      },
+      height = 100
     )
   })
 }
