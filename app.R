@@ -108,11 +108,21 @@ upgrade_params.v3.4 <- function(p) {
 
   p <- modifyList(
     p,
-    list(inequalities = NULL),  # model expects "inequalities": {}
-    keep.null = TRUE  # NULL list elements are usually discarded
+    list(inequalities = NULL), # model expects "inequalities": {}
+    keep.null = TRUE # NULL list elements are usually discarded
   )
 
   class(p) <- p$app_version <- "v3.5"
+  upgrade_params(p)
+}
+
+upgrade_params.v3.5 <- function(p) {
+  # Set waiting list adjustment to 'off'
+
+  p[["waiting_list_adjustment"]]["ip"] <- list(NULL)
+  p[["waiting_list_adjustment"]]["op"] <- list(NULL)
+
+  class(p) <- p$app_version <- "v3.6"
   upgrade_params(p)
 }
 
