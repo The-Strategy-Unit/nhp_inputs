@@ -59,10 +59,6 @@ app_ui <- function(request) {
       shiny::tags$hr(),
       bs4Dash::sidebarHeader("Demand-supply Imbalances"),
       bs4Dash::menuItem(
-        "Waiting List Imbalances",
-        tabName = "tab_wli"
-      ),
-      bs4Dash::menuItem(
         "Expat/Repat",
         tabName = "tab_er"
       ),
