@@ -119,8 +119,7 @@ upgrade_params.v3.4 <- function(p) {
 upgrade_params.v3.5 <- function(p) {
   # Set waiting list adjustment to 'off'
 
-  p[["waiting_list_adjustment"]]["ip"] <- list(NULL)
-  p[["waiting_list_adjustment"]]["op"] <- list(NULL)
+  p[["waiting_list_adjustment"]] = list(ip = NULL, op = NULL)
 
   class(p) <- p$app_version <- "v3.6"
   upgrade_params(p)
