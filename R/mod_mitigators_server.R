@@ -616,7 +616,9 @@ mod_mitigators_server <- function(
       convert_number <- function(value, config) {
         converted <- scales::number(value, 0.001)
         is_percent <- stringr::str_detect(config$y_axis_title, "%")
-        if (is_percent) converted <- scales::number(value, 0.01, suffix = "%")
+        if (is_percent) {
+          converted <- scales::number(value, 0.01, suffix = "%")
+        }
         converted
       }
 

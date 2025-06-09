@@ -334,7 +334,9 @@ col_1 <- function(...) {
 #' }
 make_action_button <- function(tag, input_id = NULL) {
   # some obvious checks
-  if (!inherits(tag, "shiny.tag")) stop("Must provide a shiny tag.")
+  if (!inherits(tag, "shiny.tag")) {
+    stop("Must provide a shiny tag.")
+  }
   if (!is.null(tag$attribs$class)) {
     if (grep("action-button", tag$attribs$class)) {
       stop("tag is already an action button")
