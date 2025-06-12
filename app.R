@@ -3,7 +3,7 @@ app_version_choices <- jsonlite::fromJSON(Sys.getenv(
   "[\"dev\"]"
 ))
 
-# CONSTANSTS ----
+# CONSTANTS ----
 maximum_model_horizon_year <- 2041
 default_baseline_year <- 2019
 
