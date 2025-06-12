@@ -3,6 +3,12 @@ app_version_choices <- jsonlite::fromJSON(Sys.getenv(
   "[\"dev\"]"
 ))
 
+# CONSTANTS ----
+maximum_model_horizon_year <- 2041
+default_baseline_year <- 2019
+
+# HELPERS ----
+
 # until https://github.com/posit-dev/air/issues/256 is resolved, use nolint start/end
 # nolint start
 "%||%" <- function(x, y) {
@@ -74,7 +80,9 @@ upgrade_params.v3.2 <- function(p) {
 
   # Overwrite variant if variant 1
   is_ndg1 <- identical(ndg_values[["ip"]][["non-elective"]], c(1.0194, 1.0240))
-  if (is_ndg1) p[["non-demographic_adjustment"]][["variant"]] <- "variant_1"
+  if (is_ndg1) {
+    p[["non-demographic_adjustment"]][["variant"]] <- "variant_1"
+  }
 
   class(p) <- p$app_version <- "v3.3"
   upgrade_params(p)
@@ -185,6 +193,18 @@ providers_map <- function(selected_peers) {
     )
 }
 
+format_year_as_fyear <- function(year) {
+  stopifnot(
+    "invalid value for year" = all(year >= 1000 & year <= 9999)
+  )
+
+  paste(year, (year + 1) %% 100, sep = "/")
+}
+
+generate_year_dropdown_choices <- function(years) {
+  fyears <- format_year_as_fyear(years)
+  purrr::set_names(as.character(years), fyears)
+}
 
 ui_body <- function() {
   # each of the columns is created in it's own variable
@@ -220,17 +240,20 @@ ui_body <- function() {
       shiny::selectInput(
         "start_year",
         "Baseline Financial Year",
-        choices = c("2019/20" = 201920, "2023/24" = 202324)
+        # TODO: revisit why start year and end year are formatted differently
+        choices = c("2019/20" = 201920, "2023/24" = 202324),
+        selected = as.character(
+          (default_baseline_year * 100) + ((default_baseline_year + 1) %% 100)
+        )
       ),
       shiny::htmlOutput("baseline_202324_warning"),
       shiny::selectInput(
         "end_year",
         "Model Financial Year",
-        choices = setNames(
-          as.character(0:21),
-          paste(2020:2041, 21:42, sep = "/")
+        choices = generate_year_dropdown_choices(
+          (default_baseline_year + 1):maximum_model_horizon_year
         ),
-        selected = "21"
+        selected = as.character(maximum_model_horizon_year)
       )
     ),
     bs4Dash::box(
@@ -529,10 +552,24 @@ server <- function(input, output, session) {
   shiny::observe({
     p <- shiny::req(params())
 
+    stopifnot(
+      "start_year is coming through as an fyear, should be yyyy" =
+        (p$start_year >= 1000) && (p$start_year <= 9999) # fmt:skip
+    )
+
     y <- p$start_year * 100 + p$start_year %% 100 + 1
     # we don't need to update dataset:
     # the parameters files that are listed in the previous scenario dropdown are already tied to that provider
     shiny::updateSelectInput(session, "start_year", selected = y)
+
+    selected_end_year <- p$end_year
+    if (
+      selected_end_year <= p$start_year ||
+        selected_end_year > maximum_model_horizon_year
+    ) {
+      selected_end_year <- maximum_model_horizon_year
+    }
+
     shiny::updateSelectInput(
       session,
       "end_year",
@@ -559,28 +596,23 @@ server <- function(input, output, session) {
   shiny::observe({
     start_yr <- as.numeric(stringr::str_sub(input$start_year, 1, 4))
 
-    fy_yyyy <- seq(start_yr + 1, 2041) # sequence from start+1 to end year
-    fy_yy <- stringr::str_sub(fy_yyyy + 1, 3, 4)
-    fy_choices <- paste(fy_yyyy, fy_yy, sep = "/")
-    fy_choices_num <- setNames(fy_yyyy, fy_choices)
+    fy_choices <- generate_year_dropdown_choices(
+      (start_yr + 1):maximum_model_horizon_year
+    )
 
     # Set end year to latest year, otherwise the year stored in existing params
-    if (input$scenario_type == "Create new from scratch") {
-      shiny::updateSelectInput(
-        session,
-        "end_year",
-        choices = fy_choices_num,
-        selected = max(fy_choices_num)
-      )
+    selected_end_year <- if (input$scenario_type == "Create new from scratch") {
+      maximum_model_horizon_year
     } else {
-      p <- shiny::req(params())
-      shiny::updateSelectInput(
-        session,
-        "end_year",
-        choices = fy_choices_num,
-        selected = p$end_year
-      )
+      shiny::req(params())$end_year
     }
+
+    shiny::updateSelectInput(
+      session,
+      "end_year",
+      choices = fy_choices,
+      selected = selected_end_year
+    )
   }) |>
     shiny::bindEvent(input$start_year)
 
