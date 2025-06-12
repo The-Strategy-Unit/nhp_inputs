@@ -4,17 +4,6 @@
 		{
 			"type": "R",
 			"code": [
-				"browseURL('http://localhost:8080/')",
-				"golem::run_dev()"
-			],
-			"group": "none",
-			"isBackground": true,
-			"problemMatcher": [],
-			"label": "R: Run App"
-		},
-		{
-			"type": "R",
-			"code": [
 				"source('dev/watch.R')"
 			],
 			"group": "none",
