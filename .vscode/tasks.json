@@ -4,42 +4,12 @@
 		{
 			"type": "R",
 			"code": [
-				"browseURL('http://localhost:8080/')",
-				"golem::run_dev()"
-			],
-			"group": "none",
-			"isBackground": true,
-			"problemMatcher": [],
-			"label": "R: Run App"
-		},
-		{
-			"type": "R",
-			"code": [
 				"source('dev/watch.R')"
 			],
 			"group": "none",
 			"isBackground": true,
 			"problemMatcher": [],
 			"label": "R: Run App (watch)"
-		},
-		{
-			"type": "R",
-			"code": [
-				"targets::tar_make()"
-			],
-			"group": "build",
-			"problemMatcher": [],
-			"label": "R: Run Targets"
-		},
-		{
-			"type": "R",
-			"code": [
-				"rsconnect::deployApp(appName='nhp_inputs', forceUpdate=TRUE, launch.browser=FALSE)"
-			],
-			"group": "none",
-			"isBackground": true,
-			"problemMatcher": [],
-			"label": "R: Deploy app"
 		}
 	]
 }
