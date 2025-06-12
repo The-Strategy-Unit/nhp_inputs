@@ -25,15 +25,6 @@
 		{
 			"type": "R",
 			"code": [
-				"targets::tar_make()"
-			],
-			"group": "build",
-			"problemMatcher": [],
-			"label": "R: Run Targets"
-		},
-		{
-			"type": "R",
-			"code": [
 				"rsconnect::deployApp(appName='nhp_inputs', forceUpdate=TRUE, launch.browser=FALSE)"
 			],
 			"group": "none",
