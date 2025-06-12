@@ -552,10 +552,24 @@ server <- function(input, output, session) {
   shiny::observe({
     p <- shiny::req(params())
 
+    stopifnot(
+      "start_year is coming through as an fyear, should be yyyy" =
+        (p$start_year >= 1000) && (p$start_year <= 9999) # fmt:skip
+    )
+
     y <- p$start_year * 100 + p$start_year %% 100 + 1
     # we don't need to update dataset:
     # the parameters files that are listed in the previous scenario dropdown are already tied to that provider
     shiny::updateSelectInput(session, "start_year", selected = y)
+
+    selected_end_year <- p$end_year
+    if (
+      selected_end_year <= p$start_year ||
+        selected_end_year > maximum_model_horizon_year
+    ) {
+      selected_end_year <- maximum_model_horizon_year
+    }
+
     shiny::updateSelectInput(
       session,
       "end_year",
