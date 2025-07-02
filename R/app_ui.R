@@ -238,25 +238,31 @@ app_ui <- function(request) {
         tabName = "op_am_c2c_referrals",
         mod_mitigators_ui(
           "mitigators_op_c2c_reduction",
-          "Consultant to Consultant Reduction"
+          "Consultant to Consultant Reduction",
+          FALSE
         )
       ),
       bs4Dash::tabItem(
         tabName = "op_am_convert_tele",
         mod_mitigators_ui(
           "mitigators_op_convert_tele",
-          "Convert to Tele Appointment"
+          "Convert to Tele Appointment",
+          FALSE
         )
       ),
       bs4Dash::tabItem(
         tabName = "op_am_fup_reduction",
-        mod_mitigators_ui("mitigators_op_fup_reduction", "Follow-Up Reduction")
+        mod_mitigators_ui(
+          "mitigators_op_fup_reduction",
+          "Follow-Up Reduction",
+          FALSE)
       ),
       bs4Dash::tabItem(
         tabName = "op_gp_referred_first_attendance_reduction",
         mod_mitigators_ui(
           "mitigators_op_gp_referred_first_attendance_reduction",
-          "GP Referred First Attendances"
+          "GP Referred First Attendances",
+          FALSE
         )
       ),
       bs4Dash::tabItem(
