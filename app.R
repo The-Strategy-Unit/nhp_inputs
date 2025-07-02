@@ -133,6 +133,26 @@ upgrade_params.v3.5 <- function(p) {
   upgrade_params(p)
 }
 
+upgrade_params.v3.6 <- function(p) {
+  # Remove renamed day-procedure mitigators
+
+  day_procedures_mitigators <- c(
+    "bads_daycase",
+    "bads_daycase_occasional",
+    "bads_outpatients",
+    "bads_outpatients_or_daycase"
+  )
+
+  for (mitigator in day_procedures_mitigators) {
+    p[["efficiencies"]][["ip"]][[mitigator]] <- NULL
+    p[["time_profile_mappings"]][["efficiencies"]][["ip"]][[mitigator]] <- NULL
+    p[["reasons"]][["efficiencies"]][["ip"]][[mitigator]] <- NULL
+  }
+
+  class(p) <- p$app_version <- "v3.7"
+  upgrade_params(p)
+}
+
 params_path <- function(user, dataset) {
   path <- file.path(
     config::get("params_data_path"),
