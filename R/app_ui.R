@@ -255,7 +255,8 @@ app_ui <- function(request) {
         mod_mitigators_ui(
           "mitigators_op_fup_reduction",
           "Follow-Up Reduction",
-          FALSE)
+          FALSE
+        )
       ),
       bs4Dash::tabItem(
         tabName = "op_gp_referred_first_attendance_reduction",
