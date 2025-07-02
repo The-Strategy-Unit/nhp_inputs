@@ -76,7 +76,7 @@ mod_mitigators_ui <- function(id, title, show_diagnoses_table = TRUE) {
             width = 2
           ),
           col_6(
-            if(show_diagnoses_table){
+            if (show_diagnoses_table) {
               bs4Dash::box(
                 title = "Top 6 Primary Diagnoses",
                 shinycssloaders::withSpinner({
@@ -92,7 +92,7 @@ mod_mitigators_ui <- function(id, title, show_diagnoses_table = TRUE) {
               }),
               width = 12
             )
-            ),
+          ),
           bs4Dash::box(
             title = "Bar Chart of Activity by Age and Sex",
             shinycssloaders::withSpinner({
