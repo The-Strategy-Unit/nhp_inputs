@@ -5,13 +5,12 @@ default:
   params_data_path: "."
   population_projections:
     values:
-      principal_proj: "Principal projection"
+      migration_category: "Principal projection"
+      var_proj_5_year_migration: "5 year migration trends"
       var_proj_10_year_migration: "10 year migration trends"
-      var_proj_alt_internal_migration: "5 year internal migration trend"
       var_proj_high_intl_migration: "High migration"
       var_proj_low_intl_migration: "Low migration"
-      const_fertility_no_mortality_improvement: "Constant fertility = no mortality improvement"
-      const_fertility: "Constant fertility"
+      var_proj_zero_net_migration: "Zero net migration"
       high_population: "High population"
       young_age_structure: "Young age structure"
       high_fertility: "High fertility"
@@ -21,8 +20,6 @@ default:
       high_life_expectancy: "High life expectancy"
       low_life_expectancy: "Low life expectancy"
       no_mortality_improvement: "No mortality improvement"
-      zero_eu_migration: "0% Future EU migration (Not National Statistics)"
-      half_eu_migration: "50% Future EU migration (Not National Statistics)"
       zero_net_migration: "Zero net migration (natural change only)"
       replacement_fertility: "Replacement fertility"
   non-demographic_adjustment:
@@ -297,13 +294,12 @@ dataset_R0A:
       custom_projection_R0A66: North Manchester Variant
     subset:
       - custom_projection_R0A66
-      - principal_proj
+      - migration_category
+      - var_proj_5_year_migration
       - var_proj_10_year_migration
-      - var_proj_alt_internal_migration
       - var_proj_high_intl_migration
       - var_proj_low_intl_migration
-      - const_fertility_no_mortality_improvement
-      - const_fertility
+      - var_proj_zero_net_migration
       - high_population
       - young_age_structure
       - high_fertility
@@ -313,8 +309,6 @@ dataset_R0A:
       - high_life_expectancy
       - low_life_expectancy
       - no_mortality_improvement
-      - zero_eu_migration
-      - half_eu_migration
       - zero_net_migration
       - replacement_fertility
 dataset_RD8:
@@ -323,13 +317,12 @@ dataset_RD8:
       custom_projection_RD8: Milton Keynes Variant
     subset:
       - custom_projection_RD8
-      - principal_proj
+      - migration_category
+      - var_proj_5_year_migration
       - var_proj_10_year_migration
-      - var_proj_alt_internal_migration
       - var_proj_high_intl_migration
       - var_proj_low_intl_migration
-      - const_fertility_no_mortality_improvement
-      - const_fertility
+      - var_proj_zero_net_migration
       - high_population
       - young_age_structure
       - high_fertility
@@ -339,7 +332,5 @@ dataset_RD8:
       - high_life_expectancy
       - low_life_expectancy
       - no_mortality_improvement
-      - zero_eu_migration
-      - half_eu_migration
       - zero_net_migration
       - replacement_fertility
