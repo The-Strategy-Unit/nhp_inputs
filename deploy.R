@@ -39,40 +39,18 @@ deploy <- function(server, app_id, app_version_choices) {
   )
 }
 
+# only use the versions that are deployed to the new server currently
 app_version_choices <- c(
+  "v3.7",
   "v3.6",
   "v3.5",
   "v3.4",
   "v3.3",
-  "v3.2",
-  "v3.1",
-  "v3.0",
-  "v2.2",
-  "v2.1",
-  "v2.0",
-  "v1.2",
-  "v1.1",
-  "v1.0",
   "dev"
 )
 
 deploy(
   server = "connect.strategyunitwm.nhs.uk",
-  app_id = 215,
-  app_version_choices
-)
-
-# only use the versions that are deployed to the new server currently
-app_version_choices <- c(
-  "v3.6",
-  "v3.5",
-  "v3.4",
-  "v3.3",
-  "dev"
-)
-
-deploy(
-  server = "connect.su.mlcsu.org",
   app_id = 71,
   app_version_choices
 )
