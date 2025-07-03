@@ -54,69 +54,70 @@ app_server <- function(input, output, session) {
     1
   })
 
+  # load all data
+  rates_data <- shiny::reactive({
+    load_provider_data("rates")
+  }) |>
+    shiny::bindCache(cache_version())
+
+  age_sex_data <- shiny::reactive({
+    age_sex <- load_provider_data("age_sex")
+    # nolint start: object_usage_linter
+    age_fct <- age_sex |> _[["age_group"]] |> unique() |> sort()
+    # nolint end
+    age_sex |>
+      dplyr::mutate(
+        age_group = factor(
+          .data[["age_group"]],
+          levels = .env[["age_fct"]]
+        )
+      )
+  }) |>
+    shiny::bindCache(cache_version())
+
+  diagnoses_data <- shiny::reactive({
+    load_provider_data("diagnoses")
+  }) |>
+    shiny::bindCache(cache_version())
+
+  procedures_data <- shiny::reactive({
+    load_provider_data("procedures")
+  }) |>
+    shiny::bindCache(cache_version())
+
+  baseline_data <- shiny::reactive({
+    load_provider_data("baseline")
+  }) |>
+    shiny::bindCache(cache_version())
+
+  covid_adjustment_data <- shiny::reactive({
+    load_provider_data("covid_adjustment")
+  }) |>
+    shiny::bindCache(cache_version())
+
+  wli_data <- shiny::reactive({
+    load_provider_data("wli")
+  }) |>
+    shiny::bindCache(cache_version())
+
+  expat_data <- shiny::reactive({
+    load_provider_data("expat")
+  }) |>
+    shiny::bindCache(cache_version())
+
+  repat_local_data <- shiny::reactive({
+    load_provider_data("repat_local")
+  }) |>
+    shiny::bindCache(cache_version())
+
+  repat_nonlocal_data <- shiny::reactive({
+    load_provider_data("repat_nonlocal")
+  }) |>
+    shiny::bindCache(cache_version())
+
   # load all other modules once the home module has finished loading
   init <- shiny::observe({
     shiny::req(start() > 0)
-
-    rates_data <- shiny::reactive({
-      load_provider_data("rates")
-    }) |>
-      shiny::bindCache(cache_version())
-
-    age_sex_data <- shiny::reactive({
-      age_sex <- load_provider_data("age_sex")
-      # nolint start: object_usage_linter
-      age_fct <- age_sex |> _[["age_group"]] |> unique() |> sort()
-      # nolint end
-      age_sex |>
-        dplyr::mutate(
-          age_group = factor(
-            .data[["age_group"]],
-            levels = .env[["age_fct"]]
-          )
-        )
-    }) |>
-      shiny::bindCache(cache_version())
-
-    diagnoses_data <- shiny::reactive({
-      load_provider_data("diagnoses")
-    }) |>
-      shiny::bindCache(cache_version())
-
-    procedures_data <- shiny::reactive({
-      load_provider_data("procedures")
-    }) |>
-      shiny::bindCache(cache_version())
-
-    baseline_data <- shiny::reactive({
-      load_provider_data("baseline")
-    }) |>
-      shiny::bindCache(cache_version())
-
-    covid_adjustment_data <- shiny::reactive({
-      load_provider_data("covid_adjustment")
-    }) |>
-      shiny::bindCache(cache_version())
-
-    wli_data <- shiny::reactive({
-      load_provider_data("wli")
-    }) |>
-      shiny::bindCache(cache_version())
-
-    expat_data <- shiny::reactive({
-      load_provider_data("expat")
-    }) |>
-      shiny::bindCache(cache_version())
-
-    repat_local_data <- shiny::reactive({
-      load_provider_data("repat_local")
-    }) |>
-      shiny::bindCache(cache_version())
-
-    repat_nonlocal_data <- shiny::reactive({
-      load_provider_data("repat_nonlocal")
-    }) |>
-      shiny::bindCache(cache_version())
 
     available_strategies <- shiny::reactive({
       # nolint start: object_usage_linter
