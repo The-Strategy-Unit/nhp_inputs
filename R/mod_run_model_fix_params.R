@@ -1,4 +1,4 @@
-mod_run_model_fix_params <- function(p) {
+mod_run_model_fix_params <- function(p, schema) {
   # the time profiles may be empty, ensure that's not the case
   tpm <- p[["time_profile_mappings"]]
   p[["time_profile_mappings"]][["activity_avoidance"]] <- list(
@@ -30,6 +30,8 @@ mod_run_model_fix_params <- function(p) {
       }
     }
   }
+
+  p <- mod_run_model_remove_invalid_mitigators(p, schema)
 
   # nolint start: commented_code_linter
   # some of the items in our params will be lists of length 0.

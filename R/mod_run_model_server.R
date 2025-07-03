@@ -1,7 +1,7 @@
 #' run_model Server Functions
 #'
 #' @noRd
-mod_run_model_server <- function(id, params) {
+mod_run_model_server <- function(id, params, schema) {
   mod_reasons_server(shiny::NS(id, "reasons"), params, "model_run")
 
   shiny::moduleServer(id, function(input, output, session) {
@@ -23,7 +23,7 @@ mod_run_model_server <- function(id, params) {
 
       params |>
         shiny::reactiveValuesToList() |>
-        mod_run_model_fix_params()
+        mod_run_model_fix_params(schema)
     })
 
     # output the status of the model run after submit is pressed
@@ -39,6 +39,8 @@ mod_run_model_server <- function(id, params) {
         s
       }
     })
+
+    # TODO: add schema validation, disable button on invalid schema, show schema validation table?
 
     # observe the submit button being pressed
     shiny::observe({
