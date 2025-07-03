@@ -115,6 +115,11 @@ app_server <- function(input, output, session) {
   }) |>
     shiny::bindCache(cache_version())
 
+  params_schema <- shiny::reactive({
+    get_params_schema()
+  }) |>
+    shiny::bindCache(cache_version())
+
   # load all other modules once the home module has finished loading
   init <- shiny::observe({
     shiny::req(start() > 0)
