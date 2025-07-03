@@ -29,6 +29,7 @@ Imports:
     httr2,
     janitor,
     jsonlite,
+    jsonvalidate,
     leaflet,
     markdown,
     openssl,
