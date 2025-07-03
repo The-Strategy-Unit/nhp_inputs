@@ -11,7 +11,10 @@ mod_run_model_remove_invalid_mitigators <- function(p, schema) {
     dplyr::select("params", "dataPath") |>
     tidyr::unnest_wider("params") |>
     purrr::pmap(
+      # nolint start
+      # these are the names of the columns in the created dataframe, so ignore lint errors
       \(dataPath, additionalProperty, ...) {
+        # nolint end
         path <- stringr::str_split(dataPath, "/")[[1]][-1]
         c(path, additionalProperty)
       }
@@ -35,7 +38,7 @@ mod_run_model_remove_invalid_mitigators <- function(p, schema) {
 
     x[[p1]] <- remove_item(sublist, ps)
 
-    return(x)
+    x
   }
 
   for (i in paths) {
