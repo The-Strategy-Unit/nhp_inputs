@@ -133,6 +133,16 @@ upgrade_params.v3.5 <- function(p) {
   upgrade_params(p)
 }
 
+upgrade_params.v3.6 <- function(p) {
+  # Overwrite population projection to 100% 'migration category' variant
+
+  p[["demographic_factors"]][["variant_probabilities"]] <-
+    list("migration_category" = 1)
+
+  class(p) <- p$app_version <- "v3.7"
+  upgrade_params(p)
+}
+
 params_path <- function(user, dataset) {
   path <- file.path(
     config::get("params_data_path"),
