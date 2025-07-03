@@ -5,7 +5,7 @@ default:
   params_data_path: "."
   population_projections:
     values:
-      migration_category: "Principal projection"
+      migration_category: "Migration category"
       var_proj_5_year_migration: "5 year migration trends"
       var_proj_10_year_migration: "10 year migration trends"
       var_proj_high_intl_migration: "High migration"
