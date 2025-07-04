@@ -141,7 +141,7 @@ upgrade_params.v3.6 <- function(p) {
   p[["demographic_factors"]][["variant_probabilities"]] <-
     list("migration_category" = 1)
 
-  class(p) <- p$app_version <- "v3.7"
+  class(p) <- p$app_version <- "v4.0"
   upgrade_params(p)
 }
 
