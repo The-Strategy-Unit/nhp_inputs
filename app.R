@@ -5,7 +5,7 @@ app_version_choices <- jsonlite::fromJSON(Sys.getenv(
 
 # CONSTANTS ----
 maximum_model_horizon_year <- 2041
-default_baseline_year <- 2019
+default_baseline_year <- 2023
 
 # HELPERS ----
 
@@ -133,6 +133,18 @@ upgrade_params.v3.5 <- function(p) {
   upgrade_params(p)
 }
 
+upgrade_params.v3.6 <- function(p) {
+  # Overwrite start_year to force 2023
+  p[["start_year"]] <- 2023
+
+  # Overwrite population projection to 100% 'migration category' variant
+  p[["demographic_factors"]][["variant_probabilities"]] <-
+    list("migration_category" = 1)
+
+  class(p) <- p$app_version <- "v4.0"
+  upgrade_params(p)
+}
+
 params_path <- function(user, dataset) {
   path <- file.path(
     config::get("params_data_path"),
@@ -241,7 +253,7 @@ ui_body <- function() {
         "start_year",
         "Baseline Financial Year",
         # TODO: revisit why start year and end year are formatted differently
-        choices = c("2019/20" = 201920, "2023/24" = 202324),
+        choices = c("2023/24" = 202324),
         selected = as.character(
           (default_baseline_year * 100) + ((default_baseline_year + 1) %% 100)
         )
@@ -270,6 +282,18 @@ ui_body <- function() {
             "Edit existing"
           ),
           inline = TRUE
+        )
+      ),
+      shinyjs::hidden(
+        shiny::div(
+          id = "pop_proj_warning",
+          shiny::HTML(
+            "<font color='red'>Your scenario will be upgraded to work with the
+            latest version of the model. From v4.0 the model uses the 2022 ONS
+            population projections, so your baseline year will be set to 2023
+            and your population-growth selections will be reset to the default.
+            Please review these changes.</font><p>"
+          )
         )
       ),
       shinyjs::hidden(
@@ -536,16 +560,6 @@ server <- function(input, output, session) {
       shinyjs::enable("selected_user")
       shinyjs::show("selected_user")
     }
-
-    if (
-      is_local() || is_power_user || "nhp_allow_2022_data" %in% session$groups
-    ) {
-      shiny::updateSelectInput(
-        session,
-        "start_year",
-        choices = c("2019/20" = 201920, "2022/23" = 202223, "2023/24" = 202324)
-      )
-    }
   })
 
   # when params change, update inputs
@@ -556,11 +570,6 @@ server <- function(input, output, session) {
       "start_year is coming through as an fyear, should be yyyy" =
         (p$start_year >= 1000) && (p$start_year <= 9999) # fmt:skip
     )
-
-    y <- p$start_year * 100 + p$start_year %% 100 + 1
-    # we don't need to update dataset:
-    # the parameters files that are listed in the previous scenario dropdown are already tied to that provider
-    shiny::updateSelectInput(session, "start_year", selected = y)
 
     selected_end_year <- p$end_year
     if (
@@ -661,17 +670,20 @@ server <- function(input, output, session) {
     if (input$scenario_type == "Create new from scratch") {
       shinyjs::show("scenario")
       shinyjs::enable("scenario")
+      shinyjs::hide("pop_proj_warning")
       shinyjs::hide("previous_scenario")
       shinyjs::hide("ndg_warning")
       shinyjs::show("naming_guidance")
       shiny::updateTextInput(session, "scenario", value = "")
     } else if (input$scenario_type == "Create new from existing") {
       shinyjs::show("scenario")
+      shinyjs::show("pop_proj_warning")
       shinyjs::show("previous_scenario")
       shinyjs::show("naming_guidance")
       shiny::updateTextInput(session, "scenario", value = "")
     } else if (input$scenario_type == "Edit existing") {
       shinyjs::hide("scenario")
+      shinyjs::show("pop_proj_warning")
       shinyjs::show("previous_scenario")
       shinyjs::hide("naming_guidance")
       shiny::updateTextInput(
@@ -682,6 +694,7 @@ server <- function(input, output, session) {
     }
   }) |>
     shiny::bindEvent(
+      input$dataset,
       input$scenario_type,
       input$previous_scenario
     )
@@ -698,6 +711,7 @@ server <- function(input, output, session) {
       if (is_ndg1) {
         shinyjs::show("ndg_warning")
         shinyjs::hide("scenario")
+        shinyjs::hide("pop_proj_warning")
         shinyjs::hide("start_button")
         shinyjs::hide("naming_guidance")
       } else {
@@ -764,11 +778,11 @@ server <- function(input, output, session) {
   output$baseline_202324_warning <- shiny::renderText({
     if (input$start_year == "202324") {
       "<font color='red'>You must request and review your 2023/24 detailed
-      baseline data before selecting 2023/24 as the baseline year. Please
+      baseline data before using 2023/24 as the baseline year. Please
       contact <a href='mailto:mlcsu.su.datascience@nhs.net?subject=NHP request:
       2023/24 baseline data&body=I am requesting the 2023/24 detailed baseline
       data for [insert scheme name].'>mlcsu.su.datascience@nhs.net</a> to
-      request your 2023/24 detailed baseline data.</font><br><br>"
+      request it.</font><br><br>"
     }
   }) |>
     shiny::bindEvent(input$start_year)
