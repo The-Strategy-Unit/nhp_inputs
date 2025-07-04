@@ -283,6 +283,18 @@ ui_body <- function() {
         )
       ),
       shinyjs::hidden(
+        shiny::div(
+          id = "pop_proj_warning",
+          shiny::HTML(
+            "<font color='red'>Your scenario will be upgraded to work with the
+            latest version of the model. From v4.0, your population growth
+            selections will be reset to the default because the model now uses
+            the 2022 ONS population projections. Please review this change.
+            </font><p>"
+          )
+        )
+      ),
+      shinyjs::hidden(
         shiny::selectInput(
           "previous_scenario",
           "Previous Scenario",
@@ -671,17 +683,20 @@ server <- function(input, output, session) {
     if (input$scenario_type == "Create new from scratch") {
       shinyjs::show("scenario")
       shinyjs::enable("scenario")
+      shinyjs::hide("pop_proj_warning")
       shinyjs::hide("previous_scenario")
       shinyjs::hide("ndg_warning")
       shinyjs::show("naming_guidance")
       shiny::updateTextInput(session, "scenario", value = "")
     } else if (input$scenario_type == "Create new from existing") {
       shinyjs::show("scenario")
+      shinyjs::show("pop_proj_warning")
       shinyjs::show("previous_scenario")
       shinyjs::show("naming_guidance")
       shiny::updateTextInput(session, "scenario", value = "")
     } else if (input$scenario_type == "Edit existing") {
       shinyjs::hide("scenario")
+      shinyjs::show("pop_proj_warning")
       shinyjs::show("previous_scenario")
       shinyjs::hide("naming_guidance")
       shiny::updateTextInput(
@@ -692,6 +707,7 @@ server <- function(input, output, session) {
     }
   }) |>
     shiny::bindEvent(
+      input$dataset,
       input$scenario_type,
       input$previous_scenario
     )
@@ -708,6 +724,7 @@ server <- function(input, output, session) {
       if (is_ndg1) {
         shinyjs::show("ndg_warning")
         shinyjs::hide("scenario")
+        shinyjs::hide("pop_proj_warning")
         shinyjs::hide("start_button")
         shinyjs::hide("naming_guidance")
       } else {
