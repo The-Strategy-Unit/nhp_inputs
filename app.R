@@ -5,7 +5,7 @@ app_version_choices <- jsonlite::fromJSON(Sys.getenv(
 
 # CONSTANTS ----
 maximum_model_horizon_year <- 2041
-default_baseline_year <- 2019
+default_baseline_year <- 2023
 
 # HELPERS ----
 
@@ -253,7 +253,7 @@ ui_body <- function() {
         "start_year",
         "Baseline Financial Year",
         # TODO: revisit why start year and end year are formatted differently
-        choices = c("2019/20" = 201920, "2023/24" = 202324),
+        choices = c("2023/24" = 202324),
         selected = as.character(
           (default_baseline_year * 100) + ((default_baseline_year + 1) %% 100)
         )
@@ -560,16 +560,6 @@ server <- function(input, output, session) {
       shinyjs::enable("selected_user")
       shinyjs::show("selected_user")
     }
-
-    if (
-      is_local() || is_power_user || "nhp_allow_2022_data" %in% session$groups
-    ) {
-      shiny::updateSelectInput(
-        session,
-        "start_year",
-        choices = c("2019/20" = 201920, "2022/23" = 202223, "2023/24" = 202324)
-      )
-    }
   })
 
   # when params change, update inputs
@@ -580,11 +570,6 @@ server <- function(input, output, session) {
       "start_year is coming through as an fyear, should be yyyy" =
         (p$start_year >= 1000) && (p$start_year <= 9999) # fmt:skip
     )
-
-    y <- p$start_year * 100 + p$start_year %% 100 + 1
-    # we don't need to update dataset:
-    # the parameters files that are listed in the previous scenario dropdown are already tied to that provider
-    shiny::updateSelectInput(session, "start_year", selected = y)
 
     selected_end_year <- p$end_year
     if (
@@ -793,11 +778,11 @@ server <- function(input, output, session) {
   output$baseline_202324_warning <- shiny::renderText({
     if (input$start_year == "202324") {
       "<font color='red'>You must request and review your 2023/24 detailed
-      baseline data before selecting 2023/24 as the baseline year. Please
+      baseline data before using 2023/24 as the baseline year. Please
       contact <a href='mailto:mlcsu.su.datascience@nhs.net?subject=NHP request:
       2023/24 baseline data&body=I am requesting the 2023/24 detailed baseline
       data for [insert scheme name].'>mlcsu.su.datascience@nhs.net</a> to
-      request your 2023/24 detailed baseline data.</font><br><br>"
+      request it.</font><br><br>"
     }
   }) |>
     shiny::bindEvent(input$start_year)
