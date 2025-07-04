@@ -289,10 +289,10 @@ ui_body <- function() {
           id = "pop_proj_warning",
           shiny::HTML(
             "<font color='red'>Your scenario will be upgraded to work with the
-            latest version of the model. From v4.0, your population growth
-            selections will be reset to the default because the model now uses
-            the 2022 ONS population projections. Please review this change.
-            </font><p>"
+            latest version of the model. From v4.0 the model uses the 2022 ONS
+            population projections, so your baseline year will be set to 2023
+            and your population-growth selections will be reset to the default.
+            Please review these changes.</font><p>"
           )
         )
       ),
