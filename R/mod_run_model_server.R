@@ -1,7 +1,7 @@
 #' run_model Server Functions
 #'
 #' @noRd
-mod_run_model_server <- function(id, params) {
+mod_run_model_server <- function(id, params, schema) {
   mod_reasons_server(shiny::NS(id, "reasons"), params, "model_run")
 
   shiny::moduleServer(id, function(input, output, session) {
@@ -23,7 +23,7 @@ mod_run_model_server <- function(id, params) {
 
       params |>
         shiny::reactiveValuesToList() |>
-        mod_run_model_fix_params()
+        mod_run_model_fix_params(schema)
     })
 
     # output the status of the model run after submit is pressed
@@ -50,9 +50,10 @@ mod_run_model_server <- function(id, params) {
 
       # get the params
       p <- shiny::req(fixed_params())
+      j <- shiny::req(params_json())
 
       # submit the model run
-      mod_run_model_submit(p, status, results_url)
+      mod_run_model_submit(j, p$app_version, status, results_url)
 
       # do not return the promise
       invisible(NULL)
@@ -60,21 +61,50 @@ mod_run_model_server <- function(id, params) {
       shiny::bindEvent(input$submit)
 
     # display the params as json
-    output$params_json <- shiny::renderText({
+    params_json <- shiny::reactive({
       jsonlite::toJSON(fixed_params(), pretty = TRUE, auto_unbox = TRUE)
     })
 
-    shiny::observe({
-      p <- !is.null(tryCatch(fixed_params(), error = \(...) NULL))
+    params_json_validation <- shiny::reactive({
+      v <- schema$validate(params_json(), verbose = TRUE)
+
+      list(
+        # because v has attributes, force to be a simpler object
+        is_valid = isTRUE(v),
+        errors = attr(v, "errors")
+      )
+    })
+
+    output$params_json <- shiny::renderText({
+      v <- params_json_validation()
+
+      shiny::validate(
+        shiny::need(
+          v$is_valid,
+          "Error: invalid parameters, see validation errors below"
+        )
+      )
+
+      params_json()
+    })
+
+    output$validation_errors <- gt::render_gt({
+      v <- params_json_validation()
+      ve_df <- v$errors
+
+      shiny::req(ve_df)
+      shiny::req(is.data.frame(ve_df) && nrow(ve_df) > 0)
+
+      gt::gt(ve_df)
     })
 
     # observe the params - enable the submit / download button only when the
     # params are valid
     shiny::observe({
-      p <- !is.null(tryCatch(fixed_params(), error = \(...) NULL))
+      v <- params_json_validation()$is_valid %||% FALSE
 
-      shinyjs::toggleState("submit", condition = p && !input$submit)
-      shinyjs::toggleState("download_params", condition = p)
+      shinyjs::toggleState("submit", condition = v && !input$submit)
+      shinyjs::toggleState("download_params", condition = v)
     })
 
     # download the params when the download button is pressed
@@ -84,12 +114,7 @@ mod_run_model_server <- function(id, params) {
     output$download_params <- shiny::downloadHandler(
       filename = \() paste0(fixed_params()$id, ".json"),
       content = \(file) {
-        jsonlite::write_json(
-          fixed_params(),
-          file,
-          pretty = TRUE,
-          auto_unbox = TRUE
-        )
+        readr::write_lines(params_json(), file)
       }
     )
   })

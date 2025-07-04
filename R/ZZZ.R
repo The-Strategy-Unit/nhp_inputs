@@ -90,3 +90,21 @@ encrypt_filename <- function(
 
   openssl::base64_encode(c(hm, ct))
 }
+
+get_params_schema <- function(
+  app_version = Sys.getenv("INPUTS_DATA_VERSION", "dev")
+) {
+  tf <- tempfile()
+
+  download.file(
+    glue::glue(
+      "https://the-strategy-unit.github.io/nhp_model/{app_version}/params-schema.json"
+    ),
+    tf
+  )
+  # append a newline to the end of the params-schema file, otherwise you get a warning
+  # "incomplete final line found"
+  cat("\n", file = tf, append = TRUE)
+
+  jsonvalidate::json_schema$new(tf)
+}
