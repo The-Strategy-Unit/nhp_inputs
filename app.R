@@ -134,8 +134,10 @@ upgrade_params.v3.5 <- function(p) {
 }
 
 upgrade_params.v3.6 <- function(p) {
-  # Overwrite population projection to 100% 'migration category' variant
+  # Overwrite start_year to force 2023
+  p[["start_year"]] <- 2023
 
+  # Overwrite population projection to 100% 'migration category' variant
   p[["demographic_factors"]][["variant_probabilities"]] <-
     list("migration_category" = 1)
 
