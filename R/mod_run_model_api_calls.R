@@ -1,13 +1,14 @@
 # recursive future promise
-mod_run_model_submit <- function(params, status, results_url) {
-  # for some reason, relying on the req_body_json does not work. it converts empty dictionaries
-  # into null. handle this manually.
-  params_json <- jsonlite::toJSON(params, auto_unbox = TRUE, pretty = TRUE)
-
+mod_run_model_submit <- function(
+  params_json,
+  app_version,
+  status,
+  results_url
+) {
   req <- httr2::request(Sys.getenv("NHP_API_URI")) |>
     httr2::req_url_path("api", "run_model") |>
     httr2::req_url_query(
-      app_version = params$app_version,
+      app_version = app_version,
       code = Sys.getenv("NHP_API_KEY")
     ) |>
     httr2::req_body_raw(params_json, "application/json") |>

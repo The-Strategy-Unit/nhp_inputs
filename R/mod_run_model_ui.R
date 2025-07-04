@@ -36,7 +36,8 @@ mod_run_model_ui <- function(id) {
       title = "View Params",
       width = 8,
       collapsed = TRUE,
-      shiny::verbatimTextOutput(ns("params_json"))
+      shiny::verbatimTextOutput(ns("params_json")),
+      gt::gt_output(ns("validation_errors"))
     )
   )
 }
