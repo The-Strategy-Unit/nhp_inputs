@@ -22,7 +22,7 @@ default_baseline_year <- 2023
 
 load_params <- function(file) {
   p <- jsonlite::read_json(file, simplifyVector = TRUE)
-
+  attr(p, "app_version") <- p$app_version
   class(p) <- p$app_version
   unclass(upgrade_params(p))
 }
@@ -216,6 +216,23 @@ generate_year_dropdown_choices <- function(years) {
   purrr::set_names(as.character(years), fyears)
 }
 
+get_version_from_attr <- function(p) {
+  app_version <- attr(p, "app_version")
+
+  if (is.null(app_version)) {
+    stop("app_version attribute not found on params object p.")
+  }
+
+  if (!stringr::str_detect(app_version, "v\\d{1,}\\.\\d{1,}")) {
+    stop("app_version attribute must be in the form 'v1.2'.")
+  }
+
+  app_version |>
+    stringr::str_remove("v") |>
+    as.numeric() |>
+    floor()
+}
+
 ui_body <- function() {
   # each of the columns is created in it's own variable
 
@@ -280,6 +297,17 @@ ui_body <- function() {
             "Edit existing"
           ),
           inline = TRUE
+        )
+      ),
+      shinyjs::hidden(
+        shiny::div(
+          id = "pop_proj_warning",
+          shiny::HTML(
+            "<font color='red'>Your scenario will be upgraded to work with the
+            latest version of the model. From v4.0 the model uses the 2022 ONS
+            population projections, so your population-growth selections will
+            be reset to the new default. Please review this change.</font><p>"
+          )
         )
       ),
       shinyjs::hidden(
@@ -458,7 +486,7 @@ server <- function(input, output, session) {
       ),
       shiny::need(
         !stringr::str_detect(s, "[^a-zA-Z0-9\\-]"),
-        "Scenario can only container letters, numbers, and - characters",
+        "Scenario can only contain letters, numbers, and - characters",
         "Scenario"
       ),
       shiny::need(
@@ -667,6 +695,7 @@ server <- function(input, output, session) {
     if (input$scenario_type == "Create new from scratch") {
       shinyjs::show("scenario")
       shinyjs::enable("scenario")
+      shinyjs::hide("pop_proj_warning")
       shinyjs::hide("previous_scenario")
       shinyjs::hide("start_year_warning")
       shinyjs::hide("ndg_warning")
@@ -693,34 +722,44 @@ server <- function(input, output, session) {
       input$previous_scenario
     )
 
+  # Warn about upgrade to new 2022 pop projections if scenario is before v4.0
+  shiny::observe({
+    if (stringr::str_detect(input$scenario_type, "existing")) {
+      p <- shiny::req(params())
+
+      is_before_v4 <- get_version_from_attr(p) < 4
+
+      if (is_before_v4) {
+        shinyjs::show("pop_proj_warning")
+      } else {
+        shinyjs::hide("pop_proj_warning")
+      }
+    }
+  }) |>
+    shiny::bindEvent(params())
+
   # Warn user that they can't upgrade certain scenarios
   shiny::observe({
     # Toggle element visibility if selecting existing scenarios
     if (stringr::str_detect(input$scenario_type, "existing")) {
       p <- shiny::req(params())
 
+      is_deprecated_start_year <- p[["start_year"]] < 2023
       is_ndg1 <- p[["non-demographic_adjustment"]][["variant"]] == "variant_1"
 
-      if (is_ndg1) {
+      if (is_deprecated_start_year) {
+        shinyjs::hide("pop_proj_warning")
+        shinyjs::show("start_year_warning")
+        shinyjs::hide("scenario")
+        shinyjs::hide("start_button")
+        shinyjs::hide("naming_guidance")
+      } else if (is_ndg1) {
         shinyjs::show("ndg_warning")
         shinyjs::hide("scenario")
         shinyjs::hide("start_button")
         shinyjs::hide("naming_guidance")
       } else {
         shinyjs::hide("ndg_warning")
-        shinyjs::enable("scenario")
-        shinyjs::show("start_button")
-      }
-
-      has_deprecated_start_year <- p[["start_year"]] < 2023
-
-      if (has_deprecated_start_year) {
-        shinyjs::show("start_year_warning")
-        shinyjs::hide("scenario")
-        shinyjs::hide("start_button")
-        shinyjs::hide("naming_guidance")
-      } else {
-        shinyjs::hide("start_year_warning")
         shinyjs::enable("scenario")
         shinyjs::show("start_button")
       }
