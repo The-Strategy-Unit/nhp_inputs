@@ -11,17 +11,6 @@ default:
       var_proj_high_intl_migration: "High migration"
       var_proj_low_intl_migration: "Low migration"
       var_proj_zero_net_migration: "Zero net migration"
-      high_population: "High population"
-      young_age_structure: "Young age structure"
-      high_fertility: "High fertility"
-      old_age_structure: "Old age structure"
-      low_population: "Low population"
-      low_fertility: "Low fertility"
-      high_life_expectancy: "High life expectancy"
-      low_life_expectancy: "Low life expectancy"
-      no_mortality_improvement: "No mortality improvement"
-      zero_net_migration: "Zero net migration (natural change only)"
-      replacement_fertility: "Replacement fertility"
   non-demographic_adjustment:
     aae:
       walk-in: [1.0117592, 1.014443]
@@ -300,17 +289,6 @@ dataset_R0A:
       - var_proj_high_intl_migration
       - var_proj_low_intl_migration
       - var_proj_zero_net_migration
-      - high_population
-      - young_age_structure
-      - high_fertility
-      - old_age_structure
-      - low_population
-      - low_fertility
-      - high_life_expectancy
-      - low_life_expectancy
-      - no_mortality_improvement
-      - zero_net_migration
-      - replacement_fertility
 dataset_RD8:
   population_projections:
     values:
@@ -323,14 +301,3 @@ dataset_RD8:
       - var_proj_high_intl_migration
       - var_proj_low_intl_migration
       - var_proj_zero_net_migration
-      - high_population
-      - young_age_structure
-      - high_fertility
-      - old_age_structure
-      - low_population
-      - low_fertility
-      - high_life_expectancy
-      - low_life_expectancy
-      - no_mortality_improvement
-      - zero_net_migration
-      - replacement_fertility
