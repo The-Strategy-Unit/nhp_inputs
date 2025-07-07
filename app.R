@@ -134,7 +134,8 @@ upgrade_params.v3.5 <- function(p) {
 }
 
 upgrade_params.v3.6 <- function(p) {
-  # Overwrite population projection to 100% 'migration category' variant
+  # Overwrite population growth selections with 'migration category' default
+  # variant due to the addition of the new ONS 2022 projections.
 
   p[["demographic_factors"]][["variant_probabilities"]] <-
     list("migration_category" = 1)
@@ -722,10 +723,12 @@ server <- function(input, output, session) {
       input$previous_scenario
     )
 
-  # Warn about upgrade to new 2022 pop projections if scenario is before v4.0
   shiny::observe({
+    # Toggle element visibility if selecting existing scenarios
     if (stringr::str_detect(input$scenario_type, "existing")) {
       p <- shiny::req(params())
+
+      # Warn about forced upgrade to 2022 pop projections if scenario is <v4.0.
 
       is_before_v4 <- get_version_from_attr(p) < 4
 
@@ -734,31 +737,26 @@ server <- function(input, output, session) {
       } else {
         shinyjs::hide("pop_proj_warning")
       }
-    }
-  }) |>
-    shiny::bindEvent(params())
 
-  # Warn user that they can't upgrade certain scenarios
-  shiny::observe({
-    # Toggle element visibility if selecting existing scenarios
-    if (stringr::str_detect(input$scenario_type, "existing")) {
-      p <- shiny::req(params())
+      # Warn user they can't upgrade certain scenarios, disable interaction.
 
       is_deprecated_start_year <- p[["start_year"]] < 2023
       is_ndg1 <- p[["non-demographic_adjustment"]][["variant"]] == "variant_1"
 
       if (is_deprecated_start_year) {
-        shinyjs::hide("pop_proj_warning")
         shinyjs::show("start_year_warning")
         shinyjs::hide("scenario")
         shinyjs::hide("start_button")
         shinyjs::hide("naming_guidance")
+        shinyjs::hide("pop_proj_warning")
       } else if (is_ndg1) {
         shinyjs::show("ndg_warning")
         shinyjs::hide("scenario")
         shinyjs::hide("start_button")
         shinyjs::hide("naming_guidance")
+        shinyjs::hide("pop_proj_warning")
       } else {
+        shinyjs::hide("start_year_warning")
         shinyjs::hide("ndg_warning")
         shinyjs::enable("scenario")
         shinyjs::show("start_button")
@@ -767,6 +765,8 @@ server <- function(input, output, session) {
 
     # Reset element visibility if starting from scratch
     if (input$scenario_type == "Create new from scratch") {
+      shinyjs::hide("pop_proj_warning")
+      shinyjs::hide("start_year_warning")
       shinyjs::hide("ndg_warning")
       shinyjs::enable("scenario")
       shinyjs::show("start_button")
