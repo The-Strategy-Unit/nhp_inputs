@@ -133,6 +133,16 @@ upgrade_params.v3.5 <- function(p) {
   upgrade_params(p)
 }
 
+upgrade_params.v3.6 <- function(p) {
+  # Overwrite population projection to 100% 'migration category' variant
+
+  p[["demographic_factors"]][["variant_probabilities"]] <-
+    list("migration_category" = 1)
+
+  class(p) <- p$app_version <- "v4.0"
+  upgrade_params(p)
+}
+
 params_path <- function(user, dataset) {
   path <- file.path(
     config::get("params_data_path"),
@@ -277,6 +287,17 @@ ui_body <- function() {
           "previous_scenario",
           "Previous Scenario",
           NULL
+        )
+      ),
+      shinyjs::hidden(
+        shiny::div(
+          id = "start_year_warning",
+          shiny::HTML(
+            "<font color='red'>You cannot upgrade a scenario that contains
+            a start year prior to 2023/24. See
+            <a href='https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/model_updates.html#v4.0'>
+            the model updates page</a> for details.</font>"
+          )
         )
       ),
       shinyjs::hidden(
@@ -662,6 +683,7 @@ server <- function(input, output, session) {
       shinyjs::show("scenario")
       shinyjs::enable("scenario")
       shinyjs::hide("previous_scenario")
+      shinyjs::hide("start_year_warning")
       shinyjs::hide("ndg_warning")
       shinyjs::show("naming_guidance")
       shiny::updateTextInput(session, "scenario", value = "")
@@ -686,8 +708,7 @@ server <- function(input, output, session) {
       input$previous_scenario
     )
 
-  # If scenario has NDG variant 1 then it cannot be updated because model v3.3
-  # does not accept variant 1.
+  # Warn user that they can't upgrade certain scenarios
   shiny::observe({
     # Toggle element visibility if selecting existing scenarios
     if (stringr::str_detect(input$scenario_type, "existing")) {
@@ -701,8 +722,20 @@ server <- function(input, output, session) {
         shinyjs::hide("start_button")
         shinyjs::hide("naming_guidance")
       } else {
-        # allow state reversal if subsequent scenario choice is non-NDG1
         shinyjs::hide("ndg_warning")
+        shinyjs::enable("scenario")
+        shinyjs::show("start_button")
+      }
+
+      has_deprecated_start_year <- p[["start_year"]] < 2023
+
+      if (has_deprecated_start_year) {
+        shinyjs::show("start_year_warning")
+        shinyjs::hide("scenario")
+        shinyjs::hide("start_button")
+        shinyjs::hide("naming_guidance")
+      } else {
+        shinyjs::hide("start_year_warning")
         shinyjs::enable("scenario")
         shinyjs::show("start_button")
       }
