@@ -5,7 +5,7 @@ app_version_choices <- jsonlite::fromJSON(Sys.getenv(
 
 # CONSTANTS ----
 maximum_model_horizon_year <- 2041
-default_baseline_year <- 2019
+default_baseline_year <- 2023
 
 # HELPERS ----
 
@@ -251,7 +251,7 @@ ui_body <- function() {
         "start_year",
         "Baseline Financial Year",
         # TODO: revisit why start year and end year are formatted differently
-        choices = c("2019/20" = 201920, "2023/24" = 202324),
+        choices = c("2023/24" = 202324),
         selected = as.character(
           (default_baseline_year * 100) + ((default_baseline_year + 1) %% 100)
         )
@@ -293,8 +293,8 @@ ui_body <- function() {
         shiny::div(
           id = "start_year_warning",
           shiny::HTML(
-            "<font color='red'>You cannot upgrade a scenario that contains
-            a start year prior to 2023/24. See
+            "<font color='red'>The selected scenario has a baseline year prior
+            to 2023/24 and cannot be upgraded. See
             <a href='https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/model_updates.html#v4.0'>
             the model updates page</a> for details.</font>"
           )
@@ -557,16 +557,6 @@ server <- function(input, output, session) {
       shinyjs::enable("selected_user")
       shinyjs::show("selected_user")
     }
-
-    if (
-      is_local() || is_power_user || "nhp_allow_2022_data" %in% session$groups
-    ) {
-      shiny::updateSelectInput(
-        session,
-        "start_year",
-        choices = c("2019/20" = 201920, "2022/23" = 202223, "2023/24" = 202324)
-      )
-    }
   })
 
   # when params change, update inputs
@@ -577,11 +567,6 @@ server <- function(input, output, session) {
       "start_year is coming through as an fyear, should be yyyy" =
         (p$start_year >= 1000) && (p$start_year <= 9999) # fmt:skip
     )
-
-    y <- p$start_year * 100 + p$start_year %% 100 + 1
-    # we don't need to update dataset:
-    # the parameters files that are listed in the previous scenario dropdown are already tied to that provider
-    shiny::updateSelectInput(session, "start_year", selected = y)
 
     selected_end_year <- p$end_year
     if (
