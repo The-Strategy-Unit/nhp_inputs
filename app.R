@@ -240,10 +240,10 @@ get_version_from_attr <- function(p) {
 }
 
 extract_major_version <- function(version_string) {
-  is_dev_or_new <- stringr::str_detect(prior_app_version, "^(dev|new)$")
+  is_dev_or_new <- stringr::str_detect(version_string, "^(dev|new)$")
 
   if (!is_dev_or_new) {
-    version_string |>
+    version_string <- version_string |>
       stringr::str_remove("v") |>
       as.numeric() |>
       floor()
@@ -753,15 +753,16 @@ server <- function(input, output, session) {
     if (stringr::str_detect(input$scenario_type, "existing")) {
       p <- shiny::req(params())
 
-      # Warn about forced upgrade to 2022 pop projections if scenario is <v4.0
-      # (ignore warning if dev or new scenario).
+      # Warn about forced upgrade to 2022 pop projections if prior scenario was
+      # <v4.0 (ignore warning if dev or new scenario).
 
-      prior_version <- get_version_from_attr(p)
-      is_dev_or_new <- stringr::str_detect(prior_version, "^(dev|new)$")
+      version_string <- get_version_from_attr(p)
+      is_dev_or_new <- stringr::str_detect(version_string, "^(dev|new)$")
 
-      if (!is_dev_or_new && prior_version < 4) {
-        shinyjs::toggle("pop_proj_warning")
-      }
+      shinyjs::toggle(
+        "pop_proj_warning",
+        condition = !is_dev_or_new && extract_major_version(version_string) < 4
+      )
 
       # Warn user they can't upgrade certain scenarios, disable interaction
 
