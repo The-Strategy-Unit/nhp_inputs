@@ -24,7 +24,9 @@ load_params <- function(file) {
   p <- jsonlite::read_json(file, simplifyVector = TRUE)
 
   # To trigger UI warnings
-  attr(p, "prior_app_version") <- p$app_version
+  prior_app_version <- p$app_version
+  if (is.null(prior_app_version)) prior_app_version <- "new"
+  attr(p, "prior_app_version") <- prior_app_version
 
   # To trigger upgrade methods
   class(p) <- p$app_version
@@ -228,14 +230,26 @@ get_version_from_attr <- function(p) {
     stop("prior_app_version attribute not found on params object p.")
   }
 
-  if (!stringr::str_detect(prior_app_version, "v\\d{1,}\\.\\d{1,}")) {
-    stop("prior_app_version attribute must be in the form 'v1.2'.")
+  is_version <- stringr::str_detect(prior_app_version, "^v\\d{1,}\\.\\d{1,}$")
+  is_dev_or_new <- stringr::str_detect(prior_app_version, "^(dev|new)$")
+  if (!(is_version | is_dev_or_new)) {
+    stop("prior_app_version attribute must be in the form 'v1.2' or 'dev'.")
   }
 
-  prior_app_version |>
-    stringr::str_remove("v") |>
-    as.numeric() |>
-    floor()
+  prior_app_version
+}
+
+extract_major_version <- function(version_string) {
+  is_dev_or_new <- stringr::str_detect(prior_app_version, "^(dev|new)$")
+
+  if (!is_dev_or_new) {
+    version_string |>
+      stringr::str_remove("v") |>
+      as.numeric() |>
+      floor()
+  }
+
+  version_string
 }
 
 ui_body <- function() {
@@ -732,11 +746,17 @@ server <- function(input, output, session) {
     if (stringr::str_detect(input$scenario_type, "existing")) {
       p <- shiny::req(params())
 
-      # Warn about forced upgrade to 2022 pop projections if scenario is <v4.0.
-      is_before_v4 <- get_version_from_attr(p) < 4
-      shinyjs::toggle("pop_proj_warning", condition = is_before_v4)
+      # Warn about forced upgrade to 2022 pop projections if scenario is <v4.0
+      # (ignore warning if dev or new scenario).
 
-      # Warn user they can't upgrade certain scenarios, disable interaction.
+      prior_version <- get_version_from_attr(p)
+      is_dev_or_new <- stringr::str_detect(prior_version, "^(dev|new)$")
+
+      if (!is_dev_or_new && prior_version < 4) {
+        shinyjs::toggle("pop_proj_warning")
+      }
+
+      # Warn user they can't upgrade certain scenarios, disable interaction
 
       is_deprecated_start_year <- p[["start_year"]] < 2023
       is_ndg1 <- p[["non-demographic_adjustment"]][["variant"]] == "variant_1"
