@@ -732,11 +732,7 @@ server <- function(input, output, session) {
 
       is_before_v4 <- get_version_from_attr(p) < 4
 
-      if (is_before_v4) {
-        shinyjs::show("pop_proj_warning")
-      } else {
-        shinyjs::hide("pop_proj_warning")
-      }
+      shinyjs::toggle("pop_proj_warning", condtion = is_before_v4)
 
       # Warn user they can't upgrade certain scenarios, disable interaction.
 
