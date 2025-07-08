@@ -615,6 +615,13 @@ server <- function(input, output, session) {
         (p$start_year >= 1000) && (p$start_year <= 9999) # fmt:skip
     )
 
+    if (p$start_year >= 2023) {
+      y <- p$start_year * 100 + p$start_year %% 100 + 1
+      # we don't need to update dataset: the parameters files that are listed in
+      # the previous scenario dropdown are already tied to that provider
+      shiny::updateSelectInput(session, "start_year", selected = y)
+    }
+
     selected_end_year <- p$end_year
     if (
       selected_end_year <= p$start_year ||
