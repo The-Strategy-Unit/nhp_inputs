@@ -22,7 +22,11 @@ default_baseline_year <- 2023
 
 load_params <- function(file) {
   p <- jsonlite::read_json(file, simplifyVector = TRUE)
-  attr(p, "app_version") <- p$app_version
+
+  # To trigger UI warnings
+  attr(p, "prior_app_version") <- p$app_version
+
+  # To trigger upgrade methods
   class(p) <- p$app_version
   unclass(upgrade_params(p))
 }
@@ -218,17 +222,17 @@ generate_year_dropdown_choices <- function(years) {
 }
 
 get_version_from_attr <- function(p) {
-  app_version <- attr(p, "app_version")
+  prior_app_version <- attr(p, "prior_app_version")
 
-  if (is.null(app_version)) {
-    stop("app_version attribute not found on params object p.")
+  if (is.null(prior_app_version)) {
+    stop("prior_app_version attribute not found on params object p.")
   }
 
-  if (!stringr::str_detect(app_version, "v\\d{1,}\\.\\d{1,}")) {
-    stop("app_version attribute must be in the form 'v1.2'.")
+  if (!stringr::str_detect(prior_app_version, "v\\d{1,}\\.\\d{1,}")) {
+    stop("prior_app_version attribute must be in the form 'v1.2'.")
   }
 
-  app_version |>
+  prior_app_version |>
     stringr::str_remove("v") |>
     as.numeric() |>
     floor()
@@ -729,10 +733,8 @@ server <- function(input, output, session) {
       p <- shiny::req(params())
 
       # Warn about forced upgrade to 2022 pop projections if scenario is <v4.0.
-
       is_before_v4 <- get_version_from_attr(p) < 4
-
-      shinyjs::toggle("pop_proj_warning", condtion = is_before_v4)
+      shinyjs::toggle("pop_proj_warning", condition = is_before_v4)
 
       # Warn user they can't upgrade certain scenarios, disable interaction.
 
