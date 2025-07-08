@@ -5,7 +5,7 @@ app_version_choices <- jsonlite::fromJSON(Sys.getenv(
 
 # CONSTANTS ----
 maximum_model_horizon_year <- 2041
-default_baseline_year <- 2019
+default_baseline_year <- 2023
 
 # HELPERS ----
 
@@ -23,6 +23,12 @@ default_baseline_year <- 2019
 load_params <- function(file) {
   p <- jsonlite::read_json(file, simplifyVector = TRUE)
 
+  # To trigger UI warnings
+  prior_app_version <- p$app_version
+  if (is.null(prior_app_version)) prior_app_version <- "new"
+  attr(p, "prior_app_version") <- prior_app_version
+
+  # To trigger upgrade methods
   class(p) <- p$app_version
   unclass(upgrade_params(p))
 }
@@ -133,6 +139,17 @@ upgrade_params.v3.5 <- function(p) {
   upgrade_params(p)
 }
 
+upgrade_params.v3.6 <- function(p) {
+  # Overwrite population growth selections with 'migration category' default
+  # variant due to the addition of the new ONS 2022 projections.
+
+  p[["demographic_factors"]][["variant_probabilities"]] <-
+    list("migration_category" = 1)
+
+  class(p) <- p$app_version <- "v4.0"
+  upgrade_params(p)
+}
+
 params_path <- function(user, dataset) {
   path <- file.path(
     config::get("params_data_path"),
@@ -206,6 +223,35 @@ generate_year_dropdown_choices <- function(years) {
   purrr::set_names(as.character(years), fyears)
 }
 
+get_version_from_attr <- function(p) {
+  prior_app_version <- attr(p, "prior_app_version")
+
+  if (is.null(prior_app_version)) {
+    stop("prior_app_version attribute not found on params object p.")
+  }
+
+  is_version <- stringr::str_detect(prior_app_version, "^v\\d{1,}\\.\\d{1,}$")
+  is_dev_or_new <- stringr::str_detect(prior_app_version, "^(dev|new)$")
+  if (!(is_version | is_dev_or_new)) {
+    stop("prior_app_version attribute must be in the form 'v1.2' or 'dev'.")
+  }
+
+  prior_app_version
+}
+
+extract_major_version <- function(version_string) {
+  is_dev_or_new <- stringr::str_detect(version_string, "^(dev|new)$")
+
+  if (!is_dev_or_new) {
+    version_string <- version_string |>
+      stringr::str_remove("v") |>
+      as.numeric() |>
+      floor()
+  }
+
+  version_string
+}
+
 ui_body <- function() {
   # each of the columns is created in it's own variable
 
@@ -241,7 +287,7 @@ ui_body <- function() {
         "start_year",
         "Baseline Financial Year",
         # TODO: revisit why start year and end year are formatted differently
-        choices = c("2019/20" = 201920, "2023/24" = 202324),
+        choices = c("2023/24" = 202324),
         selected = as.character(
           (default_baseline_year * 100) + ((default_baseline_year + 1) %% 100)
         )
@@ -273,10 +319,32 @@ ui_body <- function() {
         )
       ),
       shinyjs::hidden(
+        shiny::div(
+          id = "pop_proj_warning",
+          shiny::HTML(
+            "<font color='red'>Your scenario will be upgraded to work with the
+            latest version of the model. From v4.0 the model uses the 2022 ONS
+            population projections, so your population-growth selections will
+            be reset to the new default. Please review this change.</font><p>"
+          )
+        )
+      ),
+      shinyjs::hidden(
         shiny::selectInput(
           "previous_scenario",
           "Previous Scenario",
           NULL
+        )
+      ),
+      shinyjs::hidden(
+        shiny::div(
+          id = "start_year_warning",
+          shiny::HTML(
+            "<font color='red'>The selected scenario has a baseline year prior
+            to 2023/24 and cannot be upgraded. See
+            <a href='https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/model_updates.html#v4.0'>
+            the model updates page</a> for details.</font>"
+          )
         )
       ),
       shinyjs::hidden(
@@ -437,7 +505,7 @@ server <- function(input, output, session) {
       ),
       shiny::need(
         !stringr::str_detect(s, "[^a-zA-Z0-9\\-]"),
-        "Scenario can only container letters, numbers, and - characters",
+        "Scenario can only contain letters, numbers, and - characters",
         "Scenario"
       ),
       shiny::need(
@@ -536,16 +604,6 @@ server <- function(input, output, session) {
       shinyjs::enable("selected_user")
       shinyjs::show("selected_user")
     }
-
-    if (
-      is_local() || is_power_user || "nhp_allow_2022_data" %in% session$groups
-    ) {
-      shiny::updateSelectInput(
-        session,
-        "start_year",
-        choices = c("2019/20" = 201920, "2022/23" = 202223, "2023/24" = 202324)
-      )
-    }
   })
 
   # when params change, update inputs
@@ -557,10 +615,12 @@ server <- function(input, output, session) {
         (p$start_year >= 1000) && (p$start_year <= 9999) # fmt:skip
     )
 
-    y <- p$start_year * 100 + p$start_year %% 100 + 1
-    # we don't need to update dataset:
-    # the parameters files that are listed in the previous scenario dropdown are already tied to that provider
-    shiny::updateSelectInput(session, "start_year", selected = y)
+    if (p$start_year >= 2023) {
+      y <- p$start_year * 100 + p$start_year %% 100 + 1
+      # we don't need to update dataset: the parameters files that are listed in
+      # the previous scenario dropdown are already tied to that provider
+      shiny::updateSelectInput(session, "start_year", selected = y)
+    }
 
     selected_end_year <- p$end_year
     if (
@@ -661,7 +721,9 @@ server <- function(input, output, session) {
     if (input$scenario_type == "Create new from scratch") {
       shinyjs::show("scenario")
       shinyjs::enable("scenario")
+      shinyjs::hide("pop_proj_warning")
       shinyjs::hide("previous_scenario")
+      shinyjs::hide("start_year_warning")
       shinyjs::hide("ndg_warning")
       shinyjs::show("naming_guidance")
       shiny::updateTextInput(session, "scenario", value = "")
@@ -686,22 +748,41 @@ server <- function(input, output, session) {
       input$previous_scenario
     )
 
-  # If scenario has NDG variant 1 then it cannot be updated because model v3.3
-  # does not accept variant 1.
   shiny::observe({
     # Toggle element visibility if selecting existing scenarios
     if (stringr::str_detect(input$scenario_type, "existing")) {
       p <- shiny::req(params())
 
+      # Warn about forced upgrade to 2022 pop projections if prior scenario was
+      # <v4.0 (ignore warning if dev or new scenario).
+
+      version_string <- get_version_from_attr(p)
+      is_dev_or_new <- stringr::str_detect(version_string, "^(dev|new)$")
+
+      shinyjs::toggle(
+        "pop_proj_warning",
+        condition = !is_dev_or_new && extract_major_version(version_string) < 4
+      )
+
+      # Warn user they can't upgrade certain scenarios, disable interaction
+
+      is_deprecated_start_year <- p[["start_year"]] < 2023
       is_ndg1 <- p[["non-demographic_adjustment"]][["variant"]] == "variant_1"
 
-      if (is_ndg1) {
+      if (is_deprecated_start_year) {
+        shinyjs::show("start_year_warning")
+        shinyjs::hide("scenario")
+        shinyjs::hide("start_button")
+        shinyjs::hide("naming_guidance")
+        shinyjs::hide("pop_proj_warning")
+      } else if (is_ndg1) {
         shinyjs::show("ndg_warning")
         shinyjs::hide("scenario")
         shinyjs::hide("start_button")
         shinyjs::hide("naming_guidance")
+        shinyjs::hide("pop_proj_warning")
       } else {
-        # allow state reversal if subsequent scenario choice is non-NDG1
+        shinyjs::hide("start_year_warning")
         shinyjs::hide("ndg_warning")
         shinyjs::enable("scenario")
         shinyjs::show("start_button")
@@ -710,6 +791,8 @@ server <- function(input, output, session) {
 
     # Reset element visibility if starting from scratch
     if (input$scenario_type == "Create new from scratch") {
+      shinyjs::hide("pop_proj_warning")
+      shinyjs::hide("start_year_warning")
       shinyjs::hide("ndg_warning")
       shinyjs::enable("scenario")
       shinyjs::show("start_button")
