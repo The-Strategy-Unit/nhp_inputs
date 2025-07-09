@@ -76,15 +76,17 @@ mod_mitigators_ui <- function(id, title, show_diagnoses_table = TRUE) {
             width = 2
           ),
           col_6(
-            if (show_diagnoses_table) {
-              bs4Dash::box(
-                title = "Top 6 Primary Diagnoses",
+            bs4Dash::box(
+              title = "Top 6 Primary Diagnoses",
+              if (show_diagnoses_table) {
                 shinycssloaders::withSpinner({
                   gt::gt_output(ns("diagnoses_table"))
-                }),
-                width = 12
-              )
-            },
+                })
+                }else{
+                  shiny::p("No diagnosis data for Outpatients")
+                },
+              width = 12
+            ),
             bs4Dash::box(
               title = "Breakdown by Procedure",
               shinycssloaders::withSpinner({
