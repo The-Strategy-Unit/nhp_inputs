@@ -1,4 +1,6 @@
-mod_run_model_fix_params <- function(p, schema) {
+mod_run_model_fix_params <- function(p, schema_text) {
+  schema <- create_params_schema(schema_text)
+
   # the time profiles may be empty, ensure that's not the case
   tpm <- p[["time_profile_mappings"]]
   p[["time_profile_mappings"]][["activity_avoidance"]] <- list(

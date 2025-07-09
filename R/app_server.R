@@ -115,8 +115,8 @@ app_server <- function(input, output, session) {
   }) |>
     shiny::bindCache(cache_version())
 
-  params_schema <- shiny::reactive({
-    get_params_schema()
+  params_schema_text <- shiny::reactive({
+    get_params_schema_text()
   }) |>
     shiny::bindCache(cache_version())
 
@@ -225,7 +225,7 @@ app_server <- function(input, output, session) {
     )
     if (is_local() || can_run_model) {
       shinyjs::show("run-model-container")
-      mod_run_model_server("run_model", params, params_schema())
+      mod_run_model_server("run_model", params, params_schema_text())
     }
 
     init$destroy()
@@ -246,7 +246,7 @@ app_server <- function(input, output, session) {
 
     params |>
       shiny::reactiveValuesToList() |>
-      mod_run_model_fix_params(params_schema()) |>
+      mod_run_model_fix_params(params_schema_text()) |>
       jsonlite::write_json(file, pretty = TRUE, auto_unbox = TRUE)
   })
 

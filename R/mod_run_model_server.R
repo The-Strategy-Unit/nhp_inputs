@@ -1,7 +1,7 @@
 #' run_model Server Functions
 #'
 #' @noRd
-mod_run_model_server <- function(id, params, schema) {
+mod_run_model_server <- function(id, params, schema_text) {
   mod_reasons_server(shiny::NS(id, "reasons"), params, "model_run")
 
   shiny::moduleServer(id, function(input, output, session) {
@@ -23,7 +23,7 @@ mod_run_model_server <- function(id, params, schema) {
 
       params |>
         shiny::reactiveValuesToList() |>
-        mod_run_model_fix_params(schema)
+        mod_run_model_fix_params(schema_text)
     })
 
     # output the status of the model run after submit is pressed
@@ -66,6 +66,8 @@ mod_run_model_server <- function(id, params, schema) {
     })
 
     params_json_validation <- shiny::reactive({
+      schema <- create_params_schema(schema_text)
+
       v <- schema$validate(params_json(), verbose = TRUE)
 
       list(

@@ -91,7 +91,7 @@ encrypt_filename <- function(
   openssl::base64_encode(c(hm, ct))
 }
 
-get_params_schema <- function(
+get_params_schema_text <- function(
   app_version = Sys.getenv("INPUTS_DATA_VERSION", "dev")
 ) {
   tf <- tempfile()
@@ -106,5 +106,9 @@ get_params_schema <- function(
   # "incomplete final line found"
   cat("\n", file = tf, append = TRUE)
 
-  jsonvalidate::json_schema$new(tf)
+  paste(readLines(tf), collapse = "\n")
+}
+
+create_params_schema <- function(schema_text) {
+  jsonvalidate::json_schema$new(chema_text)
 }
