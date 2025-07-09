@@ -110,5 +110,5 @@ get_params_schema_text <- function(
 }
 
 create_params_schema <- function(schema_text) {
-  jsonvalidate::json_schema$new(chema_text)
+  jsonvalidate::json_schema$new(schema_text)
 }
