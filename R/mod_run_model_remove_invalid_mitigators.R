@@ -1,4 +1,6 @@
-mod_run_model_remove_invalid_mitigators <- function(p, schema) {
+mod_run_model_remove_invalid_mitigators <- function(p, schema_text) {
+  schema <- create_params_schema(schema_text)
+
   json_p <- jsonlite::toJSON(p, auto_unbox = TRUE)
 
   paths <- schema$validate(json_p, verbose = TRUE) |>
