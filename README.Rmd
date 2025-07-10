@@ -17,49 +17,77 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![R-CMD-check](https://github.com/The-Strategy-Unit/nhp_inputs/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/The-Strategy-Unit/nhp_inputs/actions/workflows/R-CMD-check.yaml)
+[![check](https://github.com/The-Strategy-Unit/nhp_inputs/actions/workflows/check.yaml/badge.svg)](https://github.com/The-Strategy-Unit/nhp_inputs/actions/workflows/check.yaml)
 <!-- badges: end -->
 
 ## About
 
-An app to input the parameters needed to run scenarios through the New Hospital Programme (NHP) demand model.
+A web app to input the parameters needed to run scenarios through the New Hospital Programme (NHP) demand model.
+Results can then be viewed in [the outputs app](https://github.com/The-Strategy-Unit/nhp_outputs).
 
-The app is [deployed to Posit Connect](https://connect.strategyunitwm.nhs.uk/nhp/inputs/). You must have an account and sufficient permissions to view it.
+The app is [deployed to Posit Connect](https://connect.strategyunitwm.nhs.uk/nhp/inputs/).
+You must have an account and sufficient permissions to view it.
 
 You can find more information on [the NHP model project information site](https://connect.strategyunitwm.nhs.uk/nhp/project_information/), including [a diagram](https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/components-overview.html) of how the components of the modelling process fit together.
 
 ## For developers
 
-The app is built and maintained by members of the Strategy Unit's Data Science team.
+The app is built and maintained by members of [the Strategy Unit's Data Science team](https://the-strategy-unit.github.io/data_science/).
 
 ### Structure
 
-The app is built primarily with [Shiny](https://shiny.posit.co/) and [the {golem} package](https://thinkr-open.github.io/golem/). Server and UI modules can be found in `R/`, configuration in `inst/golem-config.yml` and supporting data and text in `inst/app/`.
+Technically there are two apps: the main app in the `main` branch, and the inputs selection app (where users start or edit a scenario) in the `inputs_selection_app` branch.
+Users arrive at the selection app before being routed to the main app. 
+
+Both apps are built with [Shiny](https://shiny.posit.co/) and the main app uses the [the {golem} package](https://thinkr-open.github.io/golem/). Server and UI modules can be found in `R/`, configuration in `inst/golem-config.yml` and supporting data and text in `inst/app/`.
 
 Packages used in the app are listed in `DESCRIPTION`, and can be installed with `devtools::install_deps(dependencies = TRUE)`.
 
 ### Run locally
 
-Add an `.Renviron` file to the project root that contains the required environment variables. You can get these from a member of the Data Science team.
+Run the app locally on your machine to test that your changes work as expected.
 
-The inputs app is on the `main` branch, but the selection app (where users start or edit a scenario) is in the `inputs_selection_app` branch. Use Git’s `worktree` function to add that branch to its own folder in your development branch:
+To prepare, add an `.Renviron` file to the project root that contains the required environment variables.
+You can get these from a member of the Data Science team.
+
+Then, from the `main` branch (or your development branch of it), use Git's `worktree` function to put the `inputs_selection_app` branch (or your development branch of it) in its own subfolder. 
+
+In the terminal:
 
 ```
 git fetch origin inputs_selection_app
 git worktree add inputs_selection_app inputs_selection_app
 ```
 
-To run the app from RStudio, start up the selection app by opening the `dev/watch.R` script, go to the ‘Background Jobs’ tab of the console pane and click the ‘Start Background Job’ button. In the ‘Run Script as Background Job’ dialog box select the project root as the 'Working Directory', then hit ‘Start’. When ready, the app will tell you to visit `http://127.0.0.1:9081/` in your browser. Note that your selections in the app remain local to you.
+If you want a development version of the inputs selection app, you can specify the branch name as the second of the arguments to `git worktree add`.
 
-If you need to remove the selection-app folder at any point, you can do that with:
+To run the app from RStudio, start up the selection app by opening the `dev/watch.R` script, go to the 'Background Jobs' tab of the console pane and click the 'Start Background Job' button.
+In the 'Run Script as Background Job' dialog box select the project root as the 'Working Directory', then hit 'Start'.
+When ready, the app will tell you to visit `http://127.0.0.1:9081/` in your browser.
+
+Note that your selections in the app remain local to you and the resulting json file of parameters for your scenario will live in your local `params/development/` directory.
+These scenarios will be selectable and editable in future from your locally-run inputs selection app.
+
+If you need to remove the selection-app folder at any point, you can terminate the background job (if running) and in the terminal run:
 
 ```
-git worktree remove inputs_selection_app 
+git worktree remove inputs_selection_app
 ```
+
+### Test in dev
+
+During pre-release QA we test both apps on the server.
+This helps us spot any issues that are server-specific and might be overlooked if running the apps locally.
+
+To test the unreleased app in our development environment, first ensure you've (a) merged any PRs you want to test into the `main` branch and, if you've made any changes to the inputs selection app, (b) run the manual `deploy()` call under the 'development' heading in the `deploy.R` script in your selection app development branch.
+
+When using the dev inputs selection app on Connect, make sure to set the 'Model Version' dropdown to 'dev' in the expandable 'Advanced Options' box.
+That way you'll be taken to the dev inputs app when you hit 'Start'.
 
 ### Data extraction
 
-The app displays trust-specific data to users. The data is processed via Databricks scripts in [the nhp_data repository](https://github.com/The-Strategy-Unit/nhp_data) and stored in Azure storage.
+The app displays trust-specific data to users.
+The data is processed via Databricks scripts in [the nhp_data repository](https://github.com/The-Strategy-Unit/nhp_data) and stored in Azure storage.
 
 ### Deployment
 
