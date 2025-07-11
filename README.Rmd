@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 ## About
 
 A web app to input the parameters needed to run scenarios through the New Hospital Programme (NHP) demand model.
-Results can then be viewed in [the outputs app](https://github.com/The-Strategy-Unit/nhp_outputs).
+Results can then be viewed in [the outputs app](https://connect.strategyunitwm.nhs.uk/nhp/outputs/) found in the [nhp_outputs](https://github.com/The-Strategy-Unit/nhp_outputs) repository.
 
 The app is [deployed to Posit Connect](https://connect.strategyunitwm.nhs.uk/nhp/inputs/).
 You must have an account and sufficient permissions to view it.
