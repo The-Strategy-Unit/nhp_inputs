@@ -263,7 +263,7 @@ app_ui <- function(request) {
         mod_mitigators_ui(
           "mitigators_op_gp_referred_first_attendance_reduction",
           "GP Referred First Attendances",
-          FALSE
+          show_diagnoses_table = FALSE
         )
       ),
       bs4Dash::tabItem(
