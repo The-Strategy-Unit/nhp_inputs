@@ -239,7 +239,7 @@ app_ui <- function(request) {
         mod_mitigators_ui(
           "mitigators_op_c2c_reduction",
           "Consultant to Consultant Reduction",
-          FALSE
+          show_diagnoses_table = FALSE
         )
       ),
       bs4Dash::tabItem(
@@ -247,7 +247,7 @@ app_ui <- function(request) {
         mod_mitigators_ui(
           "mitigators_op_convert_tele",
           "Convert to Tele Appointment",
-          FALSE
+          show_diagnoses_table = FALSE
         )
       ),
       bs4Dash::tabItem(
@@ -255,7 +255,7 @@ app_ui <- function(request) {
         mod_mitigators_ui(
           "mitigators_op_fup_reduction",
           "Follow-Up Reduction",
-          FALSE
+          show_diagnoses_table = FALSE
         )
       ),
       bs4Dash::tabItem(

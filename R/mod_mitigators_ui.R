@@ -83,7 +83,7 @@ mod_mitigators_ui <- function(id, title, show_diagnoses_table = TRUE) {
                   gt::gt_output(ns("diagnoses_table"))
                 })
               } else {
-                shiny::p("No diagnosis data for Outpatients")
+                shiny::p("No diagnosis data for outpatients.")
               },
               width = 12
             ),
