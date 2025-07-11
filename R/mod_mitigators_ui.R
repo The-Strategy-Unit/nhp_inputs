@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_mitigators_ui <- function(id, title) {
+mod_mitigators_ui <- function(id, title, show_diagnoses_table = TRUE) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::h1("Activity Mitigators"),
@@ -75,12 +75,25 @@ mod_mitigators_ui <- function(id, title) {
             }),
             width = 2
           ),
-          bs4Dash::box(
-            title = "Top 6 Primary Diagnoses",
-            shinycssloaders::withSpinner({
-              gt::gt_output(ns("diagnoses_table"))
-            }),
-            width = 6
+          col_6(
+            bs4Dash::box(
+              title = "Top 6 Primary Diagnoses",
+              if (show_diagnoses_table) {
+                shinycssloaders::withSpinner({
+                  gt::gt_output(ns("diagnoses_table"))
+                })
+              } else {
+                shiny::p("No diagnosis data for outpatients.")
+              },
+              width = 12
+            ),
+            bs4Dash::box(
+              title = "Breakdown by Procedure",
+              shinycssloaders::withSpinner({
+                gt::gt_output(ns("procedures_table"))
+              }),
+              width = 12
+            )
           ),
           bs4Dash::box(
             title = "Bar Chart of Activity by Age and Sex",
@@ -88,14 +101,7 @@ mod_mitigators_ui <- function(id, title) {
               shiny::plotOutput(ns("age_grp_plot"))
             }),
             width = 6
-          ),
-          bs4Dash::box(
-            title = "Breakdown by Procedure",
-            shinycssloaders::withSpinner({
-              gt::gt_output(ns("procedures_table"))
-            }),
-            width = 6
-          ),
+          )
         )
       )
     )
