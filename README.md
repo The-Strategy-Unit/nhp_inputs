@@ -14,12 +14,17 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 ## About
 
 A web app to input the parameters needed to run scenarios through the
-New Hospital Programme (NHP) demand model. Results can then be viewed in
-[the outputs app](https://github.com/The-Strategy-Unit/nhp_outputs).
+New Hospital Programme (NHP) demand model.
 
 The app is [deployed to Posit
 Connect](https://connect.strategyunitwm.nhs.uk/nhp/inputs/). You must
 have an account and sufficient permissions to view it.
+
+Results can then be viewed in [the outputs
+app](https://connect.strategyunitwm.nhs.uk/nhp/outputs/), which is
+generated from the
+[nhp_outputs](https://github.com/The-Strategy-Unit/nhp_outputs)
+repository.
 
 You can find more information on [the NHP model project information
 site](https://connect.strategyunitwm.nhs.uk/nhp/project_information/),
