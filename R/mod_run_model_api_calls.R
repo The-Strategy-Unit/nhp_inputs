@@ -5,6 +5,18 @@ mod_run_model_submit <- function(
   status,
   results_url
 ) {
+  metadata <- params_json |>
+    jsonlite::fromJSON() |>
+    _[c("user", "dataset", "scenario")] |>
+    jsonlite::toJSON(pretty = TRUE, auto_unbox = TRUE)
+
+  cat(
+    "model run submitted:\n",
+    metadata,
+    "\n",
+    sep = ""
+  )
+
   req <- httr2::request(Sys.getenv("NHP_API_URI")) |>
     httr2::req_url_path("api", "run_model") |>
     httr2::req_url_query(
@@ -18,6 +30,12 @@ mod_run_model_submit <- function(
     promises::then(
       \(response) {
         results <- httr2::resp_body_json(response)
+
+        cat(
+          "success:\n",
+          jsonlite::toJSON(results, pretty = TRUE, auto_unbox = TRUE),
+          "\n"
+        )
 
         status("Submitted Model Run")
 
@@ -53,13 +71,29 @@ mod_run_model_submit <- function(
     ) |>
     promises::catch(
       \(error) {
-        print(error$message)
+        cat("Error submitting model run: ", error$message, "\n", sep = "")
         status(error$message)
       }
     )
 }
 
-mod_run_model_check_container_status <- function(id, status) {
+mod_run_model_check_container_status <- function(
+  id,
+  status,
+  error_counter = 10
+) {
+  if (error_counter == 0) {
+    cat(
+      "error checking status for id: ",
+      id,
+      ". too many attempts\n",
+      sep = ""
+    )
+    status("Error: running the model")
+    return(NULL)
+  }
+  cat("checking status for ", id, "\n", sep = "")
+
   promises::future_promise(
     {
       # wait 10 seconds before checking
@@ -74,13 +108,23 @@ mod_run_model_check_container_status <- function(id, status) {
   ) |>
     promises::then(
       \(response) {
-        print(response)
         res <- httr2::resp_body_json(response)
+
+        cat(
+          "model run id: ",
+          id,
+          "\n",
+          jsonlite::toJSON(res, pretty = TRUE, auto_unbox = TRUE),
+          "\n",
+          sep = ""
+        )
 
         if (res$state == "Terminated") {
           if (res$detail_status == "Completed") {
+            cat("model run success: ", id, "\n", sep = "")
             status("Success")
           } else {
+            cat("model run error: ", id, "\n", sep = "")
             status("Error: running the model")
           }
           return(NULL)
@@ -88,13 +132,14 @@ mod_run_model_check_container_status <- function(id, status) {
         status("Modelling running")
 
         # recursive call
-        mod_run_model_check_container_status(id, status)
+        mod_run_model_check_container_status(id, status, 10)
       }
     ) |>
     promises::catch(
-      \(...) {
+      \(error) {
+        cat("error:", error$message, "\n")
         # recursive call
-        mod_run_model_check_container_status(id, status)
+        mod_run_model_check_container_status(id, status, error_counter - 1)
       }
     )
 }
