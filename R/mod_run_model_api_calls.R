@@ -110,22 +110,13 @@ mod_run_model_check_container_status <- function(
       \(response) {
         res <- httr2::resp_body_json(response)
 
-        cat(
-          "model run id: ",
-          id,
-          "\n",
-          jsonlite::toJSON(res, pretty = TRUE, auto_unbox = TRUE),
-          "\n",
-          sep = ""
-        )
-
         if (res$state == "Terminated") {
           if (res$detail_status == "Completed") {
             cat("model run success: ", id, "\n", sep = "")
             status("Success")
           } else {
-            cat("model run error: ", id, "\n", sep = "")
-            status("Error: running the model")
+            cat("model run error: ", id, "\n", res$error, "\n", sep = "")
+            status(glue::glue("Error running the model ({id}): {res$error}"))
           }
           return(NULL)
         } else if (res$state == "Creating") {
@@ -150,6 +141,21 @@ mod_run_model_check_container_status <- function(
               complete <- progress$inpatients
             }
             pcnt <- scales::percent(complete / model_runs, 0.1)
+
+            cat(
+              "model run id: ",
+              id,
+              ", stage: ",
+              stage,
+              " progress: ",
+              complete,
+              "/",
+              model_runs,
+              " (",
+              pcnt,
+              ")\n",
+              sep = ""
+            )
 
             status(glue::glue(
               "Model Running [{stage}: {complete}/{model_runs} ({pcnt})]"
