@@ -137,10 +137,12 @@ mod_run_model_check_container_status <- function(
           if (is.null(progress)) {
             status("Model starting")
           } else {
-            if (progress$outpatients >= model_runs) {
+            if (progress$aae > 0 || progress$outpatients >= model_runs) {
               stage <- "A&E"
               complete <- progress$aae
-            } else if (progress$inpatients >= model_runs) {
+            } else if (
+              progress$outpatients > 0 || progress$inpatients >= model_runs
+            ) {
               stage <- "Outpatients"
               complete <- progress$outpatients
             } else {
