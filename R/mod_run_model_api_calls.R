@@ -128,8 +128,32 @@ mod_run_model_check_container_status <- function(
             status("Error: running the model")
           }
           return(NULL)
+        } else if (res$state == "Creating") {
+          # no need to change status
+        } else {
+          progress <- res$complete
+          model_runs <- res$model_runs
+
+          if (is.null(progress)) {
+            status("Model starting")
+          } else {
+            if (progress$outpatients >= model_runs) {
+              stage <- "A&E"
+              complete <- progress$aae
+            } else if (progress$inpatients >= model_runs) {
+              stage <- "Outpatients"
+              complete <- progress$outpatients
+            } else {
+              stage <- "Inpatients"
+              complete <- progress$inpatients
+            }
+            pcnt <- scales::percent(complete / model_runs, 0.1)
+
+            status(glue::glue(
+              "Model Running [{stage}: {complete}/{model_runs} ({pcnt})]"
+            ))
+          }
         }
-        status("Modelling running")
 
         # recursive call
         mod_run_model_check_container_status(id, status, 10)
