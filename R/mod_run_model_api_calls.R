@@ -110,26 +110,64 @@ mod_run_model_check_container_status <- function(
       \(response) {
         res <- httr2::resp_body_json(response)
 
-        cat(
-          "model run id: ",
-          id,
-          "\n",
-          jsonlite::toJSON(res, pretty = TRUE, auto_unbox = TRUE),
-          "\n",
-          sep = ""
-        )
-
         if (res$state == "Terminated") {
           if (res$detail_status == "Completed") {
             cat("model run success: ", id, "\n", sep = "")
             status("Success")
           } else {
-            cat("model run error: ", id, "\n", sep = "")
-            status("Error: running the model")
+            cat("model run error: ", id, "\n", res$error, "\n", sep = "")
+            status(glue::glue("Error running the model ({id}): {res$error}"))
           }
           return(NULL)
+        } else if (res$state == "Creating") {
+          # no need to change status
+        } else {
+          progress <- res$complete
+          model_runs <- res$model_runs
+
+          if (is.null(progress)) {
+            cat(
+              "model run id: ",
+              id,
+              ", stage: saving results\n",
+              sep = ""
+            )
+            status("Model running [saving results]")
+          } else {
+            if (progress$aae > 0 || progress$outpatients >= model_runs) {
+              stage <- "A&E"
+              complete <- progress$aae
+            } else if (
+              progress$outpatients > 0 || progress$inpatients >= model_runs
+            ) {
+              stage <- "Outpatients"
+              complete <- progress$outpatients
+            } else {
+              stage <- "Inpatients"
+              complete <- progress$inpatients
+            }
+            pcnt <- scales::percent(complete / model_runs, 0.1)
+
+            cat(
+              "model run id: ",
+              id,
+              ", stage: ",
+              stage,
+              " progress: ",
+              complete,
+              "/",
+              model_runs,
+              " (",
+              pcnt,
+              ")\n",
+              sep = ""
+            )
+
+            status(glue::glue(
+              "Model Running [{stage}: {complete}/{model_runs} ({pcnt})]"
+            ))
+          }
         }
-        status("Modelling running")
 
         # recursive call
         mod_run_model_check_container_status(id, status, 10)
