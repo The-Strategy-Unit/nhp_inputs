@@ -126,7 +126,13 @@ mod_run_model_check_container_status <- function(
           model_runs <- res$model_runs
 
           if (is.null(progress)) {
-            status("Model starting")
+            cat(
+              "model run id: ",
+              id,
+              ", stage: saving results\n",
+              sep = ""
+            )
+            status("Model running [saving results]")
           } else {
             if (progress$aae > 0 || progress$outpatients >= model_runs) {
               stage <- "A&E"
