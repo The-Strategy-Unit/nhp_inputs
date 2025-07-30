@@ -59,8 +59,9 @@ Run the app locally on your machine to test that your changes work as
 expected.
 
 To prepare, add an `.Renviron` file to the project root that contains
-the required environment variables. You can get these from a member of
-the Data Science team.
+the required environment variables. There is an `.Renviron.example` file
+which describes the required variables. You can get these from a member
+of the Data Science team.
 
 Then, from the `main` branch (or your development branch of it), use
 Git’s `worktree` function to put the `inputs_selection_app` branch (or
