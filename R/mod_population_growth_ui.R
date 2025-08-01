@@ -12,16 +12,7 @@ mod_population_growth_ui <- function(id, dataset) {
   ns <- shiny::NS(id)
 
   projections <- get_population_growth_options(dataset)
-
-  slider <- function(name, id, value = 0) {
-    shiny::sliderInput(
-      ns(id),
-      name,
-      min = 0,
-      max = 100,
-      value = value
-    )
-  }
+  default_projection <- names(projections)[[1]]
 
   shiny::tagList(
     shiny::tags$h1("Population Growth"),
@@ -39,12 +30,12 @@ mod_population_growth_ui <- function(id, dataset) {
         collapsible = FALSE,
         headerBorder = FALSE,
         width = 8,
-        shinyjs::disabled(slider(
-          projections[[1]],
-          names(projections)[[1]],
-          100
-        )),
-        purrr::imap(projections[-1], slider)
+        shiny::selectInput(
+          ns("population_projection"),
+          label = "Projection",
+          choices = setNames(names(projections), projections),
+          selected = default_projection
+        )
       )
     )
   )
