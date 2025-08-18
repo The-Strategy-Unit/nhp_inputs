@@ -14,7 +14,6 @@ mod_run_model_fix_params <- function(p, schema_text) {
   # for a while, the wrong time profile was set for some items. force these to none
   p[["time_profile_mappings"]][
     c(
-      "covid_adjustment",
       "baseline_adjustment",
       "non-demographic_adjustment"
     )
@@ -70,7 +69,6 @@ mod_run_model_fix_params <- function(p, schema_text) {
     "demographic_factors",
     "health_status_adjustment",
     "baseline_adjustment",
-    "covid_adjustment",
     "waiting_list_adjustment",
     "expat",
     "repat_local",
