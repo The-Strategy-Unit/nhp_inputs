@@ -150,6 +150,15 @@ upgrade_params.v3.6 <- function(p) {
   upgrade_params(p)
 }
 
+upgrade_params.v4.0 <- function(p) {
+  # Remove covid adjustment
+
+  p[["covid_adjustment"]] <- NULL
+
+  class(p) <- p$app_version <- "v4.1"
+  upgrade_params(p)
+}
+
 params_path <- function(user, dataset) {
   path <- file.path(
     config::get("params_data_path"),
