@@ -10,11 +10,6 @@
   "demographic_factors": {},
   "health_status_adjustment": true,
   "inequalities": {},
-  "covid_adjustment": {
-    "aae": {},
-    "ip": {},
-    "op": {}
-  },
   "expat": {
     "ip": {},
     "op": {},
