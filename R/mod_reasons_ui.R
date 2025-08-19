@@ -18,7 +18,7 @@ mod_reasons_ui <- function(id) {
       height = "200px",
       placeholder = paste(
         "Type your rationale here and it will be saved automatically.",
-        "You can supply reasons for your choices even if you don't make changes."
+        "You can supply rationale even if you do not make a selection or adjustment."
       )
     )
   )
