@@ -90,11 +90,6 @@ app_server <- function(input, output, session) {
   }) |>
     shiny::bindCache(cache_version())
 
-  covid_adjustment_data <- shiny::reactive({
-    load_provider_data("covid_adjustment")
-  }) |>
-    shiny::bindCache(cache_version())
-
   wli_data <- shiny::reactive({
     load_provider_data("wli")
   }) |>
@@ -146,12 +141,6 @@ app_server <- function(input, output, session) {
     mod_baseline_adjustment_server(
       "baseline_adjustment",
       baseline_data(),
-      params
-    )
-
-    mod_covid_adjustment_server(
-      "covid_adjustment",
-      covid_adjustment_data(),
       params
     )
 
@@ -207,16 +196,6 @@ app_server <- function(input, output, session) {
       mitigator_codes_lkup(),
       peers()
     )
-
-    # enable covid adjusment tab for 2019/20 baseline only
-    output$tab_covid_adjustment <- bs4Dash::renderMenu({
-      if (params$start_year == "201920") {
-        bs4Dash::menuItem(
-          "Covid Adjustment",
-          tabName = "tab_covid_adjustment"
-        )
-      }
-    })
 
     # enable the run_model page for certain users/running locally
 
