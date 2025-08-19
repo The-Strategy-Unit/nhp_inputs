@@ -368,7 +368,14 @@ ui_body <- function() {
         ),
         style = "margin-top: -5px; margin-bottom: 8px"
       ),
-      shiny::uiOutput("start_button")
+      shiny::uiOutput("start_button"),
+      shiny::hr(),
+      shiny::HTML(
+        "Please note: editing an existing scenario will automatically
+        upgrade it to the latest model version. See a full list of changes on
+        <a href='https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/model_updates.html'>the model updates page</a>.
+        You can preserve your selections by creating a new scenario from existing."
+      )
     ),
     bs4Dash::box(
       title = "Advanced Options",
