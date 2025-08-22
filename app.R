@@ -25,7 +25,9 @@ load_params <- function(file) {
 
   # To trigger UI warnings
   prior_app_version <- p$app_version
-  if (is.null(prior_app_version)) prior_app_version <- "new"
+  if (is.null(prior_app_version)) {
+    prior_app_version <- "new"
+  }
   attr(p, "prior_app_version") <- prior_app_version
 
   # To trigger upgrade methods
@@ -329,12 +331,12 @@ ui_body <- function() {
       ),
       shinyjs::hidden(
         shiny::div(
-          id = "pop_proj_warning",
+          id = "upgrade_warning",
           shiny::HTML(
-            "<font color='red'>Your scenario will be upgraded to work with the
-            latest version of the model. From v4.0 the model uses the 2022 ONS
-            population projections, so your population-growth selections will
-            be reset to the new default. Please review this change.</font><p>"
+            "Editing an existing scenario will automatically upgrade it to the
+            latest model version. See a full list of changes on
+            <a href='https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/model_updates.html'>the model updates page</a>.
+            <br><br>"
           )
         )
       ),
@@ -343,6 +345,17 @@ ui_body <- function() {
           "previous_scenario",
           "Previous Scenario",
           NULL
+        )
+      ),
+      shinyjs::hidden(
+        shiny::div(
+          id = "pop_proj_warning",
+          shiny::HTML(
+            "<font color='red'>Your scenario will be upgraded to work with the
+            latest version of the model. From v4.0 the model uses the 2022 ONS
+            population projections, so your population-growth selections will
+            be reset to the new default. Please review this change.</font><p>"
+          )
         )
       ),
       shinyjs::hidden(
@@ -730,6 +743,7 @@ server <- function(input, output, session) {
     if (input$scenario_type == "Create new from scratch") {
       shinyjs::show("scenario")
       shinyjs::enable("scenario")
+      shinyjs::hide("upgrade_warning")
       shinyjs::hide("pop_proj_warning")
       shinyjs::hide("previous_scenario")
       shinyjs::hide("start_year_warning")
@@ -740,11 +754,13 @@ server <- function(input, output, session) {
       shinyjs::show("scenario")
       shinyjs::show("previous_scenario")
       shinyjs::show("naming_guidance")
+      shinyjs::hide("upgrade_warning")
       shiny::updateTextInput(session, "scenario", value = "")
     } else if (input$scenario_type == "Edit existing") {
       shinyjs::hide("scenario")
       shinyjs::show("previous_scenario")
       shinyjs::hide("naming_guidance")
+      shinyjs::show("upgrade_warning")
       shiny::updateTextInput(
         session,
         "scenario",
