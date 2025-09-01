@@ -49,7 +49,6 @@
     "op": {}
   },
   "time_profile_mappings": {
-    "covid_adjustment": "none",
     "baseline_adjustment": "none",
     "activity_avoidance": {
       "ip": {},
