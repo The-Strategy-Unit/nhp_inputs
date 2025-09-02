@@ -156,6 +156,7 @@ upgrade_params.v4.0 <- function(p) {
   # Remove covid adjustment
 
   p[["covid_adjustment"]] <- NULL
+  p[["time_profile_mappings"]][["covid_adjustment"]] <- NULL
 
   class(p) <- p$app_version <- "v4.1"
   upgrade_params(p)
