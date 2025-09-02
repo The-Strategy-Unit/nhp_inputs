@@ -41,7 +41,7 @@ jobs:
         run: node update_manifest.js
 
       - name: Publish Connect content
-        uses: rstudio/actions/connect-publish@main
+        uses: rstudio/actions/connect-publish@b1476ab2f718512fc125e1cd09e39d2395162a60
         env:
           CONNECT_ENV_SET_AZ_STORAGE_CONTAINER: ${{ secrets.AZ_STORAGE_CONTAINER }}
           CONNECT_ENV_SET_AZ_STORAGE_EP: ${{ secrets.AZ_STORAGE_EP }}
