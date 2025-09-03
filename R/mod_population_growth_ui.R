@@ -33,7 +33,7 @@ mod_population_growth_ui <- function(id, dataset) {
         shiny::selectInput(
           ns("population_projection"),
           label = "Projection",
-          choices = setNames(names(projections), projections),
+          choices = stats::setNames(names(projections), projections),
           selected = default_projection
         )
       )

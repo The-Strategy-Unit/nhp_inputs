@@ -96,7 +96,7 @@ get_params_schema_text <- function(
 ) {
   tf <- tempfile()
 
-  download.file(
+  utils::download.file(
     glue::glue(
       "https://the-strategy-unit.github.io/nhp_model/{app_version}/params-schema.json"
     ),
