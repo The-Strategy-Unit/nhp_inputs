@@ -162,6 +162,19 @@ upgrade_params.v4.0 <- function(p) {
   upgrade_params(p)
 }
 
+upgrade_params.v4.1 <- function(p) {
+  # Update structure of the inequalities key to include strategy
+
+  p[["inequalities"]] <- list(
+    level_up = NULL,
+    zero_sum = NULL,
+    level_down = NULL
+  )
+
+  class(p) <- p$app_version <- "v4.2"
+  upgrade_params(p)
+}
+
 params_path <- function(user, dataset) {
   path <- file.path(
     config::get("params_data_path"),
