@@ -41,6 +41,7 @@ deploy <- function(server, app_id, app_version_choices) {
 
 # only use the versions that are deployed to the new server currently
 app_version_choices <- c(
+  "v4.2",
   "v4.1",
   "v4.0",
   "v3.6",
