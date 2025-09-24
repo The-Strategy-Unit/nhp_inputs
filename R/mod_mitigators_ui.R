@@ -59,21 +59,42 @@ mod_mitigators_ui <- function(id, title, show_diagnoses_table = TRUE) {
             shinycssloaders::withSpinner({
               shiny::plotOutput(ns("trend_plot"))
             }),
-            width = 5
+            htmltools::HTML(
+              paste0(
+                "<details><summary>About</summary>",
+                md_file_to_html("app", "text", "plot_trend.md"),
+                "</details>"
+              )
+            ),
+            width = 4
           ),
           bs4Dash::box(
             title = "Funnel",
             shinycssloaders::withSpinner({
               shiny::plotOutput(ns("funnel_plot"))
             }),
-            width = 5
+            htmltools::HTML(
+              paste0(
+                "<details><summary>About</summary>",
+                md_file_to_html("app", "text", "plot_funnel.md"),
+                "</details>"
+              )
+            ),
+            width = 4
           ),
           bs4Dash::box(
             title = "Boxplot",
             shinycssloaders::withSpinner({
               shiny::plotOutput(ns("boxplot"))
             }),
-            width = 2
+            htmltools::HTML(
+              paste0(
+                "<details><summary>About</summary>",
+                md_file_to_html("app", "text", "plot_box.md"),
+                "</details>"
+              )
+            ),
+            width = 4
           ),
           col_6(
             bs4Dash::box(
