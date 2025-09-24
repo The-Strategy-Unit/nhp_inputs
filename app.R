@@ -163,12 +163,12 @@ upgrade_params.v4.0 <- function(p) {
 }
 
 upgrade_params.v4.1 <- function(p) {
-  # Update structure of the inequalities key to include strategy
+  # Update structure of the inequalities key to include strategy choices
 
   p[["inequalities"]] <- list(
-    level_up = NULL,
-    zero_sum = NULL,
-    level_down = NULL
+    level_up = list(), # empty [] in output json
+    zero_sum = list(),
+    level_down = list()
   )
 
   class(p) <- p$app_version <- "v4.2"
