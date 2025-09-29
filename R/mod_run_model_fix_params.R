@@ -42,7 +42,11 @@ mod_run_model_fix_params <- function(p, schema_text) {
   # nolint end
   recursive_nullify <- function(.x) {
     for (i in names(.x)) {
-      if (length(.x[[i]]) == 0) {
+      if (
+        # an empty json list is OK for inequalities, so ignore
+        !i %in% c("level_down", "zero_sum", "level_up") &&
+          length(.x[[i]]) == 0
+      ) {
         .x[i] <- list(NULL)
       } else {
         .x[[i]] <- recursive_nullify(.x[[i]])
