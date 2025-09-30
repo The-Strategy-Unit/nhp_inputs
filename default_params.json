@@ -9,11 +9,7 @@
   "app_version": null,
   "demographic_factors": {},
   "health_status_adjustment": true,
-  "inequalities": {
-    "level_up": [],
-    "zero_sum": [],
-    "level_down": []
-  },
+  "inequalities": {},
   "expat": {
     "ip": {},
     "op": {},
