@@ -1,6 +1,6 @@
 Package: inputs
 Title: NHP Model Inputs
-Version: 4.1.0
+Version: 4.2.0
 Authors@R: c(
     person("Tom", "Jemmett", , "thomas.jemmett@nhs.net", role = c("cre", "aut")),
     person("Matt", "Dray", , "matt.dray@nhs.net", role = "aut"),
@@ -73,4 +73,4 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
