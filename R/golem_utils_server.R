@@ -17,6 +17,14 @@ not_na <- Negate(is.na)
 #'
 #' @example
 #' drop_nulls(list(1, NULL, 2))
+#' Remove NULL elements from a list
+#'
+#' Filters out NULL elements from a list or vector.
+#'
+#' @param x A list or vector that may contain NULL elements.
+#'
+#' @return The input with NULL elements removed.
+#' @noRd
 drop_nulls <- function(x) {
   x[!sapply(x, is.null)]
 }
@@ -58,11 +66,22 @@ drop_nulls <- function(x) {
 
 # nolint end
 
-#' Typing reactiveValues is too long
+#' Create reactive values (shorthand)
 #'
-#' @inheritParams reactiveValues
-#' @inheritParams reactiveValuesToList
+#' A convenience wrapper around \code{shiny::reactiveValues()} to reduce typing.
 #'
+#' @param ... Named values to create reactive variables.
+#'
+#' @return A reactivevalues object.
 #' @noRd
 rv <- function(...) shiny::reactiveValues(...)
+
+#' Convert reactive values to list (shorthand)
+#'
+#' A convenience wrapper around \code{shiny::reactiveValuesToList()} to reduce typing.
+#'
+#' @param ... Arguments passed to \code{shiny::reactiveValuesToList()}.
+#'
+#' @return A list containing the reactive values.
+#' @noRd
 rvtl <- function(...) shiny::reactiveValuesToList(...)

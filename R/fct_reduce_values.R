@@ -1,3 +1,13 @@
+#' Reduce values to ensure sum does not exceed 1
+#'
+#' Recursively reduces non-target values until the sum of all values is less than
+#' or equal to 1. This is useful for ensuring proportions remain valid.
+#'
+#' @param values A named numeric vector of values between 0 and 1.
+#' @param target The name of the target value that should not be reduced.
+#'
+#' @return A named numeric vector with adjusted values that sum to at most 1.
+#' @noRd
 reduce_values <- function(values, target) {
   # ensure values are valid
   stopifnot(

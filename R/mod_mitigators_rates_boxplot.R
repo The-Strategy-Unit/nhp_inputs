@@ -1,3 +1,15 @@
+#' Create a boxplot of rates data
+#'
+#' Generates a boxplot visualization with beeswarm points showing the
+#' distribution of rates data.
+#'
+#' @param trend_data A data frame containing rate data with columns for rate
+#'   and is_peer indicator.
+#' @param plot_range Numeric vector of length 2 specifying y-axis limits.
+#' @param interval ggplot2 layer to add interval visualization.
+#'
+#' @return A ggplot2 object representing the rates boxplot.
+#' @noRd
 rates_boxplot <- function(trend_data, plot_range, interval) {
   trend_data |>
     ggplot2::ggplot(ggplot2::aes(x = "", y = .data$rate)) +

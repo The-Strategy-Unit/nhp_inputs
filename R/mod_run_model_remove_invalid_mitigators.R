@@ -1,3 +1,13 @@
+#' Remove invalid mitigators from parameters
+#'
+#' Validates parameters against the JSON schema and removes any mitigators
+#' that don't conform to the schema.
+#'
+#' @param p List containing model parameters.
+#' @param schema_text JSON schema text for validation.
+#'
+#' @return Parameters list with invalid mitigators removed.
+#' @noRd
 mod_run_model_remove_invalid_mitigators <- function(p, schema_text) {
   schema <- create_params_schema(schema_text)
 

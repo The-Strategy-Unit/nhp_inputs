@@ -1,3 +1,17 @@
+#' Create expatriation/repatriation trend plot
+#'
+#' Generates a line plot showing trends in expatriation or repatriation rates
+#' over time with an optional prediction interval.
+#'
+#' @param df A data frame containing financial year (fyear) and percentage (pcnt) data.
+#' @param include Logical indicating whether to include the prediction interval.
+#' @param values Numeric vector of length 2 with lower and upper prediction interval bounds.
+#' @param start_year The baseline financial year to highlight.
+#' @param title Title for the y-axis.
+#' @param scale Scaling factor for determining y-axis limits (default: 10).
+#'
+#' @return A ggplot2 object representing the trend plot.
+#' @noRd
 mod_expat_repat_trend_plot <- function(
   df,
   include,
@@ -53,6 +67,18 @@ mod_expat_repat_trend_plot <- function(
     )
 }
 
+#' Create local provider split visualization
+#'
+#' Generates a stacked bar chart showing the distribution of activity across
+#' different local providers.
+#'
+#' @param df A data frame containing provider and count data.
+#' @param providers Named vector mapping provider names to codes.
+#' @param dataset The current dataset/provider identifier.
+#' @param start_year The financial year for the data.
+#'
+#' @return A ggplot2 object representing the provider split.
+#' @noRd
 mod_expat_repat_local_split_plot <- function(
   df,
   providers,
@@ -113,6 +139,15 @@ mod_expat_repat_local_split_plot <- function(
     ggplot2::theme(legend.position = "none")
 }
 
+#' Create non-local activity volume plot
+#'
+#' Generates a bar chart showing the number of spells delivered to non-local
+#' ICB residents over time.
+#'
+#' @param df A data frame containing financial year (fyear) and count (n) data.
+#'
+#' @return A ggplot2 object representing the volume plot.
+#' @noRd
 mod_expat_repat_nonlocal_n <- function(df) {
   df |>
     ggplot2::ggplot(
@@ -144,6 +179,15 @@ mod_expat_repat_nonlocal_n <- function(df) {
 }
 
 
+#' Create non-local ICB geographic map
+#'
+#' Generates an interactive leaflet map showing the geographic distribution
+#' of non-local ICB activity.
+#'
+#' @param df A spatial data frame containing ICB boundaries and activity percentages.
+#'
+#' @return A leaflet map object.
+#' @noRd
 mod_expat_repat_nonlocal_icb_map <- function(df) {
   # nolint start: object_usage_linter
   pal <- leaflet::colorNumeric(
