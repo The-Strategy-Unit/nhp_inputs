@@ -20,6 +20,16 @@ reduce_values <- function(values, target) {
     stringr::str_subset(stringr::fixed(target), TRUE)
 
   # create a recursive function to reduce the values until sum(values) <= 1
+  #' Recursive value reduction function
+  #'
+  #' Internal helper function that recursively reduces non-target values
+  #' until their sum is less than or equal to 1.
+  #'
+  #' @param values Named numeric vector of values to reduce.
+  #' @param include Character vector of names of values that can be reduced.
+  #'
+  #' @return Adjusted numeric vector with sum <= 1.
+  #' @noRd
   fn <- function(values, include) {
     # get the sum of the values
     s <- sum(values)

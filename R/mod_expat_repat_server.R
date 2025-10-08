@@ -32,6 +32,15 @@ mod_expat_repat_server <- function(
 
     # helpers ----
 
+    #' Extract expatriation/repatriation data
+    #'
+    #' Internal helper function to filter expatriation/repatriation data based
+    #' on selected activity type, subgroup, and specialty/type.
+    #'
+    #' @param dat Data frame containing expatriation/repatriation data.
+    #'
+    #' @return Filtered data frame based on input selections.
+    #' @noRd
     extract_expat_repat_data <- function(dat) {
       # TODO: techdebt
       # we should rename the dropdowns

@@ -71,6 +71,14 @@ mod_mitigators_server <- function(
       )
     })
 
+    #' Get default rate interval
+    #'
+    #' Internal helper function to return the default rate interval values.
+    #'
+    #' @param rate Rate value (unused in current implementation).
+    #'
+    #' @return Numeric vector of length 2 with default interval (0.95, 1).
+    #' @noRd
     get_default <- function(rate) {
       c(0.95, 1)
     }
@@ -613,6 +621,16 @@ mod_mitigators_server <- function(
       ) *
         scale
 
+      #' Convert number to formatted string
+      #'
+      #' Internal helper function to format numeric values based on whether
+      #' they represent percentages.
+      #'
+      #' @param value Numeric value to format.
+      #' @param config Configuration list containing y_axis_title.
+      #'
+      #' @return Formatted character string.
+      #' @noRd
       convert_number <- function(value, config) {
         converted <- scales::number(value, 0.001)
         is_percent <- stringr::str_detect(config$y_axis_title, "%")
