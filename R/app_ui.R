@@ -24,7 +24,16 @@ app_ui <- function(request) {
   }
   dataset <- jsonlite::read_json(file)$dataset
 
-  header <- bs4Dash::dashboardHeader(title = "NHP Model Inputs")
+  header <- bs4Dash::dashboardHeader(
+    title = "NHP Model Inputs",
+    shiny::actionButton(
+      inputId = "feedback",
+      label = "Give feedback",
+      onClick = glue::glue(
+        "window.open('{Sys.getenv(\"FEEDBACK_FORM_URL\")}', '_blank')"
+      )
+    )
+  )
 
   sidebar <- bs4Dash::dashboardSidebar(
     fixed = TRUE,
