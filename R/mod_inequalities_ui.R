@@ -17,6 +17,12 @@ mod_inequalities_ui <- function(id) {
         headerBorder = FALSE,
         width = 4,
         md_file_to_html("app", "text", "inequalities.md")
+      ),
+      bs4Dash::box(
+        collapsible = FALSE,
+        headerBorder = FALSE,
+        width = 8,
+        shiny::downloadButton(ns("download_inequalities"), "Download inequalities")
       )
     )
   )
