@@ -568,9 +568,11 @@ mod_mitigators_server <- function(
           dplyr::filter(.data[["param_name"]] == input$strategy)
 
         shiny::validate(
-          shiny::need(nrow(nee_params) > 0,
-                      "This TPMA was not part of the National Elicitation Exercise,
-                      so a nationally-determined estimate is not available.")
+          shiny::need(
+            nrow(nee_params) > 0,
+            "This TPMA was not part of the National Elicitation Exercise,
+                      so a nationally-determined estimate is not available."
+          )
         )
 
         nee_params |>
