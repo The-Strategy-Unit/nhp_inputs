@@ -4,24 +4,24 @@
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
-#' @noRd
-#'
 #' @importFrom shiny NS tagList
+#'
+#' @noRd
 mod_expat_repat_ui <- function(id) {
   ns <- shiny::NS(id)
 
-  #' Generate parameter controls
-  #'
-  #' Internal helper function to create UI controls for expatriation/repatriation
-  #' parameters including a checkbox and slider.
-  #'
-  #' @param type Parameter type identifier (e.g., "expat", "repat_local").
-  #' @param min Minimum value for the slider.
-  #' @param max Maximum value for the slider.
-  #' @param values Initial values for the slider range.
-  #'
-  #' @return A shiny fluidRow containing the parameter controls.
-  #' @noRd
+  # Generate parameter controls
+  #
+  # Internal helper function to create UI controls for expatriation/repatriation
+  # parameters including a checkbox and slider.
+  #
+  # @param type Parameter type identifier (e.g., "expat", "repat_local").
+  # @param min Minimum value for the slider.
+  # @param max Maximum value for the slider.
+  # @param values Initial values for the slider range.
+  #
+  # @return A shiny fluidRow containing the parameter controls.
+  # @noRd
   generate_param_controls <- function(type, min, max, values) {
     shiny::fluidRow(
       col_3(

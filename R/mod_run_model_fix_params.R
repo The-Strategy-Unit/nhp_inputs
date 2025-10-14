@@ -50,15 +50,16 @@ mod_run_model_fix_params <- function(p, schema_text) {
   # these with NULL's as
   #   toJSON(NULL) == "{}"
   # nolint end
-  #' Recursively nullify empty list elements
-  #'
-  #' Internal helper function to replace empty lists with NULL values for
-  #' proper JSON serialization (empty objects instead of empty arrays).
-  #'
-  #' @param .x A list to process.
-  #'
-  #' @return The list with empty elements replaced by NULL.
-  #' @noRd
+
+  # Recursively nullify empty list elements
+  #
+  # Internal helper function to replace empty lists with NULL values for
+  # proper JSON serialization (empty objects instead of empty arrays).
+  #
+  # @param .x A list to process.
+  #
+  # @return The list with empty elements replaced by NULL.
+  # @noRd
   recursive_nullify <- function(.x) {
     for (i in names(.x)) {
       if (length(.x[[i]]) == 0) {
