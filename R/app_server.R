@@ -148,6 +148,8 @@ app_server <- function(input, output, session) {
 
     mod_health_status_adjustment_server("health_status_adjustment", params)
 
+    mod_inequalities_server("inequalities", params)
+
     mod_waiting_list_imbalances_server(
       "waiting_list_imbalances",
       wli_data(),
