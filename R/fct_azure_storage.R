@@ -1,6 +1,6 @@
 #' Get Provider Data
 #'
-#' Read the parquet file containing a selected tupe of provider data.
+#' Read the parquet file containing a selected type of provider data.
 #'
 #' @param file The name of the file to read.
 #' @param inputs_data_version The version of the inputs data to use.
