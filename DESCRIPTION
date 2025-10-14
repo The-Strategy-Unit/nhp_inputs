@@ -34,7 +34,6 @@ Imports:
     gt,
     htmltools,
     httr2,
-    janitor,
     jsonlite,
     jsonvalidate,
     leaflet,
