@@ -9,15 +9,6 @@
 #' @examples
 #' list_to_li(c("a", "b"))
 #' @importFrom shiny tags tagAppendAttributes tagList
-#' Convert list to HTML list items
-#'
-#' Transforms a list into HTML \code{<li>} elements.
-#'
-#' @param list A list of items to convert.
-#' @param class Optional CSS class to apply to the list items.
-#'
-#' @return A list of HTML \code{<li>} tags.
-#' @noRd
 list_to_li <- function(list, class = NULL) {
   if (is.null(class)) {
     tagList(
@@ -55,15 +46,6 @@ list_to_li <- function(list, class = NULL) {
 #' list_to_p(c("This is the first paragraph", "this is the second paragraph"))
 #' @importFrom shiny tags tagAppendAttributes tagList
 #'
-#' Convert list to HTML paragraphs
-#'
-#' Transforms a list into HTML \code{<p>} elements.
-#'
-#' @param list A list of items to convert.
-#' @param class Optional CSS class to apply to the paragraphs.
-#'
-#' @return A list of HTML \code{<p>} tags.
-#' @noRd
 list_to_p <- function(list, class = NULL) {
   if (is.null(class)) {
     tagList(
@@ -91,16 +73,6 @@ list_to_p <- function(list, class = NULL) {
 }
 
 #' @importFrom shiny tags tagAppendAttributes tagList
-#' Convert named list to HTML list items
-#'
-#' Transforms a named list into HTML \code{<li>} elements where names are bold
-#' and values are regular text.
-#'
-#' @param list A named list to convert.
-#' @param class Optional CSS class to apply to the list items.
-#'
-#' @return A list of HTML \code{<li>} tags with formatted name-value pairs.
-#' @noRd
 named_to_li <- function(list, class = NULL) {
   if (is.null(class)) {
     res <- mapply(
@@ -142,14 +114,12 @@ named_to_li <- function(list, class = NULL) {
   }
 }
 
-#' Remove attributes from an HTML tag
+#' Remove a tag attribute
 #'
-#' Removes specified attributes from an HTML tag object.
+#' @param tag the tag
+#' @param ... the attributes to remove
 #'
-#' @param tag An HTML tag object.
-#' @param ... Names of attributes to remove.
-#'
-#' @return The tag with specified attributes removed.
+#' @return a new tag
 #' @noRd
 #'
 #' @examples
@@ -163,13 +133,11 @@ tag_remove_attributes <- function(tag, ...) {
   tag
 }
 
-#' Hide an HTML tag
+#' Hide or display a tag
 #'
-#' Sets the display CSS property to 'none' to hide a tag.
+#' @param tag the tag
 #'
-#' @param tag An HTML tag object to hide.
-#'
-#' @return The tag with display: none style applied.
+#' @return a tag
 #' @noRd
 #'
 #' @examples
@@ -183,7 +151,7 @@ undisplay <- function(tag) {
   # if not already hidden
   if (
     !is.null(tag$attribs$style) &&
-      !grepl("display:\\s+none", tag$attribs$style)
+    !grepl("display:\\s+none", tag$attribs$style)
   ) {
     tag$attribs$style <- paste(
       "display: none;",
@@ -195,19 +163,11 @@ undisplay <- function(tag) {
   tag
 }
 
-#' Display a hidden HTML tag
-#'
-#' Removes the display: none CSS property from a tag to make it visible.
-#'
-#' @param tag An HTML tag object to display.
-#'
-#' @return The tag with display: none removed from its style.
-#' @noRd
 #' @importFrom shiny tagList
 display <- function(tag) {
   if (
     !is.null(tag$attribs$style) &&
-      grepl("display:\\s+none", tag$attribs$style)
+    grepl("display:\\s+none", tag$attribs$style)
   ) {
     tag$attribs$style <- gsub(
       "(\\s)*display:(\\s)*none(\\s)*(;)*(\\s)*",
