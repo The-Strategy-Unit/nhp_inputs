@@ -1,18 +1,3 @@
-#' azure_storage
-#'
-#' @description A fct function
-#'
-#' @return The return value, if any, from executing the function.
-#'
-#' @noRd
-load_rds_from_adls <- function(
-  file,
-  inputs_data_version = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")
-) {
-  fs <- get_adls_fs()
-  AzureStor::storage_load_rds(fs, glue::glue("{inputs_data_version}/{file}"))
-}
-
 #' Get Provider Data
 #'
 #' Read the parquet file containing a selected tupe of provider data.
