@@ -78,7 +78,7 @@ app_ui <- function(request) {
       ),
       #
       shiny::tags$hr(),
-      bs4Dash::sidebarHeader("Activity Mitigators"),
+      bs4Dash::sidebarHeader("Types of Potentially Mitigable Activity"),
       bs4Dash::menuItem(
         "Summary totals",
         tabName = "mitigators_summary"
