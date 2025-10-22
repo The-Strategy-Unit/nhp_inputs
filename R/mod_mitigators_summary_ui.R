@@ -13,7 +13,7 @@ mod_mitigators_summary_ui <- function(id) {
     shiny::fluidRow(
       col_4(
         bs4Dash::box(
-          title = "Type of Potentially Mitigable Activity (TPMA)",
+          title = "Type of Potentially Mitigatable Activity (TPMA)",
           width = 12,
           shiny::p(
             "This table summarises the most common healthcare activities
