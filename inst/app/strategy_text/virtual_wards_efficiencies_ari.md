@@ -4,4 +4,4 @@ They also provide systems with a significant opportunity to narrow the gap betwe
 Whilst virtual wards may be beneficial for patients on a variety of clinical pathways guidance has been produced relating to three pathways which represent the majority of patients who may be clinically suitable to benefit from a virtual ward.
 These pathways are Frailty, Acute Respiratory Infections (ARI) and Heart failure.
 
-This efficiency mitigator identifies patients who may be suitable for earlier discharge through admission to a step down ARI virtual ward.
+This efficiency type of potentially mitigatable activity identifies patients who may be suitable for earlier discharge through admission to a step down ARI virtual ward.
