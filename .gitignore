@@ -15,3 +15,6 @@ params/
 
 # worktrees
 inputs_selection_app/
+
+.cache/
+tmp/

@@ -567,6 +567,14 @@ mod_mitigators_server <- function(
           readr::read_csv(col_types = "cddd") |>
           dplyr::filter(.data[["param_name"]] == input$strategy)
 
+        shiny::validate(
+          shiny::need(
+            nrow(nee_params) > 0,
+            "This TPMA was not part of the National Elicitation Exercise,
+                      so a nationally-determined estimate is not available."
+          )
+        )
+
         nee_params |>
           ggplot2::ggplot() +
           ggplot2::geom_segment(

@@ -1,34 +1,3 @@
-#' azure_storage
-#'
-#' @description A fct function
-#'
-#' @return The return value, if any, from executing the function.
-#'
-#' @noRd
-load_rds_from_adls <- function(
-  file,
-  inputs_data_version = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")
-) {
-  fs <- get_adls_fs()
-  AzureStor::storage_load_rds(fs, glue::glue("{inputs_data_version}/{file}"))
-}
-
-#' Get inequalities data
-#'
-#' Read the parquet file for inequalities
-#' @return A tibble.
-load_inequalities_data <- function() {
-
-  fs <- get_adls_fs()
-  fs |>
-    AzureStor::download_adls_file(
-      glue::glue("dev/inequalities.parquet"),
-      dest = NULL
-    ) |>
-    arrow::read_parquet() |>
-    tibble::as_tibble()
-}
-
 #' Get Provider Data
 #'
 #' Read the parquet file containing a selected type of provider data.
@@ -44,6 +13,21 @@ load_provider_data <- function(
   fs |>
     AzureStor::download_adls_file(
       glue::glue("{inputs_data_version}/{file}.parquet"),
+      dest = NULL
+    ) |>
+    arrow::read_parquet() |>
+    tibble::as_tibble()
+}
+
+#' Get inequalities data
+#'
+#' Read the parquet file for inequalities
+#' @return A tibble.
+load_inequalities_data <- function() {
+  fs <- get_adls_fs()
+  fs |>
+    AzureStor::download_adls_file(
+      glue::glue("dev/inequalities.parquet"),
       dest = NULL
     ) |>
     arrow::read_parquet() |>
