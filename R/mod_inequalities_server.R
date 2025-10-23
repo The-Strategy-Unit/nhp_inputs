@@ -3,17 +3,13 @@
 #' @noRd
 mod_inequalities_server <- function(id, params) {
   shiny::moduleServer(id, function(input, output, session) {
-
-
     inequalities_data <- shiny::reactive({
-
-      dataset <- shiny::req(params$dataset)
+      dataset <- shiny::req(params$dataset) # nolint: object_usage_linter
 
       load_inequalities_data() |>
         dplyr::filter(
           .data[["provider"]] == .env[["dataset"]]
         )
-
     })
 
     output$download_inequalities <- shiny::downloadHandler(
@@ -22,6 +18,5 @@ mod_inequalities_server <- function(id, params) {
         readr::write_csv(inequalities_data(), file)
       }
     )
-
   })
 }
