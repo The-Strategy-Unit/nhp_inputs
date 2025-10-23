@@ -22,10 +22,15 @@ mod_inequalities_ui <- function(id) {
         collapsible = FALSE,
         headerBorder = FALSE,
         width = 8,
-        shiny::downloadButton(
-          ns("download_inequalities"),
-          "Download inequalities"
-        )
+        div(
+          shiny::downloadButton(
+            ns("download_inequalities"),
+            "Download inequalities"
+          ),
+          actionButton(ns("set_all_zero_sum"), "Set all to zero sum"),
+          actionButton(ns("clear_all"), "Clear all", class = "btn-secondary")
+        ),
+        DT::dataTableOutput(ns("hrg_table"), height = "calc(100vh - 200px)")
       )
     )
   )
