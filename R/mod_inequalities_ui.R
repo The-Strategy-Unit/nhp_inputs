@@ -22,7 +22,10 @@ mod_inequalities_ui <- function(id) {
         collapsible = FALSE,
         headerBorder = FALSE,
         width = 8,
-        shiny::downloadButton(ns("download_inequalities"), "Download inequalities")
+        shiny::downloadButton(
+          ns("download_inequalities"),
+          "Download inequalities"
+        )
       )
     )
   )
