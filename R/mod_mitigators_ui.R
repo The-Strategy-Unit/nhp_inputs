@@ -10,13 +10,13 @@
 mod_mitigators_ui <- function(id, title, show_diagnoses_table = TRUE) {
   ns <- shiny::NS(id)
   shiny::tagList(
-    shiny::h1("Activity Mitigators"),
+    shiny::h1("Types of Potentially Mitigatable Activity (TPMAs)"),
     shiny::h2(title),
     shiny::fluidRow(
       col_4(
         shiny::fluidRow(
           bs4Dash::box(
-            title = "Activity Mitigator",
+            title = "Type of Potentially Mitigatable Activity",
             width = 12,
             shiny::selectInput(ns("strategy"), "Selection", choices = NULL),
             shiny::uiOutput(ns("strategy_text"))
