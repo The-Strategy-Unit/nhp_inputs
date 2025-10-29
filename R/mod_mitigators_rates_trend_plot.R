@@ -1,3 +1,19 @@
+#' Create a rates trend plot
+#'
+#' Generates a line plot showing trends in rates over time with the baseline
+#' year highlighted.
+#'
+#' @param trend_data A data frame containing rate data with columns for fyear
+#'   (financial year) and rate.
+#' @param baseline_year The baseline financial year to highlight.
+#' @param plot_range Numeric vector of length 2 specifying y-axis limits.
+#' @param y_axis_title Title for the y-axis.
+#' @param x_axis_title Title for the x-axis.
+#' @param number_format Function to format axis numbers.
+#' @param interval ggplot2 layer to add interval visualization.
+#'
+#' @return A ggplot2 object representing the rates trend plot.
+#' @noRd
 rates_trend_plot <- function(
   trend_data,
   baseline_year,
