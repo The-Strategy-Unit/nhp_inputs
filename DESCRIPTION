@@ -1,6 +1,6 @@
 Package: inputs
 Title: NHP Model Inputs
-Version: 4.2.1
+Version: 4.3.0
 Authors@R: c(
     person("Tom", "Jemmett", , "thomas.jemmett@nhs.net", role = c("cre", "aut")),
     person("Matt", "Dray", , "matt.dray@nhs.net", role = "aut"),
