@@ -1,3 +1,13 @@
+#' Fix and validate model parameters
+#'
+#' Ensures model parameters are in the correct format by filling in missing
+#' time profiles, removing invalid mitigators, and reordering parameters.
+#'
+#' @param p List containing model parameters.
+#' @param schema_text JSON schema text for validation.
+#'
+#' @return A cleaned and validated parameters list.
+#' @noRd
 mod_run_model_fix_params <- function(p, schema_text) {
   # the time profiles may be empty, ensure that's not the case
   tpm <- p[["time_profile_mappings"]]
@@ -40,6 +50,16 @@ mod_run_model_fix_params <- function(p, schema_text) {
   # these with NULL's as
   #   toJSON(NULL) == "{}"
   # nolint end
+
+  # Recursively nullify empty list elements
+  #
+  # Internal helper function to replace empty lists with NULL values for
+  # proper JSON serialization (empty objects instead of empty arrays).
+  #
+  # @param .x A list to process.
+  #
+  # @return The list with empty elements replaced by NULL.
+  # @noRd
   recursive_nullify <- function(.x) {
     for (i in names(.x)) {
       if (length(.x[[i]]) == 0) {
