@@ -167,6 +167,11 @@ upgrade_params.v4.1 <- function(p) {
   upgrade_params(p)
 }
 
+upgrade_params.v4.2 <- function(p) {
+  class(p) <- p$app_version <- "v4.3"
+  upgrade_params(p)
+}
+
 params_path <- function(user, dataset) {
   path <- file.path(
     config::get("params_data_path"),
@@ -639,8 +644,9 @@ server <- function(input, output, session) {
     p <- shiny::req(params())
 
     stopifnot(
-      "start_year is coming through as an fyear, should be yyyy" =
-        (p$start_year >= 1000) && (p$start_year <= 9999) # fmt:skip
+      "start_year is coming through as an fyear, should be yyyy" = (p$start_year >=
+        1000) &&
+        (p$start_year <= 9999) # fmt:skip
     )
 
     if (p$start_year >= 2023) {
