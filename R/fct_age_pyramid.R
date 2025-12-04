@@ -1,3 +1,12 @@
+#' Create an age pyramid plot
+#'
+#' Generates a population pyramid visualization showing age and sex distribution.
+#'
+#' @param age_data A data frame containing age group, sex, and population count data.
+#'   Expected columns: age_group, sex (1=Males, 2=Females), and n (count).
+#'
+#' @return A ggplot2 object representing the age pyramid.
+#' @noRd
 age_pyramid <- function(age_data) {
   age_data |>
     dplyr::mutate(
