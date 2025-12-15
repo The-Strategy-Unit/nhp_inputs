@@ -5,6 +5,8 @@ mod_inequalities_server <- function(id, params) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
+    mod_reasons_server(shiny::NS(id, "reasons"), params, "inequalities")
+
     inequalities_data <- shiny::reactive({
       dataset <- shiny::req(params$dataset) # nolint: object_usage_linter
 
