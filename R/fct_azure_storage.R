@@ -3,7 +3,6 @@
 #' Read the parquet file for inequalities
 #' @return A tibble.
 load_inequalities_data <- function() {
-
   fs <- get_adls_fs()
   fs |>
     AzureStor::download_adls_file(
