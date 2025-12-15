@@ -104,5 +104,20 @@ mod_inequalities_server <- function(id, params) {
         readr::write_csv(inequalities_data(), file)
       }
     )
+
+    shiny::observe({
+      inequalities <-
+        hrg$selections |>
+        dplyr::filter(.data$choice != "No change") |>
+        dplyr::mutate(
+          choice = stringr::str_to_snake(stringr::str_to_lower(.data$choice))
+        ) |>
+        dplyr::group_by(.data$choice) |>
+        dplyr::summarise(hrg_codes = list(.data$hrg_code)) |>
+        tibble::deframe() |>
+        jsonlite::toJSON(auto_unbox = FALSE, pretty = TRUE)
+
+      print(inequalities)
+    })
   })
 }
