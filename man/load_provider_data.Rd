@@ -18,5 +18,5 @@ load_provider_data(
 A tibble.
 }
 \description{
-Read the parquet file containing a selected tupe of provider data.
+Read the parquet file containing a selected type of provider data.
 }
