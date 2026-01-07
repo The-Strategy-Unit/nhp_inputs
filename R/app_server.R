@@ -56,7 +56,22 @@ app_server <- function(input, output, session) {
 
   # load all data
   rates_data <- shiny::reactive({
-    load_provider_data("rates")
+    rates <- load_provider_data("rates") |>
+      dplyr::select(-"crude_rate") |>
+      dplyr::rename(rate = "std_rate")
+
+    national_rate <- rates |>
+      dplyr::filter(
+        .data$provider == "national"
+      ) |>
+      dplyr::summarise(
+        .by = c("fyear", "strategy"),
+        national_rate = dplyr::first(.data$rate)
+      )
+
+    rates |>
+      dplyr::filter(.data$provider != "national") |>
+      dplyr::inner_join(national_rate, by = c("fyear", "strategy"))
   }) |>
     shiny::bindCache(cache_version())
 
