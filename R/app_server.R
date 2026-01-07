@@ -57,7 +57,7 @@ app_server <- function(input, output, session) {
   # load all data
   rates_data <- shiny::reactive({
     rates <- load_provider_data("rates") |>
-      dplyr::select(-crude_rate) |>
+      dplyr::select(-"crude_rate") |>
       dplyr::rename(rate = "std_rate")
 
     national_rate <- rates |>
