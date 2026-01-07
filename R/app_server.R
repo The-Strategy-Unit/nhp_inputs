@@ -70,6 +70,7 @@ app_server <- function(input, output, session) {
       )
 
     rates |>
+      dplyr::filter(.data$provider != "national") |>
       dplyr::inner_join(national_rate, by = c("fyear", "strategy"))
   }) |>
     shiny::bindCache(cache_version())
