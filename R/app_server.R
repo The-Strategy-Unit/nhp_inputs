@@ -62,7 +62,7 @@ app_server <- function(input, output, session) {
 
     national_rate <- rates |>
       dplyr::filter(
-        .data$provider == "national",
+        .data$provider == "national"
       ) |>
       dplyr::summarise(
         .by = c("fyear", "strategy"),
