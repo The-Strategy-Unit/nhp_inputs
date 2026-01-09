@@ -90,7 +90,7 @@ mod_inequalities_server <- function(id, params) {
     })
 
     # Handle dropdown changes
-    observeEvent(input$choice_changed, {
+    shiny::observeEvent(input$choice_changed, {
       row_index <- input$choice_changed$row
       new_value <- input$choice_changed$value
 
@@ -106,7 +106,7 @@ mod_inequalities_server <- function(id, params) {
     )
 
     shiny::observe({
-      inequalities <-
+      params$inequalities <-
         hrg$selections |>
         dplyr::filter(.data$choice != "No change") |>
         dplyr::mutate(
@@ -115,9 +115,8 @@ mod_inequalities_server <- function(id, params) {
         dplyr::group_by(.data$choice) |>
         dplyr::summarise(hrg_codes = list(.data$hrg_code)) |>
         tibble::deframe() |>
-        jsonlite::toJSON(auto_unbox = FALSE, pretty = TRUE)
+        purrr::map(I) # Forces any single values to stay in a list (asis)
 
-      print(inequalities)
     })
   })
 }
