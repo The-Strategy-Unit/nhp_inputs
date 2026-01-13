@@ -7,7 +7,9 @@ mod_inequalities_server <- function(id, params) {
 
     mod_reasons_server(shiny::NS(id, "reasons"), params, "inequalities")
 
-    inequalities_data <- shiny::reactive({
+    # This is the data for each HRG split by IMD for the selector provider
+    # load_inequalities_data() is pulling from Azure so might take some time
+    provider_inequalities <- shiny::reactive({
       dataset <- shiny::req(params$dataset) # nolint: object_usage_linter
 
       load_inequalities_data() |>
@@ -16,52 +18,61 @@ mod_inequalities_server <- function(id, params) {
         )
     })
 
-    # Initialize reactiveValues with NULL
-    hrg <- reactiveValues(
+    # hrg is used to track the current choice selections in table form
+    hrg <- shiny::reactiveValues(
       selections = NULL
     )
 
-    # Initialise data once inequalities_data is available
-    observe({
-      req(inequalities_data())
+    # Initialisation
+    init <- shiny::observe(
+      {
+        # Wait for data to be available
+        shiny::req(provider_inequalities())
 
-      if (is.null(hrg$selections)) {
-        hrg$selections <- tibble::tibble(
-          hrg_code = unique(inequalities_data()$sushrg_trimmed),
-          choice = "No change"
-        )
-      }
-    })
+        hrg$selections <- initialise_hrg_table(provider_inequalities(), params)
 
-    # Handle "Set all to zero sum" button
-    observeEvent(input$set_all_zero_sum, {
+        # Destroy the observer so it only runs once
+        init$destroy()
+      },
+      priority = -1 # Low priority to ensure other reactives are ready
+    )
+
+    # "Set all to zero sum" button
+    shiny::observeEvent(input$set_all_zero_sum, {
+      shiny::req(hrg$selections)
       hrg$selections$choice <- "Zero-sum"
     })
 
-    # Handle "Clear all" button
-    observeEvent(input$clear_all, {
+    # "Clear all" button
+    shiny::observeEvent(input$clear_all, {
+      shiny::req(hrg$selections)
       hrg$selections$choice <- "No change"
     })
 
     output$hrg_table <- DT::renderDataTable({
-      # Create dropdown options for Choice column
-      choice_options <- c("No change", "Zero-sum", "Level up", "Level down")
+      shiny::req(hrg$selections)
+
+      choice_options <- unname(get_inequality_choice_mappings())
 
       # Create the dropdown HTML for each row
-      dropdown_html <- sapply(seq_len(nrow(hrg$selections)), function(i) {
-        current_choice <- hrg$selections$choice[i]
-        options_html <- glue::glue_collapse(
-          sapply(choice_options, function(option) {
-            selected <- if (option == current_choice) "selected" else ""
-            glue::glue("<option value='{option}' {selected}>{option}</option>")
-          })
-        )
-        glue::glue(
-          "<select class='choice-select' data-row='{i}'>{options_html}</select>"
-        )
-      })
+      dropdown_html <- purrr::map_chr(
+        seq_len(nrow(hrg$selections)),
+        function(i) {
+          current_choice <- hrg$selections$choice[i]
+          options_html <- glue::glue_collapse(
+            purrr::map_chr(choice_options, function(option) {
+              selected <- if (option == current_choice) "selected" else ""
+              glue::glue(
+                "<option value='{option}' {selected}>{option}</option>"
+              )
+            })
+          )
+          glue::glue(
+            "<select class='choice-select' data-row='{i}'>{options_html}</select>"
+          )
+        }
+      )
 
-      # Replace the choice column with dropdown HTML
       display_data <- hrg$selections
       display_data$choice <- dropdown_html
 
@@ -91,32 +102,35 @@ mod_inequalities_server <- function(id, params) {
 
     # Handle dropdown changes
     shiny::observeEvent(input$choice_changed, {
+      shiny::req(hrg$selections)
+
       row_index <- input$choice_changed$row
-      new_value <- input$choice_changed$value
 
       # Update the data
-      hrg$selections$choice[row_index] <- new_value
+      hrg$selections$choice[row_index] <- input$choice_changed$value
     })
 
+    # Download inequalities data
     output$download_inequalities <- shiny::downloadHandler(
       filename = \() glue::glue("{params[['dataset']]}_inequalities.csv"),
       content = \(file) {
-        readr::write_csv(inequalities_data(), file)
+        readr::write_csv(provider_inequalities(), file)
       }
     )
 
     shiny::observe({
+      shiny::req(hrg$selections)
+
       params$inequalities <-
         hrg$selections |>
         dplyr::filter(.data$choice != "No change") |>
         dplyr::mutate(
-          choice = stringr::str_to_snake(stringr::str_to_lower(.data$choice))
+          choice = inequality_choices_to_snake(.data$choice)
         ) |>
         dplyr::group_by(.data$choice) |>
         dplyr::summarise(hrg_codes = list(.data$hrg_code)) |>
         tibble::deframe() |>
         purrr::map(I) # Forces any single values to stay in a list (asis)
-
     })
   })
 }
