@@ -66,10 +66,7 @@ get_inequality_choice_mappings <- function() {
 #'
 #' @return Character vector of snake_case names. Returns \code{NA} for
 #'   unrecognized values.
-#'
-#' @examples
-#' inequality_choices_to_snake("Zero-sum")
-#'
+
 inequality_choices_to_snake <- function(display_choice) {
   mappings <- get_inequality_choice_mappings()
   names(mappings)[match(display_choice, mappings)]
@@ -82,8 +79,6 @@ inequality_choices_to_snake <- function(display_choice) {
 #' @return Character vector of display names. Returns \code{NA} for
 #'   unrecognized values.
 #'
-#' @examples
-#' inequality_choices_to_display("zero_sum")
 #'
 inequality_choices_to_display <- function(snake_choice) {
   mappings <- get_inequality_choice_mappings()

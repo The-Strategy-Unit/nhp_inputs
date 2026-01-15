@@ -32,7 +32,10 @@ mod_inequalities_ui <- function(id) {
               "Download inequalities"
             ),
             actionButton(ns("set_all_zero_sum"), "Set all to zero sum"),
+            actionButton(ns("level_up"), "Level up", class = "btn-secondary"),
+            actionButton(ns("level_down"), "Level down", class = "btn-secondary"),
             actionButton(ns("clear_all"), "Clear all", class = "btn-secondary")
+
           ),
           DT::dataTableOutput(ns("hrg_table"), height = "calc(100vh - 200px)")
         )

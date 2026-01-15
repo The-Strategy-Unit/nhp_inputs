@@ -16,7 +16,3 @@ Character vector of display names. Returns \code{NA} for
 \description{
 Convert inequality choices to display case
 }
-\examples{
-inequality_choices_to_display("zero_sum")
-
-}

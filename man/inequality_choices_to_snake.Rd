@@ -16,7 +16,3 @@ Character vector of snake_case names. Returns \code{NA} for
 \description{
 Convert inequality choices to snake case
 }
-\examples{
-inequality_choices_to_snake("Zero-sum")
-
-}
