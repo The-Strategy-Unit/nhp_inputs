@@ -43,13 +43,11 @@ mod_inequalities_server <- function(id, params) {
       hrg$selections$choice <- "Zero-sum"
     })
 
-
     # "Level up" button
     shiny::observeEvent(input$level_up, {
       shiny::req(hrg$selections)
       hrg$selections$choice <- "Level up"
     })
-
 
     # "Level up" button
     shiny::observeEvent(input$level_down, {
