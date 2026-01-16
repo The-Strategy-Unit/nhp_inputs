@@ -32,10 +32,15 @@ mod_inequalities_ui <- function(id) {
               "Download inequalities"
             ),
             shiny::actionButton(ns("set_all_zero_sum"), "Set all to zero sum"),
-            shiny::actionButton(ns("clear_all"), "Clear all", class = "btn-secondary")
+            shiny::actionButton(
+              ns("clear_all"),
+              "Clear all",
+              class = "btn-secondary"
+            )
           ),
+          shiny::br(),
           shiny::div(
-          DT::dataTableOutput(ns("hrg_table"), height = "calc(100vh - 200px)")
+            DT::dataTableOutput(ns("hrg_table"), height = "calc(100vh - 200px)")
           )
         )
       )
