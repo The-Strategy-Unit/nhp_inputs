@@ -63,13 +63,17 @@ app_ui <- function(request) {
         "Health Status Adjustment",
         tabName = "tab_health_status_adjustment"
       ),
-      bs4Dash::sidebarHeader("Inequalities"),
-      #
-      bs4Dash::menuItem(
-        "Inequalities",
-        tabName = "tab_inequalities"
+      shiny::tags$hr(),
+      shinyjs::hidden(
+        shiny::div(
+          id = "inequalities_tab",
+          bs4Dash::sidebarHeader("Inequalities"),
+          bs4Dash::menuItem(
+            "Inequalities",
+            tabName = "tab_inequalities"
+          )
+        )
       ),
-      #
       shiny::tags$hr(),
       bs4Dash::sidebarHeader("Demand-supply Imbalances"),
       bs4Dash::menuItem(

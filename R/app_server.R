@@ -148,6 +148,18 @@ app_server <- function(input, output, session) {
 
     mod_health_status_adjustment_server("health_status_adjustment", params)
 
+    observe({
+      can_set_inequalities <- any(
+        c("nhp_devs", "nhp_power_users", "nhp_test_inequalities") %in%
+          session$groups
+      )
+
+      shinyjs::toggle(
+        "inequalities_tab",
+        condition = (is_local() || can_set_inequalities)
+      )
+    })
+
     mod_inequalities_server("inequalities", params)
 
     mod_waiting_list_imbalances_server(
