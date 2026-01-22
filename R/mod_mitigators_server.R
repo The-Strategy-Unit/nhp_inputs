@@ -279,7 +279,8 @@ mod_mitigators_server <- function(
     # plot ribbon to show selected params ----
 
     plot_ribbon <- shiny::reactive({
-      max_value <- provider_max_value()
+      max_value <- dplyr::filter(rates_baseline_data(), !.data$is_peer)$rate
+
       values <- param_conversion$absolute[[1]](
         max_value,
         slider_values[[mitigators_type]][[input$strategy]]$interval
