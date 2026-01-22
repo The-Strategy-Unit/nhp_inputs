@@ -185,7 +185,6 @@ mod_mitigators_server <- function(
             .default = NA # if scheme is neither focal nor a peer
           )
         ) |>
-        dplyr::filter(!is.na(.data$is_peer)) |> # only focal scheme and peers
         dplyr::arrange(dplyr::desc(.data$is_peer)) # to plot focal scheme last
     })
 
