@@ -332,7 +332,7 @@ mod_mitigators_server <- function(
         generate_rates_funnel_data()
     })
 
-    # calculate thge range across our plots
+    # calculate the range across our plots
     plot_range <- shiny::reactive({
       td_rate <- shiny::req(trend_data())$rate
 
