@@ -7,42 +7,68 @@
 #' @return The return value, if any, from executing the function.
 #'
 #' @noRd
-generate_rates_funnel_data <- function(data) {
-  funnel_data <- data |>
-    dplyr::mutate(
-      mean = data$national_rate,
-      sdev_pop_i = sqrt(abs(.data$mean) / .data$denominator),
-      z = (.data$rate - .data$mean) / .data$sdev_pop_i,
-      sigz = stats::sd(.data$z, na.rm = TRUE),
-      cl2 = 2 * .data$sdev_pop_i * .data$sigz,
-      cl3 = 3 * .data$sdev_pop_i * .data$sigz,
-      lower2 = .data$mean - .data$cl2,
-      lower3 = .data$mean - .data$cl3,
-      upper2 = .data$mean + .data$cl2,
-      upper3 = .data$mean + .data$cl3
-    )
+generate_rates_funnel_data <- function(df) {
+  df <- dplyr::arrange(df, .data$denominator)
 
-  structure(funnel_data, class = c("nhp_funnel_plot", class(funnel_data)))
+  cl <- df$national_rate[[1]]
+  stdev <- sqrt(cl / df$denominator)
+  z_i <- (df$rate - cl) / stdev
+
+  mr <- abs(diff(z_i))
+  ulmr <- 3.267 * mean(mr, na.rm = TRUE)
+  amr <- mean(mr[mr < ulmr], na.rm = TRUE)
+
+  sigma_z <- amr / 1.128
+
+  sd_fn <- \(x) sqrt(cl / x) * sigma_z
+  cl_fn <- \(s) \(x) cl + s * sd_fn(x)
+
+  calculations <- list(
+    cl = cl,
+    z_i = (df$rate - cl) / sd_fn(df$denominator),
+    lcl3 = cl_fn(-3),
+    ucl3 = cl_fn(3),
+    lcl2 = cl_fn(-2),
+    ucl2 = cl_fn(2)
+  )
+
+  structure(
+    df,
+    class = c("nhp_funnel_plot", class(df)),
+    funnel_calculations = calculations
+  )
 }
 
 #' @export
 plot.nhp_funnel_plot <- function(x, plot_range, interval, x_axis_title, ...) {
-  lines_data <- x |>
-    dplyr::select(
-      "denominator",
-      tidyselect::matches("^(lower|upper)"),
-      "mean"
-    ) |>
-    tidyr::pivot_longer(-.data$denominator, values_to = "rate")
+  funnel_calculations <- attr(x, "funnel_calculations")
 
   x |>
     ggplot2::ggplot(ggplot2::aes(.data$denominator, .data$rate)) +
     interval +
-    ggplot2::geom_line(
-      data = lines_data,
-      ggplot2::aes(group = .data$name),
-      linetype = "dashed",
-      na.rm = TRUE
+    ggplot2::geom_hline(
+      yintercept = funnel_calculations$cl,
+      linetype = "dashed"
+    ) +
+    ggplot2::geom_function(
+      fun = funnel_calculations$lcl2,
+      colour = "orange",
+      linetype = "dashed"
+    ) +
+    ggplot2::geom_function(
+      fun = funnel_calculations$ucl2,
+      colour = "orange",
+      linetype = "dashed"
+    ) +
+    ggplot2::geom_function(
+      fun = funnel_calculations$lcl3,
+      colour = "red",
+      linetype = "dashed"
+    ) +
+    ggplot2::geom_function(
+      fun = funnel_calculations$ucl3,
+      colour = "red",
+      linetype = "dashed"
     ) +
     ggplot2::geom_point(ggplot2::aes(colour = .data$is_peer)) +
     ggrepel::geom_text_repel(

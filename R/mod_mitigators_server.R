@@ -330,13 +330,19 @@ mod_mitigators_server <- function(
 
     # calculate thge range across our plots
     plot_range <- shiny::reactive({
-      range(c(
-        trend_data()$rate,
-        funnel_data()$rate,
-        funnel_data()$lower3,
-        funnel_data()$upper3
-      )) |>
-        pmax(0)
+      td_rate <- shiny::req(trend_data())$rate
+
+      fd <- shiny::req(funnel_data())
+      fd$z <- attr(fd, "funnel_calculations")$z
+
+      fd_rate <- fd |>
+        dplyr::filter(
+          .data$denominator >= max(.data$denominator) * 0.05,
+          abs(.data$z) < 4
+        ) |>
+        dplyr::pull("rate")
+
+      c(0, max(c(td_rate, fd_rate)))
     })
 
     output$funnel_plot <- shiny::renderPlot({
