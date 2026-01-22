@@ -43,32 +43,46 @@ generate_rates_funnel_data <- function(df) {
 plot.nhp_funnel_plot <- function(x, plot_range, interval, x_axis_title, ...) {
   funnel_calculations <- attr(x, "funnel_calculations")
 
+  cl_line_type <- "dashed"
+  cl_colour <- "black"
+
+  cl2_line_type <- "dashed"
+  cl2_colour <- "black"
+
+  cl3_line_type <- "dashed"
+  cl3_colour <- "black"
+
   x |>
     ggplot2::ggplot(ggplot2::aes(.data$denominator, .data$rate)) +
     interval +
     ggplot2::geom_hline(
       yintercept = funnel_calculations$cl,
-      linetype = "dashed"
+      colour = cl_colour,
+      linetype = cl_line_type
     ) +
     ggplot2::geom_function(
       fun = funnel_calculations$lcl2,
-      colour = "orange",
-      linetype = "dashed"
+      colour = cl2_colour,
+      linetype = cl2_line_type,
+      xlim = function_x_range
     ) +
     ggplot2::geom_function(
       fun = funnel_calculations$ucl2,
-      colour = "orange",
-      linetype = "dashed"
+      colour = cl2_colour,
+      linetype = cl2_line_type,
+      xlim = function_x_range
     ) +
     ggplot2::geom_function(
       fun = funnel_calculations$lcl3,
-      colour = "red",
-      linetype = "dashed"
+      colour = cl3_colour,
+      linetype = cl3_line_type,
+      xlim = function_x_range
     ) +
     ggplot2::geom_function(
       fun = funnel_calculations$ucl3,
-      colour = "red",
-      linetype = "dashed"
+      colour = cl3_colour,
+      linetype = cl3_line_type,
+      xlim = function_x_range
     ) +
     ggplot2::geom_point(ggplot2::aes(colour = .data$is_peer)) +
     ggrepel::geom_text_repel(
