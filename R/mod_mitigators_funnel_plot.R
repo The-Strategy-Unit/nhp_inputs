@@ -25,7 +25,7 @@ generate_rates_funnel_data <- function(df) {
 
   calculations <- list(
     cl = cl,
-    z_i = (df$rate - cl) / sd_fn(df$denominator),
+    z = (df$rate - cl) / sd_fn(df$denominator),
     lcl3 = cl_fn(-3),
     ucl3 = cl_fn(3),
     lcl2 = cl_fn(-2),
