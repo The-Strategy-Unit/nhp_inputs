@@ -52,6 +52,9 @@ plot.nhp_funnel_plot <- function(x, plot_range, interval, x_axis_title, ...) {
   cl3_line_type <- "dashed"
   cl3_colour <- "black"
 
+  plot_x_range <- c(0, max(x$denominator) * 1.05)
+  function_x_range <- plot_x_range * 1.2
+
   x |>
     ggplot2::ggplot(ggplot2::aes(.data$denominator, .data$rate)) +
     interval +
@@ -96,7 +99,7 @@ plot.nhp_funnel_plot <- function(x, plot_range, interval, x_axis_title, ...) {
     ) +
     ggplot2::theme(legend.position = "none") +
     ggplot2::scale_x_continuous(labels = scales::comma_format()) +
-    ggplot2::coord_cartesian(ylim = plot_range) +
+    ggplot2::coord_cartesian(xlim = plot_x_range, ylim = plot_range) +
     ggplot2::labs(x = x_axis_title) +
     ggplot2::theme(
       axis.ticks.y = ggplot2::element_blank(),
