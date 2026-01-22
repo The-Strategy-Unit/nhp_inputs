@@ -42,11 +42,7 @@ mod_mitigators_ui <- function(id, title, show_diagnoses_table = TRUE) {
             ),
             shiny::htmlOutput(ns("slider_absolute")),
             shiny::p(),
-            shiny::p(
-              "Adjusting this slider will change the width of the
-                     corresponding yellow-highlighted region in the trend, funnel
-                     and boxplot charts above."
-            )
+            shiny::htmlOutput(ns("slider_interval_text"))
           ),
           mod_reasons_ui(ns("reasons")),
           mod_time_profile_ui(ns("time_profile")),

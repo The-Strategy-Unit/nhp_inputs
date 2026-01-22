@@ -655,5 +655,18 @@ mod_mitigators_server <- function(
 
       text
     })
+
+    output$slider_interval_text <- shiny::renderText({
+      text <-
+        "Adjusting this slider will change the width of the
+        corresponding yellow-highlighted region in the trend, funnel
+        and boxplot charts above."
+
+      if (!input$include) {
+        text <- glue::glue("<font color='#ADAEAF'>{text}</font>") # grey out
+      }
+
+      text
+    })
   })
 }
