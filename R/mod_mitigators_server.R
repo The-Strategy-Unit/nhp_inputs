@@ -285,16 +285,20 @@ mod_mitigators_server <- function(
         slider_values[[mitigators_type]][[input$strategy]]$interval
       )
 
-      ggplot2::annotate(
-        "rect",
-        xmin = -Inf,
-        xmax = Inf,
-        ymin = values[[1]],
-        ymax = values[[2]],
-        colour = "#f9bf07",
-        fill = ggplot2::alpha("#f9bf07", 0.2),
-        na.rm = TRUE
-      )
+      colour <- "#f9bf07"
+
+      if (input$include) {
+        ggplot2::annotate(
+          "rect",
+          xmin = -Inf,
+          xmax = Inf,
+          ymin = values[[1]],
+          ymax = values[[2]],
+          colour = colour,
+          fill = ggplot2::alpha(colour, 0.2),
+          na.rm = TRUE
+        )
+      }
     })
 
     # trend plot ----
