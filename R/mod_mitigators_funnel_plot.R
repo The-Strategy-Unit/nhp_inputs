@@ -10,13 +10,13 @@
 generate_rates_funnel_data <- function(df) {
   df <- dplyr::arrange(df, .data$denominator)
 
-  cl <- df$national_rate[[1]]
+  cl <- df$national_rate[[1]] # centre line
   stdev <- sqrt(cl / df$denominator)
   z_i <- (df$rate - cl) / stdev
 
-  mr <- abs(diff(z_i))
-  ulmr <- 3.267 * mean(mr, na.rm = TRUE)
-  amr <- mean(mr[mr < ulmr], na.rm = TRUE)
+  mr <- abs(diff(z_i)) # moving range
+  ulmr <- 3.267 * mean(mr, na.rm = TRUE) # upper limit for moving range
+  amr <- mean(mr[mr < ulmr], na.rm = TRUE) # average moving range, excluding outliers
 
   sigma_z <- amr / 1.128
 
@@ -26,8 +26,8 @@ generate_rates_funnel_data <- function(df) {
   calculations <- list(
     cl = cl,
     z = (df$rate - cl) / sd_fn(df$denominator),
-    lcl3 = cl_fn(-3),
-    ucl3 = cl_fn(3),
+    lcl3 = cl_fn(-3), # lower control limit
+    ucl3 = cl_fn(3), # upper control limit
     lcl2 = cl_fn(-2),
     ucl2 = cl_fn(2)
   )
