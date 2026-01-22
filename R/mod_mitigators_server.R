@@ -584,7 +584,7 @@ mod_mitigators_server <- function(
               x = .data[["percentile10"]],
               xend = .data[["percentile90"]]
             ),
-            size = 2
+            linewidth = 2
           ) +
           ggplot2::geom_point(
             ggplot2::aes(y = 1, x = mean),
