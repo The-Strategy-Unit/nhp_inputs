@@ -29,11 +29,11 @@ default:
       mitigators_type: activity_avoidance
       y_axis_title: "Admissions per 1,000 population"
       x_axis_title: "Financial Year"
-      number_type: !expr scales::comma_format(accuracy = 0.001)
+      number_type: !expr scales::comma_format(accuracy = 0.001, scale = 1000)
       funnel_x_title: "Catchment Population of Trust"
       funnel_number_type: !expr scales::comma_format()
-      slider_scale: 1
-      slider_step: 0.001
+      slider_scale: 1000
+      slider_step: 0.1
       strategy_subset:
         alcohol_partially_attributable_acute: "Alcohol Related Admissions (Acute Conditions - Partially Attributable)"
         alcohol_partially_attributable_chronic: "Alcohol Related Admissions (Chronic Conditions - Partially Attributable)"
@@ -102,10 +102,10 @@ default:
       mitigators_type: efficiencies
       y_axis_title: "Admissions per 1,000 population"
       x_axis_title: "Financial Year"
-      number_type: !expr scales::comma_format(accuracy = 0.001)
+      number_type: !expr scales::comma_format(accuracy = 0.001, scale = 1000)
       funnel_x_title: "Catchment Population of Trust"
       funnel_number_type: !expr scales::comma_format()
-      slider_scale: 100
+      slider_scale: 1000
       slider_step: 0.1
       strategy_subset:
         same_day_emergency_care_low: "Same Day Emergency Care (Low Potential)"
