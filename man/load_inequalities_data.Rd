@@ -4,7 +4,12 @@
 \alias{load_inequalities_data}
 \title{Get inequalities data}
 \usage{
-load_inequalities_data()
+load_inequalities_data(
+  inputs_data_version = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")
+)
+}
+\arguments{
+\item{inputs_data_version}{The version of the inputs data to use.}
 }
 \value{
 A tibble.

@@ -1,12 +1,16 @@
 #' Get inequalities data
 #'
 #' Read the parquet file for inequalities
+#'
+#' @param inputs_data_version The version of the inputs data to use.
 #' @return A tibble.
-load_inequalities_data <- function() {
+load_inequalities_data <- function(
+  inputs_data_version = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")
+) {
   fs <- get_adls_fs()
   fs |>
     AzureStor::download_adls_file(
-      glue::glue("dev/inequalities.parquet"),
+      glue::glue("{inputs_data_version}/inequalities.parquet"),
       dest = NULL
     ) |>
     arrow::read_parquet() |>
