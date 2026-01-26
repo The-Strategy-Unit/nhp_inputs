@@ -185,7 +185,6 @@ mod_mitigators_server <- function(
             .default = NA # if scheme is neither focal nor a peer
           )
         ) |>
-        dplyr::filter(!is.na(.data$is_peer)) |> # only focal scheme and peers
         dplyr::arrange(dplyr::desc(.data$is_peer)) # to plot focal scheme last
     })
 
@@ -280,22 +279,27 @@ mod_mitigators_server <- function(
     # plot ribbon to show selected params ----
 
     plot_ribbon <- shiny::reactive({
-      max_value <- provider_max_value()
+      max_value <- dplyr::filter(rates_baseline_data(), !.data$is_peer)$rate
+
       values <- param_conversion$absolute[[1]](
         max_value,
         slider_values[[mitigators_type]][[input$strategy]]$interval
       )
 
-      ggplot2::annotate(
-        "rect",
-        xmin = -Inf,
-        xmax = Inf,
-        ymin = values[[1]],
-        ymax = values[[2]],
-        colour = "#f9bf07",
-        fill = ggplot2::alpha("#f9bf07", 0.2),
-        na.rm = TRUE
-      )
+      colour <- "#f9bf07"
+
+      if (input$include) {
+        ggplot2::annotate(
+          "rect",
+          xmin = -Inf,
+          xmax = Inf,
+          ymin = values[[1]],
+          ymax = values[[2]],
+          colour = colour,
+          fill = ggplot2::alpha(colour, 0.2),
+          na.rm = TRUE
+        )
+      }
     })
 
     # trend plot ----
@@ -328,15 +332,21 @@ mod_mitigators_server <- function(
         generate_rates_funnel_data()
     })
 
-    # calculate thge range across our plots
+    # calculate the range across our plots
     plot_range <- shiny::reactive({
-      range(c(
-        trend_data()$rate,
-        funnel_data()$rate,
-        funnel_data()$lower3,
-        funnel_data()$upper3
-      )) |>
-        pmax(0)
+      td_rate <- shiny::req(trend_data())$rate
+
+      fd <- shiny::req(funnel_data())
+      fd$z <- attr(fd, "funnel_calculations")$z
+
+      fd_rate <- fd |>
+        dplyr::filter(
+          .data$denominator >= max(.data$denominator) * 0.05,
+          abs(.data$z) < 4
+        ) |>
+        dplyr::pull("rate")
+
+      c(0, max(c(td_rate, fd_rate)))
     })
 
     output$funnel_plot <- shiny::renderPlot({
@@ -584,7 +594,7 @@ mod_mitigators_server <- function(
               x = .data[["percentile10"]],
               xend = .data[["percentile90"]]
             ),
-            size = 2
+            linewidth = 2
           ) +
           ggplot2::geom_point(
             ggplot2::aes(y = 1, x = mean),
@@ -609,7 +619,7 @@ mod_mitigators_server <- function(
 
     # rate values ----
 
-    output$slider_absolute <- shiny::renderText({
+    output$slider_absolute <- shiny::renderUI({
       scale <- config$slider_scale
       strategy <- shiny::req(input$strategy)
       max_value <- provider_max_value()
@@ -633,17 +643,30 @@ mod_mitigators_server <- function(
       rate_lo <- convert_number(rate[1], config)
       rate_hi <- convert_number(rate[2], config)
       rate_max <- convert_number(max_value * scale, config)
+      y_axis_title <- config$y_axis_title
 
       text <- glue::glue(
-        "This is equivalent to a rate interval of {rate_lo} to {rate_hi}
-        ({config$y_axis_title}) given the baseline of {rate_max}."
+        "This is equivalent to a rate interval of {rate_lo} to {rate_hi}",
+        "({y_axis_title}) given the baseline of {rate_max}.",
+        .sep = " "
       )
 
-      if (!input$include) {
-        text <- glue::glue("<font color='#ADAEAF'>{text}</font>") # grey out
-      }
+      style <- ifelse(input$include, "", "color: #ADAEAF;")
 
-      text
+      shiny::tags$p(shiny::HTML(text), style = style)
+    })
+
+    output$slider_interval_text <- shiny::renderUI({
+      text <- glue::glue(
+        "Adjusting this slider will change the width of the",
+        "corresponding yellow-highlighted region in the trend, funnel",
+        "and boxplot charts above.",
+        .sep = " "
+      )
+
+      style <- ifelse(input$include, "", "color: #ADAEAF;")
+
+      shiny::tags$p(shiny::HTML(text), style = style)
     })
   })
 }

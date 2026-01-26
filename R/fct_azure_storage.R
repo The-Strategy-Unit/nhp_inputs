@@ -12,7 +12,7 @@ load_provider_data <- function(
   fs <- get_adls_fs()
   fs |>
     AzureStor::download_adls_file(
-      glue::glue("{inputs_data_version}/{file}.parquet"),
+      glue::glue("{inputs_data_version}/provider/{file}.parquet"),
       dest = NULL
     ) |>
     arrow::read_parquet() |>
