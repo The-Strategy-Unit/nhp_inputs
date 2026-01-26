@@ -619,7 +619,7 @@ mod_mitigators_server <- function(
 
     # rate values ----
 
-    output$slider_absolute <- shiny::renderText({
+    output$slider_absolute <- shiny::renderUI({
       scale <- config$slider_scale
       strategy <- shiny::req(input$strategy)
       max_value <- provider_max_value()
@@ -643,30 +643,30 @@ mod_mitigators_server <- function(
       rate_lo <- convert_number(rate[1], config)
       rate_hi <- convert_number(rate[2], config)
       rate_max <- convert_number(max_value * scale, config)
+      y_axis_title <- config$y_axis_title
 
       text <- glue::glue(
-        "This is equivalent to a rate interval of {rate_lo} to {rate_hi}
-        ({config$y_axis_title}) given the baseline of {rate_max}."
+        "This is equivalent to a rate interval of {rate_lo} to {rate_hi}",
+        "({y_axis_title}) given the baseline of {rate_max}.",
+        .sep = " "
       )
 
-      if (!input$include) {
-        text <- glue::glue("<font color='#ADAEAF'>{text}</font>") # grey out
-      }
+      style <- ifelse(input$include, "", "color: #ADAEAF;")
 
-      text
+      shiny::tags$p(shiny::HTML(text), style = style)
     })
 
-    output$slider_interval_text <- shiny::renderText({
-      text <-
-        "Adjusting this slider will change the width of the
-        corresponding yellow-highlighted region in the trend, funnel
-        and boxplot charts above."
+    output$slider_interval_text <- shiny::renderUI({
+      text <- glue::glue(
+        "Adjusting this slider will change the width of the",
+        "corresponding yellow-highlighted region in the trend, funnel",
+        "and boxplot charts above.",
+        .sep = " "
+      )
 
-      if (!input$include) {
-        text <- glue::glue("<font color='#ADAEAF'>{text}</font>") # grey out
-      }
+      style <- ifelse(input$include, "", "color: #ADAEAF;")
 
-      text
+      shiny::tags$p(shiny::HTML(text), style = style)
     })
   })
 }
