@@ -110,6 +110,11 @@ app_server <- function(input, output, session) {
   }) |>
     shiny::bindCache(cache_version())
 
+  inequalities_data <- shiny::reactive({
+    load_provider_data("inequalities")
+  }) |>
+    shiny::bindCache(cache_version())
+
   expat_data <- shiny::reactive({
     load_provider_data("expat")
   }) |>
@@ -175,7 +180,7 @@ app_server <- function(input, output, session) {
       )
     })
 
-    mod_inequalities_server("inequalities", params)
+    mod_inequalities_server("inequalities", inequalities_data(), params)
 
     mod_waiting_list_imbalances_server(
       "waiting_list_imbalances",

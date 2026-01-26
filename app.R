@@ -30,4 +30,4 @@ cat(
   "\n"
 )
 
-inputs::run_app() # add parameters here (if any)
+run_app() # add parameters here (if any)
