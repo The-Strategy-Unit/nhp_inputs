@@ -1,7 +1,7 @@
 #' inequalities Server Functions
 #'
 #' @noRd
-mod_inequalities_server <- function(id, params) {
+mod_inequalities_server <- function(id, inequalities_data, params) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -12,7 +12,7 @@ mod_inequalities_server <- function(id, params) {
     provider_inequalities <- shiny::reactive({
       dataset <- shiny::req(params$dataset) # nolint: object_usage_linter
 
-      load_inequalities_data() |>
+      inequalities_data |>
         dplyr::filter(
           .data[["provider"]] == .env[["dataset"]]
         )
