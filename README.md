@@ -100,11 +100,14 @@ During pre-release QA we test both apps on the server. This helps us
 spot any issues that are server-specific and might be overlooked if
 running the apps locally.
 
-To test the unreleased app in our development environment, first ensure
-you’ve (a) merged any PRs you want to test into the `main` branch and,
-if you’ve made any changes to the inputs selection app, (b) run the
-manual `deploy()` call under the ‘development’ heading in the `deploy.R`
-script in your selection app development branch.
+To test the unreleased app in our development environment:
+
+1.  Merge any PRs you want to test into the `main` branch.
+2.  If you’ve changed any dependencies, run `dev/generate_manifest.R` to
+    update `manifest.json`.
+3.  If you’ve made any changes to the inputs selection app, run the
+    manual `deploy()` call under the ‘development’ heading in the
+    `deploy.R` script in your selection app development branch.
 
 When using the dev inputs selection app on Connect, make sure to set the
 ‘Model Version’ dropdown to ‘dev’ in the expandable ‘Advanced Options’
