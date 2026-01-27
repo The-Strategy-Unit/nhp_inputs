@@ -172,6 +172,11 @@ upgrade_params.v4.2 <- function(p) {
   upgrade_params(p)
 }
 
+upgrade_params.v4.3 <- function(p) {
+  class(p) <- p$app_version <- "v4.4"
+  upgrade_params(p)
+}
+
 params_path <- function(user, dataset) {
   path <- file.path(
     config::get("params_data_path"),
