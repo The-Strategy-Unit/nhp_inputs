@@ -114,7 +114,7 @@ mod_run_model_server <- function(id, params, schema_text) {
     # instead of the intended content. we handle this by disabling the button
     # until the params are ready
     output$download_params <- shiny::downloadHandler(
-      filename = \() paste0(fixed_params()$id, ".json"),
+      filename = \() paste0(fixed_params()$scenario, ".json"),
       content = \(file) {
         readr::write_lines(params_json(), file)
       }
