@@ -151,7 +151,7 @@ undisplay <- function(tag) {
   # if not already hidden
   if (
     !is.null(tag$attribs$style) &&
-      !grepl("display:\\s+none", tag$attribs$style)
+      !grepl("display:\\s+none", tag$attribs$style) # fmt: skip
   ) {
     tag$attribs$style <- paste(
       "display: none;",
@@ -167,7 +167,7 @@ undisplay <- function(tag) {
 display <- function(tag) {
   if (
     !is.null(tag$attribs$style) &&
-      grepl("display:\\s+none", tag$attribs$style)
+      grepl("display:\\s+none", tag$attribs$style) # fmt: skip
   ) {
     tag$attribs$style <- gsub(
       "(\\s)*display:(\\s)*none(\\s)*(;)*(\\s)*",
