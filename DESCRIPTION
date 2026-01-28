@@ -10,6 +10,7 @@ Authors@R: c(
     person("Rhian", "Davies", role = "ctb"),
     person("Gabriel", "Hobro", role = "ctb"),
     person("Ozayr", "Mohammed", role = "ctb"),
+    person("Claire", "Welsh", role = "ctb"),
     person("Steven", "Wyatt", role = "ctb")
   )
 Description: A shiny app for getting model input parameters.
