@@ -1,3 +1,13 @@
+#' Remove invalid mitigators from parameters
+#'
+#' Validates parameters against the JSON schema and removes any mitigators
+#' that don't conform to the schema.
+#'
+#' @param p List containing model parameters.
+#' @param schema_text JSON schema text for validation.
+#'
+#' @return Parameters list with invalid mitigators removed.
+#' @noRd
 mod_run_model_remove_invalid_mitigators <- function(p, schema_text) {
   schema <- create_params_schema(schema_text)
 
@@ -22,6 +32,16 @@ mod_run_model_remove_invalid_mitigators <- function(p, schema_text) {
       }
     )
 
+  # Remove item from nested list structure
+  #
+  # Internal helper function to recursively remove an item from a nested list
+  # structure following a specified path.
+  #
+  # @param x A list structure.
+  # @param path Character vector representing the path to the item to remove.
+  #
+  # @return The list with the specified item removed.
+  # @noRd
   remove_item <- function(x, path) {
     if (length(path) < 1) {
       return(x)

@@ -1,4 +1,15 @@
-# recursive future promise
+#' Submit model run to API
+#'
+#' Submits model parameters to the NHP API for processing and monitors the
+#' submission status. Uses promises for asynchronous execution.
+#'
+#' @param params_json JSON string containing model parameters.
+#' @param app_version Version of the app to use for the model run.
+#' @param status Reactive function to update status messages.
+#' @param results_url Reactive function to update the results URL.
+#'
+#' @return A promise that resolves when submission is complete.
+#' @noRd
 mod_run_model_submit <- function(
   params_json,
   app_version,
@@ -77,6 +88,17 @@ mod_run_model_submit <- function(
     )
 }
 
+#' Check model run container status
+#'
+#' Recursively polls the API to check the status of a running model container
+#' and updates progress information.
+#'
+#' @param id Container ID to check status for.
+#' @param status Reactive function to update status messages.
+#' @param error_counter Number of remaining error attempts before giving up (default: 10).
+#'
+#' @return A promise that resolves when the model run completes or fails.
+#' @noRd
 mod_run_model_check_container_status <- function(
   id,
   status,

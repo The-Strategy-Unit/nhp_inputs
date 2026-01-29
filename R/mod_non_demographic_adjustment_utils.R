@@ -1,3 +1,12 @@
+#' Create non-demographic adjustment table
+#'
+#' Generates a formatted gt table displaying non-demographic adjustment factors
+#' for different activity types.
+#'
+#' @param non_demographic_adjustment A list containing variant type and adjustment values.
+#'
+#' @return A gt table object.
+#' @noRd
 mod_non_demographic_adjustment_table <- function(non_demographic_adjustment) {
   title <- switch(
     non_demographic_adjustment[["variant"]],

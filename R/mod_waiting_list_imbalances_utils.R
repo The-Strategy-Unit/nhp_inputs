@@ -1,3 +1,13 @@
+#' Create waiting list imbalances table
+#'
+#' Generates a formatted gt table displaying waiting list baseline counts and
+#' parameter changes by specialty and activity type.
+#'
+#' @param df A data frame containing specialty data with columns for tretspef,
+#'   activity_type, count, and param.
+#'
+#' @return A gt table object.
+#' @noRd
 mod_waiting_list_imbalances_table <- function(df) {
   rtt_specialties() |>
     dplyr::inner_join(df, c(code = "tretspef")) |>

@@ -4,15 +4,26 @@
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
-#' @noRd
-#'
 #' @importFrom shiny NS tagList
+#'
+#' @noRd
 mod_baseline_adjustment_ui <- function(id) {
   ns <- shiny::NS(id)
 
   specs <- rtt_specialties() |>
     dplyr::mutate(sanitized_code = sanitize_input_name(.data[["code"]]))
 
+  # Create baseline adjustment table UI
+  #
+  # Internal helper function to create a gt table with baseline values,
+  # adjustment sliders, and computed parameters for different specialties.
+  #
+  # @param at Activity type (e.g., "ip", "op", "aae").
+  # @param g Group identifier (e.g., "elective", "non-elective").
+  # @param df Data frame containing specialty information (default: specs).
+  #
+  # @return A gt table object with baseline adjustment controls.
+  # @noRd
   create_table <- function(at, g, df = specs) {
     df |>
       dplyr::mutate(
