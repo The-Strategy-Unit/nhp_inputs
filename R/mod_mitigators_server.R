@@ -123,14 +123,6 @@ mod_mitigators_server <- function(
         tpm <- params$time_profile_mappings[[mitigators_type]][[activity_type]]
         time_profile_mappings$mappings <- tpm
 
-        shiny::updateCheckboxInput(
-          session,
-          "include",
-          value = !is.null(params[[mitigators_type]][[
-            activity_type
-          ]][[strategies[[1]]]])
-        )
-
         init$destroy()
       },
       priority = 100
@@ -188,9 +180,11 @@ mod_mitigators_server <- function(
 
     shiny::observe({
       # ensure include checkbox is on or off given param value
-      shiny::req(input$strategy)
+      strategy <- shiny::req(input$strategy)
+      # Wait for slider to be initialized before updating checkbox
+      shiny::req(slider_values[[mitigators_type]][[strategy]])
       include <- !is.null(params[[mitigators_type]][[activity_type]][[
-        input$strategy
+        strategy
       ]])
       shiny::updateCheckboxInput(session, "include", value = include)
     }) |>
@@ -228,6 +222,8 @@ mod_mitigators_server <- function(
     shiny::observe({
       values <- input$slider
       strategy <- shiny::req(input$strategy)
+      # Ensure slider values have been initialized for this strategy
+      shiny::req(slider_values[[mitigators_type]][[strategy]])
       max_value <- provider_max_value()
       scale <- 100
       pc_fn <- param_conversion$relative[[2]]
