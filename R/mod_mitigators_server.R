@@ -44,7 +44,6 @@ mod_mitigators_server <- function(
 
   shiny::moduleServer(id, function(input, output, session) {
     slider_values <- shiny::reactiveValues()
-    output_conversions <- shiny::reactiveValues()
     time_profile_mappings <- shiny::reactiveValues()
 
     strategies <- shiny::reactive({
@@ -114,19 +113,10 @@ mod_mitigators_server <- function(
               )
             )
 
-            output_conversions[[mitigators_type]][[
-              i
-            ]] <- (config$param_output %||% \(...) identity)(r$rate)
-
             params[[mitigators_type]][[activity_type]][[i]] <- if (
               !is.null(loaded_values[[i]])
             ) {
-              fn <- output_conversions[[mitigators_type]][[i]]
-
-              v <- slider_values[[mitigators_type]][[i]]
-              v$interval <- fn(v$interval)
-
-              v
+              slider_values[[mitigators_type]][[i]]
             }
           })
 
@@ -249,12 +239,7 @@ mod_mitigators_server <- function(
       slider_values[[mt]][[strategy]]$interval <- v
 
       params[[mt]][[at]][[strategy]] <- if (input$include) {
-        fn <- output_conversions[[mitigators_type]][[strategy]]
-
-        v <- slider_values[[mitigators_type]][[strategy]]
-        v$interval <- fn(v$interval)
-
-        v
+        slider_values[[mitigators_type]][[strategy]]
       }
     }) |>
       shiny::bindEvent(input$slider, input$include)
