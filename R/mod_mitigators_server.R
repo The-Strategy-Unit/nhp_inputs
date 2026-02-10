@@ -28,11 +28,6 @@ mod_mitigators_server <- function(
   activity_type <- config$activity_type
   mitigators_type <- config$mitigators_type
 
-  param_conversion <- list(
-    absolute = list(\(r, p) p * r, \(r, q) q / r),
-    relative = list(\(r, p) p, \(r, q) q)
-  )
-
   reasons_key <- shiny::reactiveVal()
   mod_reasons_server(
     shiny::NS(id, "reasons"),
@@ -247,12 +242,14 @@ mod_mitigators_server <- function(
     # plot ribbon to show selected params ----
 
     plot_ribbon <- shiny::reactive({
-      max_value <- dplyr::filter(rates_baseline_data(), !.data$is_peer)$rate
+      baseline_value <- dplyr::filter(
+        rates_baseline_data(),
+        !.data$is_peer
+      )$rate
 
-      values <- param_conversion$absolute[[1]](
-        max_value,
-        slider_values[[mitigators_type]][[input$strategy]]$interval
-      )
+      # convert the slider values to absolute values
+      interval <- slider_values[[mitigators_type]][[input$strategy]]$interval
+      values <- interval * baseline_value
 
       colour <- "#f9bf07"
 
@@ -588,34 +585,23 @@ mod_mitigators_server <- function(
     # rate values ----
 
     output$slider_absolute <- shiny::renderUI({
-      scale <- config$slider_scale
       strategy <- shiny::req(input$strategy)
-      max_value <- provider_max_value()
+      baseline_value <- provider_max_value()
 
-      convert_params_a <- param_conversion$absolute[[1]]
-      rate <- convert_params_a(
-        max_value,
-        slider_values[[mitigators_type]][[strategy]]$interval
-      ) *
-        scale
+      number_format <- config$interval_text_number_type %||% config$number_type
 
-      convert_number <- function(value, config) {
-        converted <- scales::number(value, 0.001)
-        is_percent <- stringr::str_detect(config$y_axis_title, "%")
-        if (is_percent) {
-          converted <- scales::number(value, 0.01, suffix = "%")
-        }
-        converted
-      }
+      # convert the slider values to absolute values
+      interval_str <- number_format(
+        slider_values[[mitigators_type]][[strategy]]$interval * baseline_value
+      )
 
-      rate_lo <- convert_number(rate[1], config)
-      rate_hi <- convert_number(rate[2], config)
-      rate_max <- convert_number(max_value * scale, config)
+      rate_baseline <- number_format(baseline_value)
       y_axis_title <- config$y_axis_title
 
       text <- glue::glue(
-        "This is equivalent to a rate interval of {rate_lo} to {rate_hi}",
-        "({y_axis_title}) given the baseline of {rate_max}.",
+        "This is equivalent to a rate interval of {interval_str[[1]]} to",
+        "{interval_str[[2]]}",
+        "({y_axis_title}) given the baseline of {rate_baseline}.",
         .sep = " "
       )
 
