@@ -37,8 +37,8 @@ mod_mitigators_ui <- function(id, title, show_diagnoses_table = TRUE) {
               ns("slider"),
               "80% prediction interval",
               0,
-              1,
-              c(0, 1)
+              100,
+              c(0, 100)
             ),
             shiny::htmlOutput(ns("slider_absolute")),
             shiny::p(),
