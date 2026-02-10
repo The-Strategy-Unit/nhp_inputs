@@ -195,22 +195,12 @@ mod_mitigators_server <- function(
       strategy <- shiny::req(input$strategy)
       max_value <- provider_max_value()
       scale <- 100
-      range <- c(0, 100)
-      step <- 0.1
-      pc_fn <- param_conversion$relative[[1]]
 
-      values <- pc_fn(
-        max_value,
-        slider_values[[mitigators_type]][[strategy]]$interval
-      ) *
-        scale
+      values <- slider_values[[mitigators_type]][[strategy]]$interval * scale
       shiny::updateSliderInput(
         session,
         "slider",
-        value = values,
-        min = range[[1]],
-        max = range[[2]],
-        step = step
+        value = values
       )
 
       update_time_profile(
@@ -226,13 +216,10 @@ mod_mitigators_server <- function(
       shiny::req(slider_values[[mitigators_type]][[strategy]])
       max_value <- provider_max_value()
       scale <- 100
-      pc_fn <- param_conversion$relative[[2]]
-
-      v <- pc_fn(max_value, values / scale)
 
       at <- activity_type
       mt <- mitigators_type
-      slider_values[[mt]][[strategy]]$interval <- v
+      slider_values[[mt]][[strategy]]$interval <- values / scale
 
       params[[mt]][[at]][[strategy]] <- if (input$include) {
         slider_values[[mitigators_type]][[strategy]]
