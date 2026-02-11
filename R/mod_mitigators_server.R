@@ -14,6 +14,8 @@ mod_mitigators_server <- function(
   mitigator_codes_lkup,
   peers
 ) {
+  default_interval <- c(0.95, 1)
+
   selected_time_profile <- update_time_profile <- NULL
   # nolint start: object_usage_linter
   c(selected_time_profile, update_time_profile) %<-%
@@ -38,9 +40,23 @@ mod_mitigators_server <- function(
   )
 
   shiny::moduleServer(id, function(input, output, session) {
+    # --------------------------------------------------------------------------
+    # module initialization
+    # --------------------------------------------------------------------------
+
+    # this will contain the slider values for each strategy. this is separate
+    # from the params reactiveValues, because we want to keep track of the
+    # values a user has set whether they have clicked "include" or not.
+    # if a value is in the params, it will be equal to the value in
+    # slider_values
     slider_values <- shiny::reactiveValues()
+
     time_profile_mappings <- shiny::reactiveValues()
 
+    # get the available strategies for this module
+    #
+    # uses the config values to filter all of the strategies to just those that
+    # are relevant to this module, and are available for the selected provider
     strategies <- shiny::reactive({
       # make sure a provider is selected
       shiny::req(params$dataset)
@@ -58,16 +74,9 @@ mod_mitigators_server <- function(
       )
     })
 
-    shiny::observe(
-      # update the reasons module with the selected strategy
-      input$strategy |>
-        shiny::req() |>
-        reasons_key()
-    ) |>
-      shiny::bindEvent(input$strategy)
-
-    default_interval <- c(0.95, 1)
-
+    # initialize the module with the values from the loaded parameters file
+    #
+    # runs when strategies() has loaded, and only runs once
     shiny::observe(
       {
         strategies <- shiny::req(strategies())
@@ -106,6 +115,18 @@ mod_mitigators_server <- function(
     ) |>
       shiny::bindEvent(strategies(), once = TRUE)
 
+    # --------------------------------------------------------------------------
+    # input$strategy observers
+    # --------------------------------------------------------------------------
+
+    # update the reasons module with the selected strategy
+    shiny::observe(
+      input$strategy |>
+        shiny::req() |>
+        reasons_key()
+    ) |>
+      shiny::bindEvent(input$strategy)
+
     # set the strategy text by loading the contents of the file for that strategy
     output$strategy_text <- shiny::renderUI({
       strategy <- shiny::req(input$strategy)
@@ -118,10 +139,51 @@ mod_mitigators_server <- function(
         "strategy_text",
         paste0(files[stringr::str_detect(strategy, files)], ".md")
       )
-    })
+    }) |>
+      shiny::bindEvent(input$strategy)
 
-    # rates data baseline year ----
+    # update the state of the "include?" checkbox when the strategy is changed
+    #
+    # runs when the strategy dropdown is changed and sets the checkbox to
+    # TRUE/FALSE depending on whether the value is currently in params or not
+    #
+    # ensures that the module is initialized by checking that slider_values is
+    # not null for the selected strategy
+    shiny::observe({
+      # ensure include checkbox is on or off given param value
+      strategy <- shiny::req(input$strategy)
+      # Wait for slider to be initialized before updating checkbox
+      shiny::req(slider_values[[mitigators_type]][[strategy]])
+      include <- !is.null(params[[mitigators_type]][[activity_type]][[
+        strategy
+      ]])
+      shiny::updateCheckboxInput(session, "include", value = include)
+    }) |>
+      shiny::bindEvent(input$strategy)
 
+    # update the slider values when the strategy is changed
+    #
+    # runs when the strategy dropdown is changed and loads the currently
+    # saved values for the selected strategy
+    shiny::observe({
+      # update slider
+      strategy <- shiny::req(input$strategy)
+      scale <- 100
+
+      values <- slider_values[[mitigators_type]][[strategy]]$interval * scale
+      shiny::updateSliderInput(
+        session,
+        "slider",
+        value = values
+      )
+
+      update_time_profile(
+        time_profile_mappings$mappings[[strategy]] %||% "linear"
+      )
+    }) |>
+      shiny::bindEvent(input$strategy)
+
+    # rates data for the baseline year
     rates_baseline_data <- shiny::reactive({
       strategy <- shiny::req(input$strategy)
 
@@ -146,44 +208,18 @@ mod_mitigators_server <- function(
           )
         ) |>
         dplyr::arrange(dplyr::desc(.data$is_peer)) # to plot focal scheme last
-    })
-
-    # params controls ----
-
-    provider_baseline_value <- shiny::reactive({
-      dplyr::filter(rates_baseline_data(), !.data$is_peer)$rate
-    })
-
-    shiny::observe({
-      # ensure include checkbox is on or off given param value
-      strategy <- shiny::req(input$strategy)
-      # Wait for slider to be initialized before updating checkbox
-      shiny::req(slider_values[[mitigators_type]][[strategy]])
-      include <- !is.null(params[[mitigators_type]][[activity_type]][[
-        strategy
-      ]])
-      shiny::updateCheckboxInput(session, "include", value = include)
     }) |>
       shiny::bindEvent(input$strategy)
 
-    shiny::observe({
-      # update slider
-      strategy <- shiny::req(input$strategy)
-      scale <- 100
+    # --------------------------------------------------------------------------
+    # params controls
+    # --------------------------------------------------------------------------
 
-      values <- slider_values[[mitigators_type]][[strategy]]$interval * scale
-      shiny::updateSliderInput(
-        session,
-        "slider",
-        value = values
-      )
-
-      update_time_profile(
-        time_profile_mappings$mappings[[strategy]] %||% "linear"
-      )
-    }) |>
-      shiny::bindEvent(input$strategy)
-
+    # update the params when the slider or include checkbox is changed
+    #
+    # runs when the slider or include checkbox is changed and saves the values
+    # for the selected strategy to the params reactiveValues (or, removes it
+    # from params if include is FALSE)
     shiny::observe({
       values <- input$slider
       strategy <- shiny::req(input$strategy)
@@ -201,25 +237,41 @@ mod_mitigators_server <- function(
     }) |>
       shiny::bindEvent(input$slider, input$include)
 
+    # sets the time profile mapping for the strategy when the time profile is
+    # changed
+    #
+    # runs when the time profile dropdown is changed, or when the include
+    # checkbox is changed
     shiny::observe({
       strategy <- shiny::req(input$strategy)
       tp <- shiny::req(selected_time_profile())
 
       time_profile_mappings$mappings[[strategy]] <- tp
 
+      # if input$include is FALSE, then we will NULL out (remove) the item
       params$time_profile_mappings[[mitigators_type]][[activity_type]][[
         strategy
       ]] <- if (input$include) tp
     }) |>
       shiny::bindEvent(selected_time_profile(), input$include)
 
+    # enable/disable the slider depending on whether the "include?" checkbox is
+    # checked
+    #
+    # runs when the include checkbox is changed
     shiny::observe({
       shinyjs::toggleState("slider", condition = input$include)
     }) |>
       shiny::bindEvent(input$include)
 
-    # plot ribbon to show selected params ----
+    # --------------------------------------------------------------------------
+    # output reactives
+    # --------------------------------------------------------------------------
 
+    # plot ribbon to show selected params
+    #
+    # draws a yellow ribbon on the trend, funnel, and boxplot charts to show the
+    # interval selected by the slider.
     plot_ribbon <- shiny::reactive({
       baseline_value <- dplyr::filter(
         rates_baseline_data(),
@@ -246,9 +298,9 @@ mod_mitigators_server <- function(
       }
     })
 
-    # trend plot ----
+    # trend plot
+    #
     # use the rates data, filtered to the provider that has been selected
-
     trend_data <- shiny::reactive({
       strategy <- shiny::req(input$strategy)
       rates_data |>
@@ -258,25 +310,19 @@ mod_mitigators_server <- function(
         )
     })
 
-    output$trend_plot <- shiny::renderPlot({
-      rates_trend_plot(
-        trend_data(),
-        params$start_year,
-        plot_range(),
-        config$y_axis_title,
-        config$x_axis_title,
-        config$number_type,
-        plot_ribbon()
-      )
-    })
-
-    # funnel plot ----
+    # funnel plot
+    #
+    # use the rates data for the baseline year to generate the funnel plot data,
+    # showing all providers, highlighting the selected provider and its peers
     funnel_data <- shiny::reactive({
       rates_baseline_data() |>
         generate_rates_funnel_data()
     })
 
     # calculate the range across our plots
+    #
+    # used to ensure that the y-axis is the same across the trend, funnel, and
+    # boxplot
     plot_range <- shiny::reactive({
       td_rate <- shiny::req(trend_data())$rate
 
@@ -293,6 +339,35 @@ mod_mitigators_server <- function(
       c(0, max(c(td_rate, fd_rate)))
     })
 
+    # get the value in the baseline year for the selected provider
+    #
+    # runs when the rates_baseline_data changes (which happens when the strategy
+    # dropdown is changed)
+    provider_baseline_value <- shiny::reactive({
+      rates_baseline_data() |>
+        dplyr::filter(.data$provider == params$dataset) |>
+        purrr::pluck("rate")
+    }) |>
+      shiny::bindEvent(rates_baseline_data())
+
+    # --------------------------------------------------------------------------
+    # output renderers
+    # --------------------------------------------------------------------------
+
+    # render the trend plot
+    output$trend_plot <- shiny::renderPlot({
+      rates_trend_plot(
+        trend_data(),
+        params$start_year,
+        plot_range(),
+        config$y_axis_title,
+        config$x_axis_title,
+        config$number_type,
+        plot_ribbon()
+      )
+    })
+
+    # render the funnel plot
     output$funnel_plot <- shiny::renderPlot({
       plot(
         funnel_data(),
@@ -302,15 +377,13 @@ mod_mitigators_server <- function(
       )
     })
 
-    # boxplot ----
-
+    # render the boxplot
     output$boxplot <- shiny::renderPlot({
       rates_baseline_data() |>
         rates_boxplot(plot_range(), plot_ribbon())
     })
 
-    # diagnoses ----
-
+    # render the diagnoses table
     output$diagnoses_table <- gt::render_gt({
       shiny::validate(
         shiny::need(
@@ -399,8 +472,7 @@ mod_mitigators_server <- function(
         )
     })
 
-    # procedures ----
-
+    # render the procedures table
     output$procedures_table <- gt::render_gt({
       shiny::validate(
         shiny::need(
@@ -498,8 +570,7 @@ mod_mitigators_server <- function(
         )
     })
 
-    # age group ----
-
+    # render the age group pyramid plot
     output$age_grp_plot <- shiny::renderPlot({
       strategy <- shiny::req(input$strategy)
       age_data <- age_sex_data |>
@@ -513,8 +584,7 @@ mod_mitigators_server <- function(
       age_pyramid(age_data)
     })
 
-    # NEE result ----
-
+    # render the NEE result
     output$nee_result <- shiny::renderPlot(
       {
         nee_params <- app_sys("app", "data", "nee_table.csv") |>
@@ -561,8 +631,7 @@ mod_mitigators_server <- function(
       height = 60
     )
 
-    # rate values ----
-
+    # render the slider absolute values text
     output$slider_absolute <- shiny::renderUI({
       strategy <- shiny::req(input$strategy)
       baseline_value <- provider_baseline_value()
@@ -589,6 +658,7 @@ mod_mitigators_server <- function(
       shiny::tags$p(shiny::HTML(text), style = style)
     })
 
+    # render the slider interval explanation text
     output$slider_interval_text <- shiny::renderUI({
       text <- glue::glue(
         "Adjusting this slider will change the width of the",
