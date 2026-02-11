@@ -188,7 +188,6 @@ mod_mitigators_server <- function(
     shiny::observe({
       # update slider
       strategy <- shiny::req(input$strategy)
-      max_value <- provider_max_value()
       scale <- 100
 
       values <- slider_values[[mitigators_type]][[strategy]]$interval * scale
@@ -209,7 +208,6 @@ mod_mitigators_server <- function(
       strategy <- shiny::req(input$strategy)
       # Ensure slider values have been initialized for this strategy
       shiny::req(slider_values[[mitigators_type]][[strategy]])
-      max_value <- provider_max_value()
       scale <- 100
 
       at <- activity_type
