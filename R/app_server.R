@@ -169,7 +169,7 @@ app_server <- function(input, output, session) {
 
     mod_health_status_adjustment_server("health_status_adjustment", params)
 
-    observe({
+    shiny::observe({
       can_set_inequalities <- any(
         c("nhp_devs", "nhp_power_users", "nhp_test_inequalities") %in%
           session$groups
