@@ -137,10 +137,8 @@ mod_mitigators_server <- function(
 
     # params controls ----
 
-    provider_max_value <- shiny::reactive({
-      r <- dplyr::filter(rates_baseline_data(), !.data$is_peer)$rate
-      m <- config$slider_scale / config$slider_step
-      floor(r * m) / m
+    provider_baseline_value <- shiny::reactive({
+      dplyr::filter(rates_baseline_data(), !.data$is_peer)$rate
     })
 
     shiny::observe({
@@ -540,7 +538,7 @@ mod_mitigators_server <- function(
 
     output$slider_absolute <- shiny::renderUI({
       strategy <- shiny::req(input$strategy)
-      baseline_value <- provider_max_value()
+      baseline_value <- provider_baseline_value()
 
       number_format <- config$interval_text_number_type %||% config$number_type
 
