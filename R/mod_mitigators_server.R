@@ -68,7 +68,7 @@ mod_mitigators_server <- function(
 
     default_interval <- c(0.95, 1)
 
-    init <- shiny::observe(
+    shiny::observe(
       {
         strategies <- shiny::req(strategies())
 
@@ -101,11 +101,10 @@ mod_mitigators_server <- function(
 
         tpm <- params$time_profile_mappings[[mitigators_type]][[activity_type]]
         time_profile_mappings$mappings <- tpm
-
-        init$destroy()
       },
       priority = 100
-    )
+    ) |>
+      shiny::bindEvent(strategies(), once = TRUE)
 
     # set the strategy text by loading the contents of the file for that strategy
     output$strategy_text <- shiny::renderUI({
