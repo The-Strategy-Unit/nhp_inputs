@@ -65,9 +65,7 @@ mod_mitigators_server <- function(
       )
     })
 
-    get_default <- function(rate) {
-      c(0.95, 1)
-    }
+    default_interval <- c(0.95, 1)
 
     init <- shiny::observe(
       {
@@ -84,36 +82,21 @@ mod_mitigators_server <- function(
           _[strategies] |>
           purrr::map("interval")
 
-        strategies |>
-          # remove the friendly name for the strategy, replace with itself
-          purrr::set_names() |>
-          purrr::walk(\(i) {
-            # get the rates data for this strategy (for the provider in the baseline year)
-            r <- rates_data |>
-              dplyr::filter(
-                .data$strategy == strategies[i],
-                .data$provider == params$dataset,
-                .data$fyear == params$start_year
-              )
-
-            slider_values[[mitigators_type]][[i]] <- c(
-              # add the additional param items if they exist.
-              config$params_items |>
-                # if the additional item is a list, chose the value for the current strategy
-                purrr::map_if(is.list, ~ .x[[i]]) |>
-                # if the additional item is a function, evaluate it with the rates data
-                purrr::map_if(is.function, rlang::exec, r),
-              list(
-                interval = loaded_values[[i]] %||% get_default(r$rate)
-              )
+        purrr::walk(strategies, \(i) {
+          slider_values[[mitigators_type]][[i]] <- c(
+            # add the additional param items if they exist.
+            config$params_items,
+            list(
+              interval = loaded_values[[i]] %||% default_interval
             )
+          )
 
-            params[[mitigators_type]][[activity_type]][[i]] <- if (
-              !is.null(loaded_values[[i]])
-            ) {
-              slider_values[[mitigators_type]][[i]]
-            }
-          })
+          params[[mitigators_type]][[activity_type]][[i]] <- if (
+            !is.null(loaded_values[[i]])
+          ) {
+            slider_values[[mitigators_type]][[i]]
+          }
+        })
 
         tpm <- params$time_profile_mappings[[mitigators_type]][[activity_type]]
         time_profile_mappings$mappings <- tpm
