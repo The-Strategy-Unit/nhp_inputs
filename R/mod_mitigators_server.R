@@ -45,13 +45,6 @@ mod_mitigators_server <- function(
       # make sure a provider is selected
       shiny::req(params$dataset)
 
-      shiny::observe(
-        input$strategy |>
-          shiny::req() |>
-          reasons_key()
-      ) |>
-        shiny::bindEvent(input$strategy)
-
       # need to invert this list (flip names -> values)
       strats_subset <- config$strategy_subset
       available_subset <- intersect(
@@ -64,6 +57,14 @@ mod_mitigators_server <- function(
         mitigator_codes_lkup[available_subset] # e.g. 'IP-EF-017: Enhanced Recovery (Hip)'
       )
     })
+
+    shiny::observe(
+      # update the reasons module with the selected strategy
+      input$strategy |>
+        shiny::req() |>
+        reasons_key()
+    ) |>
+      shiny::bindEvent(input$strategy)
 
     default_interval <- c(0.95, 1)
 
