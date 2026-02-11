@@ -58,7 +58,7 @@ mod_mitigators_server <- function(
 
     default_interval <- c(0.95, 1)
 
-    init <- shiny::observe(
+    shiny::observe(
       {
         strategies <- shiny::req(strategies())
 
@@ -88,11 +88,10 @@ mod_mitigators_server <- function(
             slider_values[[mitigators_type]][[i]]
           }
         })
-
-        init$destroy()
       },
       priority = 100
-    )
+    ) |>
+      shiny::bindEvent(strategies(), once = TRUE)
 
     # set the strategy text by loading the contents of the file for that strategy
     output$strategy_text <- shiny::renderUI({
