@@ -9,11 +9,6 @@ utils::globalVariables(c(
   ".env"
 ))
 
-rtt_specialties <- function() {
-  app_sys("app", "data", "rtt_specialties.csv") |>
-    readr::read_csv(col_types = "cc")
-}
-
 sanitize_input_name <- function(.x) {
   .x |>
     stringr::str_to_lower() |>

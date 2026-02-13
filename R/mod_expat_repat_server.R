@@ -6,21 +6,19 @@ mod_expat_repat_server <- function(
   expat_data,
   repat_local_data,
   repat_nonlocal_data,
-  params,
-  providers
+  params
 ) {
+  providers <- get_lookups()[["providers"]]
+
+  rtt_specialties <- get_lookups()[["rtt_specialties"]] |>
+    dplyr::select("specialty", "code") |>
+    tibble::deframe()
+
+  icb_boundaries <- get_lookups()[["icb_boundaries"]]
+
   mod_reasons_server(shiny::NS(id, "reasons"), params, "expat_repat")
 
   shiny::moduleServer(id, function(input, output, session) {
-    # static data ----
-    rtt_specialties <- rtt_specialties() |>
-      tibble::deframe()
-    icb_boundaries <- sf::read_sf(app_sys(
-      "app",
-      "data",
-      "icb_boundaries.geojson"
-    ))
-
     # helpers ----
 
     extract_expat_repat_data <- function(dat) {
