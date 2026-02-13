@@ -1,7 +1,7 @@
 mod_waiting_list_imbalances_table <- function(df) {
-  rtt_specialties() |>
+  get_lookups()[["rtt_specialties"]] |>
     dplyr::inner_join(df, c(code = "tretspef")) |>
-    dplyr::select(-"code") |>
+    dplyr::select(-"code", -"sanitized_code") |>
     tidyr::pivot_wider(
       names_from = "activity_type",
       values_from = c("count", "param")

@@ -12,37 +12,8 @@ app_server <- function(input, output, session) {
     Sys.getenv("CACHE_VERSION", 0)
   })
 
-  diagnoses_lkup <- shiny::reactive({
-    readr::read_csv(app_sys("app", "data", "diagnoses.csv"), col_types = "ccc")
-  })
-
-  procedures_lkup <- shiny::reactive({
-    readr::read_csv(app_sys("app", "data", "procedures.csv"), col_types = "ccc")
-  })
-
-  mitigator_codes_lkup <- shiny::reactive({
-    lkup <- app_sys("app", "data", "mitigator-codes.csv") |>
-      readr::read_csv(col_types = "c")
-
-    purrr::set_names(
-      paste0(lkup[["strategy_name"]], " (", lkup[["mitigator_code"]], ")"),
-      lkup[["strategy"]]
-    )
-  })
-
-  providers <- shiny::reactive({
-    app_sys("app", "data", "providers.csv") |>
-      readr::read_csv(col_types = "cc") |>
-      tibble::deframe() # convert tibble to named vector
-  })
-
-  peers <- shiny::reactive({
-    readr::read_csv(app_sys("app", "data", "peers.csv"), col_types = "cc")
-  })
-
   params <- mod_home_server(
     "home",
-    providers(),
     shiny::reactive(input$params_file)
   )
 
@@ -194,8 +165,7 @@ app_server <- function(input, output, session) {
       expat_data(),
       repat_local_data(),
       repat_nonlocal_data(),
-      params,
-      providers()
+      params
     )
 
     mod_non_demographic_adjustment_server("non_demographic_adjustment", params)
@@ -225,11 +195,7 @@ app_server <- function(input, output, session) {
       age_sex_data(),
       diagnoses_data(),
       procedures_data(),
-      available_strategies,
-      diagnoses_lkup(),
-      procedures_lkup(),
-      mitigator_codes_lkup(),
-      peers()
+      available_strategies
     )
 
     # enable the run_model page for certain users/running locally

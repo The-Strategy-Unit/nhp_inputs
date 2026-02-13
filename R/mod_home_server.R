@@ -1,7 +1,7 @@
 #' home Server Functions
 #'
 #' @noRd
-mod_home_server <- function(id, providers, filename) {
+mod_home_server <- function(id, filename) {
   shiny::moduleServer(id, function(input, output, session) {
     # reactives ----
 

@@ -8,13 +8,11 @@ mod_mitigators_server <- function(
   age_sex_data,
   diagnoses_data,
   procedures_data,
-  available_strategies,
-  diagnoses_lkup,
-  procedures_lkup,
-  mitigator_codes_lkup,
-  peers
+  available_strategies
 ) {
-  default_interval <- c(0.95, 1)
+  lookups <- get_lookups()
+
+  default_interval <- c(0.95, 1.0)
 
   selected_time_profile <- update_time_profile <- NULL
   # nolint start: object_usage_linter
@@ -68,10 +66,10 @@ mod_mitigators_server <- function(
         available_strategies()
       )
 
-      purrr::set_names(
-        available_subset,
-        mitigator_codes_lkup[available_subset] # e.g. 'IP-EF-017: Enhanced Recovery (Hip)'
-      )
+      lookups[["mitigators"]] |>
+        dplyr::select("strategy_name_full", "strategy") |>
+        dplyr::filter(.data$strategy %in% available_subset) |>
+        tibble::deframe()
     })
 
     # initialize the module with the values from the loaded parameters file
@@ -188,7 +186,7 @@ mod_mitigators_server <- function(
       strategy <- shiny::req(input$strategy)
 
       # nolint start: object_usage_linter
-      scheme_peers <- peers |>
+      scheme_peers <- lookups[["peers"]] |>
         dplyr::filter(
           .data$procode == params$dataset & .data$peer != params$dataset
         ) |>
@@ -401,7 +399,7 @@ mod_mitigators_server <- function(
           .data$fyear == params$start_year
         ) |>
         dplyr::inner_join(
-          diagnoses_lkup,
+          lookups[["diagnoses"]],
           by = c("diagnosis" = "diagnosis_code")
         ) |>
         dplyr::select("diagnosis_description", "n", "pcnt")
@@ -498,7 +496,10 @@ mod_mitigators_server <- function(
           .data$strategy == .env$strategy,
           .data$fyear == params$start_year
         ) |>
-        dplyr::left_join(procedures_lkup, by = c("procedure_code" = "code")) |>
+        dplyr::left_join(
+          lookups[["procedures"]],
+          by = c("procedure_code" = "code")
+        ) |>
         tidyr::replace_na(list(
           description = "Unknown/Invalid Procedure Code"
         )) |>
@@ -587,8 +588,7 @@ mod_mitigators_server <- function(
     # render the NEE result
     output$nee_result <- shiny::renderPlot(
       {
-        nee_params <- app_sys("app", "data", "nee_table.csv") |>
-          readr::read_csv(col_types = "cddd") |>
+        nee_params <- lookups[["nee_table"]] |>
           dplyr::filter(.data[["param_name"]] == input$strategy)
 
         shiny::validate(

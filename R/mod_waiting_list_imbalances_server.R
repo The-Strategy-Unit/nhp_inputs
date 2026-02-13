@@ -11,6 +11,8 @@ mod_waiting_list_imbalances_server <- function(id, wli_data, params) {
     )
   # nolint end
 
+  multipliers <- get_lookups()[["waiting_list_multipliers"]]
+
   mod_reasons_server(
     shiny::NS(id, "reasons"),
     params,
@@ -18,26 +20,6 @@ mod_waiting_list_imbalances_server <- function(id, wli_data, params) {
   )
 
   shiny::moduleServer(id, function(input, output, session) {
-    # static values ----
-    multipliers <- readr::read_csv(
-      "inst/app/data/waiting_list_params.csv",
-      col_types = "cddddd"
-    ) |>
-      dplyr::transmute(
-        .data[["tretspef"]],
-        ip = .data[["mixed_split"]] *
-          .data[["avg_ip_activity_per_pathway_mixed"]],
-        op = .data[["op_only_split"]] *
-          .data[["avg_op_first_activity_per_pathway_op_only"]] +
-          .data[["mixed_split"]] *
-            .data[["avg_op_first_activity_per_pathway_mixed"]]
-      ) |>
-      tidyr::pivot_longer(
-        c("ip", "op"),
-        names_to = "activity_type",
-        values_to = "multiplier"
-      )
-
     # reactives ----
 
     # load the waiting list data from azure
