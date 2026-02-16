@@ -24,35 +24,24 @@ app_server <- function(input, output, session) {
   })
 
   age_sex_data <- shiny::reactive({
-    get_age_sex_data()
+    provider <- params$dataset
+    fyear <- params$start_year
+
+    get_age_sex_data(provider, fyear)
   })
 
   diagnoses_data <- shiny::reactive({
-    get_diagnoses_data()
+    provider <- params$dataset
+    fyear <- params$start_year
+
+    get_diagnoses_data(provider, fyear)
   })
 
   procedures_data <- shiny::reactive({
-    get_procedures_data()
-  })
+    provider <- params$dataset
+    fyear <- params$start_year
 
-  baseline_data <- shiny::reactive({
-    get_baseline_data()
-  })
-
-  inequalities_data <- shiny::reactive({
-    get_inequalities_data()
-  })
-
-  expat_data <- shiny::reactive({
-    get_expat_data()
-  })
-
-  repat_local_data <- shiny::reactive({
-    get_repat_local_data()
-  })
-
-  repat_nonlocal_data <- shiny::reactive({
-    get_repat_nonlocal_data()
+    get_procedures_data(provider, fyear)
   })
 
   # load all other modules once the home module has finished loading
@@ -78,11 +67,7 @@ app_server <- function(input, output, session) {
         unique()
     })
 
-    mod_baseline_adjustment_server(
-      "baseline_adjustment",
-      baseline_data(),
-      params
-    )
+    mod_baseline_adjustment_server("baseline_adjustment", params)
 
     mod_population_growth_server("population_growth", params)
 
@@ -100,15 +85,9 @@ app_server <- function(input, output, session) {
       )
     })
 
-    mod_inequalities_server("inequalities", inequalities_data(), params)
+    mod_inequalities_server("inequalities", params)
 
-    mod_expat_repat_server(
-      "expat_repat",
-      expat_data(),
-      repat_local_data(),
-      repat_nonlocal_data(),
-      params
-    )
+    mod_expat_repat_server("expat_repat", params)
 
     mod_non_demographic_adjustment_server("non_demographic_adjustment", params)
 
@@ -133,10 +112,10 @@ app_server <- function(input, output, session) {
       ),
       mod_mitigators_server,
       params,
-      rates_data(),
-      age_sex_data(),
-      diagnoses_data(),
-      procedures_data(),
+      rates_data,
+      age_sex_data,
+      diagnoses_data,
+      procedures_data,
       available_strategies
     )
 

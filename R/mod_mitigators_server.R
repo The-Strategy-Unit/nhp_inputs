@@ -175,7 +175,7 @@ mod_mitigators_server <- function(
         dplyr::pull(.data$peer)
       # nolint end
 
-      rates_data |>
+      rates_data() |>
         dplyr::filter(
           .data$strategy == .env$strategy,
           .data$fyear == params$start_year
@@ -261,7 +261,7 @@ mod_mitigators_server <- function(
     # use the rates data, filtered to the provider that has been selected
     trend_data <- shiny::reactive({
       strategy <- shiny::req(input$strategy)
-      rates_data |>
+      rates_data() |>
         dplyr::filter(
           .data$strategy == .env$strategy,
           .data$provider == params$dataset
@@ -343,21 +343,19 @@ mod_mitigators_server <- function(
 
     # render the diagnoses table
     output$diagnoses_table <- gt::render_gt({
+      data <- diagnoses_data()
+
       shiny::validate(
         shiny::need(
-          diagnoses_data,
+          data,
           message = "Insufficient or suppressed data."
         )
       )
 
       strategy <- shiny::req(input$strategy)
 
-      data <- diagnoses_data |>
-        dplyr::filter(
-          .data$provider == params$dataset,
-          .data$strategy == .env$strategy,
-          .data$fyear == params$start_year
-        ) |>
+      data <- data |>
+        dplyr::filter(.data$strategy == .env$strategy) |>
         dplyr::inner_join(
           lookups[["diagnoses"]],
           by = c("diagnosis" = "diagnosis_code")
@@ -432,30 +430,26 @@ mod_mitigators_server <- function(
 
     # render the procedures table
     output$procedures_table <- gt::render_gt({
+      data <- procedures_data()
+
       shiny::validate(
         shiny::need(
-          procedures_data,
+          data,
           message = "Insufficient or suppressed data."
         )
       )
 
-      pd <- procedures_data
-
       shiny::validate(
         shiny::need(
-          !is.null(pd) && nrow(pd) > 0,
+          !is.null(data) && nrow(data) > 0,
           "No procedures to display"
         )
       )
 
       strategy <- shiny::req(input$strategy)
 
-      data <- pd |>
-        dplyr::filter(
-          .data$provider == params$dataset,
-          .data$strategy == .env$strategy,
-          .data$fyear == params$start_year
-        ) |>
+      data <- data |>
+        dplyr::filter(.data$strategy == .env$strategy) |>
         dplyr::left_join(
           lookups[["procedures"]],
           by = c("procedure_code" = "code")
@@ -534,12 +528,8 @@ mod_mitigators_server <- function(
     # render the age group pyramid plot
     output$age_grp_plot <- shiny::renderPlot({
       strategy <- shiny::req(input$strategy)
-      age_data <- age_sex_data |>
-        dplyr::filter(
-          .data$provider == params$dataset,
-          .data$strategy == .env$strategy,
-          .data$fyear == params$start_year
-        )
+      age_data <- age_sex_data() |>
+        dplyr::filter(.data$strategy == .env$strategy)
 
       shiny::req(nrow(age_data) > 0)
       age_pyramid(age_data)
