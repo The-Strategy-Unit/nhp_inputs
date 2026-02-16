@@ -107,14 +107,16 @@ download_params_schema <- function(
   invisible(file_path)
 }
 
-get_params_schema_text <- function(
+.schema_cache <- new.env()
+get_params_schema <- function(
   app_version = Sys.getenv("INPUTS_DATA_VERSION", "dev")
 ) {
   file_path <- app_sys("app", "data", glue::glue("params-schema.json"))
 
-  readr::read_file(file_path)
-}
+  schema_text <- readr::read_file(file_path)
 
-create_params_schema <- function(schema_text) {
-  jsonvalidate::json_schema$new(schema_text)
+  if (!exists("schema", envir = .schema_cache)) {
+    .schema_cache[["schema"]] <- jsonvalidate::json_schema$new(schema_text)
+  }
+  .schema_cache[["schema"]]
 }
