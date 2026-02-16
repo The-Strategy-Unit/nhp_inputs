@@ -39,10 +39,6 @@ app_server <- function(input, output, session) {
     get_baseline_data()
   })
 
-  wli_data <- shiny::reactive({
-    get_wli_data()
-  })
-
   inequalities_data <- shiny::reactive({
     get_inequalities_data()
   })
@@ -105,12 +101,6 @@ app_server <- function(input, output, session) {
     })
 
     mod_inequalities_server("inequalities", inequalities_data(), params)
-
-    mod_waiting_list_imbalances_server(
-      "waiting_list_imbalances",
-      wli_data(),
-      params
-    )
 
     mod_expat_repat_server(
       "expat_repat",

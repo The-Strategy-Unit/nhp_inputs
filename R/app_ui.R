@@ -202,10 +202,6 @@ app_ui <- function(request) {
         mod_non_demographic_adjustment_ui("non_demographic_adjustment")
       ),
       bs4Dash::tabItem(
-        tabName = "tab_wli",
-        mod_waiting_list_imbalances_ui("waiting_list_imbalances")
-      ),
-      bs4Dash::tabItem(
         tabName = "tab_er",
         mod_expat_repat_ui("expat_repat")
       ),
