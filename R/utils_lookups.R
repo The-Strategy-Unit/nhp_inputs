@@ -1,6 +1,10 @@
+lookup_file_path <- function(file) {
+  app_sys("app", "reference", file)
+}
+
 get_diagnoses_lookup <- function() {
   readr::read_csv(
-    app_sys("app", "data", "diagnoses.csv"),
+    lookup_file_path("diagnoses.csv"),
     col_types = "ccc",
     progress = FALSE
   )
@@ -8,14 +12,14 @@ get_diagnoses_lookup <- function() {
 
 get_procedures_lookup <- function() {
   readr::read_csv(
-    app_sys("app", "data", "procedures.csv"),
+    lookup_file_path("procedures.csv"),
     col_types = "ccc",
     progress = FALSE
   )
 }
 
 get_mitigators_lookup <- function() {
-  app_sys("app", "data", "mitigator-codes.csv") |>
+  lookup_file_path("mitigator-codes.csv") |>
     readr::read_csv(col_types = "c", progress = FALSE) |>
     dplyr::mutate(
       strategy_name_full = glue::glue("{strategy_name} ({mitigator_code})")
@@ -24,40 +28,40 @@ get_mitigators_lookup <- function() {
 
 get_peers_lookup <- function() {
   readr::read_csv(
-    app_sys("app", "data", "peers.csv"),
+    lookup_file_path("peers.csv"),
     col_types = "cc",
     progress = FALSE
   )
 }
 
 get_providers_lookup <- function() {
-  app_sys("app", "data", "providers.csv") |>
+  lookup_file_path("providers.csv") |>
     readr::read_csv(col_types = "cc", progress = FALSE) |>
     tibble::deframe()
 }
 
 get_ndg_variants_lookup <- function() {
-  app_sys("app", "data", "ndg_variants.json") |>
+  lookup_file_path("ndg_variants.json") |>
     jsonlite::read_json(simplifyVector = TRUE) |>
     purrr::keep_at(c("variant_2", "variant_3"))
 }
 
 get_nee_lookup <- function() {
   readr::read_csv(
-    app_sys("app", "data", "nee_table.csv"),
+    lookup_file_path("nee_table.csv"),
     col_types = "cddd",
     progress = FALSE
   )
 }
 
 get_rtt_specialties_lookup <- function() {
-  app_sys("app", "data", "rtt_specialties.csv") |>
+  lookup_file_path("rtt_specialties.csv") |>
     readr::read_csv(col_types = "cc", progress = FALSE) |>
     dplyr::mutate(sanitized_code = sanitize_input_name(.data[["code"]]))
 }
 
 get_waiting_list_multipliers <- function() {
-  app_sys("app", "data", "waiting_list_params.csv") |>
+  lookup_file_path("waiting_list_params.csv") |>
     readr::read_csv(col_types = "cddddd", progress = FALSE) |>
     dplyr::transmute(
       .data[["tretspef"]],
@@ -76,7 +80,7 @@ get_waiting_list_multipliers <- function() {
 }
 
 get_icb_boundaries <- function() {
-  sf::read_sf(app_sys("app", "data", "icb_boundaries.geojson"))
+  sf::read_sf(lookup_file_path("icb_boundaries.geojson"))
 }
 
 # use a singleton pattern to cache lookups in memory, but prevent the files from
