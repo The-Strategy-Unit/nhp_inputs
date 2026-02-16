@@ -10,14 +10,6 @@ app_server <- function(input, output, session) {
     shiny::reactive(input$params_file)
   )
 
-  # we could probably drop the need for start now, kept for historical reasons
-  start <- shiny::reactive({
-    shiny::req(length(params) > 0)
-    shiny::req(params$dataset)
-    shiny::req(params$scenario)
-    1
-  })
-
   # load all data
   rates_data <- shiny::reactive({
     get_rates_data()
@@ -46,7 +38,7 @@ app_server <- function(input, output, session) {
 
   # load all other modules once the home module has finished loading
   init <- shiny::observe({
-    shiny::req(start() > 0)
+    shiny::req(params$dataset)
 
     available_strategies <- shiny::reactive({
       # nolint start: object_usage_linter
@@ -130,11 +122,9 @@ app_server <- function(input, output, session) {
     }
 
     init$destroy()
-  }) |>
-    shiny::bindEvent(start())
+  })
 
   shiny::observe({
-    shiny::req(start() > 0)
     shiny::req(params$dataset)
     shiny::req(params$scenario)
 
