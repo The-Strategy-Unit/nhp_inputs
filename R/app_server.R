@@ -141,11 +141,6 @@ app_server <- function(input, output, session) {
       jsonlite::write_json(file, pretty = TRUE, auto_unbox = TRUE)
   })
 
-  if (as.logical(Sys.getenv("ENABLE_AUTO_RECONNECT", FALSE))) {
-    cat("auto reconnect enabled\n")
-    session$allowReconnect("force")
-  }
-
   # return
   NULL
 }
