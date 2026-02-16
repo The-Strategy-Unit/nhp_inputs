@@ -17,13 +17,16 @@ run_app <- function(
   uiPattern = "/", # nolint
   ...
 ) {
-  if (getOption("golem.app.prod", FALSE)) {
-    create_data_cache()
-  }
-
   # required for async promise calls
   if (!is_local()) {
     future::plan(future::multicore, workers = 2)
+  }
+
+  # check files exist before starting app
+  # TODO: consider more rigorous checks, e.g. specific files exist, or number of files
+  if (!dir.exists(file.path(app_sys("app"), "data"))) {
+    cat("Initialising data directory...\n")
+    get_all_data_files()
   }
 
   golem::with_golem_options(

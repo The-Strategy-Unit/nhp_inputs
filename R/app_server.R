@@ -5,13 +5,6 @@
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
-  # in fct_create_data_cache, we utilise this env var to invalidate the cache
-  # we can use it's value to allow us to cache all of the reactive data without
-  # having to bind to some other input which might change
-  cache_version <- shiny::reactive({
-    Sys.getenv("CACHE_VERSION", 0)
-  })
-
   params <- mod_home_server(
     "home",
     shiny::reactive(input$params_file)
@@ -27,85 +20,48 @@ app_server <- function(input, output, session) {
 
   # load all data
   rates_data <- shiny::reactive({
-    rates <- load_provider_data("rates") |>
-      dplyr::select(-"crude_rate") |>
-      dplyr::rename(rate = "std_rate")
-
-    national_rate <- rates |>
-      dplyr::filter(
-        .data$provider == "national"
-      ) |>
-      dplyr::summarise(
-        .by = c("fyear", "strategy"),
-        national_rate = dplyr::first(.data$rate)
-      )
-
-    rates |>
-      dplyr::filter(.data$provider != "national") |>
-      dplyr::inner_join(national_rate, by = c("fyear", "strategy"))
-  }) |>
-    shiny::bindCache(cache_version())
+    get_rates_data()
+  })
 
   age_sex_data <- shiny::reactive({
-    age_sex <- load_provider_data("age_sex")
-    # nolint start: object_usage_linter
-    age_fct <- age_sex |> _[["age_group"]] |> unique() |> sort()
-    # nolint end
-    age_sex |>
-      dplyr::mutate(
-        dplyr::across("sex", as.character),
-        age_group = factor(
-          .data[["age_group"]],
-          levels = .env[["age_fct"]]
-        )
-      )
-  }) |>
-    shiny::bindCache(cache_version())
+    get_age_sex_data()
+  })
 
   diagnoses_data <- shiny::reactive({
-    load_provider_data("diagnoses")
-  }) |>
-    shiny::bindCache(cache_version())
+    get_diagnoses_data()
+  })
 
   procedures_data <- shiny::reactive({
-    load_provider_data("procedures")
-  }) |>
-    shiny::bindCache(cache_version())
+    get_procedures_data()
+  })
 
   baseline_data <- shiny::reactive({
-    load_provider_data("baseline")
-  }) |>
-    shiny::bindCache(cache_version())
+    get_baseline_data()
+  })
 
   wli_data <- shiny::reactive({
-    load_provider_data("wli")
-  }) |>
-    shiny::bindCache(cache_version())
+    get_wli_data()
+  })
 
   inequalities_data <- shiny::reactive({
-    load_provider_data("inequalities")
-  }) |>
-    shiny::bindCache(cache_version())
+    get_inequalities_data()
+  })
 
   expat_data <- shiny::reactive({
-    load_provider_data("expat")
-  }) |>
-    shiny::bindCache(cache_version())
+    get_expat_data()
+  })
 
   repat_local_data <- shiny::reactive({
-    load_provider_data("repat_local")
-  }) |>
-    shiny::bindCache(cache_version())
+    get_repat_local_data()
+  })
 
   repat_nonlocal_data <- shiny::reactive({
-    load_provider_data("repat_nonlocal")
-  }) |>
-    shiny::bindCache(cache_version())
+    get_repat_nonlocal_data()
+  })
 
   params_schema_text <- shiny::reactive({
     get_params_schema_text()
-  }) |>
-    shiny::bindCache(cache_version())
+  })
 
   # load all other modules once the home module has finished loading
   init <- shiny::observe({
