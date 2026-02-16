@@ -59,10 +59,6 @@ app_server <- function(input, output, session) {
     get_repat_nonlocal_data()
   })
 
-  params_schema_text <- shiny::reactive({
-    get_params_schema_text()
-  })
-
   # load all other modules once the home module has finished loading
   init <- shiny::observe({
     shiny::req(start() > 0)
@@ -161,7 +157,7 @@ app_server <- function(input, output, session) {
     )
     if (is_local() || can_run_model) {
       shinyjs::show("run-model-container")
-      mod_run_model_server("run_model", params, params_schema_text())
+      mod_run_model_server("run_model", params)
     }
 
     init$destroy()
@@ -182,7 +178,7 @@ app_server <- function(input, output, session) {
 
     params |>
       shiny::reactiveValuesToList() |>
-      mod_run_model_fix_params(params_schema_text()) |>
+      mod_run_model_fix_params() |>
       jsonlite::write_json(file, pretty = TRUE, auto_unbox = TRUE)
   })
 
