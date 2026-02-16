@@ -28,11 +28,6 @@ mod_mitigators_server <- function(
   activity_type <- config$activity_type
   mitigators_type <- config$mitigators_type
 
-  param_conversion <- list(
-    absolute = list(\(r, p) p * r, \(r, q) q / r),
-    relative = list(\(r, p) p, \(r, q) q)
-  )
-
   reasons_key <- shiny::reactiveVal()
   mod_reasons_server(
     shiny::NS(id, "reasons"),
@@ -44,7 +39,6 @@ mod_mitigators_server <- function(
 
   shiny::moduleServer(id, function(input, output, session) {
     slider_values <- shiny::reactiveValues()
-    output_conversions <- shiny::reactiveValues()
     time_profile_mappings <- shiny::reactiveValues()
 
     strategies <- shiny::reactive({
@@ -114,32 +108,15 @@ mod_mitigators_server <- function(
               )
             )
 
-            output_conversions[[mitigators_type]][[
-              i
-            ]] <- (config$param_output %||% \(...) identity)(r$rate)
-
             params[[mitigators_type]][[activity_type]][[i]] <- if (
               !is.null(loaded_values[[i]])
             ) {
-              fn <- output_conversions[[mitigators_type]][[i]]
-
-              v <- slider_values[[mitigators_type]][[i]]
-              v$interval <- fn(v$interval)
-
-              v
+              slider_values[[mitigators_type]][[i]]
             }
           })
 
         tpm <- params$time_profile_mappings[[mitigators_type]][[activity_type]]
         time_profile_mappings$mappings <- tpm
-
-        shiny::updateCheckboxInput(
-          session,
-          "include",
-          value = !is.null(params[[mitigators_type]][[
-            activity_type
-          ]][[strategies[[1]]]])
-        )
 
         init$destroy()
       },
@@ -198,9 +175,11 @@ mod_mitigators_server <- function(
 
     shiny::observe({
       # ensure include checkbox is on or off given param value
-      shiny::req(input$strategy)
+      strategy <- shiny::req(input$strategy)
+      # Wait for slider to be initialized before updating checkbox
+      shiny::req(slider_values[[mitigators_type]][[strategy]])
       include <- !is.null(params[[mitigators_type]][[activity_type]][[
-        input$strategy
+        strategy
       ]])
       shiny::updateCheckboxInput(session, "include", value = include)
     }) |>
@@ -209,24 +188,13 @@ mod_mitigators_server <- function(
     shiny::observe({
       # update slider
       strategy <- shiny::req(input$strategy)
-      max_value <- provider_max_value()
       scale <- 100
-      range <- c(0, 100)
-      step <- 0.1
-      pc_fn <- param_conversion$relative[[1]]
 
-      values <- pc_fn(
-        max_value,
-        slider_values[[mitigators_type]][[strategy]]$interval
-      ) *
-        scale
+      values <- slider_values[[mitigators_type]][[strategy]]$interval * scale
       shiny::updateSliderInput(
         session,
         "slider",
-        value = values,
-        min = range[[1]],
-        max = range[[2]],
-        step = step
+        value = values
       )
 
       update_time_profile(
@@ -238,23 +206,16 @@ mod_mitigators_server <- function(
     shiny::observe({
       values <- input$slider
       strategy <- shiny::req(input$strategy)
-      max_value <- provider_max_value()
+      # Ensure slider values have been initialized for this strategy
+      shiny::req(slider_values[[mitigators_type]][[strategy]])
       scale <- 100
-      pc_fn <- param_conversion$relative[[2]]
-
-      v <- pc_fn(max_value, values / scale)
 
       at <- activity_type
       mt <- mitigators_type
-      slider_values[[mt]][[strategy]]$interval <- v
+      slider_values[[mt]][[strategy]]$interval <- values / scale
 
       params[[mt]][[at]][[strategy]] <- if (input$include) {
-        fn <- output_conversions[[mitigators_type]][[strategy]]
-
-        v <- slider_values[[mitigators_type]][[strategy]]
-        v$interval <- fn(v$interval)
-
-        v
+        slider_values[[mitigators_type]][[strategy]]
       }
     }) |>
       shiny::bindEvent(input$slider, input$include)
@@ -279,12 +240,14 @@ mod_mitigators_server <- function(
     # plot ribbon to show selected params ----
 
     plot_ribbon <- shiny::reactive({
-      max_value <- dplyr::filter(rates_baseline_data(), !.data$is_peer)$rate
+      baseline_value <- dplyr::filter(
+        rates_baseline_data(),
+        !.data$is_peer
+      )$rate
 
-      values <- param_conversion$absolute[[1]](
-        max_value,
-        slider_values[[mitigators_type]][[input$strategy]]$interval
-      )
+      # convert the slider values to absolute values
+      interval <- slider_values[[mitigators_type]][[input$strategy]]$interval
+      values <- interval * baseline_value
 
       colour <- "#f9bf07"
 
@@ -620,34 +583,23 @@ mod_mitigators_server <- function(
     # rate values ----
 
     output$slider_absolute <- shiny::renderUI({
-      scale <- config$slider_scale
       strategy <- shiny::req(input$strategy)
-      max_value <- provider_max_value()
+      baseline_value <- provider_max_value()
 
-      convert_params_a <- param_conversion$absolute[[1]]
-      rate <- convert_params_a(
-        max_value,
-        slider_values[[mitigators_type]][[strategy]]$interval
-      ) *
-        scale
+      number_format <- config$interval_text_number_type %||% config$number_type
 
-      convert_number <- function(value, config) {
-        converted <- scales::number(value, 0.001)
-        is_percent <- stringr::str_detect(config$y_axis_title, "%")
-        if (is_percent) {
-          converted <- scales::number(value, 0.01, suffix = "%")
-        }
-        converted
-      }
+      # convert the slider values to absolute values
+      interval_str <- number_format(
+        slider_values[[mitigators_type]][[strategy]]$interval * baseline_value
+      )
 
-      rate_lo <- convert_number(rate[1], config)
-      rate_hi <- convert_number(rate[2], config)
-      rate_max <- convert_number(max_value * scale, config)
+      rate_baseline <- number_format(baseline_value)
       y_axis_title <- config$y_axis_title
 
       text <- glue::glue(
-        "This is equivalent to a rate interval of {rate_lo} to {rate_hi}",
-        "({y_axis_title}) given the baseline of {rate_max}.",
+        "This is equivalent to a rate interval of {interval_str[[1]]} to",
+        "{interval_str[[2]]}",
+        "({y_axis_title}) given the baseline of {rate_baseline}.",
         .sep = " "
       )
 
