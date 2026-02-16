@@ -62,10 +62,6 @@ get_baseline_data <- function() {
   load_provider_data("baseline")
 }
 
-get_wli_data <- function() {
-  load_provider_data("wli")
-}
-
 get_inequalities_data <- function() {
   load_provider_data("inequalities")
 }
