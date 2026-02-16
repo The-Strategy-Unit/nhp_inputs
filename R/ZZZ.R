@@ -90,10 +90,7 @@ download_params_schema <- function(
   data_path = app_sys("app", "data"),
   app_version = Sys.getenv("INPUTS_DATA_VERSION", "dev")
 ) {
-  file_path <- file.path(
-    data_path,
-    glue::glue("params-schema.json")
-  )
+  file_path <- file.path(data_path, "params-schema.json")
 
   params_schema <- httr2::request(
     "https://the-strategy-unit.github.io"
@@ -111,12 +108,10 @@ download_params_schema <- function(
 get_params_schema <- function(
   app_version = Sys.getenv("INPUTS_DATA_VERSION", "dev")
 ) {
-  file_path <- app_sys("app", "data", glue::glue("params-schema.json"))
-
-  schema_text <- readr::read_file(file_path)
-
   if (!exists("schema", envir = .schema_cache)) {
-    .schema_cache[["schema"]] <- jsonvalidate::json_schema$new(schema_text)
+    .schema_cache[["schema"]] <- app_sys("app", "data", "params-schema.json") |>
+      readr::read_file() |>
+      jsonvalidate::json_schema$new()
   }
   .schema_cache[["schema"]]
 }

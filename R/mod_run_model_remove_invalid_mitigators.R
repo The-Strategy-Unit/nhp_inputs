@@ -3,7 +3,13 @@ mod_run_model_remove_invalid_mitigators <- function(p) {
 
   json_p <- jsonlite::toJSON(p, auto_unbox = TRUE)
 
-  paths <- schema$validate(json_p, verbose = TRUE) |>
+  validate <- schema$validate(json_p, verbose = TRUE)
+
+  if (validate) {
+    return(p)
+  }
+
+  paths <- validate |>
     attr("errors") |>
     dplyr::filter(
       .data[["keyword"]] == "additionalProperties",
