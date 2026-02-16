@@ -35,12 +35,16 @@ get_rates_data <- function() {
     dplyr::inner_join(national_rate, by = c("fyear", "strategy"))
 }
 
-get_age_sex_data <- function() {
+get_age_sex_data <- function(provider, fyear) {
   age_sex <- load_provider_data("age_sex")
 
   age_fct <- sort(unique(age_sex[["age_group"]]))
 
   age_sex |>
+    dplyr::filter(
+      .data$provider == .env$provider,
+      .data$fyear == .env$fyear
+    ) |>
     dplyr::mutate(
       dplyr::across("sex", as.character),
       age_group = factor(
@@ -50,24 +54,43 @@ get_age_sex_data <- function() {
     )
 }
 
-get_diagnoses_data <- function() {
-  load_provider_data("diagnoses")
+get_diagnoses_data <- function(provider, fyear) {
+  load_provider_data("diagnoses") |>
+    dplyr::filter(
+      .data$provider == .env$provider,
+      .data$fyear == .env$fyear
+    )
 }
 
-get_procedures_data <- function() {
-  load_provider_data("procedures")
+get_procedures_data <- function(provider, fyear) {
+  load_provider_data("procedures") |>
+    dplyr::filter(
+      .data$provider == .env$provider,
+      .data$fyear == .env$fyear
+    )
 }
 
-get_baseline_data <- function() {
-  load_provider_data("baseline")
+get_baseline_data <- function(provider, fyear) {
+  load_provider_data("baseline") |>
+    dplyr::filter(
+      .data$provider == .env$provider,
+      .data$fyear == .env$fyear
+    )
 }
 
-get_inequalities_data <- function() {
-  load_provider_data("inequalities")
+get_inequalities_data <- function(provider, fyear) {
+  load_provider_data("inequalities") |>
+    dplyr::filter(
+      .data$provider == .env$provider,
+      .data$fyear == .env$fyear
+    )
 }
 
-get_expat_data <- function() {
-  load_provider_data("expat")
+get_expat_data <- function(provider) {
+  load_provider_data("expat") |>
+    dplyr::filter(
+      .data$provider == .env$provider
+    )
 }
 
 get_repat_local_data <- function() {

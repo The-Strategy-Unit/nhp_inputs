@@ -1,13 +1,7 @@
 #' expat_repat Server Functions
 #'
 #' @noRd
-mod_expat_repat_server <- function(
-  id,
-  expat_data,
-  repat_local_data,
-  repat_nonlocal_data,
-  params
-) {
+mod_expat_repat_server <- function(id, params) {
   providers <- get_lookups()[["providers"]]
 
   selected_time_profile <- update_time_profile <- NULL
@@ -28,6 +22,18 @@ mod_expat_repat_server <- function(
   mod_reasons_server(shiny::NS(id, "reasons"), params, "expat_repat")
 
   shiny::moduleServer(id, function(input, output, session) {
+    expat_data <- shiny::reactive({
+      get_expat_data(params$dataset)
+    })
+
+    repat_local_data <- shiny::reactive({
+      get_repat_local_data()
+    })
+
+    repat_nonlocal_data <- shiny::reactive({
+      get_repat_nonlocal_data()
+    })
+
     # helpers ----
 
     extract_expat_repat_data <- function(dat) {
@@ -58,24 +64,21 @@ mod_expat_repat_server <- function(
 
     # extract the expat data for the current selection
     expat <- shiny::reactive({
-      ds <- shiny::req(params$dataset)
-
-      expat_data |>
-        dplyr::filter(.data$provider == ds) |>
+      expat_data() |>
         extract_expat_repat_data() |>
         dplyr::select("fyear", "count")
     })
 
     # extract the repat local data for the current selection
     repat_local <- shiny::reactive({
-      repat_local_data |>
+      repat_local_data() |>
         extract_expat_repat_data() |>
         dplyr::select("fyear", "icb", "provider", "count", "pcnt")
     })
 
     # extract the repat nonlocal data for the current selection
     repat_nonlocal <- shiny::reactive({
-      repat_nonlocal_data |>
+      repat_nonlocal_data() |>
         extract_expat_repat_data() |>
         dplyr::select(
           "fyear",
