@@ -4,19 +4,13 @@
 mod_mitigators_summary_server <- function(id, age_sex_data, params) {
   shiny::moduleServer(id, function(input, output, session) {
     mitigators_summary <- shiny::reactive({
-      year <- as.character(shiny::req(params$start_year))
-
       strategy_codes <- dplyr::select(
         get_lookups()[["mitigators"]],
         "strategy_name" = "strategy_name_full",
         "strategy"
       )
 
-      age_sex_data |>
-        dplyr::filter(
-          .data[["fyear"]] == year,
-          .data[["provider"]] == params$dataset
-        ) |>
+      age_sex_data() |>
         dplyr::count(
           .data[["strategy"]],
           wt = .data[["n"]],
