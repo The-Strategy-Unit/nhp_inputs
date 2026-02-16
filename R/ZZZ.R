@@ -86,22 +86,33 @@ encrypt_filename <- function(
   openssl::base64_encode(c(hm, ct))
 }
 
+download_params_schema <- function(
+  data_path = app_sys("app", "data"),
+  app_version = Sys.getenv("INPUTS_DATA_VERSION", "dev")
+) {
+  file_path <- file.path(
+    data_path,
+    glue::glue("params-schema.json")
+  )
+
+  params_schema <- httr2::request(
+    "https://the-strategy-unit.github.io"
+  ) |>
+    httr2::req_url_path("nhp_model", app_version, "params-schema.json") |>
+    httr2::req_perform() |>
+    httr2::resp_body_string()
+
+  readr::write_lines(params_schema, file_path)
+
+  invisible(file_path)
+}
+
 get_params_schema_text <- function(
   app_version = Sys.getenv("INPUTS_DATA_VERSION", "dev")
 ) {
-  tf <- tempfile()
+  file_path <- app_sys("app", "data", glue::glue("params-schema.json"))
 
-  utils::download.file(
-    glue::glue(
-      "https://the-strategy-unit.github.io/nhp_model/{app_version}/params-schema.json"
-    ),
-    tf
-  )
-  # append a newline to the end of the params-schema file, otherwise you get a warning
-  # "incomplete final line found"
-  cat("\n", file = tf, append = TRUE)
-
-  paste(readLines(tf), collapse = "\n")
+  readr::read_file(file_path)
 }
 
 create_params_schema <- function(schema_text) {
