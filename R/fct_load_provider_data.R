@@ -1,3 +1,5 @@
+.data_cache <- new.env()
+
 #' Get Provider Data
 #'
 #' Read the parquet file containing a selected type of provider data.
@@ -6,9 +8,12 @@
 #' @param inputs_data_version The version of the inputs data to use.
 #' @return A tibble.
 load_provider_data <- function(file, data_path = app_sys("app", "data")) {
-  file.path(data_path, glue::glue("{file}.parquet")) |>
-    arrow::read_parquet() |>
-    tibble::as_tibble()
+  if (!exists(file, envir = .data_cache)) {
+    .data_cache[[file]] <- file.path(data_path, glue::glue("{file}.parquet")) |>
+      arrow::read_parquet() |>
+      tibble::as_tibble()
+  }
+  .data_cache[[file]]
 }
 
 get_rates_data <- function() {
