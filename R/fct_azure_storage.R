@@ -31,20 +31,54 @@ download_provider_data <- function(
 #'
 #' @return the adls filesystem
 get_adls_fs <- function() {
-  ep_uri <- Sys.getenv("LOCAL_STORAGE_EP")
+  ep_uri <- Sys.getenv("AZ_STORAGE_EP")
 
-  ep <- if (ep_uri != "") {
-    sa_key <- Sys.getenv("LOCAL_STORAGE_KEY")
-
-    AzureStor::adls_endpoint(ep_uri, key = sa_key)
+  resource <- "https://storage.azure.com/"
+  token <- if (imds_available()) {
+    AzureAuth::get_managed_token(resource)
   } else {
-    ep_uri <- Sys.getenv("AZ_STORAGE_EP")
-    token <- AzureAuth::get_managed_token("https://storage.azure.com/") |>
-      AzureAuth::extract_jwt()
-
-    AzureStor::adls_endpoint(ep_uri, token = token)
+    AzureAuth::get_azure_token(
+      resource = resource,
+      tenant = "common",
+      app = "04b07795-8ddb-461a-bbee-02f9e1bf7b46",
+      auth_type = "authorization_code"
+    )
   }
+
+  ep <- AzureStor::adls_endpoint(ep_uri, token = token)
+
   AzureStor::adls_filesystem(ep, Sys.getenv("AZ_STORAGE_CONTAINER"))
+}
+
+#' Check if Azure Instance Metadata Service (IMDS) is Available
+#'
+#' This function checks if the Azure Instance Metadata Service (IMDS) is
+#' available by attempting to make a request to the IMDS endpoint. The result is
+#' cached in an environment variable for future use, saving the need for
+#' repeated checks.
+#'
+#' You can also set the `IMDS_AVAILABLE` environment variable manually to
+#' "true" or "false" to override the automatic check, which can be useful for
+#' testing or in environments where the check may not work correctly.
+imds_available <- function() {
+  available <- Sys.getenv("IMDS_AVAILABLE")
+
+  if (available == "") {
+    imds_available <- tryCatch(
+      {
+        Sys.getenv("MSI_ENDPOINT", "http://169.254.169.254/metadata/identity/oauth2") |>
+          httr2::request() |>
+          httr2::req_headers(Metadata = "true") |>
+          httr2::req_timeout(0.2) |>
+          httr2::req_perform()
+
+        TRUE
+      },
+      error = function(e) FALSE
+    )
+    Sys.setenv(IMDS_AVAILABLE = imds_available)
+  }
+  as.logical(imds_available)
 }
 
 #' Get All Data Files
