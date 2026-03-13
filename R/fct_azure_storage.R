@@ -66,7 +66,10 @@ imds_available <- function() {
   if (available == "") {
     imds_available <- tryCatch(
       {
-        Sys.getenv("MSI_ENDPOINT", "http://169.254.169.254/metadata/identity/oauth2") |>
+        Sys.getenv(
+          "MSI_ENDPOINT",
+          "http://169.254.169.254/metadata/identity/oauth2"
+        ) |>
           httr2::request() |>
           httr2::req_headers(Metadata = "true") |>
           httr2::req_timeout(0.2) |>
