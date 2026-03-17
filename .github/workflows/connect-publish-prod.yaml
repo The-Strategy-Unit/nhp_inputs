@@ -16,7 +16,7 @@ jobs:
       INPUTS_DATA_VERSION: ${{ steps.set-variables.outputs.INPUTS_DATA_VERSION }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Get version
         id: set-variables
