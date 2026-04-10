@@ -82,6 +82,7 @@ app_server <- function(input, output, session) {
     # nolint end
     age_sex |>
       dplyr::mutate(
+        dplyr::across("sex", as.character),
         age_group = factor(
           .data[["age_group"]],
           levels = .env[["age_fct"]]
