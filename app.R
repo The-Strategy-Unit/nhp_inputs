@@ -6,6 +6,7 @@ app_version_choices <- jsonlite::fromJSON(Sys.getenv(
 # CONSTANTS ----
 maximum_model_horizon_year <- 2041
 default_baseline_year <- 2024
+min_baseline_year <- 2023
 
 # HELPERS ----
 
@@ -654,7 +655,7 @@ server <- function(input, output, session) {
         (p$start_year <= 9999) # fmt:skip
     )
 
-    if (p$start_year >= 2023) {
+    if (p$start_year >= min_baseline_year) {
       y <- p$start_year * 100 + p$start_year %% 100 + 1
       # we don't need to update dataset: the parameters files that are listed in
       # the previous scenario dropdown are already tied to that provider
@@ -808,7 +809,7 @@ server <- function(input, output, session) {
 
       # Warn user they can't upgrade certain scenarios, disable interaction
 
-      is_deprecated_start_year <- p[["start_year"]] < 2023
+      is_deprecated_start_year <- p[["start_year"]] < min_baseline_year
       is_ndg1 <- p[["non-demographic_adjustment"]][["variant"]] == "variant_1"
 
       if (is_deprecated_start_year) {
