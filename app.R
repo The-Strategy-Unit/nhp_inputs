@@ -4,7 +4,7 @@ app_version_choices <- jsonlite::fromJSON(Sys.getenv(
 ))
 
 # CONSTANTS ----
-maximum_model_horizon_year <- 2041
+maximum_model_horizon_year <- 2047
 default_baseline_year <- 2023
 
 # HELPERS ----
@@ -690,7 +690,7 @@ server <- function(input, output, session) {
   }) |>
     shiny::bindEvent(selected_providers())
 
-  # the end-year range should be 1 year after the start year to the year 2041/42,
+  # the end-year range should be 1 year after the start year to max horizon,
   # which will also be the default if starting from scratch.
   shiny::observe({
     start_yr <- as.numeric(stringr::str_sub(input$start_year, 1, 4))
