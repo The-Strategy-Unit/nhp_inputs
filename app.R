@@ -319,7 +319,18 @@ ui_body <- function() {
           (default_baseline_year * 100) + ((default_baseline_year + 1) %% 100)
         )
       ),
-      shiny::htmlOutput("baseline_202324_warning"),
+      shiny::div(
+        id = "baseline_warning",
+        shiny::icon("circle-info"),
+        shiny::HTML(
+          "You must request and review your 2023/24 detailed baseline data before
+        selecting 2023/24 as the baseline year. Please contact
+        <a href='mailto:mlcsu.su.datascience@nhs.net?subject=NHP request:
+        2023/24 baseline data&body=I am requesting the 2023/24 detailed baseline
+        data for [insert scheme name].'>mlcsu.su.datascience@nhs.net</a> to
+        request your 2023/24 detailed baseline data.<br><br>"
+        )
+      ),
       shiny::selectInput(
         "end_year",
         "Model Financial Year",
@@ -348,6 +359,7 @@ ui_body <- function() {
       shinyjs::hidden(
         shiny::div(
           id = "upgrade_warning",
+          shiny::icon("circle-info"),
           shiny::HTML(
             "Editing an existing scenario will automatically upgrade it to the
             latest model version. See a full list of changes on
@@ -366,33 +378,35 @@ ui_body <- function() {
       shinyjs::hidden(
         shiny::div(
           id = "pop_proj_warning",
+          shiny::icon("circle-info"),
           shiny::HTML(
-            "<font color='red'>Your scenario will be upgraded to work with the
+            "Your scenario will be upgraded to work with the
             latest version of the model. From v4.0 the model uses the 2022 ONS
             population projections, so your population-growth selections will
-            be reset to the new default. Please review this change.</font><p>"
+            be reset to the new default. Please review this change.<p>"
           )
         )
       ),
       shinyjs::hidden(
         shiny::div(
           id = "start_year_warning",
+          shiny::icon("triangle-exclamation"),
           shiny::HTML(
-            "<font color='red'>The selected scenario has a baseline year prior
-            to 2023/24 and cannot be upgraded. See
-            <a href='https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/model_updates.html#v4.0'>
-            the model updates page</a> for details.</font>"
+            "The selected scenario has a baseline year prior to 2023/24 and
+            cannot be upgraded. See <a href='https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/model_updates.html#v4.0'>
+            the model updates page</a> for details."
           )
         )
       ),
       shinyjs::hidden(
         shiny::div(
           id = "ndg_warning",
+          shiny::icon("triangle-exclamation"),
           shiny::HTML(
-            "<font color='red'>You cannot upgrade a scenario that contains
+            "You cannot upgrade a scenario that contains
             Variant 1 of the non-demographic growth (NDG) adjustment. See
             <a href='https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/model_updates.html#v3.3'>
-            the model updates page</a> for details.</font>"
+            the model updates page</a> for details."
           )
         )
       ),
@@ -885,18 +899,6 @@ server <- function(input, output, session) {
     }
   }) |>
     shiny::bindEvent(filename(), params_with_inputs())
-
-  output$baseline_202324_warning <- shiny::renderText({
-    if (input$start_year == "202324") {
-      "<font color='red'>You must request and review your 2023/24 detailed
-      baseline data before selecting 2023/24 as the baseline year. Please
-      contact <a href='mailto:mlcsu.su.datascience@nhs.net?subject=NHP request:
-      2023/24 baseline data&body=I am requesting the 2023/24 detailed baseline
-      data for [insert scheme name].'>mlcsu.su.datascience@nhs.net</a> to
-      request your 2023/24 detailed baseline data.</font><br><br>"
-    }
-  }) |>
-    shiny::bindEvent(input$start_year)
 
   # return ----
   NULL
