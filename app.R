@@ -5,7 +5,7 @@ app_version_choices <- jsonlite::fromJSON(Sys.getenv(
 
 # CONSTANTS ----
 maximum_model_horizon_year <- 2041
-default_baseline_year <- 2023
+default_baseline_year <- 2024
 
 # HELPERS ----
 
@@ -314,12 +314,12 @@ ui_body <- function() {
         "start_year",
         "Baseline Financial Year",
         # TODO: revisit why start year and end year are formatted differently
-        choices = c("2023/24" = 202324),
+        choices = c("2023/24" = 202324, "2024/25" = 202425),
         selected = as.character(
           (default_baseline_year * 100) + ((default_baseline_year + 1) %% 100)
         )
       ),
-      shiny::htmlOutput("baseline_202324_warning"),
+      shiny::htmlOutput("baseline_warning"),
       shiny::selectInput(
         "end_year",
         "Model Financial Year",
@@ -886,15 +886,13 @@ server <- function(input, output, session) {
   }) |>
     shiny::bindEvent(filename(), params_with_inputs())
 
-  output$baseline_202324_warning <- shiny::renderText({
-    if (input$start_year == "202324") {
-      "<font color='red'>You must request and review your 2023/24 detailed
-      baseline data before selecting 2023/24 as the baseline year. Please
-      contact <a href='mailto:mlcsu.su.datascience@nhs.net?subject=NHP request:
-      2023/24 baseline data&body=I am requesting the 2023/24 detailed baseline
-      data for [insert scheme name].'>mlcsu.su.datascience@nhs.net</a> to
-      request your 2023/24 detailed baseline data.</font><br><br>"
-    }
+  output$baseline_warning <- shiny::renderText({
+    "<font color='red'>You must request and review your detailed
+      baseline data before running the model. Please contact
+      <a href='mailto:mlcsu.su.datascience@nhs.net?subject=NHP request:
+      detailed baseline data&body=I am requesting the detailed baseline
+      data for [scheme name] for financial year [YYYY/YY].'>mlcsu.su.datascience@nhs.net</a> to
+      request your detailed baseline data for a given financial year.</font><br><br>"
   }) |>
     shiny::bindEvent(input$start_year)
 
