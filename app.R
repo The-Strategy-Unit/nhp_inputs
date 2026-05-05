@@ -315,7 +315,7 @@ ui_body <- function() {
         "start_year",
         "Baseline Financial Year",
         # TODO: revisit why start year and end year are formatted differently
-        choices = c("2023/24" = 202324, "2024/25" = 202425),
+        choices = c("2023/24" = 202324),
         selected = as.character(
           (default_baseline_year * 100) + ((default_baseline_year + 1) %% 100)
         )
@@ -642,6 +642,16 @@ server <- function(input, output, session) {
       shinyjs::enable("app_version")
       shinyjs::enable("selected_user")
       shinyjs::show("selected_user")
+
+      if (
+        is_local() || is_power_user || "nhp_allow_2024_data" %in% session$groups
+      ) {
+        shiny::updateSelectInput(
+          session,
+          "start_year",
+          choices = c("2023/24" = 202324, "2024/25" = 202425)
+        )
+      }
     }
   })
 
