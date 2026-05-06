@@ -4,7 +4,8 @@ app_version_choices <- jsonlite::fromJSON(Sys.getenv(
 ))
 
 # CONSTANTS ----
-maximum_model_horizon_year <- 2041
+maximum_model_horizon_year <- 2047
+default_horizon_year <- 2041
 default_baseline_year <- 2023
 
 # HELPERS ----
@@ -337,7 +338,7 @@ ui_body <- function() {
         choices = generate_year_dropdown_choices(
           (default_baseline_year + 1):maximum_model_horizon_year
         ),
-        selected = as.character(maximum_model_horizon_year)
+        selected = as.character(default_horizon_year)
       )
     ),
     bs4Dash::box(
@@ -704,8 +705,7 @@ server <- function(input, output, session) {
   }) |>
     shiny::bindEvent(selected_providers())
 
-  # the end-year range should be 1 year after the start year to the year 2041/42,
-  # which will also be the default if starting from scratch.
+  # the end-year range should be 1 year after the start year to max horizon
   shiny::observe({
     start_yr <- as.numeric(stringr::str_sub(input$start_year, 1, 4))
 
@@ -713,9 +713,9 @@ server <- function(input, output, session) {
       (start_yr + 1):maximum_model_horizon_year
     )
 
-    # Set end year to latest year, otherwise the year stored in existing params
+    # Set end year to default horizon otherwise the year stored in existing params
     selected_end_year <- if (input$scenario_type == "Create new from scratch") {
-      maximum_model_horizon_year
+      default_horizon_year
     } else {
       shiny::req(params())$end_year
     }
