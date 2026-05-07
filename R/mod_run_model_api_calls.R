@@ -66,7 +66,11 @@ mod_run_model_submit <- function(
           )
         )
 
-        mod_run_model_check_container_status(results[["id"]], status)
+        mod_run_model_check_container_status(
+          results[["dataset"]],
+          results[["model_run_id"]],
+          status
+        )
       }
     ) |>
     promises::catch(
@@ -78,13 +82,15 @@ mod_run_model_submit <- function(
 }
 
 mod_run_model_check_container_status <- function(
-  id,
+  dataset,
+  model_run_id,
   status,
   error_counter = 10
 ) {
+  id <- glue::glue("{dataset} | {model_run_id}")
   if (error_counter == 0) {
     cat(
-      "error checking status for id: ",
+      "error checking status for model run id: ",
       id,
       ". too many attempts\n",
       sep = ""
@@ -99,7 +105,7 @@ mod_run_model_check_container_status <- function(
       # wait 10 seconds before checking
       Sys.sleep(10)
       req <- httr2::request(Sys.getenv("NHP_API_URI")) |>
-        httr2::req_url_path("api", "model_run_status", id) |>
+        httr2::req_url_path("api", "model_run_status", dataset, model_run_id) |>
         httr2::req_url_query(code = Sys.getenv("NHP_API_KEY"))
 
       httr2::req_perform(req)
@@ -170,14 +176,19 @@ mod_run_model_check_container_status <- function(
         }
 
         # recursive call
-        mod_run_model_check_container_status(id, status, 10)
+        mod_run_model_check_container_status(dataset, model_run_id, status, 10)
       }
     ) |>
     promises::catch(
       \(error) {
         cat("error:", error$message, "\n")
         # recursive call
-        mod_run_model_check_container_status(id, status, error_counter - 1)
+        mod_run_model_check_container_status(
+          dataset,
+          model_run_id,
+          status,
+          error_counter - 1
+        )
       }
     )
 }
