@@ -7,6 +7,7 @@ app_version_choices <- jsonlite::fromJSON(Sys.getenv(
 maximum_model_horizon_year <- 2047
 default_horizon_year <- 2041
 default_baseline_year <- 2023
+min_baseline_year <- 2023
 
 # HELPERS ----
 
@@ -315,22 +316,26 @@ ui_body <- function() {
         "start_year",
         "Baseline Financial Year",
         # TODO: revisit why start year and end year are formatted differently
-        choices = c("2023/24" = 202324),
+        choices = c("2023/24" = 202324), # conditionally updated later
         selected = as.character(
           (default_baseline_year * 100) + ((default_baseline_year + 1) %% 100)
         )
       ),
       shiny::div(
         id = "baseline_warning",
+        style = "margin-bottom: 1rem;",
         shiny::icon("circle-info"),
-        shiny::HTML(
-          "You must request and review your 2023/24 detailed baseline data before
-        selecting 2023/24 as the baseline year. Please contact
-        <a href='mailto:mlcsu.su.datascience@nhs.net?subject=NHP request:
-        2023/24 baseline data&body=I am requesting the 2023/24 detailed baseline
-        data for [insert scheme name].'>mlcsu.su.datascience@nhs.net</a> to
-        request your 2023/24 detailed baseline data.<br><br>"
-        )
+        "You must",
+        shiny::a(
+          "request your detailed baseline data",
+          href = paste0(
+            "mailto:mlcsu.su.datascience@nhs.net?subject=NHP request: ",
+            "detailed baseline data&body=I am requesting the detailed ",
+            "baseline data for [scheme name] for financial year [YYYY/YY], as ",
+            "instructed in the NHP inputs app."
+          ),
+        ),
+        "and review it before you run the model."
       ),
       shiny::selectInput(
         "end_year",
@@ -360,13 +365,18 @@ ui_body <- function() {
       shinyjs::hidden(
         shiny::div(
           id = "upgrade_warning",
+          style = "margin-bottom: 1rem;",
           shiny::icon("circle-info"),
-          shiny::HTML(
-            "Editing an existing scenario will automatically upgrade it to the
-            latest model version. See a full list of changes on
-            <a href='https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/model_updates.html'>the model updates page</a>.
-            <br><br>"
-          )
+          "Editing an existing scenario will automatically upgrade it to",
+          "the latest model version. See",
+          shiny::a(
+            "the model updates page",
+            href = paste0(
+              "https://connect.strategyunitwm.nhs.uk/nhp/project_information/",
+              "project_plan_and_summary/model_updates.html"
+            )
+          ),
+          "for a full list of changes."
         )
       ),
       shinyjs::hidden(
@@ -379,47 +389,57 @@ ui_body <- function() {
       shinyjs::hidden(
         shiny::div(
           id = "pop_proj_warning",
+          style = "margin-bottom: 1rem;",
           shiny::icon("circle-info"),
-          shiny::HTML(
-            "Your scenario will be upgraded to work with the
-            latest version of the model. From v4.0 the model uses the 2022 ONS
-            population projections, so your population-growth selections will
-            be reset to the new default. Please review this change.<p>"
-          )
+          "Your scenario will be upgraded to work with the latest version of",
+          "the model. From v4.0 the model uses the 2022 ONS population",
+          "projections, so your population-growth selections will be reset to",
+          "the new default. Please review this change."
         )
       ),
       shinyjs::hidden(
         shiny::div(
           id = "start_year_warning",
+          style = "margin-bottom: 1rem;",
           shiny::icon("triangle-exclamation"),
-          shiny::HTML(
-            "The selected scenario has a baseline year prior to 2023/24 and
-            cannot be upgraded. See <a href='https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/model_updates.html#v4.0'>
-            the model updates page</a> for details."
-          )
+          "The selected scenario has a baseline year prior to 2023/24 and",
+          "cannot be upgraded. See",
+          shiny::a(
+            "the model updates page",
+            href = paste0(
+              "https://connect.strategyunitwm.nhs.uk/nhp/project_information/",
+              "project_plan_and_summary/model_updates.html#v4.0.0"
+            )
+          ),
+          "for reasoning"
         )
       ),
       shinyjs::hidden(
         shiny::div(
           id = "ndg_warning",
+          style = "margin-bottom: 1rem;",
           shiny::icon("triangle-exclamation"),
-          shiny::HTML(
-            "You cannot upgrade a scenario that contains
-            Variant 1 of the non-demographic growth (NDG) adjustment. See
-            <a href='https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/model_updates.html#v3.3'>
-            the model updates page</a> for details."
+          "You cannot upgrade a scenario that contains Variant 1 of the",
+          "non-demographic growth (NDG) adjustment. See",
+          shiny::a(
+            "the model updates page",
+            href = paste0(
+              "https://connect.strategyunitwm.nhs.uk/nhp/project_information/",
+              "project_plan_and_summary/model_updates.html#v3.3"
+            ),
+            "for reasoning."
           )
         )
       ),
       shiny::textInput("scenario", "Name"),
       shiny::div(
         id = "naming_guidance",
+        style = "margin-top: -5px; margin-bottom: 8px",
         "Please follow",
         shiny::a(
           "the model-run naming guidelines.",
           href = "https://connect.strategyunitwm.nhs.uk/nhp/project_information/user_guide/naming_scenarios.html"
         ),
-        style = "margin-top: -5px; margin-bottom: 8px"
       ),
       shiny::uiOutput("start_button")
     ),
@@ -657,6 +677,17 @@ server <- function(input, output, session) {
       shinyjs::enable("selected_user")
       shinyjs::show("selected_user")
     }
+
+    if (
+      is_local() || is_power_user || "nhp_allow_2024_data" %in% session$groups
+    ) {
+      shiny::updateSelectInput(
+        session,
+        "start_year",
+        choices = c("2023/24" = 202324, "2024/25" = 202425),
+        selected = 202425
+      )
+    }
   })
 
   # when params change, update inputs
@@ -669,7 +700,7 @@ server <- function(input, output, session) {
         (p$start_year <= 9999) # fmt:skip
     )
 
-    if (p$start_year >= 2023) {
+    if (p$start_year >= min_baseline_year) {
       y <- p$start_year * 100 + p$start_year %% 100 + 1
       # we don't need to update dataset: the parameters files that are listed in
       # the previous scenario dropdown are already tied to that provider
@@ -822,7 +853,7 @@ server <- function(input, output, session) {
 
       # Warn user they can't upgrade certain scenarios, disable interaction
 
-      is_deprecated_start_year <- p[["start_year"]] < 2023
+      is_deprecated_start_year <- p[["start_year"]] < min_baseline_year
       is_ndg1 <- p[["non-demographic_adjustment"]][["variant"]] == "variant_1"
 
       if (is_deprecated_start_year) {
