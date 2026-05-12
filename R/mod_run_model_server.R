@@ -52,8 +52,20 @@ mod_run_model_server <- function(id, params, schema_text) {
       p <- shiny::req(fixed_params())
       j <- shiny::req(params_json())
 
+      # decide whether the results are viewable to all users: if this is false
+      # then only nhp_devs/nhp_power_users can view the results
+      viewable <- input$results_viewable
+      full_model_results <- input$full_model_results
+
       # submit the model run
-      mod_run_model_submit(j, p$app_version, status, results_url)
+      mod_run_model_submit(
+        j,
+        p$app_version,
+        viewable,
+        full_model_results,
+        status,
+        results_url
+      )
 
       # do not return the promise
       invisible(NULL)

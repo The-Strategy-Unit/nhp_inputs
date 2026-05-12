@@ -2,6 +2,8 @@
 mod_run_model_submit <- function(
   params_json,
   app_version,
+  viewable,
+  full_model_results,
   status,
   results_url
 ) {
@@ -21,7 +23,9 @@ mod_run_model_submit <- function(
     httr2::req_url_path("api", "run_model") |>
     httr2::req_url_query(
       app_version = app_version,
-      code = Sys.getenv("NHP_API_KEY")
+      code = Sys.getenv("NHP_API_KEY"),
+      save_full_model_results = tolower(as.character(full_model_results)),
+      results_viewable = tolower(as.character(viewable))
     ) |>
     httr2::req_body_raw(params_json, "application/json") |>
     httr2::req_method("POST")
