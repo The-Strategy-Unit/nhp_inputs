@@ -109,6 +109,17 @@ mod_run_model_server <- function(id, params, schema_text) {
       shinyjs::toggleState("download_params", condition = v)
     })
 
+    shiny::observe({
+      show_advanced_options <- any(
+        c("nhp_devs", "nhp_power_users") %in% session$groups
+      )
+      enable_model_run_args <- show_advanced_options || is_local()
+
+      shinyjs::toggle("model_run_args", enable_model_run_args)
+      shinyjs::toggleState("results_viewable", enable_model_run_args)
+      shinyjs::toggleState("full_model_results", enable_model_run_args)
+    })
+
     # download the params when the download button is pressed
     # shiny downloadHandlers do not handle errors well, returning a .html file
     # instead of the intended content. we handle this by disabling the button
