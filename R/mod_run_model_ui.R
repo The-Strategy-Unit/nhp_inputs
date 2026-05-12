@@ -12,6 +12,29 @@ mod_run_model_ui <- function(id) {
   shiny::fluidRow(
     col_4(
       mod_reasons_ui(ns("reasons")),
+      shinyjs::hidden(
+        shiny::div(
+          id = ns("model_run_args"),
+          bs4Dash::box(
+            title = "Model Run Arguments",
+            width = 12,
+            shinyjs::disabled(
+              shiny::checkboxInput(
+                ns("results_viewable"),
+                "Make results viewable to all users",
+                value = TRUE
+              )
+            ),
+            shinyjs::disabled(
+              shiny::checkboxInput(
+                ns("full_model_results"),
+                "Save full model results",
+                value = FALSE
+              )
+            )
+          )
+        )
+      ),
       bs4Dash::box(
         title = "Run Model",
         width = 12,
