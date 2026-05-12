@@ -43,30 +43,19 @@ mod_run_model_submit <- function(
 
         status("Submitted Model Run")
 
-        version <- results$app_version
-        # generate the results url
-        # nolint start: object_usage_linter
-        f <- encrypt_filename(
-          file.path(
-            "prod",
-            version,
-            results$dataset,
-            glue::glue("{results$scenario}-{results$create_datetime}.json.gz"),
-            fsep = "/"
-          )
-        )
-        # nolint end
-
         # update version for the url
         version <- stringr::str_replace(
-          version,
+          results$app_version,
           "^v(\\d)+\\.(\\d+).*",
           "v\\1-\\2"
         )
+        if (stringr::str_detect(version, "^v\\d+-\\d+$")) {
+          version <- "dev"
+        }
         results_url(
           glue::glue(
             Sys.getenv("NHP_OUTPUTS_URI"),
-            "?{utils::URLencode(f, TRUE)}"
+            "?{utils::URLencode(results$outputs_app_uri, TRUE)}"
           )
         )
 
