@@ -49,7 +49,7 @@ mod_run_model_submit <- function(
           "^v(\\d)+\\.(\\d+).*",
           "v\\1-\\2"
         )
-        if (stringr::str_detect(version, "^v\\d+-\\d+$")) {
+        if (!stringr::str_detect(version, "^v\\d+-\\d+$")) {
           version <- "dev"
         }
         results_url(
