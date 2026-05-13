@@ -130,6 +130,15 @@ mod_run_model_server <- function(id, params, schema_text) {
       shinyjs::toggle("model_run_args", enable_model_run_args)
       shinyjs::toggleState("results_viewable", enable_model_run_args)
       shinyjs::toggleState("full_model_results", enable_model_run_args)
+
+      # by default, if we are in dev or it's a dev/power user, we should set
+      # the results to not be viewable
+      app_is_dev_version <- !stringr::str_starts(params$app_version, "v")
+      shiny::updateCheckboxInput(
+        session,
+        "results_viewable",
+        value = !(show_advanced_options || app_is_dev_version)
+      )
     })
 
     # download the params when the download button is pressed
