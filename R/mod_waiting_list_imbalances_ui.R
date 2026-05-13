@@ -32,8 +32,7 @@ mod_waiting_list_imbalances_ui <- function(id) {
           width = 12,
           md_file_to_html("app", "text", "waiting_list_imbalances.md")
         ),
-        mod_reasons_ui(ns("reasons")),
-        mod_time_profile_ui(ns("time_profile"))
+        mod_reasons_ui(ns("reasons"))
       ),
       bs4Dash::box(
         collapsible = FALSE,
