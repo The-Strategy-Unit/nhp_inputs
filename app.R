@@ -617,9 +617,6 @@ server <- function(input, output, session) {
       p$seed <- sample(1:100000, 1)
     }
     p$user <- current_user()
-    # decide whether the results are viewable to all users: if this is false
-    # then only nhp_devs/nhp_power_users can view the results
-    p$viewable <- any(stringr::str_starts(session$groups, "nhp_provider"))
 
     return(p)
   }) |>
