@@ -6,8 +6,11 @@
 app_ui <- function(request) {
   # handle loading the provided filename
 
-  f <- utils::URLdecode(stringr::str_sub(request$QUERY_STRING, 2L))
-
+  f <- if (getOption("shiny.devmode", default = FALSE)) {
+    "test.json"
+  } else {
+    utils::URLdecode(stringr::str_sub(request$QUERY_STRING, 2L))
+  }
   file <- file.path(get_golem_config("params_data_path"), "tmp", f)
 
   if (f == "" || !file.exists(file)) {

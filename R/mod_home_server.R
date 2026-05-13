@@ -22,8 +22,10 @@ mod_home_server <- function(id, filename) {
       # copy the loaded params into params
       purrr::walk(names(p), \(i) params[[i]] <- p[[i]])
 
-      # remove the temporary file
-      unlink(filename())
+      if (!getOption("shiny.devmode", default = FALSE)) {
+        # remove the temporary file
+        unlink(filename())
+      }
 
       init$destroy()
     })
