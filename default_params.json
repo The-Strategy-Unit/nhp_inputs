@@ -4,7 +4,7 @@
   "scenario": null,
   "seed": null,
   "model_runs": 256,
-  "start_year": 2019,
+  "start_year": 2024,
   "end_year": 2041,
   "app_version": null,
   "demographic_factors": {},

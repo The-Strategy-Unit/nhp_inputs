@@ -6,7 +6,7 @@ app_version_choices <- jsonlite::fromJSON(Sys.getenv(
 # CONSTANTS ----
 maximum_model_horizon_year <- 2047
 default_horizon_year <- 2041
-default_baseline_year <- 2023
+default_baseline_year <- 2024
 min_baseline_year <- 2023
 
 # HELPERS ----
@@ -316,7 +316,7 @@ ui_body <- function() {
         "start_year",
         "Baseline Financial Year",
         # TODO: revisit why start year and end year are formatted differently
-        choices = c("2023/24" = 202324), # conditionally updated later
+        choices = c("2023/24" = 202324, "2024/25" = 202425),
         selected = as.character(
           (default_baseline_year * 100) + ((default_baseline_year + 1) %% 100)
         )
@@ -673,17 +673,6 @@ server <- function(input, output, session) {
       shinyjs::enable("app_version")
       shinyjs::enable("selected_user")
       shinyjs::show("selected_user")
-    }
-
-    if (
-      is_local() || is_power_user || "nhp_allow_2024_data" %in% session$groups
-    ) {
-      shiny::updateSelectInput(
-        session,
-        "start_year",
-        choices = c("2023/24" = 202324, "2024/25" = 202425),
-        selected = 202425
-      )
     }
   })
 
