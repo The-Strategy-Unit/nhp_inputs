@@ -52,12 +52,12 @@ mod_run_model_submit <- function(
         if (!stringr::str_detect(version, "^v\\d+-\\d+$")) {
           version <- "dev"
         }
-        results_url(
-          glue::glue(
-            Sys.getenv("NHP_OUTPUTS_URI"),
-            "?{utils::URLencode(results$outputs_app_uri, TRUE)}"
-          )
+
+        url <- glue::glue(
+          "{Sys.getenv('NHP_OUTPUTS_URI')}?{results$dataset}/{results$model_run_id}"
         )
+        cat("results url: ", url, "\n", sep = "")
+        results_url(url)
 
         mod_run_model_check_container_status(
           results[["dataset"]],
