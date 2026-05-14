@@ -133,17 +133,20 @@ mod_run_model_check_container_status <- function(
             )
             status("Model running [saving results]")
           } else {
-            if (progress$aae > 0 || progress$outpatients >= model_runs) {
+            if (
+              progress[["AaE"]] > 0 || progress[["Outpatients"]] >= model_runs
+            ) {
               stage <- "A&E"
-              complete <- progress$aae
+              complete <- progress[["AaE"]]
             } else if (
-              progress$outpatients > 0 || progress$inpatients >= model_runs
+              progress[["Outpatients"]] > 0 ||
+                progress[["Inpatients"]] >= model_runs
             ) {
               stage <- "Outpatients"
-              complete <- progress$outpatients
+              complete <- progress[["Outpatients"]]
             } else {
               stage <- "Inpatients"
-              complete <- progress$inpatients
+              complete <- progress[["Inpatients"]]
             }
             pcnt <- scales::percent(complete / model_runs, 0.1)
 
