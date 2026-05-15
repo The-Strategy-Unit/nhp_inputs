@@ -2,6 +2,8 @@
 mod_run_model_submit <- function(
   params_json,
   app_version,
+  viewable,
+  full_model_results,
   status,
   results_url
 ) {
@@ -21,7 +23,9 @@ mod_run_model_submit <- function(
     httr2::req_url_path("api", "run_model") |>
     httr2::req_url_query(
       app_version = app_version,
-      code = Sys.getenv("NHP_API_KEY")
+      code = Sys.getenv("NHP_API_KEY"),
+      save_full_model_results = tolower(as.character(full_model_results)),
+      results_viewable = tolower(as.character(viewable))
     ) |>
     httr2::req_body_raw(params_json, "application/json") |>
     httr2::req_method("POST")
@@ -39,34 +43,27 @@ mod_run_model_submit <- function(
 
         status("Submitted Model Run")
 
-        version <- results$app_version
-        # generate the results url
-        # nolint start: object_usage_linter
-        f <- encrypt_filename(
-          file.path(
-            "prod",
-            version,
-            results$dataset,
-            glue::glue("{results$scenario}-{results$create_datetime}.json.gz"),
-            fsep = "/"
-          )
-        )
-        # nolint end
-
         # update version for the url
         version <- stringr::str_replace(
-          version,
+          results$app_version,
           "^v(\\d)+\\.(\\d+).*",
           "v\\1-\\2"
         )
-        results_url(
-          glue::glue(
-            Sys.getenv("NHP_OUTPUTS_URI"),
-            "?{utils::URLencode(f, TRUE)}"
-          )
-        )
+        if (!stringr::str_detect(version, "^v\\d+-\\d+$")) {
+          version <- "dev"
+        }
 
-        mod_run_model_check_container_status(results[["id"]], status)
+        url <- glue::glue(
+          "{Sys.getenv('NHP_OUTPUTS_URI')}?{results$dataset}/{results$model_run_id}"
+        )
+        cat("results url: ", url, "\n", sep = "")
+        results_url(url)
+
+        mod_run_model_check_container_status(
+          results[["dataset"]],
+          results[["model_run_id"]],
+          status
+        )
       }
     ) |>
     promises::catch(
@@ -78,13 +75,15 @@ mod_run_model_submit <- function(
 }
 
 mod_run_model_check_container_status <- function(
-  id,
+  dataset,
+  model_run_id,
   status,
   error_counter = 10
 ) {
+  id <- glue::glue("{dataset} | {model_run_id}")
   if (error_counter == 0) {
     cat(
-      "error checking status for id: ",
+      "error checking status for model run id: ",
       id,
       ". too many attempts\n",
       sep = ""
@@ -99,7 +98,7 @@ mod_run_model_check_container_status <- function(
       # wait 10 seconds before checking
       Sys.sleep(10)
       req <- httr2::request(Sys.getenv("NHP_API_URI")) |>
-        httr2::req_url_path("api", "model_run_status", id) |>
+        httr2::req_url_path("api", "model_run_status", dataset, model_run_id) |>
         httr2::req_url_query(code = Sys.getenv("NHP_API_KEY"))
 
       httr2::req_perform(req)
@@ -134,17 +133,20 @@ mod_run_model_check_container_status <- function(
             )
             status("Model running [saving results]")
           } else {
-            if (progress$aae > 0 || progress$outpatients >= model_runs) {
+            if (
+              progress[["AaE"]] > 0 || progress[["Outpatients"]] >= model_runs
+            ) {
               stage <- "A&E"
-              complete <- progress$aae
+              complete <- progress[["AaE"]]
             } else if (
-              progress$outpatients > 0 || progress$inpatients >= model_runs
+              progress[["Outpatients"]] > 0 ||
+                progress[["Inpatients"]] >= model_runs
             ) {
               stage <- "Outpatients"
-              complete <- progress$outpatients
+              complete <- progress[["Outpatients"]]
             } else {
               stage <- "Inpatients"
-              complete <- progress$inpatients
+              complete <- progress[["Inpatients"]]
             }
             pcnt <- scales::percent(complete / model_runs, 0.1)
 
@@ -170,14 +172,19 @@ mod_run_model_check_container_status <- function(
         }
 
         # recursive call
-        mod_run_model_check_container_status(id, status, 10)
+        mod_run_model_check_container_status(dataset, model_run_id, status, 10)
       }
     ) |>
     promises::catch(
       \(error) {
         cat("error:", error$message, "\n")
         # recursive call
-        mod_run_model_check_container_status(id, status, error_counter - 1)
+        mod_run_model_check_container_status(
+          dataset,
+          model_run_id,
+          status,
+          error_counter - 1
+        )
       }
     )
 }

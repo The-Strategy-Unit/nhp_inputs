@@ -52,8 +52,20 @@ mod_run_model_server <- function(id, params, schema_text) {
       p <- shiny::req(fixed_params())
       j <- shiny::req(params_json())
 
+      # decide whether the results are viewable to all users: if this is false
+      # then only nhp_devs/nhp_power_users can view the results
+      viewable <- input$results_viewable
+      full_model_results <- input$full_model_results
+
       # submit the model run
-      mod_run_model_submit(j, p$app_version, status, results_url)
+      mod_run_model_submit(
+        j,
+        p$app_version,
+        viewable,
+        full_model_results,
+        status,
+        results_url
+      )
 
       # do not return the promise
       invisible(NULL)
@@ -107,6 +119,26 @@ mod_run_model_server <- function(id, params, schema_text) {
 
       shinyjs::toggleState("submit", condition = v && !input$submit)
       shinyjs::toggleState("download_params", condition = v)
+    })
+
+    shiny::observe({
+      show_advanced_options <- any(
+        c("nhp_devs", "nhp_power_users") %in% session$groups
+      )
+      enable_model_run_args <- show_advanced_options || is_local()
+
+      shinyjs::toggle("model_run_args", enable_model_run_args)
+      shinyjs::toggleState("results_viewable", enable_model_run_args)
+      shinyjs::toggleState("full_model_results", enable_model_run_args)
+
+      # by default, if we are in dev or it's a dev/power user, we should set
+      # the results to not be viewable
+      app_is_dev_version <- !stringr::str_starts(params$app_version, "v")
+      shiny::updateCheckboxInput(
+        session,
+        "results_viewable",
+        value = !(show_advanced_options || app_is_dev_version)
+      )
     })
 
     # download the params when the download button is pressed
