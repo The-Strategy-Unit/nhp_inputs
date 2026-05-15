@@ -10,8 +10,7 @@
 mod_baseline_adjustment_ui <- function(id) {
   ns <- shiny::NS(id)
 
-  specs <- rtt_specialties() |>
-    dplyr::mutate(sanitized_code = sanitize_input_name(.data[["code"]]))
+  specs <- get_lookups()[["rtt_specialties"]]
 
   create_table <- function(at, g, df = specs) {
     df |>

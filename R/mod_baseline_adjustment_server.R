@@ -1,16 +1,21 @@
 #' baseline_adjustment Server Functions
 #'
 #' @noRd
-mod_baseline_adjustment_server <- function(id, baseline_data, params) {
+mod_baseline_adjustment_server <- function(id, params) {
   mod_reasons_server(shiny::NS(id, "reasons"), params, "baseline_adjustment")
 
+  rtt_specialties <- get_lookups()[["rtt_specialties"]]
+
   shiny::moduleServer(id, function(input, output, session) {
+    baseline_data <- shiny::reactive({
+      get_baseline_data(params$dataset, params$start_year)
+    })
+
     # static data ----
 
     # creates a table containing all of the options shown in the baseline adjustment page, including the input id
     # for each slider
-    specs <- rtt_specialties() |>
-      dplyr::mutate(sanitized_code = sanitize_input_name(.data[["code"]])) |>
+    specs <- rtt_specialties |>
       dplyr::cross_join(
         dplyr::bind_rows(
           ip = tibble::tibble(g = c("elective", "non-elective", "maternity")),
@@ -47,7 +52,7 @@ mod_baseline_adjustment_server <- function(id, baseline_data, params) {
       year <- as.character(shiny::req(params$start_year))
       # nolint end
 
-      baseline_data |>
+      baseline_data() |>
         dplyr::filter(
           .data[["fyear"]] == .env[["year"]],
           .data[["provider"]] == .env[["dataset"]]

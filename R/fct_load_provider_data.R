@@ -1,0 +1,102 @@
+.data_cache <- new.env()
+
+#' Get Provider Data
+#'
+#' Read the parquet file containing a selected type of provider data.
+#'
+#' @param file The name of the file to read.
+#' @param inputs_data_version The version of the inputs data to use.
+#' @return A tibble.
+load_provider_data <- function(file, data_path = app_sys("app", "data")) {
+  if (!exists(file, envir = .data_cache)) {
+    .data_cache[[file]] <- file.path(data_path, glue::glue("{file}.parquet")) |>
+      arrow::read_parquet() |>
+      tibble::as_tibble()
+  }
+  .data_cache[[file]]
+}
+
+get_rates_data <- function() {
+  rates <- load_provider_data("rates") |>
+    dplyr::select(-"crude_rate") |>
+    dplyr::rename(rate = "std_rate")
+
+  national_rate <- rates |>
+    dplyr::filter(
+      .data$provider == "national"
+    ) |>
+    dplyr::summarise(
+      .by = c("fyear", "strategy"),
+      national_rate = dplyr::first(.data$rate)
+    )
+
+  rates |>
+    dplyr::filter(.data$provider != "national") |>
+    dplyr::inner_join(national_rate, by = c("fyear", "strategy"))
+}
+
+get_age_sex_data <- function(provider, fyear) {
+  age_sex <- load_provider_data("age_sex")
+
+  age_fct <- sort(unique(age_sex[["age_group"]]))
+
+  age_sex |>
+    dplyr::filter(
+      .data$provider == .env$provider,
+      .data$fyear == .env$fyear
+    ) |>
+    dplyr::mutate(
+      dplyr::across("sex", as.character),
+      age_group = factor(
+        .data[["age_group"]],
+        levels = .env[["age_fct"]]
+      )
+    )
+}
+
+get_diagnoses_data <- function(provider, fyear) {
+  load_provider_data("diagnoses") |>
+    dplyr::filter(
+      .data$provider == .env$provider,
+      .data$fyear == .env$fyear
+    )
+}
+
+get_procedures_data <- function(provider, fyear) {
+  load_provider_data("procedures") |>
+    dplyr::filter(
+      .data$provider == .env$provider,
+      .data$fyear == .env$fyear
+    )
+}
+
+get_baseline_data <- function(provider, fyear) {
+  load_provider_data("baseline") |>
+    dplyr::filter(
+      .data$provider == .env$provider,
+      .data$fyear == .env$fyear
+    )
+}
+
+get_inequalities_data <- function(provider, fyear) {
+  load_provider_data("inequalities") |>
+    dplyr::filter(
+      .data$provider == .env$provider,
+      .data$fyear == .env$fyear
+    )
+}
+
+get_expat_data <- function(provider) {
+  load_provider_data("expat") |>
+    dplyr::filter(
+      .data$provider == .env$provider
+    )
+}
+
+get_repat_local_data <- function() {
+  load_provider_data("repat_local")
+}
+
+get_repat_nonlocal_data <- function() {
+  load_provider_data("repat_nonlocal")
+}

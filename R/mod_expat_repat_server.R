@@ -1,14 +1,9 @@
 #' expat_repat Server Functions
 #'
 #' @noRd
-mod_expat_repat_server <- function(
-  id,
-  expat_data,
-  repat_local_data,
-  repat_nonlocal_data,
-  params,
-  providers
-) {
+mod_expat_repat_server <- function(id, params) {
+  providers <- get_lookups()[["providers"]]
+
   selected_time_profile <- update_time_profile <- NULL
   # nolint start: object_usage_linter.
   c(selected_time_profile, update_time_profile) %<-%
@@ -18,17 +13,26 @@ mod_expat_repat_server <- function(
     )
   # nolint end
 
+  rtt_specialties <- get_lookups()[["rtt_specialties"]] |>
+    dplyr::select("specialty", "code") |>
+    tibble::deframe()
+
+  icb_boundaries <- get_lookups()[["icb_boundaries"]]
+
   mod_reasons_server(shiny::NS(id, "reasons"), params, "expat_repat")
 
   shiny::moduleServer(id, function(input, output, session) {
-    # static data ----
-    rtt_specialties <- rtt_specialties() |>
-      tibble::deframe()
-    icb_boundaries <- sf::read_sf(app_sys(
-      "app",
-      "data",
-      "icb_boundaries.geojson"
-    ))
+    expat_data <- shiny::reactive({
+      get_expat_data(params$dataset)
+    })
+
+    repat_local_data <- shiny::reactive({
+      get_repat_local_data()
+    })
+
+    repat_nonlocal_data <- shiny::reactive({
+      get_repat_nonlocal_data()
+    })
 
     # helpers ----
 
@@ -60,24 +64,21 @@ mod_expat_repat_server <- function(
 
     # extract the expat data for the current selection
     expat <- shiny::reactive({
-      ds <- shiny::req(params$dataset)
-
-      expat_data |>
-        dplyr::filter(.data$provider == ds) |>
+      expat_data() |>
         extract_expat_repat_data() |>
         dplyr::select("fyear", "count")
     })
 
     # extract the repat local data for the current selection
     repat_local <- shiny::reactive({
-      repat_local_data |>
+      repat_local_data() |>
         extract_expat_repat_data() |>
         dplyr::select("fyear", "icb", "provider", "count", "pcnt")
     })
 
     # extract the repat nonlocal data for the current selection
     repat_nonlocal <- shiny::reactive({
-      repat_nonlocal_data |>
+      repat_nonlocal_data() |>
         extract_expat_repat_data() |>
         dplyr::select(
           "fyear",

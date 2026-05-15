@@ -8,11 +8,9 @@ mod_non_demographic_adjustment_server <- function(id, params) {
     "non-demographic_adjustment"
   )
 
-  shiny::moduleServer(id, function(input, output, session) {
-    ndg_variants <- app_sys("app", "data", "ndg_variants.json") |>
-      jsonlite::read_json(simplifyVector = TRUE) |>
-      purrr::keep_at(c("variant_2", "variant_3"))
+  ndg_variants <- get_lookups()[["ndg_variants"]]
 
+  shiny::moduleServer(id, function(input, output, session) {
     # reactives ----
 
     non_demographic_adjustment <- shiny::reactive({

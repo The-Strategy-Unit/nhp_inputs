@@ -85,13 +85,17 @@ mod_expat_repat_ui <- function(id) {
           generate_param_controls("repat_local", 100, 500, c(100, 105)),
           shiny::fluidRow(
             col_6(
-              shiny::plotOutput(
-                ns("repat_local_plot"),
+              shinycssloaders::withSpinner(
+                shiny::plotOutput(
+                  ns("repat_local_plot"),
+                )
               )
             ),
             col_6(
-              shiny::plotOutput(
-                ns("repat_local_split_plot")
+              shinycssloaders::withSpinner(
+                shiny::plotOutput(
+                  ns("repat_local_split_plot")
+                )
               )
             )
           )
@@ -102,18 +106,24 @@ mod_expat_repat_ui <- function(id) {
           generate_param_controls("repat_nonlocal", 100, 500, c(100, 105)),
           shiny::fluidRow(
             col_4(
-              shiny::plotOutput(
-                ns("repat_nonlocal_pcnt_plot")
+              shinycssloaders::withSpinner(
+                shiny::plotOutput(
+                  ns("repat_nonlocal_pcnt_plot")
+                )
               )
             ),
             col_4(
-              shiny::plotOutput(
-                ns("repat_nonlocal_n")
+              shinycssloaders::withSpinner(
+                shiny::plotOutput(
+                  ns("repat_nonlocal_n")
+                )
               )
             ),
             col_4(
-              leaflet::leafletOutput(
-                ns("repat_nonlocal_icb_map")
+              shinycssloaders::withSpinner(
+                leaflet::leafletOutput(
+                  ns("repat_nonlocal_icb_map")
+                )
               )
             )
           )

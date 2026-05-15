@@ -4,33 +4,13 @@
 mod_mitigators_summary_server <- function(id, age_sex_data, params) {
   shiny::moduleServer(id, function(input, output, session) {
     mitigators_summary <- shiny::reactive({
-      year <- as.character(shiny::req(params$start_year))
-
-      strategy_codes <- readr::read_csv(
-        app_sys("app", "data", "mitigator-codes.csv"),
-        col_select = c("strategy", "strategy_name", "mitigator_code"),
-        col_types = "c"
+      strategy_codes <- dplyr::select(
+        get_lookups()[["mitigators"]],
+        "strategy_name" = "strategy_name_full",
+        "strategy"
       )
 
-      strategy_names <- get_golem_config("mitigators_config") |>
-        purrr::map("strategy_subset") |>
-        purrr::flatten() |>
-        tibble::enframe("strategy", "strategy_name") |>
-        tidyr::unnest("strategy_name") |>
-        dplyr::left_join(
-          strategy_codes,
-          by = dplyr::join_by("strategy", "strategy_name")
-        ) |>
-        dplyr::mutate(
-          strategy_name = glue::glue("{strategy_name} ({mitigator_code})")
-        ) |>
-        dplyr::select(-"mitigator_code")
-
-      age_sex_data |>
-        dplyr::filter(
-          .data[["fyear"]] == year,
-          .data[["provider"]] == params$dataset
-        ) |>
+      age_sex_data() |>
         dplyr::count(
           .data[["strategy"]],
           wt = .data[["n"]],
@@ -38,7 +18,7 @@ mod_mitigators_summary_server <- function(id, age_sex_data, params) {
           sort = TRUE
         ) |>
         dplyr::slice(1:20) |>
-        dplyr::inner_join(strategy_names, by = dplyr::join_by("strategy")) |>
+        dplyr::inner_join(strategy_codes, by = dplyr::join_by("strategy")) |>
         dplyr::select(-"strategy")
     })
 

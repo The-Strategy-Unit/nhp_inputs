@@ -6,8 +6,11 @@
 app_ui <- function(request) {
   # handle loading the provided filename
 
-  f <- utils::URLdecode(stringr::str_sub(request$QUERY_STRING, 2L))
-
+  f <- if (getOption("shiny.devmode", default = FALSE)) {
+    "test.json"
+  } else {
+    utils::URLdecode(stringr::str_sub(request$QUERY_STRING, 2L))
+  }
   file <- file.path(get_golem_config("params_data_path"), "tmp", f)
 
   if (f == "" || !file.exists(file)) {
@@ -200,10 +203,6 @@ app_ui <- function(request) {
       bs4Dash::tabItem(
         tabName = "tab_nda",
         mod_non_demographic_adjustment_ui("non_demographic_adjustment")
-      ),
-      bs4Dash::tabItem(
-        tabName = "tab_wli",
-        mod_waiting_list_imbalances_ui("waiting_list_imbalances")
       ),
       bs4Dash::tabItem(
         tabName = "tab_er",
