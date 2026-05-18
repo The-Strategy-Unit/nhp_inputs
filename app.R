@@ -322,9 +322,15 @@ ui_body <- function() {
         )
       ),
       shiny::div(
-        id = "baseline_warning",
+        id = "default_start_warning",
         style = "margin-bottom: 1rem;",
         shiny::icon("circle-info"),
+        "Note that 2024/25 is the default year."
+      ),
+      shiny::div(
+        id = "baseline_warning",
+        style = "margin-bottom: 1rem;",
+        shiny::icon("triangle-exclamation"),
         "You must",
         shiny::a(
           "request your detailed baseline data",
