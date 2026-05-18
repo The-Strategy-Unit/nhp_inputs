@@ -26,18 +26,9 @@ load_provider_data <- function(
 #'
 #' @return the adls filesystem
 get_adls_fs <- function() {
-  ep_uri <- Sys.getenv("LOCAL_STORAGE_EP")
+  token <- azkit::get_auth_token()
 
-  ep <- if (ep_uri != "") {
-    sa_key <- Sys.getenv("LOCAL_STORAGE_KEY")
-
-    AzureStor::adls_endpoint(ep_uri, key = sa_key)
-  } else {
-    ep_uri <- Sys.getenv("AZ_STORAGE_EP")
-    token <- AzureAuth::get_managed_token("https://storage.azure.com/") |>
-      AzureAuth::extract_jwt()
-
-    AzureStor::adls_endpoint(ep_uri, token = token)
-  }
-  AzureStor::adls_filesystem(ep, Sys.getenv("AZ_STORAGE_CONTAINER"))
+  Sys.getenv("AZ_STORAGE_EP") |>
+    AzureStor::adls_endpoint(token = token) |>
+    AzureStor::adls_filesystem(Sys.getenv("AZ_STORAGE_CONTAINER"))
 }

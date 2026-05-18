@@ -19,7 +19,7 @@ Depends:
     R (>= 4.4.0)
 Imports: 
     arrow,
-    AzureAuth,
+    azkit,
     AzureStor,
     bs4Dash,
     cachem,
@@ -69,7 +69,8 @@ Suggests:
     usethis,
     watchr (>= 0.0.0.9000)
 Remotes:
-    github::tomjemmett/watchr
+    github::tomjemmett/watchr,
+    github::the-strategy-unit/azkit
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-GB
