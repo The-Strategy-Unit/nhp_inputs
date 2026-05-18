@@ -21,8 +21,8 @@ load_provider_data <- function(
 
 #' Get ADLS Filesystem
 #'
-#' try to use a managed token, this will only work if run in an Azure data centre
-#' if it fails, try instead to use Azure Resource Manager
+#' Get the Azure Data Lake Storage filesystem using the endpoint and container
+#' specified in environment variables. (AZ_STORAGE_EP and AZ_STORAGE_CONTAINER)
 #'
 #' @return the adls filesystem
 get_adls_fs <- function() {
