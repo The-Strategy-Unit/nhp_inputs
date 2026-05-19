@@ -109,6 +109,9 @@ mod_run_model_check_container_status <- function(
     promises::then(
       \(response) {
         res <- httr2::resp_body_json(response)
+        if (is.null(res$status)) {
+          res$status <- "unknown"
+        }
 
         if (res$status == "complete") {
           cat("model run success: ", id, "\n", sep = "")
@@ -167,6 +170,13 @@ mod_run_model_check_container_status <- function(
             res$status,
             "\n",
             sep = ""
+          )
+          # recursive call, but reduce error counter since this is unexpected
+          mod_run_model_check_container_status(
+            dataset,
+            model_run_id,
+            status,
+            error_counter - 1
           )
         }
 
