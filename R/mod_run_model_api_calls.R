@@ -172,12 +172,12 @@ mod_run_model_check_container_status <- function(
             sep = ""
           )
           # recursive call, but reduce error counter since this is unexpected
-          mod_run_model_check_container_status(
+          return(mod_run_model_check_container_status(
             dataset,
             model_run_id,
             status,
             error_counter - 1
-          )
+          ))
         }
 
         # recursive call
