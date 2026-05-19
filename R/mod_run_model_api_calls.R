@@ -112,7 +112,7 @@ mod_run_model_check_container_status <- function(
 
         state <- res$state %||% "unknown"
         if (state == "Terminated") {
-          if (res$detail_status == "Completed") {
+          if ((res$detail_status %||% "Completed") == "Completed") {
             cat("model run success: ", id, "\n", sep = "")
             status("Success")
           } else {
@@ -120,10 +120,11 @@ mod_run_model_check_container_status <- function(
             status(glue::glue("Error running the model ({id}): {res$error}"))
           }
           return(NULL)
-        } else if (state == "Creating" || state == "unknown") {
+        } else if (state %in% c("Creating", "unknown")) {
           # no need to change status
         } else {
-          progress <- res$complete
+          progress <- res$complete %||%
+            list(Inpatients = 0, Outpatients = 0, AaE = 0)
           model_runs <- res$model_runs
 
           if (is.null(progress)) {
