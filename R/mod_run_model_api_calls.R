@@ -179,7 +179,7 @@ mod_run_model_check_container_status <- function(
         cat(
           "error: ",
           error$message,
-          "[error counter: ",
+          " [error counter: ",
           error_counter,
           "]\n",
           sep = ""
