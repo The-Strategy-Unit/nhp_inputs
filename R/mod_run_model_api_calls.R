@@ -54,7 +54,8 @@ mod_run_model_submit <- function(
         }
 
         url <- glue::glue(
-          "{Sys.getenv('NHP_OUTPUTS_URI')}?{results$dataset}/{results$model_run_id}"
+          Sys.getenv("NHP_OUTPUTS_URI"),
+          "?{results$dataset}/{results$model_run_id}"
         )
         cat("results url: ", url, "\n", sep = "")
         results_url(url)
@@ -109,8 +110,9 @@ mod_run_model_check_container_status <- function(
       \(response) {
         res <- httr2::resp_body_json(response)
 
-        if (res$state == "Terminated") {
-          if (res$detail_status == "Completed") {
+        state <- res$state %||% "unknown"
+        if (state == "Terminated") {
+          if ((res$detail_status %||% "Completed") == "Completed") {
             cat("model run success: ", id, "\n", sep = "")
             status("Success")
           } else {
@@ -118,10 +120,11 @@ mod_run_model_check_container_status <- function(
             status(glue::glue("Error running the model ({id}): {res$error}"))
           }
           return(NULL)
-        } else if (res$state == "Creating") {
+        } else if (state %in% c("Creating", "unknown")) {
           # no need to change status
         } else {
-          progress <- res$complete
+          progress <- res$complete %||%
+            list(Inpatients = 0, Outpatients = 0, AaE = 0)
           model_runs <- res$model_runs
 
           if (is.null(progress)) {
