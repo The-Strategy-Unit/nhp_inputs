@@ -54,7 +54,7 @@ mod_run_model_submit <- function(
         }
 
         url <- glue::glue(
-          Sys.getenv('NHP_OUTPUTS_URI'),
+          Sys.getenv("NHP_OUTPUTS_URI"),
           "?{results$dataset}/{results$model_run_id}"
         )
         cat("results url: ", url, "\n", sep = "")
