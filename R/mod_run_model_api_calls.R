@@ -109,69 +109,75 @@ mod_run_model_check_container_status <- function(
     promises::then(
       \(response) {
         res <- httr2::resp_body_json(response)
+        if (is.null(res$status)) {
+          res$status <- "unknown"
+        }
 
-        state <- res$state %||% "unknown"
-        if (state == "Terminated") {
-          if ((res$detail_status %||% "Completed") == "Completed") {
-            cat("model run success: ", id, "\n", sep = "")
-            status("Success")
-          } else {
-            cat("model run error: ", id, "\n", res$error, "\n", sep = "")
-            status(glue::glue("Error running the model ({id}): {res$error}"))
-          }
+        if (res$status == "complete") {
+          cat("model run success: ", id, "\n", sep = "")
+          status("Success")
           return(NULL)
-        } else if (state %in% c("Creating", "unknown")) {
-          # no need to change status
-        } else {
+        } else if (res$status == "error") {
+          cat("model run error: ", id, "\n", res$error, "\n", sep = "")
+          status(glue::glue("Error running the model ({id}): {res$error}"))
+          return(NULL)
+        } else if (res$status == "submitted") {
+          # do not do anything just yet
+        } else if (res$status == "running") {
           progress <- res$complete %||%
             list(Inpatients = 0, Outpatients = 0, AaE = 0)
           model_runs <- res$model_runs
 
-          if (is.null(progress)) {
-            cat(
-              "model run id: ",
-              id,
-              ", stage: saving results\n",
-              sep = ""
-            )
-            status("Model running [saving results]")
+          if (progress[["Inpatients"]] < model_runs) {
+            stage <- "Inpatients"
+            complete <- progress[["Inpatients"]]
+          } else if (progress[["Outpatients"]] < model_runs) {
+            stage <- "Outpatients"
+            complete <- progress[["Outpatients"]]
+          } else if (progress[["AaE"]] < model_runs) {
+            stage <- "A&E"
+            complete <- progress[["AaE"]]
           } else {
-            if (
-              progress[["AaE"]] > 0 || progress[["Outpatients"]] >= model_runs
-            ) {
-              stage <- "A&E"
-              complete <- progress[["AaE"]]
-            } else if (
-              progress[["Outpatients"]] > 0 ||
-                progress[["Inpatients"]] >= model_runs
-            ) {
-              stage <- "Outpatients"
-              complete <- progress[["Outpatients"]]
-            } else {
-              stage <- "Inpatients"
-              complete <- progress[["Inpatients"]]
-            }
-            pcnt <- scales::percent(complete / model_runs, 0.1)
-
-            cat(
-              "model run id: ",
-              id,
-              ", stage: ",
-              stage,
-              " progress: ",
-              complete,
-              "/",
-              model_runs,
-              " (",
-              pcnt,
-              ")\n",
-              sep = ""
-            )
-
-            status(glue::glue(
-              "Model Running [{stage}: {complete}/{model_runs} ({pcnt})]"
-            ))
+            stage <- "Saving Results"
+            complete <- 0
           }
+
+          pcnt <- scales::percent(complete / model_runs, 0.1)
+
+          cat(
+            "model run id: ",
+            id,
+            ", stage: ",
+            stage,
+            " progress: ",
+            complete,
+            "/",
+            model_runs,
+            " (",
+            pcnt,
+            ")\n",
+            sep = ""
+          )
+
+          status(glue::glue(
+            "Model Running [{stage}: {complete}/{model_runs} ({pcnt})]"
+          ))
+        } else {
+          cat(
+            "unknown status for model run id: ",
+            id,
+            " - ",
+            res$status,
+            "\n",
+            sep = ""
+          )
+          # recursive call, but reduce error counter since this is unexpected
+          return(mod_run_model_check_container_status(
+            dataset,
+            model_run_id,
+            status,
+            error_counter - 1
+          ))
         }
 
         # recursive call
@@ -180,7 +186,14 @@ mod_run_model_check_container_status <- function(
     ) |>
     promises::catch(
       \(error) {
-        cat("error:", error$message, "\n")
+        cat(
+          "error: ",
+          error$message,
+          " [error counter: ",
+          error_counter,
+          "]\n",
+          sep = ""
+        )
         # recursive call
         mod_run_model_check_container_status(
           dataset,
