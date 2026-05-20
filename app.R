@@ -4,10 +4,13 @@ app_version_choices <- jsonlite::fromJSON(Sys.getenv(
 ))
 
 # CONSTANTS ----
-maximum_model_horizon_year <- 2047
-default_horizon_year <- 2041
-default_baseline_year <- 2024
-min_baseline_year <- 2023
+years <- list(
+  horizon_max = Sys.getenv("YEAR_HORIZON_MAX"),
+  horizon_default = Sys.getenv("YEAR_HORIZON_DEFAULT"),
+  baseline_default = Sys.getenv("YEAR_BASELINE_DEFAULT"),
+  baseline_min = Sys.getenv("YEAR_BASELINE_MIN")
+) |>
+  purrr::map(as.numeric)
 
 # HELPERS ----
 
@@ -318,7 +321,8 @@ ui_body <- function() {
         # TODO: revisit why start year and end year are formatted differently
         choices = c("2023/24" = 202324, "2024/25" = 202425),
         selected = as.character(
-          (default_baseline_year * 100) + ((default_baseline_year + 1) %% 100)
+          (years[["baseline_default"]] * 100) +
+            ((years[["baseline_default"]] + 1) %% 100)
         )
       ),
       shiny::div(
@@ -347,9 +351,9 @@ ui_body <- function() {
         "end_year",
         "Model Financial Year",
         choices = generate_year_dropdown_choices(
-          (default_baseline_year + 1):maximum_model_horizon_year
+          (years[["baseline_default"]] + 1):years[["horizon_max"]]
         ),
-        selected = as.character(default_horizon_year)
+        selected = as.character(years[["horizon_default"]])
       )
     ),
     bs4Dash::box(
@@ -692,7 +696,7 @@ server <- function(input, output, session) {
         (p$start_year <= 9999) # fmt:skip
     )
 
-    if (p$start_year >= min_baseline_year) {
+    if (p$start_year >= years[["baseline_min"]]) {
       y <- p$start_year * 100 + p$start_year %% 100 + 1
       # we don't need to update dataset: the parameters files that are listed in
       # the previous scenario dropdown are already tied to that provider
@@ -702,9 +706,9 @@ server <- function(input, output, session) {
     selected_end_year <- p$end_year
     if (
       selected_end_year <= p$start_year ||
-        selected_end_year > maximum_model_horizon_year
+        selected_end_year > years[["horizon_max"]]
     ) {
-      selected_end_year <- maximum_model_horizon_year
+      selected_end_year <- years[["horizon_max"]]
     }
 
     shiny::updateSelectInput(
@@ -733,12 +737,12 @@ server <- function(input, output, session) {
     start_yr <- as.numeric(stringr::str_sub(input$start_year, 1, 4))
 
     fy_choices <- generate_year_dropdown_choices(
-      (start_yr + 1):maximum_model_horizon_year
+      (start_yr + 1):years[["horizon_max"]]
     )
 
     # Set end year to default horizon otherwise the year stored in existing params
     selected_end_year <- if (input$scenario_type == "Create new from scratch") {
-      default_horizon_year
+      years[["horizon_default"]]
     } else {
       shiny::req(params())$end_year
     }
@@ -845,7 +849,7 @@ server <- function(input, output, session) {
 
       # Warn user they can't upgrade certain scenarios, disable interaction
 
-      is_deprecated_start_year <- p[["start_year"]] < min_baseline_year
+      is_deprecated_start_year <- p[["start_year"]] < years[["baseline_min"]]
       is_ndg1 <- p[["non-demographic_adjustment"]][["variant"]] == "variant_1"
 
       if (is_deprecated_start_year) {
@@ -900,6 +904,7 @@ server <- function(input, output, session) {
   })
 
   output$providers_map <- leaflet::renderLeaflet({
+    shiny::req(selected_peers())
     providers_map(selected_peers())
   })
 
