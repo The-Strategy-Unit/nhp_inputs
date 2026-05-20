@@ -504,7 +504,7 @@
       "description": {
         "Package": "azkit",
         "Title": "Azure storage authentication toolkit",
-        "Version": "0.3.0",
+        "Version": "0.3.1",
         "Authors@R": "\n    c(person(\n        \"Fran\", \"Barton\",\n        email = \"francis.barton@nhs.net\",\n        role = c(\"aut\", \"cre\"),\n        comment = c(ORCID = \"0000-0002-5650-1176\")\n    ),\n    person(\n        \"Tom\", \"Jemmett\",\n        email = \"thomas.jemmett@nhs.net\",\n        role = \"ctb\"\n    ))",
         "Description": "Handles authentication and basic tasks with Azure blob storage.",
         "License": "MIT + file LICENSE",
@@ -519,18 +519,18 @@
         "RemoteHost": "api.github.com",
         "RemoteRepo": "azkit",
         "RemoteUsername": "the-strategy-unit",
-        "RemotePkgRef": "github::the-strategy-unit/azkit",
+        "RemotePkgRef": "the-strategy-unit/azkit",
         "RemoteRef": "HEAD",
-        "RemoteSha": "5bc96225ba3787aaf1a0e8ce21a6683fab0eb086",
+        "RemoteSha": "98e6a2a2d551b8365b6acac5d587f7f5c04362c4",
         "GithubRepo": "azkit",
         "GithubUsername": "the-strategy-unit",
         "GithubRef": "HEAD",
-        "GithubSHA1": "5bc96225ba3787aaf1a0e8ce21a6683fab0eb086",
+        "GithubSHA1": "98e6a2a2d551b8365b6acac5d587f7f5c04362c4",
         "NeedsCompilation": "no",
-        "Packaged": "2026-05-15 13:12:33 UTC; tom",
+        "Packaged": "2026-05-20 15:06:39 UTC; tom",
         "Author": "Fran Barton [aut, cre] (ORCID: <https://orcid.org/0000-0002-5650-1176>),\n  Tom Jemmett [ctb]",
         "Maintainer": "Fran Barton <francis.barton@nhs.net>",
-        "Built": "R 4.6.0; ; 2026-05-15 13:12:33 UTC; unix"
+        "Built": "R 4.6.0; ; 2026-05-20 15:06:39 UTC; unix"
       }
     },
     "base64enc": {
