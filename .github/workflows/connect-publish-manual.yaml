@@ -15,7 +15,7 @@ on:
         default: "production"
         options:
           - "production"
-          - "new-production"
+          - "development"
   workflow_call:
     inputs:
       namespace:
