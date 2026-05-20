@@ -11,6 +11,5 @@ jobs:
     with:
       namespace: "dev"
       inputs_data_version: "dev"
-      environment: "production"
+      environment: "development"
     secrets: inherit
-        
