@@ -23,7 +23,11 @@ deploy <- function(server, app_id, app_version_choices) {
       app_version_choices,
       auto_unbox = TRUE
     ),
-    R_CONFIG_ACTIVE = "production"
+    R_CONFIG_ACTIVE = "production",
+    YEAR_HORIZON_DEFAULT = 2041,
+    YEAR_HORIZON_MAX = 2043,
+    YEAR_BASELINE_DEFAULT = 2024,
+    YEAR_BASELINE_MIN = 2023
   )
 
   rsconnect::deployApp(
@@ -34,7 +38,11 @@ deploy <- function(server, app_id, app_version_choices) {
     appTitle = "NHP: Inputs Selection",
     envVars = c(
       "APP_VERSION_CHOICES",
-      "R_CONFIG_ACTIVE"
+      "R_CONFIG_ACTIVE",
+      "YEAR_HORIZON_DEFAULT",
+      "YEAR_HORIZON_MAX",
+      "YEAR_BASELINE_DEFAULT",
+      "YEAR_BASELINE_MIN"
     )
   )
 }
