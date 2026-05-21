@@ -79,21 +79,24 @@ mod_mitigators_server <- function(
           _[strategies] |>
           purrr::map("interval")
 
-        purrr::walk(strategies, \(i) {
-          slider_values[[mitigators_type]][[i]] <- c(
-            # add the additional param items if they exist.
-            config$params_items,
-            list(
-              interval = loaded_values[[i]] %||% default_interval
-            )
-          )
+        strategies |>
+          purrr::walk(\(i) {
+            slider_values[[mitigators_type]][[i]] <- c(
+              # add the additional param items if they exist.
 
-          params[[mitigators_type]][[activity_type]][[i]] <- if (
-            !is.null(loaded_values[[i]])
-          ) {
-            slider_values[[mitigators_type]][[i]]
-          }
-        })
+              # if the additional item is a list, chose the value for the current strategy
+              purrr::map_if(config$params_items, is.list, ~ .x[[i]]),
+              list(
+                interval = loaded_values[[i]] %||% default_interval
+              )
+            )
+
+            params[[mitigators_type]][[activity_type]][[i]] <- if (
+              !is.null(loaded_values[[i]])
+            ) {
+              slider_values[[mitigators_type]][[i]]
+            }
+          })
       },
       priority = 100
     ) |>
