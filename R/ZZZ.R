@@ -16,12 +16,6 @@ sanitize_input_name <- function(.x) {
     stringr::str_remove_all("[^a-z0-9-]+")
 }
 
-# suppress vs code / languageserver "no visible binding" warnings
-if (FALSE) {
-  .data <- NULL
-  .env <- NULL
-}
-
 md_file_to_html <- function(...) {
   file <- app_sys(...)
 
@@ -70,20 +64,6 @@ params_filename <- function(user, dataset, scenario) {
 # check to see whether the app is running locally or in production
 is_local <- function() {
   Sys.getenv("SHINY_PORT") == "" || !getOption("golem.app.prod", TRUE)
-}
-
-encrypt_filename <- function(
-  filename,
-  key_b64 = Sys.getenv("NHP_ENCRYPT_KEY")
-) {
-  key <- openssl::base64_decode(key_b64)
-
-  f <- charToRaw(filename)
-
-  ct <- openssl::aes_cbc_encrypt(f, key, NULL)
-  hm <- as.raw(openssl::sha256(ct, key))
-
-  openssl::base64_encode(c(hm, ct))
 }
 
 download_params_schema <- function(
