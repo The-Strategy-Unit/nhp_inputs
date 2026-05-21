@@ -47,6 +47,8 @@ Server and UI modules can be found in `R/`, configuration in `inst/golem-config.
 
 Run the app locally on your machine to test that your changes work as expected.
 
+#### Setup
+
 First, install the required packages listed in the DESCRIPTION with `pak::local_install_deps(dependencies = TRUE)`.
 
 Then add an `.Renviron` file to the project root that contains the required environment variables.
@@ -65,18 +67,31 @@ git worktree add inputs_selection_app inputs_selection_app
 The first argument is the name of the folder in which to put the branch content.
 If you want a development version of the inputs selection app, you can specify the branch name as the second of the arguments to `git worktree add`.
 
-To run the app from RStudio, start up the selection app by opening the `dev/watch.R` script, go to the 'Background Jobs' tab of the console pane and click the 'Start Background Job' button.
-In the 'Run Script as Background Job' dialog box select the project root as the 'Working Directory', then hit 'Start'.
-When ready, the app will tell you to visit `http://127.0.0.1:9081/` in your browser.
-
-Note that your selections in the app remain local to you and the resulting json file of parameters for your scenario will live in your local `params/development/` directory.
-These scenarios will be selectable and editable in future from your locally-run inputs selection app.
-
 If you need to remove the selection-app folder at any point, you can terminate the background job (if running) and in the terminal run:
 
 ```
 git worktree remove inputs_selection_app
 ```
+
+#### Run the app
+
+Once setup, we can run the app.
+This is done by launching a background Shiny app and then watching the files for changes, which causes an auto-reload.
+The method for doing this depends on your IDE.
+
+In RStudio:
+
+1. Open the `dev/watch.R` script and go to the 'Background Jobs' tab of the console pane and click the 'Start Background Job' button.
+2. Click 'Start' after checking that the 'R Script' path is pre-populated with the path to `watch.R` (otherwise select it yourself). 
+3. When ready, a message will tell you to visit `http://127.0.0.1:9081/` in your browser.
+
+In Positron: run `source('dev/watch.R')` and click the link to the URL when complete.
+
+In VS Code: open the command palette (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>), search for 'Tasks: Run Task', then select 'R: Run App (watch)' and finally click the link to the URL when complete.
+
+Making selections in the app will cause values to be written to a local json file, which will live in your local `params/development/` directory.
+These scenarios will be selectable and editable in future from your locally-run inputs selection app.
+They will not be available from the deployed app.
 
 ### Test in dev
 
