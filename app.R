@@ -1,3 +1,6 @@
+# suppress .data warnings
+library(rlang)
+
 app_version_choices <- jsonlite::fromJSON(Sys.getenv(
   "APP_VERSION_CHOICES",
   "[\"dev\"]"
@@ -140,7 +143,7 @@ upgrade_params.v3.4 <- function(p) {
 upgrade_params.v3.5 <- function(p) {
   # Set waiting list adjustment to 'off'
 
-  p[["waiting_list_adjustment"]] = list(ip = NULL, op = NULL)
+  p[["waiting_list_adjustment"]] <- list(ip = NULL, op = NULL)
 
   class(p) <- p$app_version <- "v3.6"
   upgrade_params(p)
@@ -264,7 +267,7 @@ get_version_from_attr <- function(p) {
 
   is_version <- stringr::str_detect(prior_app_version, "^v\\d{1,}\\.\\d{1,}$")
   is_dev_or_new <- stringr::str_detect(prior_app_version, "^(dev|new)$")
-  if (!(is_version | is_dev_or_new)) {
+  if (!(is_version || is_dev_or_new)) {
     stop("prior_app_version attribute must be in the form 'v1.2' or 'dev'.")
   }
 
@@ -690,10 +693,9 @@ server <- function(input, output, session) {
   shiny::observe({
     p <- shiny::req(params())
 
+    valid_start_year <- (p$start_year >= 1000) && (p$start_year <= 9999)
     stopifnot(
-      "start_year is coming through as an fyear, should be yyyy" = (p$start_year >=
-        1000) &&
-        (p$start_year <= 9999) # fmt:skip
+      "start_year is coming through as an fyear, should be yyyy" = valid_start_year
     )
 
     if (p$start_year >= years[["baseline_min"]]) {
