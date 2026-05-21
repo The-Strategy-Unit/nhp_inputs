@@ -11,7 +11,7 @@
 #' @return The path to the downloaded file.
 download_provider_data <- function(
   file,
-  data_path = app_sys("app", "data"),
+  data_path = file.path("app_data"),
   inputs_data_version = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev"),
   ...
 ) {
@@ -48,7 +48,7 @@ get_adls_fs <- function() {
 get_all_data_files <- function(
   inputs_data_version = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")
 ) {
-  data_path <- file.path("inst", "app", "data")
+  data_path <- file.path("app_data")
   if (!dir.exists(data_path)) {
     dir.create(data_path, recursive = TRUE)
   }

@@ -19,4 +19,4 @@ inputs_selection_app/
 .cache/
 tmp/
 
-inst/app/data/
+app_data/

@@ -4,7 +4,7 @@
 \alias{load_provider_data}
 \title{Get Provider Data}
 \usage{
-load_provider_data(file, data_path = app_sys("app", "data"))
+load_provider_data(file, data_path = file.path("app_data"))
 }
 \arguments{
 \item{file}{The name of the file to read.}

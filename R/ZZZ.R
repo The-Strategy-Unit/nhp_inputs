@@ -87,7 +87,7 @@ encrypt_filename <- function(
 }
 
 download_params_schema <- function(
-  data_path = app_sys("app", "data"),
+  data_path = "app_data",
   app_version = Sys.getenv("INPUTS_DATA_VERSION", "dev")
 ) {
   file_path <- file.path(data_path, "params-schema.json")
@@ -109,7 +109,7 @@ get_params_schema <- function(
   app_version = Sys.getenv("INPUTS_DATA_VERSION", "dev")
 ) {
   if (!exists("schema", envir = .schema_cache)) {
-    .schema_cache[["schema"]] <- app_sys("app", "data", "params-schema.json") |>
+    .schema_cache[["schema"]] <- file.path("app_data", "params-schema.json") |>
       readr::read_file() |>
       jsonvalidate::json_schema$new()
   }

@@ -7,7 +7,7 @@
 #' @param file The name of the file to read.
 #' @param inputs_data_version The version of the inputs data to use.
 #' @return A tibble.
-load_provider_data <- function(file, data_path = app_sys("app", "data")) {
+load_provider_data <- function(file, data_path = file.path("app_data")) {
   if (!exists(file, envir = .data_cache)) {
     .data_cache[[file]] <- file.path(data_path, glue::glue("{file}.parquet")) |>
       arrow::read_parquet() |>

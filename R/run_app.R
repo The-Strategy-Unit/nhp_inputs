@@ -24,7 +24,7 @@ run_app <- function(
 
   # check files exist before starting app
   # TODO: consider more rigorous checks, e.g. specific files exist, or number of files
-  if (!dir.exists(file.path(app_sys("app"), "data"))) {
+  if (!dir.exists(file.path("app_data"))) {
     cat("Initialising data directory...\n")
     get_all_data_files()
   }
