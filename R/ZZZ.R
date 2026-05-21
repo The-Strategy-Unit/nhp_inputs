@@ -105,9 +105,7 @@ download_params_schema <- function(
 }
 
 .schema_cache <- new.env()
-get_params_schema <- function(
-  app_version = Sys.getenv("INPUTS_DATA_VERSION", "dev")
-) {
+get_params_schema <- function() {
   if (!exists("schema", envir = .schema_cache)) {
     .schema_cache[["schema"]] <- file.path("app_data", "params-schema.json") |>
       readr::read_file() |>

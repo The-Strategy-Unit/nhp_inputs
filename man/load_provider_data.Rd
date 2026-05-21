@@ -9,7 +9,7 @@ load_provider_data(file, data_path = file.path("app_data"))
 \arguments{
 \item{file}{The name of the file to read.}
 
-\item{inputs_data_version}{The version of the inputs data to use.}
+\item{data_path}{The path to the directory containing the parquet files.}
 }
 \value{
 A tibble.

@@ -5,7 +5,7 @@
 #' Read the parquet file containing a selected type of provider data.
 #'
 #' @param file The name of the file to read.
-#' @param inputs_data_version The version of the inputs data to use.
+#' @param data_path The path to the directory containing the parquet files.
 #' @return A tibble.
 load_provider_data <- function(file, data_path = file.path("app_data")) {
   if (!exists(file, envir = .data_cache)) {
