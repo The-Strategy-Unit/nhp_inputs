@@ -1,12 +1,14 @@
+
 # suppress .data warnings
 library(rlang)
+
+# LOAD VALUES ----
 
 app_version_choices <- jsonlite::fromJSON(Sys.getenv(
   "APP_VERSION_CHOICES",
   "[\"dev\"]"
 ))
 
-# CONSTANTS ----
 years <- list(
   horizon_max = Sys.getenv("YEAR_HORIZON_MAX"),
   horizon_default = Sys.getenv("YEAR_HORIZON_DEFAULT"),
@@ -15,18 +17,9 @@ years <- list(
 ) |>
   purrr::map(as.numeric)
 
-# HELPERS ----
+# PARAMS ----
 
-# until https://github.com/posit-dev/air/issues/256 is resolved, use nolint start/end
-# nolint start
-"%||%" <- function(x, y) {
-  if (is.null(x)) {
-    y
-  } else {
-    x
-  }
-}
-# nolint end
+## LOAD PARAMS ----
 
 load_params <- function(file) {
   p <- jsonlite::read_json(file, simplifyVector = TRUE)
@@ -42,6 +35,11 @@ load_params <- function(file) {
   class(p) <- p$app_version
   unclass(upgrade_params(p))
 }
+
+## UPGRADE PARAMS ----
+
+# Older scenarios need to be updated given changes between model versions.
+# Insert below a new upgrade_params.vX.Y() step for each major or minor release.
 
 upgrade_params <- function(p) {
   UseMethod("upgrade_params", p)
@@ -185,6 +183,15 @@ upgrade_params.v4.3 <- function(p) {
   upgrade_params(p)
 }
 
+upgrade_params.v4.4 <- function(p) {
+  class(p) <- p$app_version <- "v5.0"
+  upgrade_params(p)
+}
+
+# Insert above a new upgrade step for each new major or minor version
+
+## LOCATE PARAMS ----
+
 params_path <- function(user, dataset) {
   path <- file.path(
     config::get("params_data_path"),
@@ -205,10 +212,25 @@ params_filename <- function(user, dataset, scenario) {
   )
 }
 
+# APP HELPERS ----
+
+# until https://github.com/posit-dev/air/issues/256 is resolved, use nolint start/end
+# nolint start
+"%||%" <- function(x, y) {
+  if (is.null(x)) {
+    y
+  } else {
+    x
+  }
+}
+# nolint end
+
 # check to see whether the app is running locally or in production
 is_local <- function() {
   Sys.getenv("SHINY_PORT") == "" || !getOption("golem.app.prod", TRUE)
 }
+
+## PEERS ----
 
 peers_table <- function(selected_peers) {
   selected_peers |>
@@ -245,6 +267,8 @@ providers_map <- function(selected_peers) {
     )
 }
 
+## YEARS ----
+
 format_year_as_fyear <- function(year) {
   stopifnot(
     "invalid value for year" = all(year >= 1000 & year <= 9999)
@@ -257,6 +281,8 @@ generate_year_dropdown_choices <- function(years) {
   fyears <- format_year_as_fyear(years)
   purrr::set_names(as.character(years), fyears)
 }
+
+## VERSIONS ----
 
 get_version_from_attr <- function(p) {
   prior_app_version <- attr(p, "prior_app_version")
@@ -286,6 +312,8 @@ extract_major_version <- function(version_string) {
 
   version_string
 }
+
+# COMPOSE APP ----
 
 ui_body <- function() {
   # each of the columns is created in it's own variable
