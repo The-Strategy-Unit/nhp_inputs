@@ -46,6 +46,7 @@ get_age_sex_data <- function(provider, fyear) {
       .data$fyear == .env$fyear
     ) |>
     dplyr::mutate(
+      dplyr::across("sex", as.character),
       age_group = factor(
         .data[["age_group"]],
         levels = .env[["age_fct"]]
