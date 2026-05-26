@@ -1,4 +1,3 @@
-
 # suppress .data warnings
 library(rlang)
 
@@ -10,10 +9,10 @@ app_version_choices <- jsonlite::fromJSON(Sys.getenv(
 ))
 
 years <- list(
-  horizon_max = Sys.getenv("YEAR_HORIZON_MAX"),
-  horizon_default = Sys.getenv("YEAR_HORIZON_DEFAULT"),
-  baseline_default = Sys.getenv("YEAR_BASELINE_DEFAULT"),
-  baseline_min = Sys.getenv("YEAR_BASELINE_MIN")
+  horizon_max = Sys.getenv("YEAR_HORIZON_MAX", "2047"),
+  horizon_default = Sys.getenv("YEAR_HORIZON_DEFAULT", "2041"),
+  baseline_default = Sys.getenv("YEAR_BASELINE_DEFAULT", "2024"),
+  baseline_min = Sys.getenv("YEAR_BASELINE_MIN", "2023")
 ) |>
   purrr::map(as.numeric)
 
