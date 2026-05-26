@@ -34,7 +34,11 @@ deploy <- function(server, app_id, app_version_choices) {
     appTitle = "NHP: Inputs Selection",
     envVars = c(
       "APP_VERSION_CHOICES",
-      "R_CONFIG_ACTIVE"
+      "R_CONFIG_ACTIVE",
+      "YEAR_HORIZON_DEFAULT",
+      "YEAR_HORIZON_MAX",
+      "YEAR_BASELINE_DEFAULT",
+      "YEAR_BASELINE_MIN"
     )
   )
 }
