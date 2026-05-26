@@ -31,7 +31,7 @@ deploy <- function(server, app_id, app_version_choices) {
       app_version_choices,
       auto_unbox = TRUE
     ),
-    R_CONFIG_ACTIVE,
+    R_CONFIG_ACTIVE = "production",
     YEAR_HORIZON_MAX = get_env_var("YEAR_HORIZON_MAX"),
     YEAR_HORIZON_DEFAULT = get_env_var("YEAR_HORIZON_DEFAULT"),
     YEAR_BASELINE_DEFAULT = get_env_var("YEAR_BASELINE_DEFAULT"),
