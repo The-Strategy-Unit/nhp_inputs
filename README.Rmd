@@ -33,12 +33,13 @@ You can find more information on [the NHP model project information site](https:
 
 ## For developers
 
-The app is built and maintained by members of [the Strategy Unit's Data Science team](https://the-strategy-unit.github.io/data_science/).
+The guidance below is for the members of [the Strategy Unit's Data Science team](https://the-strategy-unit.github.io/data_science/), who built and maintain this app.
+
 
 ### Structure
 
 Technically there are two apps: the main app in the `main` branch, and the inputs selection app (where users start or edit a scenario) in the `inputs_selection_app` branch.
-Users arrive at the selection app before being routed to the main app. 
+Users arrive at the selection app before being routed to the main app.
 
 Both apps are built with [Shiny](https://shiny.posit.co/) and the main app uses the [the {golem} package](https://thinkr-open.github.io/golem/).
 Server and UI modules can be found in `R/`, configuration in `inst/golem-config.yml` and supporting data and text in `inst/app/`.
@@ -55,7 +56,7 @@ Then add an `.Renviron` file to the project root that contains the required envi
 Copy into it the required variables, which are listed in the `.Renviron.example`.
 You can get the values you need from a member of the Data Science team.
 
-Then, from the `main` branch (or your development branch of it), use Git's `worktree` function to put the `inputs_selection_app` branch (or your development branch of it) in its own subfolder. 
+Then, from the `main` branch (or your development branch of it), use Git's `worktree` function to put the `inputs_selection_app` branch (or your development branch of it) in its own subfolder.
 
 In the terminal:
 
@@ -82,7 +83,7 @@ The method for doing this depends on your IDE.
 In RStudio:
 
 1. Open the `dev/watch.R` script and go to the 'Background Jobs' tab of the console pane and click the 'Start Background Job' button.
-2. Click 'Start' after checking that the 'R Script' path is pre-populated with the path to `watch.R` (otherwise select it yourself). 
+2. Click 'Start' after checking that the 'R Script' path is pre-populated with the path to `watch.R` (otherwise select it yourself).
 3. When ready, a message will tell you to visit `http://127.0.0.1:9081/` in your browser.
 
 In Positron: run `source('dev/watch.R')` and click the link to the URL when complete.
@@ -107,14 +108,17 @@ To test the unreleased app in our development environment:
 When using the dev inputs selection app on Connect, make sure to set the 'Model Version' dropdown to 'dev' in the expandable 'Advanced Options' box.
 That way you'll be taken to the dev inputs app when you hit 'Start'.
 
-### Data extraction
+### Data
 
 The app displays trust-specific data to users.
 The data is processed via Databricks scripts in [the nhp_data repository](https://github.com/The-Strategy-Unit/nhp_data) and stored in Azure storage.
 
+If the data updates and you need to invalidate the current cache, you force a reset by appending `?reset_cache=true` to the app's canonical URL at `https://connect.strategyunitwm.nhs.uk/nhp/inputs/` (authorised devs only).
+
 ### Deployment
 
-Deployment is controlled by GitHub Actions, where:
+Deployment is controlled by GitHub Actions in `.github/workflows/`, where:
 
 * pushes to the `main` branch redeploy the app to /nhp/dev/inputs/ for purposes of quality assurance
 * tagged releases trigger a new deployment to /nhp/vX-Y/inputs/, where 'vX-Y' is the current version (note the hyphen)
+* manual deployment is possible with `connect-publish-manual.yaml`
