@@ -113,7 +113,7 @@ That way you'll be taken to the dev inputs app when you hit 'Start'.
 The app displays trust-specific data to users.
 The data is processed via Databricks scripts in [the nhp_data repository](https://github.com/The-Strategy-Unit/nhp_data) and stored in Azure storage.
 
-If the data updates and you need to invalidate the current cache, you force a reset by appending `?reset_cache=true` to the app's canonical URL at `https://connect.strategyunitwm.nhs.uk/nhp/inputs/`(authorised devs only).
+If the data updates and you need to invalidate the current cache, you force a reset by appending `?reset_cache=true` to the app's canonical URL at `https://connect.strategyunitwm.nhs.uk/nhp/inputs/` (authorised devs only).
 
 ### Deployment
 
