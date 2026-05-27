@@ -117,7 +117,8 @@ If the data updates and you need to invalidate the current cache, you can append
 
 ### Deployment
 
-Deployment is controlled by GitHub Actions, where:
+Deployment is controlled by GitHub Actions in `.github/workflows/`, where:
 
 * pushes to the `main` branch redeploy the app to /nhp/dev/inputs/ for purposes of quality assurance
 * tagged releases trigger a new deployment to /nhp/vX-Y/inputs/, where 'vX-Y' is the current version (note the hyphen)
+* manual deployment is possible with `connect-publish-manual.yaml`
