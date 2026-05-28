@@ -1,3 +1,11 @@
+get_env_var <- function(env_var) {
+  env_val <- Sys.getenv(env_var, unset = NA)
+  if (is.na(env_val)) {
+    stop("Missing required env var: ", env_var)
+  }
+  env_val
+}
+
 deploy <- function(server, app_id, app_version_choices) {
   if (!file.exists("deploy.R") && dir.exists("inputs_selection_app")) {
     withr::local_dir("inputs_selection_app")
@@ -23,7 +31,11 @@ deploy <- function(server, app_id, app_version_choices) {
       app_version_choices,
       auto_unbox = TRUE
     ),
-    R_CONFIG_ACTIVE = "production"
+    R_CONFIG_ACTIVE = "production",
+    YEAR_HORIZON_MAX = get_env_var("YEAR_HORIZON_MAX"),
+    YEAR_HORIZON_DEFAULT = get_env_var("YEAR_HORIZON_DEFAULT"),
+    YEAR_BASELINE_DEFAULT = get_env_var("YEAR_BASELINE_DEFAULT"),
+    YEAR_BASELINE_MIN = get_env_var("YEAR_BASELINE_MIN")
   )
 
   rsconnect::deployApp(
@@ -34,7 +46,11 @@ deploy <- function(server, app_id, app_version_choices) {
     appTitle = "NHP: Inputs Selection",
     envVars = c(
       "APP_VERSION_CHOICES",
-      "R_CONFIG_ACTIVE"
+      "R_CONFIG_ACTIVE",
+      "YEAR_HORIZON_DEFAULT",
+      "YEAR_HORIZON_MAX",
+      "YEAR_BASELINE_DEFAULT",
+      "YEAR_BASELINE_MIN"
     )
   )
 }
