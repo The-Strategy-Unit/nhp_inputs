@@ -35,9 +35,24 @@
     "op": {}
   },
   "non-demographic_adjustment": {
-    "ip": {},
-    "op": {},
-    "aae": {}
+    "variant": "variant_2",
+    "value-type": "year-on-year-growth",
+    "values": {
+      "aae": {
+        "ambulance": [1.0121, 1.0142],
+        "walk-in": [1.0121, 1.0142]
+      },
+      "ip": {
+        "elective": [1.0053, 1.0071],
+        "maternity": [1, 1],
+        "non-elective": [0.9955, 1.0017]
+      },
+      "op": {
+        "first": [1.0228, 1.027],
+        "followup": [1.0228, 1.027],
+        "procedure": [1.0228, 1.027]
+      }
+    }
   },
   "activity_avoidance": {
     "ip": {},
