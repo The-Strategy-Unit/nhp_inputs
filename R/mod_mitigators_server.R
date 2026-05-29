@@ -543,8 +543,10 @@ mod_mitigators_server <- function(
         shiny::validate(
           shiny::need(
             nrow(nee_params) > 0,
-            "This TPMA was not part of the National Elicitation Exercise,
-                      so a nationally-determined estimate is not available."
+            paste(
+              "This TPMA was not part of the National Elicitation Exercise,",
+              "so a nationally-determined estimate is not available."
+            )
           )
         )
 
