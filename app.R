@@ -187,6 +187,11 @@ upgrade_params.v4.4 <- function(p) {
   upgrade_params(p)
 }
 
+upgrade_params.v5.0 <- function(p) {
+  class(p) <- p$app_version <- "v5.1"
+  upgrade_params(p)
+}
+
 # Insert above a new upgrade step for each new major or minor version
 
 ## LOCATE PARAMS ----
