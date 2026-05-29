@@ -612,9 +612,8 @@ mod_mitigators_server <- function(
 
     output$slider_interval_text <- shiny::renderUI({
       text <- glue::glue(
-        "Adjusting this slider will change the width of the",
-        "corresponding yellow-highlighted region in the trend, funnel",
-        "and boxplot charts above.",
+        "Click a slider handle and use your arrow keys for finer control.",
+        "Your interval is shown as a yellow range on the trend, funnel and boxplot charts.",
         .sep = " "
       )
 
