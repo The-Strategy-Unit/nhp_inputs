@@ -10,7 +10,7 @@ on:
         required: true
         type: string
         default: "vX.Y"
-        
+
   workflow_call:
     inputs:
       from:
@@ -20,14 +20,24 @@ on:
         required: true
         type: string
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   sync-data:
     name: "Sync Data"
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
-      # need to generate a SAS token in azure portal for the container
-      # permissions needed: Read/Add/Create/Write/Delete/List
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: Download azcopy
         run: |
           curl -s -L https://aka.ms/downloadazcopy-v10-linux | tar zx --strip-components 1
@@ -37,5 +47,5 @@ jobs:
         run: |
           echo "Syncing from ${{ inputs.from }} to ${{ inputs.to }}"
           ./azcopy sync --recursive \
-            "${{ secrets.AZ_STORAGE_EP }}${{ secrets.AZ_STORAGE_CONTAINER }}/${{ inputs.from }}/?${{ secrets.AZ_STORAGE_SAS }}" \
-            "${{ secrets.AZ_STORAGE_EP }}${{ secrets.AZ_STORAGE_CONTAINER }}/${{ inputs.to }}/?${{ secrets.AZ_STORAGE_SAS }}"
+            "${{ secrets.AZ_STORAGE_EP }}${{ secrets.AZ_STORAGE_CONTAINER }}/${{ inputs.from }}" \
+            "${{ secrets.AZ_STORAGE_EP }}${{ secrets.AZ_STORAGE_CONTAINER }}/${{ inputs.to }}"
