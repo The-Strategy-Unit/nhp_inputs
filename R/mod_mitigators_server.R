@@ -543,8 +543,10 @@ mod_mitigators_server <- function(
         shiny::validate(
           shiny::need(
             nrow(nee_params) > 0,
-            "This TPMA was not part of the National Elicitation Exercise,
-                      so a nationally-determined estimate is not available."
+            paste(
+              "This TPMA was not part of the National Elicitation Exercise,",
+              "so a nationally-determined estimate is not available."
+            )
           )
         )
 
@@ -610,9 +612,8 @@ mod_mitigators_server <- function(
 
     output$slider_interval_text <- shiny::renderUI({
       text <- glue::glue(
-        "Adjusting this slider will change the width of the",
-        "corresponding yellow-highlighted region in the trend, funnel",
-        "and boxplot charts above.",
+        "Click a slider handle and use your arrow keys for finer control.",
+        "Your interval is shown as a yellow range on the trend, funnel and boxplot charts.",
         .sep = " "
       )
 
