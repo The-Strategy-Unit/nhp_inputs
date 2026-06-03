@@ -2,16 +2,16 @@ name: "Sync Data"
 
 # Note on authentication:
 #
-# This action uses OIDC federated credentials for authenticating with GitHub.
+# This action uses OIDC federated credentials for authenticating with Azure.
 #
-# In azure there is a managed identity which has been created and is set to allow federated
+# In Azure there is a managed identity which has been created and is set to allow federated
 # credentials from this repo when the environment is "production".
 #
-# That managed identity has been grated Storage Blob Data Contributor role to the storage account
+# That managed identity has been granted Storage Blob Data Contributor role to the storage account
 # which is being synced with azcopy.
 #
-# So long as those credentials are in place, this action should be able to authenticate with azure
-# and sync data between the specified containers. These permissions do not expire.
+# So long as those credentials are in place, this action should be able to authenticate with Azure
+# and sync data between the specified container. These permissions do not expire.
 on:
   workflow_dispatch:
     inputs:
