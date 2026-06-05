@@ -192,6 +192,15 @@ upgrade_params.v5.0 <- function(p) {
   upgrade_params(p)
 }
 
+upgrade_params.v5.1() <- function(p) {
+  # Remove time-profile mappings
+
+  p[["time_profile_mappings"]] <- NULL
+
+  class(p) <- p$app_version <- "v5.2"
+  upgrade_params(p)
+}
+
 # Insert above a new upgrade step for each new major or minor version
 
 ## LOCATE PARAMS ----
