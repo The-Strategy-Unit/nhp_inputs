@@ -45,8 +45,7 @@ mod_mitigators_ui <- function(id, title, show_diagnoses_table = TRUE) {
             shiny::p(),
             shiny::htmlOutput(ns("slider_interval_text"))
           ),
-          mod_reasons_ui(ns("reasons")),
-          mod_time_profile_ui(ns("time_profile")),
+          mod_reasons_ui(ns("reasons"))
         )
       ),
       col_8(

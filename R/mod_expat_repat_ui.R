@@ -65,7 +65,6 @@ mod_expat_repat_ui <- function(id) {
           )
         ),
         mod_reasons_ui(ns("reasons")),
-        mod_time_profile_ui(ns("time_profile")),
         bs4Dash::box(
           collapsible = FALSE,
           headerBorder = FALSE,

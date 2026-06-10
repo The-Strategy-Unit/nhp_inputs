@@ -9,15 +9,6 @@ mod_expat_repat_server <- function(
   params,
   providers
 ) {
-  selected_time_profile <- update_time_profile <- NULL
-  # nolint start: object_usage_linter.
-  c(selected_time_profile, update_time_profile) %<-%
-    mod_time_profile_server(
-      shiny::NS(id, "time_profile"),
-      params
-    )
-  # nolint end
-
   mod_reasons_server(shiny::NS(id, "reasons"), params, "expat_repat")
 
   shiny::moduleServer(id, function(input, output, session) {
@@ -102,18 +93,6 @@ mod_expat_repat_server <- function(
         )
     })
 
-    # update the time profile
-    shiny::observe({
-      params$time_profile_mappings[
-        c(
-          "expat",
-          "repat_local",
-          "repat_nonlocal"
-        )
-      ] <- selected_time_profile()
-    }) |>
-      shiny::bindEvent(selected_time_profile())
-
     # two reactiveValues to keep track of the slider values
     # shadow_params always stores a value for each item selectable by the dropdowns
     # params contains the returned values, and will contain the value from shadow_params if "include" is checked
@@ -128,9 +107,6 @@ mod_expat_repat_server <- function(
         p <- shiny::isolate({
           params
         })
-
-        # update the selected time profile (all 3 will have the same value, so just use expat)
-        update_time_profile(p$time_profile_mappings[["expat"]])
 
         default_values <- list(
           expat = c(0.95, 1.0),

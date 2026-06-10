@@ -2,15 +2,6 @@
 #'
 #' @noRd
 mod_waiting_list_imbalances_server <- function(id, wli_data, params) {
-  selected_time_profile <- update_time_profile <- NULL
-  # nolint start: object_usage_linter.
-  c(selected_time_profile, update_time_profile) %<-%
-    mod_time_profile_server(
-      shiny::NS(id, "time_profile"),
-      params
-    )
-  # nolint end
-
   mod_reasons_server(
     shiny::NS(id, "reasons"),
     params,
@@ -74,25 +65,12 @@ mod_waiting_list_imbalances_server <- function(id, wli_data, params) {
 
     # observers ----
 
-    # update the time profile
-    shiny::observe({
-      params$time_profile_mappings[[
-        "waiting_list_adjustment"
-      ]] <- selected_time_profile()
-    }) |>
-      shiny::bindEvent(selected_time_profile())
-
     # when the module is initialised, load the values from the loaded params file
     init <- shiny::observe(
       {
         p <- shiny::isolate({
           params
         })
-
-        # update the selected time profile
-        update_time_profile(p$time_profile_mappings[[
-          "waiting_list_adjustment"
-        ]])
 
         p <- p$waiting_list_adjustment
 

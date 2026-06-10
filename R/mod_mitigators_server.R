@@ -14,15 +14,6 @@ mod_mitigators_server <- function(
   mitigator_codes_lkup,
   peers
 ) {
-  selected_time_profile <- update_time_profile <- NULL
-  # nolint start: object_usage_linter
-  c(selected_time_profile, update_time_profile) %<-%
-    mod_time_profile_server(
-      shiny::NS(id, "time_profile"),
-      params
-    )
-  # nolint end
-
   config <- get_golem_config("mitigators_config")[[id]]
 
   activity_type <- config$activity_type
@@ -39,7 +30,6 @@ mod_mitigators_server <- function(
 
   shiny::moduleServer(id, function(input, output, session) {
     slider_values <- shiny::reactiveValues()
-    time_profile_mappings <- shiny::reactiveValues()
 
     strategies <- shiny::reactive({
       # make sure a provider is selected
@@ -114,9 +104,6 @@ mod_mitigators_server <- function(
               slider_values[[mitigators_type]][[i]]
             }
           })
-
-        tpm <- params$time_profile_mappings[[mitigators_type]][[activity_type]]
-        time_profile_mappings$mappings <- tpm
 
         init$destroy()
       },
@@ -196,10 +183,6 @@ mod_mitigators_server <- function(
         "slider",
         value = values
       )
-
-      update_time_profile(
-        time_profile_mappings$mappings[[strategy]] %||% "linear"
-      )
     }) |>
       shiny::bindEvent(input$strategy)
 
@@ -219,18 +202,6 @@ mod_mitigators_server <- function(
       }
     }) |>
       shiny::bindEvent(input$slider, input$include)
-
-    shiny::observe({
-      strategy <- shiny::req(input$strategy)
-      tp <- shiny::req(selected_time_profile())
-
-      time_profile_mappings$mappings[[strategy]] <- tp
-
-      params$time_profile_mappings[[mitigators_type]][[activity_type]][[
-        strategy
-      ]] <- if (input$include) tp
-    }) |>
-      shiny::bindEvent(selected_time_profile(), input$include)
 
     shiny::observe({
       shinyjs::toggleState("slider", condition = input$include)

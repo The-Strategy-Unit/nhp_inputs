@@ -1,35 +1,4 @@
 mod_run_model_fix_params <- function(p, schema_text) {
-  # the time profiles may be empty, ensure that's not the case
-  tpm <- p[["time_profile_mappings"]]
-  p[["time_profile_mappings"]][["activity_avoidance"]] <- list(
-    ip = tpm[["activity_avoidance"]][["ip"]] %||% list(),
-    op = tpm[["activity_avoidance"]][["op"]] %||% list(),
-    aae = tpm[["activity_avoidance"]][["aae"]] %||% list()
-  )
-  p[["time_profile_mappings"]][["efficiencies"]] <- list(
-    ip = tpm[["efficiencies"]][["ip"]] %||% list(),
-    op = tpm[["efficiencies"]][["op"]] %||% list()
-  )
-
-  # for a while, the wrong time profile was set for some items. force these to none
-  p[["time_profile_mappings"]][
-    c(
-      "baseline_adjustment",
-      "non-demographic_adjustment"
-    )
-  ] <- "none"
-
-  # check all the mitigators have a time profile
-  for (i in c("activity_avoidance", "efficiencies")) {
-    for (j in names(p[[i]])) {
-      for (k in names(p[[i]][[j]])) {
-        if (is.null(p$time_profile_mappings[[i]][[j]][[k]])) {
-          p$time_profile_mappings[[i]][[j]][[k]] <- "linear"
-        }
-      }
-    }
-  }
-
   p <- mod_run_model_remove_invalid_mitigators(p, schema_text)
 
   # nolint start: commented_code_linter
@@ -77,7 +46,6 @@ mod_run_model_fix_params <- function(p, schema_text) {
     "non-demographic_adjustment",
     "activity_avoidance",
     "efficiencies",
-    "time_profile_mappings",
     "reasons"
   )
 
