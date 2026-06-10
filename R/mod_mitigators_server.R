@@ -220,6 +220,10 @@ mod_mitigators_server <- function(
     }) |>
       shiny::bindEvent(input$slider, input$include)
 
+    # enable/disable the slider depending on whether the "include?" checkbox is
+    # checked
+    #
+    # runs when the include checkbox is changed
     shiny::observe({
       shinyjs::toggleState("slider", condition = input$include)
     }) |>
