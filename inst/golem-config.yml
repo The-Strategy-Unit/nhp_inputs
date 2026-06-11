@@ -32,8 +32,6 @@ default:
       number_type: !expr scales::comma_format(accuracy = 0.001, scale = 1000)
       funnel_x_title: "Catchment Population of Trust"
       funnel_number_type: !expr scales::comma_format()
-      slider_scale: 1000
-      slider_step: 0.1
       strategy_subset:
         alcohol_partially_attributable_acute: "Alcohol Related Admissions (Acute Conditions - Partially Attributable)"
         alcohol_partially_attributable_chronic: "Alcohol Related Admissions (Chronic Conditions - Partially Attributable)"
@@ -75,8 +73,6 @@ default:
       x_axis_title: "Financial Year"
       number_type: !expr scales::comma_format(accuracy = 0.1)
       funnel_x_title: "Number of Admissions"
-      slider_scale: 1
-      slider_step: 0.1
       strategy_subset:
         emergency_elderly: "Emergency Admission of Older People"
         enhanced_recovery_bladder: "Enhanced Recovery (Bladder)"
@@ -105,8 +101,6 @@ default:
       number_type: !expr scales::comma_format(accuracy = 0.001, scale = 1000)
       funnel_x_title: "Catchment Population of Trust"
       funnel_number_type: !expr scales::comma_format()
-      slider_scale: 1000
-      slider_step: 0.1
       strategy_subset:
         same_day_emergency_care_low: "Same Day Emergency Care (Low Potential)"
         same_day_emergency_care_moderate: "Same Day Emergency Care (Moderate Potential)"
@@ -121,8 +115,6 @@ default:
       x_axis_title: "Financial Year"
       number_type: !expr scales::comma_format(accuracy = 0.1, scale = 1000)
       funnel_x_title: "Number of Procedures Performed"
-      slider_scale: 1000
-      slider_step: 0.1
       strategy_subset:
         pre-op_los_1-day: "Pre-op Length of Stay of 1 day"
         pre-op_los_2-day: "Pre-op Length of Stay of 2 days"
@@ -139,8 +131,6 @@ default:
       number_type: !expr scales::percent_format()
       interval_text_number_type: !expr scales::percent_format(accuracy = 0.01)
       funnel_x_title: "Number of Procedures Performed"
-      slider_scale: 100
-      slider_step: 0.1
       strategy_subset:
         day_procedures_occasionally_dc: "Day Procedures: Occasionally performed as a Daycase"
         day_procedures_usually_dc: "Day Procedures: Usually performed as a Daycase"
@@ -154,8 +144,6 @@ default:
       number_type: !expr scales::percent_format()
       interval_text_number_type: !expr scales::percent_format(accuracy = 0.01)
       funnel_x_title: "Number of Procedures Performed"
-      slider_scale: 100
-      slider_step: 0.1
       strategy_subset:
         day_procedures_occasionally_op: "Day Procedures: Occasionally performed in Outpatients"
         day_procedures_usually_op: "Day Procedures: Usually performed in Outpatients"
@@ -169,8 +157,6 @@ default:
       number_type: !expr scales::percent_format()
       interval_text_number_type: !expr scales::percent_format(accuracy = 0.01)
       funnel_x_title: "Number of Appointments"
-      slider_scale: 100
-      slider_step: 0.1
       strategy_subset:
         consultant_to_consultant_reduction_adult_non-surgical: "Outpatient Consultant to Consultant Referrals (Adult, Non-Surgical)"
         consultant_to_consultant_reduction_adult_surgical: "Outpatient Consultant to Consultant Referrals (Adult, Surgical)"
@@ -184,8 +170,6 @@ default:
       number_type: !expr scales::percent_format()
       interval_text_number_type: !expr scales::percent_format(accuracy = 0.01)
       funnel_x_title: "Number of Appointments"
-      slider_scale: 100
-      slider_step: 0.1
       strategy_subset:
         convert_to_tele_adult_non-surgical: "Outpatient Convert to Tele-Attendance (Adult, Non-Surgical)"
         convert_to_tele_adult_surgical: "Outpatient Convert to Tele-Attendance (Adult, Surgical)"
@@ -198,8 +182,6 @@ default:
       x_axis_title: "Financial Year"
       number_type: !expr scales::comma_format()
       funnel_x_title: "Number of Appointments"
-      slider_scale: 1
-      slider_step: 0.1
       strategy_subset:
         followup_reduction_adult_non-surgical: "Outpatient Followup Appointment Reduction (Adult, Non-Surgical)"
         followup_reduction_adult_surgical: "Outpatient Followup Appointment Reduction (Adult, Surgical)"
@@ -213,8 +195,6 @@ default:
       number_type: !expr scales::percent_format()
       interval_text_number_type: !expr scales::percent_format(accuracy = 0.01)
       funnel_x_title: "Number of Appointments"
-      slider_scale: 100
-      slider_step: 0.1
       strategy_subset:
         gp_referred_first_attendance_reduction_adult_non-surgical: "Outpatient GP Referred First Attendance Reduction (Adult, Non-Surgical)"
         gp_referred_first_attendance_reduction_adult_surgical: "Outpatient GP Referred First Attendance Reduction (Adult, Surgical)"
@@ -228,8 +208,6 @@ default:
       number_type: !expr scales::percent_format()
       interval_text_number_type: !expr scales::percent_format(accuracy = 0.01)
       funnel_x_title: "Number of Attendances"
-      slider_scale: 100
-      slider_step: 0.1
       strategy_subset:
         frequent_attenders_adult_ambulance: "A&E Frequent Attenders (Adult, Ambulance Conveyed)"
         frequent_attenders_adult_walk-in: "A&E Frequent Attenders (Adult, Walk-in)"
@@ -243,8 +221,6 @@ default:
       number_type: !expr scales::percent_format()
       interval_text_number_type: !expr scales::percent_format(accuracy = 0.01)
       funnel_x_title: "Number of Attendances"
-      slider_scale: 100
-      slider_step: 0.1
       strategy_subset:
         left_before_seen_adult_ambulance: "A&E Patients Left Before Being Treated (Adult, Ambulance Conveyed)"
         left_before_seen_adult_walk-in: "A&E Patients Left Before Being Treated (Adult, Walk-in)"
@@ -258,8 +234,6 @@ default:
       number_type: !expr scales::percent_format()
       interval_text_number_type: !expr scales::percent_format(accuracy = 0.01)
       funnel_x_title: "Number of Attendances"
-      slider_scale: 100
-      slider_step: 0.1
       strategy_subset:
         discharged_no_treatment_adult_ambulance: "A&E Discharged No Investigation or Treatment (Adult, Ambulance Conveyed)"
         discharged_no_treatment_adult_walk-in: "A&E Discharged No Investigation or Treatment (Adult, Walk-in)"
@@ -273,8 +247,6 @@ default:
       number_type: !expr scales::percent_format()
       interval_text_number_type: !expr scales::percent_format(accuracy = 0.01)
       funnel_x_title: "Number of Attendances"
-      slider_scale: 100
-      slider_step: 0.1
       strategy_subset:
         low_cost_discharged_adult_ambulance: "A&E Low Cost Discharged Attendances (Adult, Ambulance Conveyed)"
         low_cost_discharged_adult_walk-in: "A&E Low Cost Discharged Attendances (Adult, Walk-in)"

@@ -1,9 +1,16 @@
 #' inequalities Server Functions
 #'
 #' @noRd
-mod_inequalities_server <- function(id, inequalities_data, params) {
+mod_inequalities_server <- function(id, params) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
+
+    inequalities_data <- shiny::reactive({
+      provider <- params$dataset
+      fyear <- params$start_year
+
+      get_inequalities_data(provider, fyear)
+    })
 
     mod_reasons_server(shiny::NS(id, "reasons"), params, "inequalities")
 
@@ -12,7 +19,7 @@ mod_inequalities_server <- function(id, inequalities_data, params) {
     provider_inequalities <- shiny::reactive({
       dataset <- shiny::req(params$dataset) # nolint: object_usage_linter
 
-      inequalities_data |>
+      inequalities_data() |>
         dplyr::filter(
           .data[["provider"]] == .env[["dataset"]]
         )

@@ -5,140 +5,40 @@
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
-  # in fct_create_data_cache, we utilise this env var to invalidate the cache
-  # we can use it's value to allow us to cache all of the reactive data without
-  # having to bind to some other input which might change
-  cache_version <- shiny::reactive({
-    Sys.getenv("CACHE_VERSION", 0)
-  })
-
-  diagnoses_lkup <- shiny::reactive({
-    readr::read_csv(app_sys("app", "data", "diagnoses.csv"), col_types = "ccc")
-  })
-
-  procedures_lkup <- shiny::reactive({
-    readr::read_csv(app_sys("app", "data", "procedures.csv"), col_types = "ccc")
-  })
-
-  mitigator_codes_lkup <- shiny::reactive({
-    lkup <- app_sys("app", "data", "mitigator-codes.csv") |>
-      readr::read_csv(col_types = "c")
-
-    purrr::set_names(
-      paste0(lkup[["strategy_name"]], " (", lkup[["mitigator_code"]], ")"),
-      lkup[["strategy"]]
-    )
-  })
-
-  providers <- shiny::reactive({
-    app_sys("app", "data", "providers.csv") |>
-      readr::read_csv(col_types = "cc") |>
-      tibble::deframe() # convert tibble to named vector
-  })
-
-  peers <- shiny::reactive({
-    readr::read_csv(app_sys("app", "data", "peers.csv"), col_types = "cc")
-  })
-
   params <- mod_home_server(
     "home",
-    providers(),
     shiny::reactive(input$params_file)
   )
 
-  # we could probably drop the need for start now, kept for historical reasons
-  start <- shiny::reactive({
-    shiny::req(length(params) > 0)
-    shiny::req(params$dataset)
-    shiny::req(params$scenario)
-    1
-  })
-
   # load all data
   rates_data <- shiny::reactive({
-    rates <- load_provider_data("rates") |>
-      dplyr::select(-"crude_rate") |>
-      dplyr::rename(rate = "std_rate")
-
-    national_rate <- rates |>
-      dplyr::filter(
-        .data$provider == "national"
-      ) |>
-      dplyr::summarise(
-        .by = c("fyear", "strategy"),
-        national_rate = dplyr::first(.data$rate)
-      )
-
-    rates |>
-      dplyr::filter(.data$provider != "national") |>
-      dplyr::inner_join(national_rate, by = c("fyear", "strategy"))
-  }) |>
-    shiny::bindCache(cache_version())
+    get_rates_data()
+  })
 
   age_sex_data <- shiny::reactive({
-    age_sex <- load_provider_data("age_sex")
-    # nolint start: object_usage_linter
-    age_fct <- age_sex |> _[["age_group"]] |> unique() |> sort()
-    # nolint end
-    age_sex |>
-      dplyr::mutate(
-        dplyr::across("sex", as.character),
-        age_group = factor(
-          .data[["age_group"]],
-          levels = .env[["age_fct"]]
-        )
-      )
-  }) |>
-    shiny::bindCache(cache_version())
+    provider <- params$dataset
+    fyear <- params$start_year
+
+    get_age_sex_data(provider, fyear)
+  })
 
   diagnoses_data <- shiny::reactive({
-    load_provider_data("diagnoses")
-  }) |>
-    shiny::bindCache(cache_version())
+    provider <- params$dataset
+    fyear <- params$start_year
+
+    get_diagnoses_data(provider, fyear)
+  })
 
   procedures_data <- shiny::reactive({
-    load_provider_data("procedures")
-  }) |>
-    shiny::bindCache(cache_version())
+    provider <- params$dataset
+    fyear <- params$start_year
 
-  baseline_data <- shiny::reactive({
-    load_provider_data("baseline")
-  }) |>
-    shiny::bindCache(cache_version())
-
-  wli_data <- shiny::reactive({
-    load_provider_data("wli")
-  }) |>
-    shiny::bindCache(cache_version())
-
-  inequalities_data <- shiny::reactive({
-    load_provider_data("inequalities")
-  }) |>
-    shiny::bindCache(cache_version())
-
-  expat_data <- shiny::reactive({
-    load_provider_data("expat")
-  }) |>
-    shiny::bindCache(cache_version())
-
-  repat_local_data <- shiny::reactive({
-    load_provider_data("repat_local")
-  }) |>
-    shiny::bindCache(cache_version())
-
-  repat_nonlocal_data <- shiny::reactive({
-    load_provider_data("repat_nonlocal")
-  }) |>
-    shiny::bindCache(cache_version())
-
-  params_schema_text <- shiny::reactive({
-    get_params_schema_text()
-  }) |>
-    shiny::bindCache(cache_version())
+    get_procedures_data(provider, fyear)
+  })
 
   # load all other modules once the home module has finished loading
   init <- shiny::observe({
-    shiny::req(start() > 0)
+    shiny::req(params$dataset)
 
     available_strategies <- shiny::reactive({
       # nolint start: object_usage_linter
@@ -159,17 +59,13 @@ app_server <- function(input, output, session) {
         unique()
     })
 
-    mod_baseline_adjustment_server(
-      "baseline_adjustment",
-      baseline_data(),
-      params
-    )
+    mod_baseline_adjustment_server("baseline_adjustment", params)
 
     mod_population_growth_server("population_growth", params)
 
     mod_health_status_adjustment_server("health_status_adjustment", params)
 
-    observe({
+    shiny::observe({
       can_set_inequalities <- any(
         c("nhp_devs", "nhp_power_users", "nhp_test_inequalities") %in%
           session$groups
@@ -181,26 +77,13 @@ app_server <- function(input, output, session) {
       )
     })
 
-    mod_inequalities_server("inequalities", inequalities_data(), params)
+    mod_inequalities_server("inequalities", params)
 
-    mod_waiting_list_imbalances_server(
-      "waiting_list_imbalances",
-      wli_data(),
-      params
-    )
-
-    mod_expat_repat_server(
-      "expat_repat",
-      expat_data(),
-      repat_local_data(),
-      repat_nonlocal_data(),
-      params,
-      providers()
-    )
+    mod_expat_repat_server("expat_repat", params)
 
     mod_non_demographic_adjustment_server("non_demographic_adjustment", params)
 
-    mod_mitigators_summary_server("mitigators_summary", age_sex_data(), params)
+    mod_mitigators_summary_server("mitigators_summary", age_sex_data, params)
 
     purrr::walk(
       c(
@@ -221,15 +104,11 @@ app_server <- function(input, output, session) {
       ),
       mod_mitigators_server,
       params,
-      rates_data(),
-      age_sex_data(),
-      diagnoses_data(),
-      procedures_data(),
-      available_strategies,
-      diagnoses_lkup(),
-      procedures_lkup(),
-      mitigator_codes_lkup(),
-      peers()
+      rates_data,
+      age_sex_data,
+      diagnoses_data,
+      procedures_data,
+      available_strategies
     )
 
     # enable the run_model page for certain users/running locally
@@ -239,15 +118,13 @@ app_server <- function(input, output, session) {
     )
     if (is_local() || can_run_model) {
       shinyjs::show("run-model-container")
-      mod_run_model_server("run_model", params, params_schema_text())
+      mod_run_model_server("run_model", params)
     }
 
     init$destroy()
-  }) |>
-    shiny::bindEvent(start())
+  })
 
   shiny::observe({
-    shiny::req(start() > 0)
     shiny::req(params$dataset)
     shiny::req(params$scenario)
 
@@ -260,26 +137,8 @@ app_server <- function(input, output, session) {
 
     params |>
       shiny::reactiveValuesToList() |>
-      mod_run_model_fix_params(params_schema_text()) |>
+      mod_run_model_fix_params() |>
       jsonlite::write_json(file, pretty = TRUE, auto_unbox = TRUE)
-  })
-
-  if (as.logical(Sys.getenv("ENABLE_AUTO_RECONNECT", FALSE))) {
-    cat("auto reconnect enabled\n")
-    session$allowReconnect("force")
-  }
-
-  shiny::observe({
-    shiny::req("nhp_devs" %in% session$groups)
-
-    u <- shiny::parseQueryString(session$clientData$url_search)
-
-    shiny::req(!is.null(u$reset_cache))
-    cat("reset cache\n")
-
-    dc <- shiny::shinyOptions()$cache
-
-    dc$reset()
   })
 
   # return

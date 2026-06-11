@@ -9,22 +9,11 @@ utils::globalVariables(c(
   ".env"
 ))
 
-rtt_specialties <- function() {
-  app_sys("app", "data", "rtt_specialties.csv") |>
-    readr::read_csv(col_types = "cc")
-}
-
 sanitize_input_name <- function(.x) {
   .x |>
     stringr::str_to_lower() |>
     stringr::str_replace_all("(\\s|\\_|-)+", "-") |>
     stringr::str_remove_all("[^a-z0-9-]+")
-}
-
-# suppress vs code / languageserver "no visible binding" warnings
-if (FALSE) {
-  .data <- NULL
-  .env <- NULL
 }
 
 md_file_to_html <- function(...) {
@@ -77,38 +66,30 @@ is_local <- function() {
   Sys.getenv("SHINY_PORT") == "" || !getOption("golem.app.prod", TRUE)
 }
 
-encrypt_filename <- function(
-  filename,
-  key_b64 = Sys.getenv("NHP_ENCRYPT_KEY")
-) {
-  key <- openssl::base64_decode(key_b64)
-
-  f <- charToRaw(filename)
-
-  ct <- openssl::aes_cbc_encrypt(f, key, NULL)
-  hm <- as.raw(openssl::sha256(ct, key))
-
-  openssl::base64_encode(c(hm, ct))
-}
-
-get_params_schema_text <- function(
+download_params_schema <- function(
+  data_path = "app_data",
   app_version = Sys.getenv("INPUTS_DATA_VERSION", "dev")
 ) {
-  tf <- tempfile()
+  file_path <- file.path(data_path, "params-schema.json")
 
-  utils::download.file(
-    glue::glue(
-      "https://the-strategy-unit.github.io/nhp_model/{app_version}/params-schema.json"
-    ),
-    tf
-  )
-  # append a newline to the end of the params-schema file, otherwise you get a warning
-  # "incomplete final line found"
-  cat("\n", file = tf, append = TRUE)
+  params_schema <- httr2::request(
+    "https://the-strategy-unit.github.io"
+  ) |>
+    httr2::req_url_path("nhp_model", app_version, "params-schema.json") |>
+    httr2::req_perform() |>
+    httr2::resp_body_string()
 
-  paste(readLines(tf), collapse = "\n")
+  readr::write_lines(params_schema, file_path)
+
+  invisible(file_path)
 }
 
-create_params_schema <- function(schema_text) {
-  jsonvalidate::json_schema$new(schema_text)
+.schema_cache <- new.env()
+get_params_schema <- function() {
+  if (!exists("schema", envir = .schema_cache)) {
+    .schema_cache[["schema"]] <- file.path("app_data", "params-schema.json") |>
+      readr::read_file() |>
+      jsonvalidate::json_schema$new()
+  }
+  .schema_cache[["schema"]]
 }

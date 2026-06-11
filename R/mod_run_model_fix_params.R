@@ -1,5 +1,5 @@
-mod_run_model_fix_params <- function(p, schema_text) {
-  p <- mod_run_model_remove_invalid_mitigators(p, schema_text)
+mod_run_model_fix_params <- function(p) {
+  p <- mod_run_model_remove_invalid_mitigators(p)
 
   # nolint start: commented_code_linter
   # some of the items in our params will be lists of length 0.
