@@ -29,7 +29,7 @@ mod_mitigators_summary_ui <- function(id) {
         bs4Dash::box(
           width = 12,
           shinycssloaders::withSpinner(
-            gt::gt_output(ns("diagnoses_table"))
+            shiny::htmlOutput(ns("diagnoses_table"))
           )
         )
       )

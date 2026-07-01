@@ -48,7 +48,7 @@ mod_non_demographic_adjustment_ui <- function(id) {
         collapsible = FALSE,
         headerBorder = FALSE,
         width = 4,
-        gt::gt_output(ns("non_demographic_adjustment_table"))
+        shiny::htmlOutput(ns("non_demographic_adjustment_table"))
       )
     )
   )

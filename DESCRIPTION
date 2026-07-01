@@ -47,7 +47,7 @@ Imports:
     rlang,
     scales,
     sf,
-    shiny (>= 1.7.1),
+    shiny (>= 1.14.0),
     shinycssloaders,
     shinyjs,
     shinyWidgets,
@@ -67,7 +67,7 @@ Suggests:
     spelling,
     testthat (>= 3.0.0),
     usethis,
-    watchr (>= 0.0.0.9000)
+    watcher
 Remotes:
     github::tomjemmett/watchr,
     github::the-strategy-unit/azkit
