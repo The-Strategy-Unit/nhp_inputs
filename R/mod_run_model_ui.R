@@ -60,7 +60,7 @@ mod_run_model_ui <- function(id) {
       width = 8,
       collapsed = TRUE,
       shiny::verbatimTextOutput(ns("params_json")),
-      gt::gt_output(ns("validation_errors"))
+      shiny::htmlOutput(ns("validation_errors"))
     )
   )
 }

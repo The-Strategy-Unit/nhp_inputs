@@ -38,7 +38,7 @@ mod_waiting_list_imbalances_ui <- function(id) {
         collapsible = FALSE,
         headerBorder = FALSE,
         width = 8,
-        gt::gt_output(ns("table"))
+        shiny::htmlOutput(ns("table"))
       )
     )
   )

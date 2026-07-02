@@ -76,7 +76,7 @@ mod_mitigators_ui <- function(id, title, show_diagnoses_table = TRUE) {
               title = "Top 6 Primary Diagnoses",
               if (show_diagnoses_table) {
                 shinycssloaders::withSpinner({
-                  gt::gt_output(ns("diagnoses_table"))
+                  shiny::htmlOutput(ns("diagnoses_table"))
                 })
               } else {
                 shiny::p("No diagnosis data for outpatients.")
@@ -86,7 +86,7 @@ mod_mitigators_ui <- function(id, title, show_diagnoses_table = TRUE) {
             bs4Dash::box(
               title = "Breakdown by Procedure",
               shinycssloaders::withSpinner({
-                gt::gt_output(ns("procedures_table"))
+                shiny::htmlOutput(ns("procedures_table"))
               }),
               width = 12
             )
