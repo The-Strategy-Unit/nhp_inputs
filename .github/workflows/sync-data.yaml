@@ -41,7 +41,7 @@ jobs:
   sync-data:
     name: "Sync Data"
     runs-on: ubuntu-latest
-    environment: production
+    environment: sync-data
 
     steps:
       - name: Azure Login
