@@ -12,6 +12,7 @@ on:
         description: "The environment to deploy to"
         required: true
         type: string
+        default: "development"
   workflow_call:
     inputs:
       namespace:
@@ -24,7 +25,6 @@ on:
         description: "The environment to deploy to"
         required: true
         type: string
-        default: "development"
 
 jobs:
   connect-publish:
