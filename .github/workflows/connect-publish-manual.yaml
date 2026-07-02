@@ -45,6 +45,7 @@ jobs:
             any::rsconnect
             any::cpp11
             any::fs
+            any::progress
       - name: Generate manifest
         run: Rscript dev/generate_manifest.R
 
