@@ -5,7 +5,7 @@ name: "Sync Data"
 # This action uses OIDC federated credentials for authenticating with Azure.
 #
 # In Azure there is a managed identity which has been created and is set to allow federated
-# credentials from this repo when the environment is "production".
+# credentials from this repo when the environment is "sync-data".
 #
 # That managed identity has been granted Storage Blob Data Contributor role to the storage account
 # which is being synced with azcopy.
