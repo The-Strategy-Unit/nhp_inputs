@@ -11,11 +11,7 @@ on:
       environment:
         description: "The environment to deploy to"
         required: true
-        type: choice
-        default: "production"
-        options:
-          - "production"
-          - "development"
+        type: string
   workflow_call:
     inputs:
       namespace:
@@ -28,17 +24,35 @@ on:
         description: "The environment to deploy to"
         required: true
         type: string
-        default: "production"
+        default: "development"
+
 jobs:
   connect-publish:
     name: "Connect Publish: ${{ inputs.namespace }} [${{ inputs.environment }}]"
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ vars.RSCONNECT_URL }}nhp/${{ inputs.namespace }}/inputs
+
     steps:
       - uses: actions/checkout@v6
 
-      - name: Update manifest.json
-        run: node update_manifest.js
+      - uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          cache-version: 1
+          extra-packages: |
+            any::rsconnect
+            any::cpp11
+            any::fs
+      - name: Generate manifest
+        run: Rscript dev/generate_manifest.R
+
+      - name: Upload manifest
+        uses: actions/upload-artifact@v7
+        with:
+          name: manifest
+          path: manifest.json
 
       - name: Publish Connect content
         uses: rstudio/actions/connect-publish@main
@@ -46,14 +60,13 @@ jobs:
           CONNECT_ENV_SET_AZ_STORAGE_CONTAINER: ${{ secrets.AZ_STORAGE_CONTAINER }}
           CONNECT_ENV_SET_AZ_STORAGE_EP: ${{ secrets.AZ_STORAGE_EP }}
           CONNECT_ENV_SET_NHP_API_KEY: ${{ secrets.NHP_API_KEY }}
-          CONNECT_ENV_SET_NHP_API_URI: ${{ secrets.NHP_API_URI }}
-          CONNECT_ENV_SET_NHP_ENCRYPT_KEY: ${{ secrets.NHP_ENCRYPT_KEY }}
+          CONNECT_ENV_SET_NHP_API_URI: ${{ vars.NHP_API_URI }}
           CONNECT_ENV_SET_NHP_INPUTS_DATA_VERSION: ${{ inputs.inputs_data_version }}
           CONNECT_ENV_SET_NHP_OUTPUTS_URI: ${{ secrets.NHP_OUTPUTS_URI }}
           CONNECT_ENV_SET_FEEDBACK_FORM_URL: ${{ secrets.FEEDBACK_FORM_URL }}
           CONNECT_ENV_SET_GOLEM_CONFIG_ACTIVE: "production"
         with:
-          url: ${{ secrets.RSCONNECT_URL }}
+          url: ${{ vars.RSCONNECT_URL }}
           api-key: ${{ secrets.RSCONNECT_API_KEY }}
           access-type: logged_in
           force: true
