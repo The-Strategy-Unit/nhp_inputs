@@ -67,9 +67,11 @@ Suggests:
     spelling,
     testthat (>= 3.0.0),
     usethis,
-    watcher
+    watcher,
+    nhp.inputs.selection.app
 Remotes:
-    github::the-strategy-unit/azkit
+    github::the-strategy-unit/azkit,
+    nhp.inputs.selection.app=github::the-strategy-unit/nhp_inputs_selection_app
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-GB

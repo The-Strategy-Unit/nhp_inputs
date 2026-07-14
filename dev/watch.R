@@ -1,10 +1,7 @@
 shiny::devmode()
 
 selection_app <- callr::r_bg(\() {
-  app <- shiny::runApp(
-    "inputs_selection_app",
-    port = 9080
-  )
+  app <- nhp.inputs.selection.app::run_app(port = 9080)
   print(app)
 })
 
