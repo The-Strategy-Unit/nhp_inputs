@@ -61,14 +61,14 @@ Imports:
 Suggests:
     covr,
     devtools,
+    nhp.inputs.selection.app,
     mockery,
     rcmdcheck,
     rsconnect,
     spelling,
     testthat (>= 3.0.0),
     usethis,
-    watcher,
-    nhp.inputs.selection.app
+    watcher
 Remotes:
     github::the-strategy-unit/azkit,
     nhp.inputs.selection.app=github::the-strategy-unit/nhp_inputs_selection_app
