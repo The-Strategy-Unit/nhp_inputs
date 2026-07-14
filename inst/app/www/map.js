@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         onEachFeature: function (feature, layer) {
           if (feature.properties && feature.properties.icb22nm) {
-            pcnt = selectedIcbs[feature.properties.icb22cdh];
+            const pcnt = selectedIcbs[feature.properties.icb22cdh];
             layer.bindPopup(`${feature.properties.icb22nm}: ${(pcnt * 100).toFixed(1)}%`);
           }
         }
