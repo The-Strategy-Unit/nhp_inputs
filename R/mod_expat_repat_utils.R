@@ -142,23 +142,3 @@ mod_expat_repat_nonlocal_n <- function(df) {
       panel.grid.major.y = ggplot2::element_line("#9d928a", linetype = "dotted")
     )
 }
-
-
-mod_expat_repat_nonlocal_icb_map <- function(df) {
-  # nolint start: object_usage_linter
-  pal <- leaflet::colorNumeric(
-    viridis::viridis_pal()(3),
-    df$pcnt
-  )
-  # nolint end
-
-  leaflet::leaflet(df) |>
-    leaflet::addProviderTiles("CartoDB.Positron") |>
-    leaflet::addPolygons(
-      color = "#000000",
-      weight = 1,
-      opacity = 1,
-      fillColor = ~ pal(pcnt),
-      popup = ~ glue::glue("{icb22nm}: {count} ({scales::percent(pcnt)})")
-    )
-}

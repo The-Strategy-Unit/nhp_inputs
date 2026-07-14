@@ -339,12 +339,14 @@ golem_add_external_resources <- function() {
     "www",
     app_sys("app/www")
   )
+
   tags$head(
     golem::favicon(),
     golem::bundle_resources(
       path = app_sys("app/www"),
       app_title = "NHP: Inputs"
     ),
+    use_leafletjs(),
     tags$base(target = "_blank")
   )
 }

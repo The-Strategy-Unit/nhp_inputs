@@ -119,10 +119,9 @@ mod_expat_repat_ui <- function(id) {
               )
             ),
             col_4(
-              shinycssloaders::withSpinner(
-                leaflet::leafletOutput(
-                  ns("repat_nonlocal_icb_map")
-                )
+              shiny::tags$div(
+                id = ns("icb_map"),
+                style = "height: 400px;"
               )
             )
           )

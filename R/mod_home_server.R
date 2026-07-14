@@ -23,7 +23,9 @@ mod_home_server <- function(id, filename) {
       purrr::walk(names(p), \(i) params[[i]] <- p[[i]])
 
       # remove the temporary file
-      unlink(filename())
+      if (!shiny::in_devmode()) {
+        unlink(filename())
+      }
 
       init$destroy()
     })
