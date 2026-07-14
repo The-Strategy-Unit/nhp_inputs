@@ -34,15 +34,17 @@ of how the components of the modelling process fit together.
 
 ## For developers
 
-The app is built and maintained by members of [the Strategy Unit’s Data
-Science team](https://the-strategy-unit.github.io/data_science/).
+The guidance below is for the members of [the Strategy Unit’s Data
+Science team](https://the-strategy-unit.github.io/data_science/), who
+built and maintain this app.
 
 ### Structure
 
 Technically there are two apps: the main app in the `main` branch, and
-the inputs selection app (where users start or edit a scenario) in the
-`inputs_selection_app` branch. Users arrive at the selection app before
-being routed to the main app.
+the [inputs selection
+app](https://github.com/The-Strategy-Unit/nhp_inputs_selection_app)
+(where users start or edit a scenario). Users arrive at the selection
+app before being routed to the main app.
 
 Both apps are built with [Shiny](https://shiny.posit.co/) and the main
 app uses the [the {golem}
@@ -50,49 +52,50 @@ package](https://thinkr-open.github.io/golem/). Server and UI modules
 can be found in `R/`, configuration in `inst/golem-config.yml` and
 supporting data and text in `inst/app/`.
 
-Packages used in the app are listed in `DESCRIPTION`, and can be
-installed with `devtools::install_deps(dependencies = TRUE)`.
-
 ### Run locally
 
 Run the app locally on your machine to test that your changes work as
 expected.
 
-To prepare, add an `.Renviron` file to the project root that contains
-the required environment variables. There is an `.Renviron.example` file
-which describes the required variables. You can get these from a member
-of the Data Science team.
+#### Setup
 
-Then, from the `main` branch (or your development branch of it), use
-Git’s `worktree` function to put the `inputs_selection_app` branch (or
-your development branch of it) in its own subfolder.
+First, install the required packages listed in the DESCRIPTION with
+`pak::local_install_dev_deps(dependencies = TRUE)`.
 
-In the terminal:
+Then add an `.Renviron` file to the project root that contains the
+required environment variables. Copy into it the required variables,
+which are listed in the `.Renviron.example`. You can get the values you
+need from a member of the Data Science team.
 
-    git fetch origin inputs_selection_app
-    git worktree add inputs_selection_app inputs_selection_app
+#### Run the app
 
-If you want a development version of the inputs selection app, you can
-specify the branch name as the second of the arguments to
-`git worktree add`.
+Once setup, we can run the app. This is done by launching a background
+Shiny app and then watching the files for changes, which causes an
+auto-reload. The method for doing this depends on your IDE.
 
-To run the app from RStudio, start up the selection app by opening the
-`dev/watch.R` script, go to the ‘Background Jobs’ tab of the console
-pane and click the ‘Start Background Job’ button. In the ‘Run Script as
-Background Job’ dialog box select the project root as the ‘Working
-Directory’, then hit ‘Start’. When ready, the app will tell you to visit
-`http://127.0.0.1:9081/` in your browser.
+In RStudio:
 
-Note that your selections in the app remain local to you and the
-resulting json file of parameters for your scenario will live in your
-local `params/development/` directory. These scenarios will be
-selectable and editable in future from your locally-run inputs selection
-app.
+1.  Open the `dev/watch.R` script and go to the ‘Background Jobs’ tab of
+    the console pane and click the ‘Start Background Job’ button.
+2.  Click ‘Start’ after checking that the ‘R Script’ path is
+    pre-populated with the path to `watch.R` (otherwise select it
+    yourself).
+3.  When ready, a message will tell you to visit
+    `http://127.0.0.1:9081/` in your browser.
 
-If you need to remove the selection-app folder at any point, you can
-terminate the background job (if running) and in the terminal run:
+In Positron: run `source('dev/watch.R')` and click the link to the URL
+when complete.
 
-    git worktree remove inputs_selection_app
+In VS Code: open the command palette
+(<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>), search for ‘Tasks: Run
+Task’, then select ‘R: Run App (watch)’ and finally click the link to
+the URL when complete.
+
+Making selections in the app will cause values to be written to a local
+json file, which will live in your local `params/development/`
+directory. These scenarios will be selectable and editable in future
+from your locally-run inputs selection app. They will not be available
+from the deployed app.
 
 ### Test in dev
 
@@ -107,25 +110,32 @@ To test the unreleased app in our development environment:
     update `manifest.json`.
 3.  If you’ve made any changes to the inputs selection app, run the
     manual `deploy()` call under the ‘development’ heading in the
-    `deploy.R` script in your selection app development branch.
+    `deploy.R` script in your selection-app development branch.
 
 When using the dev inputs selection app on Connect, make sure to set the
 ‘Model Version’ dropdown to ‘dev’ in the expandable ‘Advanced Options’
 box. That way you’ll be taken to the dev inputs app when you hit
 ‘Start’.
 
-### Data extraction
+### Data
 
 The app displays trust-specific data to users. The data is processed via
 Databricks scripts in [the nhp_data
 repository](https://github.com/The-Strategy-Unit/nhp_data) and stored in
 Azure storage.
 
+If the data updates and you need to invalidate the current cache, you
+force a reset by appending `?reset_cache=true` to the app’s canonical
+URL at `https://connect.strategyunitwm.nhs.uk/nhp/inputs/` (authorised
+devs only).
+
 ### Deployment
 
-Deployment is controlled by GitHub Actions, where:
+Deployment is controlled by GitHub Actions in `.github/workflows/`,
+where:
 
 - pushes to the `main` branch redeploy the app to /nhp/dev/inputs/ for
   purposes of quality assurance
 - tagged releases trigger a new deployment to /nhp/vX-Y/inputs/, where
   ‘vX-Y’ is the current version (note the hyphen)
+- manual deployment is possible with `connect-publish-manual.yaml`
