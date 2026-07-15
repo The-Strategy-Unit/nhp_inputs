@@ -93,3 +93,13 @@ get_params_schema <- function() {
   }
   .schema_cache[["schema"]]
 }
+
+use_leafletjs <- function() {
+  htmltools::htmlDependency(
+    name = "leaflet",
+    version = "1.9.4",
+    src = c(href = "https://unpkg.com/leaflet@1.9.4/dist"),
+    script = "leaflet.js",
+    stylesheet = "leaflet.css"
+  )
+}

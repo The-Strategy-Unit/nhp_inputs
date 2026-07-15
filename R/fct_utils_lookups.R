@@ -79,10 +79,6 @@ get_waiting_list_multipliers <- function() {
     )
 }
 
-get_icb_boundaries <- function() {
-  sf::read_sf(lookup_file_path("icb_boundaries.geojson"))
-}
-
 # use a singleton pattern to cache lookups in memory, but prevent the files from
 # being read immediately when the package is attached
 .lookups_cache <- new.env()
@@ -99,8 +95,7 @@ get_lookups <- function() {
         "ndg_variants" = get_ndg_variants_lookup(),
         "nee_table" = get_nee_lookup(),
         "rtt_specialties" = get_rtt_specialties_lookup(),
-        "waiting_list_multipliers" = get_waiting_list_multipliers(),
-        "icb_boundaries" = get_icb_boundaries()
+        "waiting_list_multipliers" = get_waiting_list_multipliers()
       ),
       envir = .lookups_cache
     )

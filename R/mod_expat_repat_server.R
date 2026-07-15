@@ -8,8 +8,6 @@ mod_expat_repat_server <- function(id, params) {
     dplyr::select("specialty", "code") |>
     tibble::deframe()
 
-  icb_boundaries <- get_lookups()[["icb_boundaries"]]
-
   mod_reasons_server(shiny::NS(id, "reasons"), params, "expat_repat")
 
   shiny::moduleServer(id, function(input, output, session) {
@@ -331,24 +329,20 @@ mod_expat_repat_server <- function(id, params) {
       mod_expat_repat_nonlocal_n(df)
     })
 
-    output$repat_nonlocal_icb_map <- leaflet::renderLeaflet({
-      dat <- repat_nonlocal() |>
+    shiny::observe({
+      icb_pcnts <- repat_nonlocal() |>
         dplyr::filter(
-          .data$count > 5,
-          .data$fyear == params$start_year,
+          .data[["count"]] > 5,
+          .data[["fyear"]] == params$start_year,
           .data[["provider"]] == params$dataset,
           !.data[["is_main_icb"]]
-        )
+        ) |>
+        dplyr::select("icb", "pcnt") |>
+        tibble::deframe()
 
-      df <- icb_boundaries |>
-        dplyr::inner_join(
-          dat,
-          by = dplyr::join_by("icb22cdh" == "icb")
-        )
+      shiny::req(length(icb_pcnts) > 0)
 
-      shiny::req(nrow(df) > 0)
-
-      mod_expat_repat_nonlocal_icb_map(df)
+      session$sendCustomMessage("selectedIcbs", icb_pcnts)
     })
 
     # return ----
