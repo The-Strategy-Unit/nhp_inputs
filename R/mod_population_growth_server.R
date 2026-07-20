@@ -38,7 +38,7 @@ mod_population_growth_server <- function(id, params) {
     shiny::observe({
       if (init_timeout) {
         shiny::invalidateLater(50)
-        shiny::req((init_timeout <<- FALSE))
+        shiny::req((init_timeout <<- FALSE)) # nolint
       }
       names(
         params$demographic_factors$variant_probabilities
