@@ -35,7 +35,7 @@ jobs:
     with:
       namespace: ${{ needs.get-variables.outputs.NAMESPACE }}
       inputs_data_version: ${{ needs.get-variables.outputs.INPUTS_DATA_VERSION }}
-      environment: "production"
+      environment: "production (${{ needs.get-variables.outputs.NAMESPACE }})"
     secrets: inherit
 
   sync-data:
