@@ -38,7 +38,7 @@ The guidance below is for the members of [the Strategy Unit's Data Science team]
 
 ### Structure
 
-Technically there are two apps: the main app in the `main` branch, and the inputs selection app (where users start or edit a scenario) in the `inputs_selection_app` branch.
+Technically there are two apps: the main app in the `main` branch, and the [inputs selection app](https://github.com/The-Strategy-Unit/nhp_inputs_selection_app) (where users start or edit a scenario).
 Users arrive at the selection app before being routed to the main app.
 
 Both apps are built with [Shiny](https://shiny.posit.co/) and the main app uses the [the {golem} package](https://thinkr-open.github.io/golem/).
@@ -50,29 +50,11 @@ Run the app locally on your machine to test that your changes work as expected.
 
 #### Setup
 
-First, install the required packages listed in the DESCRIPTION with `pak::local_install_deps(dependencies = TRUE)`.
+First, install the required packages listed in the DESCRIPTION with `pak::local_install_dev_deps(dependencies = TRUE)`.
 
 Then add an `.Renviron` file to the project root that contains the required environment variables.
 Copy into it the required variables, which are listed in the `.Renviron.example`.
 You can get the values you need from a member of the Data Science team.
-
-Then, from the `main` branch (or your development branch of it), use Git's `worktree` function to put the `inputs_selection_app` branch (or your development branch of it) in its own subfolder.
-
-In the terminal:
-
-```
-git fetch origin inputs_selection_app
-git worktree add inputs_selection_app inputs_selection_app
-```
-
-The first argument is the name of the folder in which to put the branch content.
-If you want a development version of the inputs selection app, you can specify the branch name as the second of the arguments to `git worktree add`.
-
-If you need to remove the selection-app folder at any point, you can terminate the background job (if running) and in the terminal run:
-
-```
-git worktree remove inputs_selection_app
-```
 
 #### Run the app
 
