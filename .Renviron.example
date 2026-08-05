@@ -4,6 +4,7 @@ NHP_API_URI=
 NHP_API_KEY=
 NHP_FEEDBACK_FORM_URL=
 NHP_OUTPUTS_URI=https://connect.strategyunitwm.nhs.uk/nhp/{version}/outputs/
+NHP_MODEL_RUN_PROGRESS_URI=https://connect.strategyunitwm.nhs.uk/nhp/model_run_progress/
 YEAR_HORIZON_DEFAULT=2041
 YEAR_HORIZON_MAX=2043
 YEAR_BASELINE_DEFAULT=2024
