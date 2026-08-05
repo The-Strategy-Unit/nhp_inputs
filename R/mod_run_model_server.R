@@ -14,9 +14,14 @@ mod_run_model_server <- function(id, params) {
     fixed_params <- shiny::reactive({
       shiny::req(params$scenario != "")
 
-      params |>
+      p <- params |>
         shiny::reactiveValuesToList() |>
         mod_run_model_fix_params()
+
+      # remove the inputs app data as this is not needed for the model run
+      p[["__inputs_app__"]] <- NULL
+
+      p
     })
 
     # output the status of the model run after submit is pressed
@@ -32,6 +37,9 @@ mod_run_model_server <- function(id, params) {
       progress_url <- glue::glue(
         "{envvars$NHP_MODEL_RUN_PROGRESS_URI)}?model_run_id={s[['dataset']]}/{s[['model_run_id']]}",
       )
+
+      # add the model_run_id to the params
+      params[["__inputs_app__"]][["model_run_id"]] <- s[["model_run_id"]]
 
       # redirect the user to the progress page...
       shinyjs::runjs(

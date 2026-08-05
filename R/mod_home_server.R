@@ -22,6 +22,12 @@ mod_home_server <- function(id, filename) {
       # copy the loaded params into params
       purrr::walk(names(p), \(i) params[[i]] <- p[[i]])
 
+      # add the session id
+      if (is.null(params[["__inputs_app__"]])) {
+        params[["__inputs_app__"]] <- list()
+      }
+      params[["__inputs_app__"]][["session_id"]] <- uuid::UUIDgenerate()
+
       # remove the temporary file
       if (!shiny::in_devmode()) {
         unlink(file)
