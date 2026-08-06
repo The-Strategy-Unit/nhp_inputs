@@ -338,7 +338,8 @@ mod_expat_repat_server <- function(id, params) {
           !.data[["is_main_icb"]]
         ) |>
         dplyr::select("icb", "pcnt") |>
-        tibble::deframe()
+        tibble::deframe() |>
+        as.list()
 
       shiny::req(length(icb_pcnts) > 0)
 
