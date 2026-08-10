@@ -62,6 +62,7 @@ jobs:
           CONNECT_ENV_SET_AZ_STORAGE_EP: ${{ secrets.AZ_STORAGE_EP }}
           CONNECT_ENV_SET_NHP_API_KEY: ${{ secrets.NHP_API_KEY }}
           CONNECT_ENV_SET_NHP_API_URI: ${{ vars.NHP_API_URI }}
+          CONNECT_ENV_SET_NHP_MODEL_RUN_PROGRESS_URI: ${{ vars.NHP_MODEL_RUN_PROGRESS_URI }}
           CONNECT_ENV_SET_NHP_INPUTS_DATA_VERSION: ${{ inputs.inputs_data_version }}
           CONNECT_ENV_SET_NHP_OUTPUTS_URI: ${{ secrets.NHP_OUTPUTS_URI }}
           CONNECT_ENV_SET_NHP_FEEDBACK_FORM_URL: ${{ secrets.FEEDBACK_FORM_URL }}
