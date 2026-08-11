@@ -24,7 +24,7 @@ mod_home_server <- function(id, filename) {
 
       # remove the temporary file
       if (!shiny::in_devmode()) {
-        unlink(filename())
+        unlink(file)
       }
     }) |>
       shiny::bindEvent(filename(), once = TRUE)
