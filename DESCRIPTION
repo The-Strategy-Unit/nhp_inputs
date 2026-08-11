@@ -52,6 +52,7 @@ Imports:
     tibble,
     tidyr,
     tidyselect,
+    watcher,
     zeallot
 Suggests:
     covr,
@@ -62,8 +63,7 @@ Suggests:
     rsconnect,
     spelling,
     testthat (>= 3.0.0),
-    usethis,
-    watcher
+    usethis
 Remotes:
     github::the-strategy-unit/azkit,
     nhp.inputs.selection.app=github::the-strategy-unit/nhp_inputs_selection_app

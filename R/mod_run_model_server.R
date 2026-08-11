@@ -35,19 +35,29 @@ mod_run_model_server <- function(id, params) {
 
       # handle the case where the model run has been submitted and we have a model_run_id
       progress_url <- glue::glue(
-        "{envvars$NHP_MODEL_RUN_PROGRESS_URI)}?model_run_id={s[['dataset']]}/{s[['model_run_id']]}",
+        "{envvars$NHP_MODEL_RUN_PROGRESS_URI)}?model_run_id={s[['dataset']]}/{s[['model_run_id']]}"
       )
 
       # add the model_run_id to the params
       params[["__inputs_app__"]][["model_run_id"]] <- s[["model_run_id"]]
 
-      # redirect the user to the progress page...
-      shinyjs::runjs(
-        glue::glue("window.location.replace('{progress_url}');")
-      )
+      if (shiny::in_devmode()) {
+        shiny::showModal(
+          shiny::modalDialog(
+            title = "Model run submitted",
+            easyClose = FALSE,
+            shiny::tags$p("Mocked model run submission.")
+          )
+        )
+      } else {
+        # redirect the user to the progress page...
+        shinyjs::runjs(
+          glue::glue("window.location.replace('{progress_url}');")
+        )
+      }
 
       # ... but show a link in case the redirect fails
-      shiny::tags$a(href = progress_url, "View Results")
+      shiny::tags$a(href = progress_url, "View Progress")
     })
 
     # observe the submit button being pressed

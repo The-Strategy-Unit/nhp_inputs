@@ -11,6 +11,25 @@ app_server <- function(input, output, session) {
 
   params <- mod_home_server("home", tmp_params_file_path)
 
+  params_file <- list(
+    # file watcher, will be instantiated later
+    watcher = NULL,
+    # session id callback for the watcher
+    session_id = shiny::reactiveVal(NULL),
+    # filename
+    filename = shiny::reactive({
+      dataset <- shiny::req(params$dataset)
+      scenario <- shiny::req(params$scenario)
+
+      params_filename(
+        # if running locally, then user will be NULL
+        session$user %||% "[development]",
+        dataset,
+        scenario
+      )
+    })
+  )
+
   # load all data
   rates_data <- shiny::reactive({
     get_rates_data()
