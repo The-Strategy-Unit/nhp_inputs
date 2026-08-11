@@ -12,8 +12,8 @@ mod_home_server <- function(id, filename) {
     # load the selected params
     # if the user chooses to create new from scratch, we use the default parameters file
     # otherwise, load the values for the scenario the user selected
-    init <- shiny::observe({
-      file <- filename()
+    shiny::observe({
+      file <- shiny::req(filename())
 
       # make sure the file exists before loading it
       shiny::req(file.exists(file))
@@ -26,9 +26,8 @@ mod_home_server <- function(id, filename) {
       if (!shiny::in_devmode()) {
         unlink(filename())
       }
-
-      init$destroy()
-    })
+    }) |>
+      shiny::bindEvent(filename(), once = TRUE)
 
     # renders ----
     output$model_options <- gt::render_gt({

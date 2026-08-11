@@ -5,10 +5,11 @@
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
-  params <- mod_home_server(
-    "home",
-    shiny::reactive(input$params_file)
-  )
+  tmp_params_file_path <- shiny::reactive({
+    parse_url_query_filename(session$clientData$url_search)
+  })
+
+  params <- mod_home_server("home", tmp_params_file_path)
 
   # load all data
   rates_data <- shiny::reactive({
