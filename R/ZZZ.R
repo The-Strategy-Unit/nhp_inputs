@@ -112,3 +112,23 @@ get_params_schema_text <- function(
 create_params_schema <- function(schema_text) {
   jsonvalidate::json_schema$new(schema_text)
 }
+
+parse_url_query_filename <- function(query_string) {
+  f <- utils::URLdecode(stringr::str_sub(query_string, 2L))
+
+  if (stringr::str_detect(f, "[^a-zA-Z0-9]")) {
+    return(NULL)
+  }
+
+  if (f == "") {
+    return(NULL)
+  }
+
+  file <- file.path(get_golem_config("params_data_path"), "tmp", f)
+
+  if (!file.exists(file)) {
+    return(NULL)
+  }
+
+  file
+}

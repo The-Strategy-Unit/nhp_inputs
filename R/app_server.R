@@ -5,6 +5,10 @@
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
+  tmp_params_file_path <- shiny::reactive({
+    parse_url_query_filename(session$clientData$url_search)
+  })
+
   # in fct_create_data_cache, we utilise this env var to invalidate the cache
   # we can use it's value to allow us to cache all of the reactive data without
   # having to bind to some other input which might change
@@ -43,7 +47,7 @@ app_server <- function(input, output, session) {
   params <- mod_home_server(
     "home",
     providers(),
-    shiny::reactive(input$params_file)
+    tmp_params_file_path
   )
 
   # we could probably drop the need for start now, kept for historical reasons

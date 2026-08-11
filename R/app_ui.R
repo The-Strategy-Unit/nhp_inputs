@@ -6,11 +6,9 @@
 app_ui <- function(request) {
   # handle loading the provided filename
 
-  f <- utils::URLdecode(stringr::str_sub(request$QUERY_STRING, 2L))
+  file <- parse_url_query_filename(request$QUERY_STRING)
 
-  file <- file.path(get_golem_config("params_data_path"), "tmp", f)
-
-  if (f == "" || !file.exists(file)) {
+  if (is.null(file)) {
     # redirect back to the inputs selection tool
     return(
       shiny::httpResponse(
@@ -22,7 +20,7 @@ app_ui <- function(request) {
       )
     )
   }
-  dataset <- jsonlite::read_json(file)$dataset
+  dataset <- jsonlite::read_json(file.path(file))$dataset
 
   header <- bs4Dash::dashboardHeader(
     title = "NHP Model Inputs",
@@ -319,10 +317,6 @@ app_ui <- function(request) {
   shiny::tagList(
     golem_add_external_resources(),
     shinyjs::useShinyjs(),
-    shiny::conditionalPanel(
-      "false",
-      shiny::textInput("params_file", NULL, file)
-    ),
     bs4Dash::dashboardPage(
       help = NULL,
       dark = NULL,
