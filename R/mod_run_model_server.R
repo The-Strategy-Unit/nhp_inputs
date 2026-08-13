@@ -113,6 +113,30 @@ mod_run_model_server <- function(id, params) {
       )
     })
 
+    shiny::observe({
+      modal <- shiny::modalDialog(
+        title = "Model Run Parameters",
+        shiny::div(
+          style = "height: 50vh; display: flex; flex-direction: column;",
+          shiny::tags$style(
+            shiny::HTML(
+              paste0(
+                "#",
+                session$ns("params_json"),
+                "{ flex: 1 1 auto; min-height: 0; overflow: auto; margin: 0; }"
+              )
+            )
+          ),
+          shiny::verbatimTextOutput(session$ns("params_json"))
+        ),
+        easyClose = TRUE,
+        size = "l"
+      )
+
+      shiny::showModal(modal)
+    }) |>
+      shiny::bindEvent(input$view_params)
+
     output$params_json <- shiny::renderText({
       v <- params_json_validation()
 
