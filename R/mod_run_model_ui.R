@@ -9,15 +9,26 @@
 #' @importFrom shiny NS tagList
 mod_run_model_ui <- function(id) {
   ns <- shiny::NS(id)
-  shiny::fluidRow(
-    col_4(
-      mod_reasons_ui(ns("reasons")),
+  bslib::layout_columns(
+    col_widths = c(4, 8),
+    shiny::tagList(
+      bslib::card(
+        fill = FALSE,
+        md_file_to_html("app", "text", "run_model.md")
+      ),
+      mod_reasons_ui(ns("reasons"))
+    ),
+
+    shiny::tagList(
       shinyjs::hidden(
         shiny::div(
           id = ns("model_run_args"),
-          bs4Dash::box(
-            title = "Model Run Arguments",
-            width = 12,
+          bslib::card(
+            bslib::card_header(
+              "Model Run Arguments",
+              class = "bg-primary"
+            ),
+            fill = FALSE,
             shinyjs::disabled(
               shiny::checkboxInput(
                 ns("results_viewable"),
@@ -35,32 +46,49 @@ mod_run_model_ui <- function(id) {
           )
         )
       ),
-      bs4Dash::box(
-        title = "Run Model",
-        width = 12,
-        shiny::fluidRow(
-          col_6(
-            shiny::actionButton(ns("submit"), "Submit Model Run"),
+      bslib::card(
+        bslib::card_header(
+          "Run Model",
+          class = "bg-primary"
+        ),
+        fill = FALSE,
+        bslib::layout_columns(
+          col_widths = c(6, 6),
+          shiny::actionButton(
+            ns("submit"),
+            "Submit Model Run",
+            class = "bg-secondary"
           ),
-          col_6(
-            shiny::downloadButton(ns("download_params"), "Download params")
+          shiny::downloadButton(
+            ns("download_params"),
+            "Download params",
+            class = "bg-secondary"
           )
         ),
         shiny::uiOutput(ns("status"))
       ),
-      bs4Dash::box(
-        collapsible = FALSE,
-        headerBorder = FALSE,
-        width = 12,
-        md_file_to_html("app", "text", "run_model.md")
+      bslib::card(
+        bslib::card_header(
+          shiny::tags$button(
+            type = "button",
+            class = "btn btn-link p-0 text-start w-100",
+            `data-bs-toggle` = "collapse",
+            `data-bs-target` = "#view_params_collapse",
+            `aria-expanded` = "false",
+            `aria-controls` = "view_params_collapse",
+            "View Params",
+          ),
+          class = "bg-primary"
+        ),
+        fill = FALSE,
+
+        bslib::card_body(
+          id = "view_params_collapse",
+          class = "collapse",
+          shiny::verbatimTextOutput(ns("params_json")),
+          shiny::htmlOutput(ns("validation_errors"))
+        )
       )
-    ),
-    bs4Dash::box(
-      title = "View Params",
-      width = 8,
-      collapsed = TRUE,
-      shiny::verbatimTextOutput(ns("params_json")),
-      shiny::htmlOutput(ns("validation_errors"))
     )
   )
 }

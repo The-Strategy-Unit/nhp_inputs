@@ -11,11 +11,10 @@ mod_health_status_adjustment_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::tags$h1("Health Status Adjustment"),
-    shiny::fluidRow(
-      bs4Dash::box(
-        collapsible = FALSE,
-        headerBorder = FALSE,
-        width = 4,
+    bslib::layout_columns(
+      col_widths = c(4, 8),
+      bslib::card(
+        fill = FALSE,
         md_file_to_html("app", "text", "health_status_adjustment.md"),
         shinyjs::hidden(
           shinyjs::disabled(
@@ -26,7 +25,8 @@ mod_health_status_adjustment_ui <- function(id) {
             )
           )
         )
-      )
+      ),
+      shiny::tags$span()
     )
   )
 }

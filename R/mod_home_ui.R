@@ -10,30 +10,27 @@
 mod_home_ui <- function(id) {
   ns <- shiny::NS(id)
 
-  left_column <- col_4(
-    bs4Dash::box(
-      collapsible = FALSE,
-      headerBorder = FALSE,
-      width = 12,
-      md_file_to_html("app", "text", "home.md")
-    )
+  left_column <- bslib::card(
+    fill = FALSE,
+    md_file_to_html("app", "text", "home.md")
   )
 
-  right_column <- col_8(
-    bs4Dash::box(
-      title = "Model Options",
-      collapsible = FALSE,
-      width = 12,
-      shinycssloaders::withSpinner(
-        shiny::htmlOutput(ns("model_options"))
-      )
+  right_column <- bslib::card(
+    bslib::card_header(
+      "Model Options",
+      class = "bg-primary"
+    ),
+    fill = FALSE,
+    shinycssloaders::withSpinner(
+      shiny::htmlOutput(ns("model_options"))
     )
   )
 
   # build the home page outputs
   shiny::tagList(
     htmltools::h1("NHP Model Inputs"),
-    shiny::fluidRow(
+    bslib::layout_columns(
+      col_widths = c(4, 8),
       left_column,
       right_column
     )

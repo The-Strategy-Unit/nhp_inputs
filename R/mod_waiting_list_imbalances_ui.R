@@ -12,13 +12,15 @@ mod_waiting_list_imbalances_ui <- function(id) {
 
   shiny::tagList(
     shiny::tags$h1("Waiting List Imbalances"),
-    shiny::fluidRow(
-      col_4(
-        bs4Dash::box(
-          collapsible = FALSE,
-          headerBorder = FALSE,
-          width = 12,
-          title = "Include in model",
+    bslib::layout_columns(
+      col_widths = c(4, 8),
+      shiny::tagList(
+        bslib::card(
+          bslib::card_header(
+            "Include in model",
+            class = "bg-primary"
+          ),
+          fill = FALSE,
           shinyWidgets::switchInput(
             ns("use_wli"),
             value = FALSE,
@@ -26,18 +28,14 @@ mod_waiting_list_imbalances_ui <- function(id) {
             offLabel = "No"
           )
         ),
-        bs4Dash::box(
-          collapsible = FALSE,
-          headerBorder = FALSE,
-          width = 12,
+        bslib::card(
+          fill = FALSE,
           md_file_to_html("app", "text", "waiting_list_imbalances.md")
         ),
         mod_reasons_ui(ns("reasons"))
       ),
-      bs4Dash::box(
-        collapsible = FALSE,
-        headerBorder = FALSE,
-        width = 8,
+      bslib::card(
+        fill = FALSE,
         shiny::htmlOutput(ns("table"))
       )
     )
