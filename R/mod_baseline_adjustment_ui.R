@@ -81,68 +81,62 @@ mod_baseline_adjustment_ui <- function(id) {
         ),
         mod_reasons_ui(ns("reasons"))
       ),
-      bslib::card(
-        bslib::card_header(
-          "Parameters",
-          class = "bg-primary"
+
+      bslib::navset_card_pill(
+        bslib::nav_panel(
+          title = "Inpatients",
+          bslib::navset_card_pill(
+            bslib::nav_panel(
+              "Elective",
+              create_table("ip", "elective")
+            ),
+            bslib::nav_panel(
+              "Non-Elective",
+              create_table("ip", "non-elective")
+            ),
+            bslib::nav_panel(
+              "Maternity",
+              create_table(
+                "ip",
+                "maternity",
+                specs |> dplyr::filter(.data[["code"]] == "Other (Medical)")
+              )
+            )
+          )
         ),
-        fill = FALSE,
-        bslib::navset_tab(
-          bslib::nav_panel(
-            "Inpatients",
-            bslib::navset_tab(
-              bslib::nav_panel(
-                "Elective",
-                create_table("ip", "elective")
-              ),
-              bslib::nav_panel(
-                "Non-Elective",
-                create_table("ip", "non-elective")
-              ),
-              bslib::nav_panel(
-                "Maternity",
-                create_table(
-                  "ip",
-                  "maternity",
-                  specs |> dplyr::filter(.data[["code"]] == "Other (Medical)")
+        bslib::nav_panel(
+          title = "Outpatients",
+          bslib::navset_card_pill(
+            bslib::nav_panel(
+              "First Attendance",
+              create_table("op", "first")
+            ),
+            bslib::nav_panel(
+              "Follow-up Attendance",
+              create_table("op", "followup")
+            ),
+            bslib::nav_panel(
+              "Procedure",
+              create_table("op", "procedure")
+            )
+          )
+        ),
+        bslib::nav_panel(
+          title = "A&E",
+          create_table(
+            "aae",
+            "-",
+            tibble::tibble(code = c("ambulance", "walk-in")) |>
+              dplyr::mutate(
+                dplyr::across(
+                  "code",
+                  .fns = c(
+                    specialty = snakecase::to_title_case,
+                    sanitized_code = sanitize_input_name
+                  ),
+                  .names = "{.fn}"
                 )
               )
-            )
-          ),
-          bslib::nav_panel(
-            "Outpatients",
-            bslib::navset_tab(
-              bslib::nav_panel(
-                "First Attendance",
-                create_table("op", "first")
-              ),
-              bslib::nav_panel(
-                "Follow-up Attendance",
-                create_table("op", "followup")
-              ),
-              bslib::nav_panel(
-                "Procedure",
-                create_table("op", "procedure")
-              )
-            )
-          ),
-          bslib::nav_panel(
-            "A&E",
-            create_table(
-              "aae",
-              "-",
-              tibble::tibble(code = c("ambulance", "walk-in")) |>
-                dplyr::mutate(
-                  dplyr::across(
-                    "code",
-                    .fns = c(
-                      specialty = snakecase::to_title_case,
-                      sanitized_code = sanitize_input_name
-                    ),
-                    .names = "{.fn}"
-                  )
-                )
-            )
           )
         )
       )
