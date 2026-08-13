@@ -11,18 +11,18 @@ mod_non_demographic_adjustment_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::tags$h1("Non-demographic Adjustment"),
-    shiny::fluidRow(
-      bs4Dash::column(
-        width = 4,
-        bs4Dash::box(
-          collapsible = FALSE,
-          headerBorder = FALSE,
-          width = 12,
+    bslib::layout_columns(
+      col_widths = c(4, 8),
+      shiny::tagList(
+        bslib::card(
+          fill = FALSE,
           md_file_to_html("app", "text", "non_demographic_adjustment.md")
         ),
-        bs4Dash::box(
-          title = "Non-demographic Variant",
-          width = 12,
+        bslib::card(
+          bslib::card_header(
+            "Non-demographic Variant",
+            class = "bg-primary"
+          ),
           md_file_to_html(
             "app",
             "text",
@@ -44,10 +44,8 @@ mod_non_demographic_adjustment_ui <- function(id) {
           )
         )
       ),
-      bs4Dash::box(
-        collapsible = FALSE,
-        headerBorder = FALSE,
-        width = 4,
+      bslib::card(
+        fill = TRUE,
         shiny::htmlOutput(ns("non_demographic_adjustment_table"))
       )
     )

@@ -64,39 +64,42 @@ mod_baseline_adjustment_ui <- function(id) {
 
   shiny::tagList(
     shiny::tags$h1("Baseline Adjustment"),
-    shiny::fluidRow(
-      col_4(
-        bs4Dash::box(
-          collapsible = FALSE,
-          headerBorder = FALSE,
-          width = 12,
+    bslib::layout_columns(
+      col_widths = c(4, 8),
+      fill = FALSE,
+      shiny::tagList(
+        bslib::card(
+          fill = FALSE,
           md_file_to_html("app", "text", "baseline_adjustment.md"),
           shinyjs::hidden(
             shiny::downloadButton(
               ns("download_baseline"),
-              "Download Baseline Values (excel)"
+              "Download Baseline Values (excel)",
+              class = "bg-secondary"
             )
           )
         ),
         mod_reasons_ui(ns("reasons"))
       ),
-      bs4Dash::box(
-        title = "Parameters",
-        width = 8,
-        collapsible = FALSE,
-        bs4Dash::tabsetPanel(
-          shiny::tabPanel(
+      bslib::card(
+        bslib::card_header(
+          "Parameters",
+          class = "bg-primary"
+        ),
+        fill = FALSE,
+        bslib::navset_tab(
+          bslib::nav_panel(
             "Inpatients",
-            bs4Dash::tabsetPanel(
-              shiny::tabPanel(
+            bslib::navset_tab(
+              bslib::nav_panel(
                 "Elective",
                 create_table("ip", "elective")
               ),
-              shiny::tabPanel(
+              bslib::nav_panel(
                 "Non-Elective",
                 create_table("ip", "non-elective")
               ),
-              shiny::tabPanel(
+              bslib::nav_panel(
                 "Maternity",
                 create_table(
                   "ip",
@@ -106,24 +109,24 @@ mod_baseline_adjustment_ui <- function(id) {
               )
             )
           ),
-          shiny::tabPanel(
+          bslib::nav_panel(
             "Outpatients",
-            bs4Dash::tabsetPanel(
-              shiny::tabPanel(
+            bslib::navset_tab(
+              bslib::nav_panel(
                 "First Attendance",
                 create_table("op", "first")
               ),
-              shiny::tabPanel(
+              bslib::nav_panel(
                 "Follow-up Attendance",
                 create_table("op", "followup")
               ),
-              shiny::tabPanel(
+              bslib::nav_panel(
                 "Procedure",
                 create_table("op", "procedure")
               )
             )
           ),
-          shiny::tabPanel(
+          bslib::nav_panel(
             "A&E",
             create_table(
               "aae",

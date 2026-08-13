@@ -22,303 +22,178 @@ app_ui <- function(request) {
   }
   dataset <- jsonlite::read_json(file.path(file))$dataset
 
-  header <- bs4Dash::dashboardHeader(
-    title = "NHP Model Inputs",
-    shiny::actionButton(
-      inputId = "feedback",
-      label = "Give feedback",
-      onClick = glue::glue(
-        "window.open('{envvars$NHP_FEEDBACK_FORM_URL}', '_blank')"
-      )
-    )
-  )
-
-  sidebar <- bs4Dash::dashboardSidebar(
-    fixed = TRUE,
-    skin = "light",
-    status = "primary",
-    bs4Dash::sidebarMenu(
-      id = "sidebarMenu",
-      #
-      bs4Dash::menuItem(
-        "Home",
-        tabName = "tab_home",
-        icon = shiny::icon("house")
-      ),
-      shiny::tags$hr(),
-      bs4Dash::sidebarHeader("Baseline Adjustments"),
-      bs4Dash::menuItem(
+  body <- list(
+    bslib::nav_panel(
+      "Home",
+      icon = shiny::icon("house"),
+      mod_home_ui("home")
+    ),
+    bslib::nav_menu(
+      "Population Changes",
+      icon = shiny::icon("user"),
+      bslib::nav_panel(
         "Baseline Adjustment",
-        tabName = "tab_baseline_adjustment"
-      ),
-      shiny::tags$hr(),
-      bs4Dash::sidebarHeader("Population Changes"),
-      bs4Dash::menuItem(
-        "Population Growth",
-        tabName = "tab_population_growth"
-      ),
-      bs4Dash::menuItem(
-        "Health Status Adjustment",
-        tabName = "tab_health_status_adjustment"
-      ),
-      shiny::tags$hr(),
-      shinyjs::hidden(
-        shiny::div(
-          id = "inequalities_tab",
-          bs4Dash::sidebarHeader("Inequalities"),
-          bs4Dash::menuItem(
-            "Inequalities",
-            tabName = "tab_inequalities"
-          )
-        )
-      ),
-      shiny::tags$hr(),
-      bs4Dash::sidebarHeader("Demand-supply Imbalances"),
-      bs4Dash::menuItem(
-        "Expat/Repat",
-        tabName = "tab_er"
-      ),
-      shiny::tags$hr(),
-      bs4Dash::sidebarHeader("Non-demographic Changes"),
-      bs4Dash::menuItem(
-        "Non-demographic Adjustment",
-        tabName = "tab_nda"
-      ),
-      #
-      shiny::tags$hr(),
-      bs4Dash::sidebarHeader("Types of Activity"),
-      bs4Dash::menuItem(
-        "Summary totals",
-        tabName = "mitigators_summary"
-      ),
-      bs4Dash::menuItem(
-        "Inpatients",
-        bs4Dash::menuSubItem(
-          "Admission Avoidance",
-          tabName = "ip_am_admission_avoidance"
-        ),
-        bs4Dash::menuSubItem(
-          "Mean LoS Reduction",
-          tabName = "ip_am_mean_los_reduction"
-        ),
-        bs4Dash::menuSubItem(
-          "SDEC conversion",
-          tabName = "ip_am_sdec_conversion"
-        ),
-        bs4Dash::menuSubItem(
-          "Pre-op LoS Reduction",
-          tabName = "ip_am_preop_los_reduction"
-        ),
-        bs4Dash::menuSubItem(
-          "Day Procedures: Daycase",
-          tabName = "ip_am_mitigators_day_procedures_daycase"
-        ),
-        bs4Dash::menuSubItem(
-          "Day Procedures: OP",
-          tabName = "ip_am_mitigators_day_procedures_outpatients"
-        )
-      ),
-      bs4Dash::menuItem(
-        "Outpatients",
-        bs4Dash::menuSubItem(
-          "Consultant Referrals",
-          tabName = "op_am_c2c_referrals"
-        ),
-        bs4Dash::menuSubItem(
-          "Convert to Tele",
-          tabName = "op_am_convert_tele"
-        ),
-        bs4Dash::menuSubItem(
-          "Followup Reduction",
-          tabName = "op_am_fup_reduction"
-        ),
-        bs4Dash::menuSubItem(
-          "GP Referred First Att.",
-          tabName = "op_gp_referred_first_attendance_reduction"
-        )
-      ),
-      bs4Dash::menuItem(
-        "A&E",
-        bs4Dash::menuSubItem(
-          "Discharged No Treatment",
-          tabName = "aae_discharged_no_treatment"
-        ),
-        bs4Dash::menuSubItem(
-          "Frequent Attenders",
-          tabName = "aae_frequent_attenders"
-        ),
-        bs4Dash::menuSubItem(
-          "Left Before Seen",
-          tabName = "aae_left_before_seen"
-        ),
-        bs4Dash::menuSubItem(
-          "Low Cost Discharged",
-          tabName = "aae_low_cost_discharged"
-        )
-      ),
-      #
-      shiny::tags$hr(),
-      #
-      shinyjs::hidden(
-        shiny::tags$div(
-          id = "run-model-container",
-          shiny::tags$hr(),
-          bs4Dash::sidebarHeader("Run Model"),
-          bs4Dash::menuItem(
-            "Run Model",
-            tabName = "tab_run_model"
-          )
-        )
-      )
-    )
-  )
-
-  body <- bs4Dash::dashboardBody(
-    bs4Dash::tabItems(
-      bs4Dash::tabItem(
-        tabName = "tab_home",
-        mod_home_ui("home")
-      ),
-      bs4Dash::tabItem(
-        tabName = "tab_baseline_adjustment",
         mod_baseline_adjustment_ui("baseline_adjustment")
       ),
-      bs4Dash::tabItem(
-        tabName = "tab_population_growth",
+      bslib::nav_panel(
+        "Population Growth",
         mod_population_growth_ui("population_growth", dataset)
       ),
-      bs4Dash::tabItem(
-        tabName = "tab_health_status_adjustment",
+      bslib::nav_panel(
+        "Health Status Adjustment",
         mod_health_status_adjustment_ui("health_status_adjustment")
       ),
-      bs4Dash::tabItem(
-        tabName = "tab_inequalities",
+      bslib::nav_panel(
+        "Non-demographic Adjustment",
+        mod_non_demographic_adjustment_ui("non_demographic_adjustment")
+      )
+    ),
+    bslib::nav_menu(
+      "Demand-supply Imbalances",
+      icon = shiny::icon("balance-scale"),
+      bslib::nav_panel(
+        "Inequalities",
         mod_inequalities_ui("inequalities")
       ),
-      bs4Dash::tabItem(
-        tabName = "tab_nda",
-        mod_non_demographic_adjustment_ui("non_demographic_adjustment")
-      ),
-      bs4Dash::tabItem(
-        tabName = "tab_er",
+      bslib::nav_panel(
+        "Expat/Repat",
         mod_expat_repat_ui("expat_repat")
-      ),
-      bs4Dash::tabItem(
-        tabName = "mitigators_summary",
+      )
+    ),
+    bslib::nav_menu(
+      "Activity Mitigation",
+      icon = shiny::icon("hand-holding-medical"),
+      bslib::nav_panel(
+        "Summary Totals",
         mod_mitigators_summary_ui("mitigators_summary")
       ),
-      bs4Dash::tabItem(
-        tabName = "ip_am_admission_avoidance",
+      bslib::nav_item(
+        shiny::tags$hr(),
+        shiny::tags$h4("Inpatients", class = "dropdown-header")
+      ),
+      bslib::nav_panel(
+        "Admission Avoidance",
         mod_mitigators_ui(
           "mitigators_admission_avoidance",
           "Admission Avoidance"
         )
       ),
-      bs4Dash::tabItem(
-        tabName = "ip_am_mean_los_reduction",
+      bslib::nav_panel(
+        "Mean Length of Stay Reduction",
         mod_mitigators_ui(
           "mitigators_mean_los_reduction",
           "Mean Length of Stay Reduction"
         )
       ),
-      bs4Dash::tabItem(
-        tabName = "ip_am_sdec_conversion",
+      bslib::nav_panel(
+        "SDEC conversion",
         mod_mitigators_ui("mitigators_sdec_conversion", "SDEC conversion")
       ),
-      bs4Dash::tabItem(
-        tabName = "ip_am_preop_los_reduction",
+      bslib::nav_panel(
+        "Pre-op Length of Stay Reduction",
         mod_mitigators_ui(
           "mitigators_preop_los_reduction",
           "Pre-op Length of Stay Reduction"
         )
       ),
-      bs4Dash::tabItem(
-        tabName = "ip_am_mitigators_day_procedures_daycase",
+      bslib::nav_panel(
+        "Day Procedures: Daycase",
         mod_mitigators_ui(
           "mitigators_day_procedures_daycase",
           "Day Procedures: Daycase"
         )
       ),
-      bs4Dash::tabItem(
-        tabName = "ip_am_mitigators_day_procedures_outpatients",
+      bslib::nav_panel(
+        "Day Procedures: Outpatients",
         mod_mitigators_ui(
           "mitigators_day_procedures_outpatients",
           "Day Procedures: Outpatients"
         )
       ),
-      bs4Dash::tabItem(
-        tabName = "op_am_c2c_referrals",
+      bslib::nav_item(
+        shiny::tags$hr(),
+        shiny::tags$h4("Outpatients", class = "dropdown-header")
+      ),
+      bslib::nav_panel(
+        "Consultant to Consultant Reduction",
         mod_mitigators_ui(
           "mitigators_op_c2c_reduction",
           "Consultant to Consultant Reduction",
           show_diagnoses_table = FALSE
         )
       ),
-      bs4Dash::tabItem(
-        tabName = "op_am_convert_tele",
+      bslib::nav_panel(
+        "Convert to Tele Appointment",
         mod_mitigators_ui(
           "mitigators_op_convert_tele",
           "Convert to Tele Appointment",
           show_diagnoses_table = FALSE
         )
       ),
-      bs4Dash::tabItem(
-        tabName = "op_am_fup_reduction",
+      bslib::nav_panel(
+        "Follow-Up Reduction",
         mod_mitigators_ui(
           "mitigators_op_fup_reduction",
           "Follow-Up Reduction",
           show_diagnoses_table = FALSE
         )
       ),
-      bs4Dash::tabItem(
-        tabName = "op_gp_referred_first_attendance_reduction",
+      bslib::nav_panel(
+        "GP Referred First Attendances",
         mod_mitigators_ui(
           "mitigators_op_gp_referred_first_attendance_reduction",
           "GP Referred First Attendances",
           show_diagnoses_table = FALSE
         )
       ),
-      bs4Dash::tabItem(
-        tabName = "aae_discharged_no_treatment",
+      bslib::nav_item(
+        shiny::tags$hr(),
+        shiny::tags$h4("A&E", class = "dropdown-header")
+      ),
+      bslib::nav_panel(
+        "Discharged with No Investigations or Treatments",
         mod_mitigators_ui(
           "mitigators_aae_discharged_no_treatment",
           "Discharged with No Investigations or Treatments"
         )
       ),
-      bs4Dash::tabItem(
-        tabName = "aae_frequent_attenders",
+      bslib::nav_panel(
+        "Frequent Attenders",
         mod_mitigators_ui(
           "mitigators_aae_frequent_attenders",
           "Frequent Attenders"
         )
       ),
-      bs4Dash::tabItem(
-        tabName = "aae_left_before_seen",
+      bslib::nav_panel(
+        "Left Before Seen",
         mod_mitigators_ui("mitigators_aae_left_before_seen", "Left Before Seen")
       ),
-      bs4Dash::tabItem(
-        tabName = "aae_low_cost_discharged",
+      bslib::nav_panel(
+        "Low Cost Discharged",
         mod_mitigators_ui(
           "mitigators_aae_low_cost_discharged",
           "Low Cost Discharged"
         )
-      ),
-      bs4Dash::tabItem(
-        tabName = "tab_run_model",
-        mod_run_model_ui("run_model")
       )
+    ),
+    bslib::nav_panel(
+      "Run Model",
+      icon = shiny::icon("play"),
+      mod_run_model_ui("run_model")
     )
   )
 
   shiny::tagList(
     golem_add_external_resources(),
     shinyjs::useShinyjs(),
-    bs4Dash::dashboardPage(
-      help = NULL,
-      dark = NULL,
-      header,
-      sidebar,
-      body
+    bslib::page_navbar(
+      title = "NHP Model Inputs",
+      navbar_options = bslib::navbar_options(
+        class = "bg-primary",
+        theme = "dark"
+      ),
+      theme = ui_theme(),
+      !!!body
     )
   )
 }
@@ -343,4 +218,14 @@ golem_add_external_resources <- function() {
     use_leafletjs(),
     tags$base(target = "_blank")
   )
+}
+
+
+ui_theme <- function() {
+  brand <- brand.yml::read_brand_yml(app_sys("_brand.yml"))
+
+  bslib::bs_theme(brand = brand) |>
+    bslib::bs_add_rules(
+      sass::sass_file(app_sys("app/www/styles.scss"))
+    )
 }

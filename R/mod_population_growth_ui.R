@@ -16,20 +16,18 @@ mod_population_growth_ui <- function(id, dataset) {
 
   shiny::tagList(
     shiny::tags$h1("Population Growth"),
-    shiny::fluidRow(
-      col_4(
-        bs4Dash::box(
-          collapsible = FALSE,
-          headerBorder = FALSE,
-          width = 12,
+
+    bslib::layout_columns(
+      col_widths = c(4, 8),
+      shiny::tagList(
+        bslib::card(
+          fill = FALSE,
           md_file_to_html("app", "text", "population_growth.md")
         ),
         mod_reasons_ui(ns("reasons"))
       ),
-      bs4Dash::box(
-        collapsible = FALSE,
-        headerBorder = FALSE,
-        width = 8,
+      bslib::card(
+        fill = TRUE,
         shiny::selectInput(
           ns("population_projection"),
           label = "Projection",

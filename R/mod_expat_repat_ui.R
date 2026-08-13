@@ -11,21 +11,18 @@ mod_expat_repat_ui <- function(id) {
   ns <- shiny::NS(id)
 
   generate_param_controls <- function(type, min, max, values) {
-    shiny::fluidRow(
-      col_3(
-        shiny::checkboxInput(ns(glue::glue("include_{type}")), "Include?")
-      ),
-      col_9(
-        shinyjs::disabled(
-          shiny::sliderInput(
-            ns(type),
-            "Prediction interval",
-            min,
-            max,
-            values,
-            0.1,
-            post = "%"
-          )
+    bslib::layout_columns(
+      col_widths = c(3, 9),
+      shiny::checkboxInput(ns(glue::glue("include_{type}")), "Include?"),
+      shinyjs::disabled(
+        shiny::sliderInput(
+          ns(type),
+          "Prediction interval",
+          min,
+          max,
+          values,
+          0.1,
+          post = "%"
         )
       )
     )
@@ -33,11 +30,15 @@ mod_expat_repat_ui <- function(id) {
 
   shiny::tagList(
     shiny::tags$h1("Expatriation/Repatriation"),
-    shiny::fluidRow(
-      col_4(
-        bs4Dash::box(
-          title = "Selection",
-          width = 12,
+    bslib::layout_columns(
+      col_widths = c(4, 8),
+      shiny::tagList(
+        bslib::card(
+          bslib::card_header(
+            "Selection",
+            class = "bg-primary"
+          ),
+          fill = FALSE,
           shiny::selectInput(
             ns("activity_type"),
             "Activity Type",
@@ -65,64 +66,63 @@ mod_expat_repat_ui <- function(id) {
           )
         ),
         mod_reasons_ui(ns("reasons")),
-        bs4Dash::box(
-          collapsible = FALSE,
-          headerBorder = FALSE,
-          width = 12,
+        bslib::card(
+          fill = FALSE,
           md_file_to_html("app", "text", "expat_repat.md")
         ),
       ),
-      col_8(
-        bs4Dash::box(
-          title = "Expatriation Model Parameter",
-          width = 12,
+      shiny::tagList(
+        bslib::card(
+          bslib::card_header(
+            "Expatriation Model Parameter",
+            class = "bg-primary"
+          ),
+          fill = FALSE,
           generate_param_controls("expat", 0, 100, c(95, 100))
         ),
-        bs4Dash::box(
-          title = "Repatriation (Local) Model Parameter",
-          width = 12,
+        bslib::card(
+          bslib::card_header(
+            "Repatriation (Local) Model Parameter",
+            class = "bg-primary"
+          ),
+          fill = FALSE,
           generate_param_controls("repat_local", 100, 500, c(100, 105)),
-          shiny::fluidRow(
-            col_6(
-              shinycssloaders::withSpinner(
-                shiny::plotOutput(
-                  ns("repat_local_plot"),
-                )
+          bslib::layout_columns(
+            col_widths = c(6, 6),
+            shinycssloaders::withSpinner(
+              shiny::plotOutput(
+                ns("repat_local_plot"),
               )
             ),
-            col_6(
-              shinycssloaders::withSpinner(
-                shiny::plotOutput(
-                  ns("repat_local_split_plot")
-                )
+            shinycssloaders::withSpinner(
+              shiny::plotOutput(
+                ns("repat_local_split_plot")
               )
             )
           )
         ),
-        bs4Dash::box(
-          title = "Repatriation (Non-Local) Model Parameter",
-          width = 12,
+        bslib::card(
+          bslib::card_header(
+            "Repatriation (Non-Local) Model Parameter",
+            class = "bg-primary"
+          ),
+          fill = FALSE,
           generate_param_controls("repat_nonlocal", 100, 500, c(100, 105)),
-          shiny::fluidRow(
-            col_4(
-              shinycssloaders::withSpinner(
-                shiny::plotOutput(
-                  ns("repat_nonlocal_pcnt_plot")
-                )
+          bslib::layout_columns(
+            col_widths = c(4, 4, 4),
+            shinycssloaders::withSpinner(
+              shiny::plotOutput(
+                ns("repat_nonlocal_pcnt_plot")
               )
             ),
-            col_4(
-              shinycssloaders::withSpinner(
-                shiny::plotOutput(
-                  ns("repat_nonlocal_n")
-                )
+            shinycssloaders::withSpinner(
+              shiny::plotOutput(
+                ns("repat_nonlocal_n")
               )
             ),
-            col_4(
-              shiny::tags$div(
-                id = ns("icb_map"),
-                style = "height: 400px;"
-              )
+            shiny::tags$div(
+              id = ns("icb_map"),
+              style = "height: 400px;"
             )
           )
         )
