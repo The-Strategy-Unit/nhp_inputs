@@ -19,11 +19,11 @@ mod_run_model_submit <- function(
     sep = ""
   )
 
-  req <- httr2::request(Sys.getenv("NHP_API_URI")) |>
+  req <- httr2::request(envvars$NHP_API_URI) |>
     httr2::req_url_path("api", "run_model") |>
     httr2::req_url_query(
       app_version = app_version,
-      code = Sys.getenv("NHP_API_KEY"),
+      code = envvars$NHP_API_KEY,
       save_full_model_results = tolower(as.character(full_model_results)),
       results_viewable = tolower(as.character(viewable))
     ) |>
@@ -54,7 +54,7 @@ mod_run_model_submit <- function(
         }
 
         url <- glue::glue(
-          Sys.getenv("NHP_OUTPUTS_URI"),
+          envvars$NHP_OUTPUTS_URI,
           "?{results$dataset}/{results$model_run_id}"
         )
         cat("results url: ", url, "\n", sep = "")
@@ -98,9 +98,9 @@ mod_run_model_check_container_status <- function(
     {
       # wait 10 seconds before checking
       Sys.sleep(10)
-      req <- httr2::request(Sys.getenv("NHP_API_URI")) |>
+      req <- httr2::request(envvars$NHP_API_URI) |>
         httr2::req_url_path("api", "model_run_status", dataset, model_run_id) |>
-        httr2::req_url_query(code = Sys.getenv("NHP_API_KEY"))
+        httr2::req_url_query(code = envvars$NHP_API_KEY)
 
       httr2::req_perform(req)
     },

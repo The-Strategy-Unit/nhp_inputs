@@ -28,7 +28,7 @@ app_ui <- function(request) {
       inputId = "feedback",
       label = "Give feedback",
       onClick = glue::glue(
-        "window.open('{Sys.getenv(\"FEEDBACK_FORM_URL\")}', '_blank')"
+        "window.open('{envvars$NHP_FEEDBACK_FORM_URL}', '_blank')"
       )
     )
   )

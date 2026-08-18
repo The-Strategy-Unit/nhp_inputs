@@ -12,7 +12,7 @@
 download_provider_data <- function(
   file,
   data_path = file.path("app_data"),
-  inputs_data_version = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev"),
+  inputs_data_version = envvars$NHP_INPUTS_DATA_VERSION,
   ...
 ) {
   fs <- get_adls_fs()
@@ -33,9 +33,9 @@ download_provider_data <- function(
 get_adls_fs <- function() {
   token <- azkit::get_auth_token()
 
-  Sys.getenv("AZ_STORAGE_EP") |>
+  envvars$AZ_STORAGE_EP |>
     AzureStor::adls_endpoint(token = token) |>
-    AzureStor::adls_filesystem(Sys.getenv("AZ_STORAGE_CONTAINER"))
+    AzureStor::adls_filesystem(envvars$AZ_STORAGE_CONTAINER)
 }
 
 #' Get All Data Files
@@ -46,7 +46,7 @@ get_adls_fs <- function() {
 #' @param inputs_data_version The version of the inputs data to use.
 #' @return NULL
 get_all_data_files <- function(
-  inputs_data_version = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")
+  inputs_data_version = envvars$NHP_INPUTS_DATA_VERSION
 ) {
   data_path <- file.path("app_data")
   if (!dir.exists(data_path)) {
