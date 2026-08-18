@@ -180,6 +180,17 @@ app_ui <- function(request) {
       "Run Model",
       icon = shiny::icon("play"),
       mod_run_model_ui("run_model")
+    ),
+    bslib::nav_spacer(),
+    bslib::nav_item(
+      shiny::actionButton(
+        inputId = "feedback",
+        class = "btn-sm bg-secondary",
+        label = "Give feedback",
+        onClick = glue::glue(
+          "window.open('{envvars$NHP_FEEDBACK_FORM_URL}', '_blank')"
+        )
+      )
     )
   )
 
