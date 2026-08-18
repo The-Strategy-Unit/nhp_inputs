@@ -68,7 +68,7 @@ is_local <- function() {
 
 download_params_schema <- function(
   data_path = "app_data",
-  app_version = envvars$get("NHP_INPUTS_DATA_VERSION", "dev")
+  app_version = envvars$NHP_INPUTS_DATA_VERSION
 ) {
   file_path <- file.path(data_path, "params-schema.json")
 

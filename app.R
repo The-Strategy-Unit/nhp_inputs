@@ -15,24 +15,18 @@ envvars_valid <- {
 
   envvar_error <- FALSE
   for (i in names(envvars)) {
-    v <- if (stringr::str_detect(i, "KEY")) {
-      "***"
-    } else {
-      envvars[[i]]
+    if (i != "CACHE_VERSION") {
+      envvar_error <- envvar_error || v == ""
     }
 
     cat(
       "  * ",
       stringr::str_pad(i, name_padding_size, side = "right"),
       " : ",
-      v,
+      ifelse(stringr::str_detect(i, "KEY"), "***", v),
       "\n",
       sep = ""
     )
-
-    if (i != "CACHE_VERSION") {
-      envvar_error <- envvar_error || v == ""
-    }
   }
 
   if (envvar_error) {
