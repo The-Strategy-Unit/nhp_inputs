@@ -52,6 +52,7 @@ Imports:
     tibble,
     tidyr,
     tidyselect,
+    uuid,
     watcher,
     zeallot
 Suggests:
