@@ -4,29 +4,37 @@
 
 pkgload::load_all(export_all = FALSE, helpers = FALSE, attach_testthat = FALSE)
 
-cat(
-  "listing environment variables:\n",
-  "  * AZ_STORAGE_CONTAINER:   ",
-  Sys.getenv("AZ_STORAGE_CONTAINER"),
-  "\n",
-  "  * AZ_STORAGE_EP:          ",
-  Sys.getenv("AZ_STORAGE_EP"),
-  "\n",
-  "  * NHP_API_URI:            ",
-  Sys.getenv("NHP_API_URI"),
-  "\n",
-  "  * NHP_INPUTS_DATA_VERSION:",
-  Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev"),
-  "\n",
-  "  * NHP_CONTAINER_VERSION:  ",
-  Sys.getenv("NHP_CONTAINER_VERSION", "dev"),
-  "\n",
-  "  * NHP_OUTPUTS_URI:        ",
-  Sys.getenv("NHP_OUTPUTS_URI"),
-  "\n",
-  "  * CACHE_VERSION:          ",
-  Sys.getenv("CACHE_VERSION"),
-  "\n"
-)
+# print and validate environment variables
+envvars_valid <- {
+  cat("listing environment variables:\n")
+
+  name_padding_size <- envvars |>
+    names() |>
+    stringr::str_length() |>
+    max()
+
+  envvar_error <- FALSE
+  for (i in names(envvars)) {
+    if (i != "CACHE_VERSION") {
+      envvar_error <- envvar_error || v == ""
+    }
+
+    cat(
+      "  * ",
+      stringr::str_pad(i, name_padding_size, side = "right"),
+      " : ",
+      ifelse(stringr::str_detect(i, "KEY"), "***", v),
+      "\n",
+      sep = ""
+    )
+  }
+
+  if (envvar_error) {
+    stop(
+      "One or more required environment variables are not set. ",
+      "Please check the output above for details."
+    )
+  }
+}
 
 run_app() # add parameters here (if any)

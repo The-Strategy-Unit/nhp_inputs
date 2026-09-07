@@ -4,9 +4,7 @@
 \alias{get_all_data_files}
 \title{Get All Data Files}
 \usage{
-get_all_data_files(
-  inputs_data_version = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")
-)
+get_all_data_files(inputs_data_version = envvars$NHP_INPUTS_DATA_VERSION)
 }
 \arguments{
 \item{inputs_data_version}{The version of the inputs data to use.}

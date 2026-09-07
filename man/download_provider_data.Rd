@@ -7,7 +7,7 @@
 download_provider_data(
   file,
   data_path = file.path("app_data"),
-  inputs_data_version = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev"),
+  inputs_data_version = envvars$NHP_INPUTS_DATA_VERSION,
   ...
 )
 }

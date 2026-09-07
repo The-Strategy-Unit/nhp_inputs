@@ -68,7 +68,7 @@ is_local <- function() {
 
 download_params_schema <- function(
   data_path = "app_data",
-  app_version = Sys.getenv("INPUTS_DATA_VERSION", "dev")
+  app_version = envvars$NHP_INPUTS_DATA_VERSION
 ) {
   file_path <- file.path(data_path, "params-schema.json")
 
@@ -122,4 +122,22 @@ parse_url_query_filename <- function(query_string) {
   }
 
   file
+}
+
+# handle loading of envvars centrally, makes it easier to detect issues
+envvars <- c(
+  "AZ_STORAGE_CONTAINER",
+  "AZ_STORAGE_EP",
+  "NHP_API_URI",
+  "NHP_API_KEY",
+  "NHP_INPUTS_DATA_VERSION",
+  "NHP_OUTPUTS_URI",
+  "NHP_FEEDBACK_FORM_URL",
+  "CACHE_VERSION"
+) |>
+  rlang::set_names() |>
+  purrr::map(Sys.getenv)
+
+if (envvars$NHP_INPUTS_DATA_VERSION == "") {
+  envvars$NHP_INPUTS_DATA_VERSION <- "dev"
 }
