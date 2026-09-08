@@ -28,11 +28,12 @@ mod_population_growth_ui <- function(id, dataset) {
       ),
       bslib::card(
         fill = TRUE,
-        shiny::selectInput(
+        shiny::selectizeInput(
           ns("population_projection"),
           label = "Projection",
           choices = stats::setNames(names(projections), projections),
-          selected = default_projection
+          selected = default_projection,
+          options = list(dropdownParent = "body")
         )
       )
     )

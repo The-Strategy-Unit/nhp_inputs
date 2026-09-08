@@ -69,7 +69,7 @@ mod_mitigators_server <- function(
         strategies <- shiny::req(strategies())
 
         # update the drop down
-        shiny::updateSelectInput(session, "strategy", choices = strategies)
+        shiny::updateSelectizeInput(session, "strategy", choices = strategies)
 
         loaded_values <- params |>
           shiny::reactiveValuesToList() |>

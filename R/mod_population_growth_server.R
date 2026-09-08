@@ -21,7 +21,7 @@ mod_population_growth_server <- function(id, params) {
           params$demographic_factors$variant_probabilities
         }) |>
           names() |> # Assumes strictly 1 variant
-          shiny::updateSelectInput(
+          shiny::updateSelectizeInput(
             session,
             "population_projection",
             selected = _

@@ -39,37 +39,40 @@ mod_expat_repat_ui <- function(id) {
             class = "bg-primary"
           ),
           fill = FALSE,
-          shiny::selectInput(
+          shiny::selectizeInput(
             ns("activity_type"),
             "Activity Type",
             c(
               "Inpatients" = "ip",
               "Outpatients" = "op",
               "A&E" = "aae"
-            )
+            ),
+            options = list(dropdownParent = "body")
           ),
           shinyjs::hidden(
-            shiny::selectInput(
+            shiny::selectizeInput(
               ns("ip_subgroup"),
               "Subgroup",
               c(
                 "Elective" = "elective",
                 "Non-Elective" = "non-elective",
                 "Maternity" = "maternity"
-              )
+              ),
+              options = list(dropdownParent = "body")
             )
           ),
-          shiny::selectInput(
+          shiny::selectizeInput(
             ns("type"),
             NULL,
-            NULL
+            NULL,
+            options = list(dropdownParent = "body")
           )
         ),
         mod_reasons_ui(ns("reasons")),
         bslib::card(
           fill = FALSE,
           md_file_to_html("app", "text", "expat_repat.md")
-        ),
+        )
       ),
       shiny::tagList(
         bslib::card(

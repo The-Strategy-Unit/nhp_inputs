@@ -28,14 +28,15 @@ mod_non_demographic_adjustment_ui <- function(id) {
             "text",
             "non_demographic_adjustment_variants_pt1.md"
           ),
-          shiny::selectInput(
+          shiny::selectizeInput(
             inputId = ns("ndg_variant"),
             label = "Selection",
             choices = purrr::set_names(
               c("variant_2", "variant_3"),
               snakecase::to_title_case
             ),
-            selected = "variant_2"
+            selected = "variant_2",
+            options = list(dropdownParent = "body")
           ),
           md_file_to_html(
             "app",
