@@ -31,7 +31,7 @@ mod_non_demographic_adjustment_server <- function(id, params) {
           params[["non-demographic_adjustment"]][["variant"]]
         })
 
-        shiny::updateSelectInput(
+        shiny::updateSelectizeInput(
           session,
           "ndg_variant",
           selected = p_ndg_variant

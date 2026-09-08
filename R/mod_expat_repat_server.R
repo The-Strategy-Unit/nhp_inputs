@@ -171,11 +171,11 @@ mod_expat_repat_server <- function(id, params) {
             rtt_specialties
           }
         }
-        shiny::updateSelectInput(session, "type", type_label, type_values)
+        shiny::updateSelectizeInput(session, "type", type_label, type_values)
 
         # reset the subgroup selection if we aren't on inpatients
         if (at != "ip") {
-          shiny::updateSelectInput(
+          shiny::updateSelectizeInput(
             session,
             "ip_subgroup",
             selected = "elective"

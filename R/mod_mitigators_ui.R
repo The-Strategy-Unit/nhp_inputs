@@ -14,18 +14,19 @@ mod_mitigators_ui <- function(id, title, show_diagnoses_table = TRUE) {
     shiny::h2(title),
     bslib::layout_columns(
       col_widths = c(4, 8),
-      shiny::fluidRow(
+      shiny::tags$div(
         bslib::card(
           bslib::card_header(
             "Type of Potentially Mitigatable Activity",
             class = "bg-primary"
           ),
           fill = FALSE,
-          shiny::selectInput(
+          shiny::selectizeInput(
             ns("strategy"),
             "Selection",
             choices = NULL,
-            width = "100%"
+            width = "100%",
+            options = list(dropdownParent = "body")
           ),
           shiny::uiOutput(ns("strategy_text"))
         ),
