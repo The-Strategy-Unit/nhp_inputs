@@ -128,6 +128,7 @@ parse_url_query_filename <- function(query_string) {
 envvars <- c(
   "AZ_STORAGE_CONTAINER",
   "AZ_STORAGE_EP",
+  "CARTO_API_KEY",
   "NHP_API_URI",
   "NHP_API_KEY",
   "NHP_INPUTS_DATA_VERSION",

@@ -60,6 +60,7 @@ jobs:
         env:
           CONNECT_ENV_SET_AZ_STORAGE_CONTAINER: ${{ secrets.AZ_STORAGE_CONTAINER }}
           CONNECT_ENV_SET_AZ_STORAGE_EP: ${{ secrets.AZ_STORAGE_EP }}
+          CONNECT_ENV_SET_CARTO_API_KEY: ${{ secrets.CARTO_API_KEY }}
           CONNECT_ENV_SET_NHP_API_KEY: ${{ secrets.NHP_API_KEY }}
           CONNECT_ENV_SET_NHP_API_URI: ${{ vars.NHP_API_URI }}
           CONNECT_ENV_SET_NHP_MODEL_RUN_PROGRESS_URI: ${{ vars.NHP_MODEL_RUN_PROGRESS_URI }}

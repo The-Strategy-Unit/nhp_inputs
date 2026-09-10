@@ -70,7 +70,7 @@ mod_expat_repat_ui <- function(id) {
           headerBorder = FALSE,
           width = 12,
           md_file_to_html("app", "text", "expat_repat.md")
-        ),
+        )
       ),
       col_8(
         bs4Dash::box(
@@ -86,7 +86,7 @@ mod_expat_repat_ui <- function(id) {
             col_6(
               shinycssloaders::withSpinner(
                 shiny::plotOutput(
-                  ns("repat_local_plot"),
+                  ns("repat_local_plot")
                 )
               )
             ),
@@ -121,6 +121,7 @@ mod_expat_repat_ui <- function(id) {
             col_4(
               shiny::tags$div(
                 id = ns("icb_map"),
+                `data-carto-key` = Sys.getenv("CARTO_API_KEY"),
                 style = "height: 400px;"
               )
             )

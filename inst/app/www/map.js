@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', function () {
     return;
   }
 
+  // Pull in CARTO_API_KEY env var
+  const cartoApiKey = mapEl.getAttribute('data-carto-key');
+
   if (mapEl.getBoundingClientRect().height === 0) {
     console.warn(
       `Map container #${mapContainerId} has zero height. Set an explicit CSS height.`
@@ -23,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Add a tile layer to the map (using Carto's light basemap)
   L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    `https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=${cartoApiKey}`,
     {
       subdomains: 'abcd',
       maxZoom: 10,
