@@ -5,39 +5,59 @@ mod_run_model_server <- function(id, params) {
   mod_reasons_server(shiny::NS(id, "reasons"), params, "model_run")
 
   shiny::moduleServer(id, function(input, output, session) {
-    # we are using promises to run REST queries to submit a new model run
-    # and to check on the progress of those model runs
-    # because of limitations with shiny (https://stackoverflow.com/a/69451122)
-    # we need to utilise some side effect to notify the user of the status of
-    # the model runs
-    status <- shiny::reactiveVal()
-    # when a model run is run we insert the current time into create_datetime,
-    # but this is kept within the job submission. this reactiveVal is used to
-    # store the url of the results when they are complete
-    results_url <- shiny::reactiveVal()
+    # use a callback to handle the asynchronous promise when we submit the model run
+    # see (https://stackoverflow.com/a/69451122)
+    progress_callback <- shiny::reactiveVal()
 
     # the params as they are created in the app are not quite ready for use by
     # the model, this reactive handles this by "fixing" the params
     fixed_params <- shiny::reactive({
       shiny::req(params$scenario != "")
 
-      params |>
+      p <- params |>
         shiny::reactiveValuesToList() |>
         mod_run_model_fix_params()
+
+      # remove the inputs app data as this is not needed for the model run
+      p[["__inputs_app__"]] <- NULL
+
+      p
     })
 
     # output the status of the model run after submit is pressed
     output$status <- shiny::renderUI({
-      s <- shiny::req(status())
+      s <- shiny::req(progress_callback())
 
-      if (s == "Success") {
-        shiny::tags$p(
-          "Completed: ",
-          shiny::tags$a(href = results_url(), "View Outputs")
+      # if the progress callback is not a model_run_id, then display the message as is
+      if (!inherits(s, "progress.model_run_id")) {
+        return(s)
+      }
+
+      # handle the case where the model run has been submitted and we have a model_run_id
+      progress_url <- glue::glue(
+        "{envvars$NHP_MODEL_RUN_PROGRESS_URI)}?model_run_id={s[['dataset']]}/{s[['model_run_id']]}"
+      )
+
+      # add the model_run_id to the params
+      params[["__inputs_app__"]][["model_run_id"]] <- s[["model_run_id"]]
+
+      if (shiny::in_devmode()) {
+        shiny::showModal(
+          shiny::modalDialog(
+            title = "Model run submitted",
+            easyClose = FALSE,
+            shiny::tags$p("Mocked model run submission.")
+          )
         )
       } else {
-        s
+        # redirect the user to the progress page...
+        shinyjs::runjs(
+          glue::glue("window.location.replace('{progress_url}');")
+        )
       }
+
+      # ... but show a link in case the redirect fails
+      shiny::tags$a(href = progress_url, "View Progress")
     })
 
     # observe the submit button being pressed
@@ -46,7 +66,12 @@ mod_run_model_server <- function(id, params) {
       # immediately disable the submit button and the menu for the rest of the app
       shinyjs::disable("submit")
       shinyjs::hide(selector = "#sidebarItemExpanded")
-      status("Please Wait...")
+      progress_callback(
+        structure(
+          "Please Wait...",
+          class = "progress.running"
+        )
+      )
 
       # get the params
       p <- shiny::req(fixed_params())
@@ -63,8 +88,7 @@ mod_run_model_server <- function(id, params) {
         p$app_version,
         viewable,
         full_model_results,
-        status,
-        results_url
+        progress_callback
       )
 
       # do not return the promise

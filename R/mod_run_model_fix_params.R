@@ -46,7 +46,8 @@ mod_run_model_fix_params <- function(p) {
     "non-demographic_adjustment",
     "activity_avoidance",
     "efficiencies",
-    "reasons"
+    "reasons",
+    "__inputs_app__"
   )
 
   # make sure to only select items that exist in the params

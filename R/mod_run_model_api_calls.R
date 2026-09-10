@@ -4,8 +4,7 @@ mod_run_model_submit <- function(
   app_version,
   viewable,
   full_model_results,
-  status,
-  results_url
+  progress_callback
 ) {
   metadata <- params_json |>
     jsonlite::fromJSON() |>
@@ -35,171 +34,25 @@ mod_run_model_submit <- function(
       \(response) {
         results <- httr2::resp_body_json(response)
 
-        cat(
-          "success:\n",
-          jsonlite::toJSON(results, pretty = TRUE, auto_unbox = TRUE),
-          "\n"
-        )
-
-        status("Submitted Model Run")
-
-        # update version for the url
-        version <- stringr::str_replace(
-          results$app_version,
-          "^v(\\d)+\\.(\\d+).*",
-          "v\\1-\\2"
-        )
-        if (!stringr::str_detect(version, "^v\\d+-\\d+$")) {
-          version <- "dev"
-        }
-
-        url <- glue::glue(
-          envvars$NHP_OUTPUTS_URI,
-          "?{results$dataset}/{results$model_run_id}"
-        )
-        cat("results url: ", url, "\n", sep = "")
-        results_url(url)
-
-        mod_run_model_check_container_status(
-          results[["dataset"]],
-          results[["model_run_id"]],
-          status
+        progress_callback(
+          structure(
+            list(
+              "dataset" = results[["dataset"]],
+              "model_run_id" = results[["model_run_id"]]
+            ),
+            class = "progress.model_run_id"
+          )
         )
       }
     ) |>
     promises::catch(
       \(error) {
         cat("Error submitting model run: ", error$message, "\n", sep = "")
-        status(error$message)
-      }
-    )
-}
-
-mod_run_model_check_container_status <- function(
-  dataset,
-  model_run_id,
-  status,
-  error_counter = 10
-) {
-  id <- glue::glue("{dataset} | {model_run_id}")
-  if (error_counter == 0) {
-    cat(
-      "error checking status for model run id: ",
-      id,
-      ". too many attempts\n",
-      sep = ""
-    )
-    status("Error: running the model")
-    return(NULL)
-  }
-  cat("checking status for ", id, "\n", sep = "")
-
-  promises::future_promise(
-    {
-      # wait 10 seconds before checking
-      Sys.sleep(10)
-      req <- httr2::request(envvars$NHP_API_URI) |>
-        httr2::req_url_path("api", "model_run_status", dataset, model_run_id) |>
-        httr2::req_url_query(code = envvars$NHP_API_KEY)
-
-      httr2::req_perform(req)
-    },
-    packages = character()
-  ) |>
-    promises::then(
-      \(response) {
-        res <- httr2::resp_body_json(response)
-        if (is.null(res$status)) {
-          res$status <- "unknown"
-        }
-
-        if (res$status == "complete") {
-          cat("model run success: ", id, "\n", sep = "")
-          status("Success")
-          return(NULL)
-        } else if (res$status == "error") {
-          cat("model run error: ", id, "\n", res$error, "\n", sep = "")
-          status(glue::glue("Error running the model ({id}): {res$error}"))
-          return(NULL)
-        } else if (res$status == "submitted") {
-          # do not do anything just yet
-        } else if (res$status == "running") {
-          progress <- res$complete %||%
-            list(Inpatients = 0, Outpatients = 0, AaE = 0)
-          model_runs <- res$model_runs
-
-          if (progress[["Inpatients"]] < model_runs) {
-            stage <- "Inpatients"
-            complete <- progress[["Inpatients"]]
-          } else if (progress[["Outpatients"]] < model_runs) {
-            stage <- "Outpatients"
-            complete <- progress[["Outpatients"]]
-          } else if (progress[["AaE"]] < model_runs) {
-            stage <- "A&E"
-            complete <- progress[["AaE"]]
-          } else {
-            stage <- "Saving Results"
-            complete <- 0
-          }
-
-          pcnt <- scales::percent(complete / model_runs, 0.1)
-
-          cat(
-            "model run id: ",
-            id,
-            ", stage: ",
-            stage,
-            " progress: ",
-            complete,
-            "/",
-            model_runs,
-            " (",
-            pcnt,
-            ")\n",
-            sep = ""
+        progress_callback(
+          structure(
+            error$message,
+            class = "progress.error"
           )
-
-          status(glue::glue(
-            "Model Running [{stage}: {complete}/{model_runs} ({pcnt})]"
-          ))
-        } else {
-          cat(
-            "unknown status for model run id: ",
-            id,
-            " - ",
-            res$status,
-            "\n",
-            sep = ""
-          )
-          # recursive call, but reduce error counter since this is unexpected
-          return(mod_run_model_check_container_status(
-            dataset,
-            model_run_id,
-            status,
-            error_counter - 1
-          ))
-        }
-
-        # recursive call
-        mod_run_model_check_container_status(dataset, model_run_id, status, 10)
-      }
-    ) |>
-    promises::catch(
-      \(error) {
-        cat(
-          "error: ",
-          error$message,
-          " [error counter: ",
-          error_counter,
-          "]\n",
-          sep = ""
-        )
-        # recursive call
-        mod_run_model_check_container_status(
-          dataset,
-          model_run_id,
-          status,
-          error_counter - 1
         )
       }
     )

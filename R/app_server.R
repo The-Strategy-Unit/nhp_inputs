@@ -11,6 +11,25 @@ app_server <- function(input, output, session) {
 
   params <- mod_home_server("home", tmp_params_file_path)
 
+  params_file <- list(
+    # file watcher, will be instantiated later
+    watcher = NULL,
+    # session id callback for the watcher
+    session_id = shiny::reactiveVal(NULL),
+    # filename
+    filename = shiny::reactive({
+      dataset <- shiny::req(params$dataset)
+      scenario <- shiny::req(params$scenario)
+
+      params_filename(
+        # if running locally, then user will be NULL
+        session$user %||% "[development]",
+        dataset,
+        scenario
+      )
+    })
+  )
+
   # load all data
   rates_data <- shiny::reactive({
     get_rates_data()
@@ -113,7 +132,6 @@ app_server <- function(input, output, session) {
     )
 
     # enable the run_model page for certain users/running locally
-
     can_run_model <- any(
       c("nhp_devs", "nhp_power_users", "nhp_run_model") %in% session$groups
     )
@@ -122,24 +140,58 @@ app_server <- function(input, output, session) {
       mod_run_model_server("run_model", params)
     }
 
+    params_file$watcher <- watcher::watcher(
+      params_file$filename(),
+      \(file) {
+        if (!session$isClosed()) {
+          params_file$session_id(
+            load_params(file)[["__inputs_app__"]][["session_id"]]
+          )
+        }
+      }
+    )
+    params_file$watcher$start()
+
     init$destroy()
   })
+
+  shiny::observe({
+    session_id_file <- shiny::req(params_file$session_id())
+    session_id <- shiny::req(params[["__inputs_app__"]][["session_id"]])
+
+    if (session_id_file != session_id) {
+      shiny::showModal(
+        shiny::modalDialog(
+          title = "Session Ended",
+          "You have opened this scenario in another session. This session will now close.",
+          easyClose = FALSE,
+          footer = NULL
+        )
+      )
+
+      session$close()
+    }
+  }) |>
+    shiny::bindEvent(params_file$session_id())
 
   shiny::observe({
     shiny::req(params$dataset)
     shiny::req(params$scenario)
 
-    file <- params_filename(
-      # if running locally, then user will be NULL
-      session$user %||% "[development]",
-      params$dataset,
-      params$scenario
-    )
-
     params |>
       shiny::reactiveValuesToList() |>
       mod_run_model_fix_params() |>
-      jsonlite::write_json(file, pretty = TRUE, auto_unbox = TRUE)
+      jsonlite::write_json(
+        params_file$filename(),
+        pretty = TRUE,
+        auto_unbox = TRUE
+      )
+  })
+
+  session$onSessionEnded(function() {
+    if (!is.null(params_file$watcher) && params_file$watcher$is_running()) {
+      params_file$watcher$stop()
+    }
   })
 
   # return
