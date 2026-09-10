@@ -2,7 +2,7 @@
 # To deploy, run: rsconnect::deployApp()
 # Or use the blue button on top of this file
 
-pkgload::load_all(export_all = FALSE, helpers = FALSE, attach_testthat = FALSE)
+pkgload::load_all(export_all = TRUE, helpers = FALSE, attach_testthat = FALSE)
 
 # print and validate environment variables
 envvars_valid <- {
@@ -15,6 +15,7 @@ envvars_valid <- {
 
   envvar_error <- FALSE
   for (i in names(envvars)) {
+    v <- envvars[[i]]
     if (i != "CACHE_VERSION") {
       envvar_error <- envvar_error || v == ""
     }
@@ -23,7 +24,11 @@ envvars_valid <- {
       "  * ",
       stringr::str_pad(i, name_padding_size, side = "right"),
       " : ",
-      ifelse(stringr::str_detect(i, "KEY"), "***", v),
+      dplyr::case_when(
+        v == "" ~ "(not set)",
+        stringr::str_detect(i, "KEY") ~ "***",
+        .default = v
+      ),
       "\n",
       sep = ""
     )
