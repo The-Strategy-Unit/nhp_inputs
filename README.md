@@ -1,6 +1,3 @@
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 # NHP Inputs
 
 <!-- badges: start -->
@@ -13,24 +10,56 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 
 ## About
 
-A web app to input the parameters needed to run scenarios through the
-New Hospital Programme (NHP) demand model.
+A web app to input the parameters needed to run scenarios through the New 
+Hospital Programme (NHP) demand model.
 
-The app is [deployed to Posit
-Connect](https://connect.strategyunitwm.nhs.uk/nhp/inputs/). You must
-have an account and sufficient permissions to view it.
+The app is [deployed to Posit Connect](https://connect.strategyunitwm.nhs.uk/nhp/inputs/).
+You must have an account and sufficient permissions to view it.
 
-Results can then be viewed in [the outputs
-app](https://connect.strategyunitwm.nhs.uk/nhp/outputs/), which is
-generated from the
-[nhp_outputs](https://github.com/The-Strategy-Unit/nhp_outputs)
-repository.
+Results can then be viewed in [the outputs app](https://connect.strategyunitwm.nhs.uk/nhp/outputs/), 
+which is generated from the [nhp_outputs](https://github.com/The-Strategy-Unit/nhp_outputs) repository.
 
-You can find more information on [the NHP model project information
-site](https://connect.strategyunitwm.nhs.uk/nhp/project_information/),
-including [a
-diagram](https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/components-overview.html)
+You can find more information on 
+[the NHP model project information site](https://connect.strategyunitwm.nhs.uk/nhp/project_information/), 
+including [a diagram](https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/components-overview.html) 
 of how the components of the modelling process fit together.
+
+In this app you can:
+
+- select an existing scenario
+- create a new scenario (from scratch or from an existing one)
+- choose the NHP Inputs model version to open
+- launch into the correct version of the Inputs app with the selected scenario parameters
+
+This app is the entry point for managing scenario (JSON) files and provides the 
+most recent NHP Inputs app version as a default selection.
+
+## More detail on the app functionality
+
+The selection app provides a guided workflow to:
+
+1. Pick a provider (dataset) and baseline/model years.
+2. Choose a scenario action:
+   - Create new from scratch
+   - Create new from existing
+   - Edit existing
+3. Set advanced options (seed, model runs, model version; user scope for power users).
+4. Save parameters to a temporary JSON file.
+5. Open the NHP Inputs app URL using that parameter file.
+
+The app also:
+
+- filters available providers by user groups
+- shows a provider/peer map and peers list
+- applies upgrade logic when older scenarios are loaded
+- blocks upgrades for unsupported legacy scenarios (for example older baseline 
+years or certain NDG - non demographic growth - variants)
+
+## For developers
+
+The guidance below is for the members of 
+[the Strategy Unit's Data Science team](https://the-strategy-unit.github.io/data_science/), 
+who built and maintain this app.
 
 ## For developers
 
@@ -40,17 +69,14 @@ built and maintain this app.
 
 ### Structure
 
-Technically there are two apps: the main app in the `main` branch, and
-the [inputs selection
-app](https://github.com/The-Strategy-Unit/nhp_inputs_selection_app)
-(where users start or edit a scenario). Users arrive at the selection
-app before being routed to the main app.
+Technically this app uses the Shiny app [inputs selection app](https://github.com/The-Strategy-Unit/nhp_inputs_selection_app) 
+packaged up for use here in directing users to either the latest (default) or a
+previous version that they select.
 
-Both apps are built with [Shiny](https://shiny.posit.co/) and the main
-app uses the [the {golem}
-package](https://thinkr-open.github.io/golem/). Server and UI modules
-can be found in `R/`, configuration in `inst/golem-config.yml` and
-supporting data and text in `inst/app/`.
+Both apps are built with [Shiny](https://shiny.posit.co/) and this uses
+[the {golem} package](https://thinkr-open.github.io/golem/). 
+Server and UI modules can be found in `R/`, configuration in 
+`inst/golem-config.yml` and supporting data and text in `inst/app/`.
 
 ### Run locally
 
@@ -69,30 +95,14 @@ need from a member of the Data Science team.
 
 #### Run the app
 
-Once setup, we can run the app. This is done by launching a background
-Shiny app and then watching the files for changes, which causes an
-auto-reload. The method for doing this depends on your IDE.
+Once setup, we can run the app
 
-In RStudio:
-
-1.  Open the `dev/watch.R` script and go to the ‘Background Jobs’ tab of
-    the console pane and click the ‘Start Background Job’ button.
-2.  Click ‘Start’ after checking that the ‘R Script’ path is
-    pre-populated with the path to `watch.R` (otherwise select it
-    yourself).
-3.  When ready, a message will tell you to visit
-    `http://127.0.0.1:9081/` in your browser.
-
-In Positron: run `source('dev/watch.R')` and click the link to the URL
-when complete.
-
-In VS Code: open the command palette
-(<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>), search for ‘Tasks: Run
-Task’, then select ‘R: Run App (watch)’ and finally click the link to
-the URL when complete.
+```r
+source('dev/watch.R')
+```
 
 Making selections in the app will cause values to be written to a local
-json file, which will live in your local `params/development/`
+json file, which will live in your local `params/[development]/`
 directory. These scenarios will be selectable and editable in future
 from your locally-run inputs selection app. They will not be available
 from the deployed app.
