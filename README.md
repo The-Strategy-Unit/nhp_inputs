@@ -95,30 +95,14 @@ need from a member of the Data Science team.
 
 #### Run the app
 
-Once setup, we can run the app. This is done by launching a background
-Shiny app and then watching the files for changes, which causes an
-auto-reload. The method for doing this depends on your IDE.
+Once setup, we can run the app
 
-In RStudio:
-
-1.  Open the `dev/watch.R` script and go to the ‘Background Jobs’ tab of
-    the console pane and click the ‘Start Background Job’ button.
-2.  Click ‘Start’ after checking that the ‘R Script’ path is
-    pre-populated with the path to `watch.R` (otherwise select it
-    yourself).
-3.  When ready, a message will tell you to visit
-    `http://127.0.0.1:9081/` in your browser.
-
-In Positron: run `source('dev/watch.R')` and click the link to the URL
-when complete.
-
-In VS Code: open the command palette
-(<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>), search for ‘Tasks: Run
-Task’, then select ‘R: Run App (watch)’ and finally click the link to
-the URL when complete.
+```r
+source('dev/watch.R')
+```
 
 Making selections in the app will cause values to be written to a local
-json file, which will live in your local `params/development/`
+json file, which will live in your local `params/[development]/`
 directory. These scenarios will be selectable and editable in future
 from your locally-run inputs selection app. They will not be available
 from the deployed app.
