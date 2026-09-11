@@ -69,17 +69,14 @@ built and maintain this app.
 
 ### Structure
 
-Technically there are two apps: the main app in the `main` branch, and
-the [inputs selection
-app](https://github.com/The-Strategy-Unit/nhp_inputs_selection_app)
-(where users start or edit a scenario). Users arrive at the selection
-app before being routed to the main app.
+Technically this app uses the Shiny app [inputs selection app](https://github.com/The-Strategy-Unit/nhp_inputs_selection_app) 
+packaged up for use here in directing users to either the latest (default) or a
+previous version that they select.
 
-Both apps are built with [Shiny](https://shiny.posit.co/) and the main
-app uses the [the {golem}
-package](https://thinkr-open.github.io/golem/). Server and UI modules
-can be found in `R/`, configuration in `inst/golem-config.yml` and
-supporting data and text in `inst/app/`.
+Both apps are built with [Shiny](https://shiny.posit.co/) and this uses
+[the {golem} package](https://thinkr-open.github.io/golem/). 
+Server and UI modules can be found in `R/`, configuration in 
+`inst/golem-config.yml` and supporting data and text in `inst/app/`.
 
 ### Run locally
 
