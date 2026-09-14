@@ -49,7 +49,10 @@ expected.
 #### Setup
 
 First, install the required packages listed in the DESCRIPTION with
-`pak::local_install_dev_deps(dependencies = TRUE)`.
+
+```r
+pak::local_install_dev_deps(dependencies = TRUE)
+```
 
 Then add an `.Renviron` file to the project root that contains the
 required environment variables. Copy into it the required variables,
@@ -93,9 +96,8 @@ box. That way you’ll be taken to the dev inputs app when you hit
 ### Data
 
 The app displays trust-specific data to users. The data is processed via
-Databricks scripts in [the nhp_data
-repository](https://github.com/The-Strategy-Unit/nhp_data) and stored in
-Azure storage.
+Databricks scripts in [the nhp_data repository](https://github.com/The-Strategy-Unit/nhp_data) 
+and stored in Azure storage.
 
 If the data updates and you need to invalidate the current cache, you
 force a reset by appending `?reset_cache=true` to the app’s canonical
