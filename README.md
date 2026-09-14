@@ -24,37 +24,6 @@ You can find more information on
 including [a diagram](https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/components-overview.html) 
 of how the components of the modelling process fit together.
 
-In this app you can:
-
-- select an existing scenario
-- create a new scenario (from scratch or from an existing one)
-- choose the NHP Inputs model version to open
-- launch into the correct version of the Inputs app with the selected scenario parameters
-
-This app is the entry point for managing scenario (JSON) files and provides the 
-most recent NHP Inputs app version as a default selection.
-
-## More detail on the app functionality
-
-The selection app provides a guided workflow to:
-
-1. Pick a provider (dataset) and baseline/model years.
-2. Choose a scenario action:
-   - Create new from scratch
-   - Create new from existing
-   - Edit existing
-3. Set advanced options (seed, model runs, model version; user scope for power users).
-4. Save parameters to a temporary JSON file.
-5. Open the NHP Inputs app URL using that parameter file.
-
-The app also:
-
-- filters available providers by user groups
-- shows a provider/peer map and peers list
-- applies upgrade logic when older scenarios are loaded
-- blocks upgrades for unsupported legacy scenarios (for example older baseline 
-years or certain NDG - non demographic growth - variants)
-
 ## For developers
 
 The guidance below is for the members of 
@@ -63,7 +32,7 @@ who built and maintain this app.
 
 ### Structure
 
-Technically this app uses the Shiny app [inputs selection app](https://github.com/The-Strategy-Unit/nhp_inputs_selection_app) 
+Technically this app uses the [inputs selection app](https://github.com/The-Strategy-Unit/nhp_inputs_selection_app) 
 packaged up for use here in directing users to either the latest (default) or a
 previous version that they select.
 
