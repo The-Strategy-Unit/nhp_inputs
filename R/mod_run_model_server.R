@@ -35,7 +35,7 @@ mod_run_model_server <- function(id, params) {
 
       # handle the case where the model run has been submitted and we have a model_run_id
       progress_url <- glue::glue(
-        "{envvars$NHP_MODEL_RUN_PROGRESS_URI)}?model_run_id={s[['dataset']]}/{s[['model_run_id']]}"
+        "{envvars$NHP_MODEL_RUN_PROGRESS_URI}?model_run_id={s[['dataset']]}/{s[['model_run_id']]}"
       )
 
       # add the model_run_id to the params
