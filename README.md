@@ -61,12 +61,6 @@ The guidance below is for the members of
 [the Strategy Unit's Data Science team](https://the-strategy-unit.github.io/data_science/), 
 who built and maintain this app.
 
-## For developers
-
-The guidance below is for the members of [the Strategy Unit’s Data
-Science team](https://the-strategy-unit.github.io/data_science/), who
-built and maintain this app.
-
 ### Structure
 
 Technically this app uses the Shiny app [inputs selection app](https://github.com/The-Strategy-Unit/nhp_inputs_selection_app) 
