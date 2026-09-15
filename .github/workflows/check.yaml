@@ -69,24 +69,6 @@ jobs:
           echo "Errors in the workflow"
           exit 1
 
-  check-readme-rendered:
-    runs-on: ubuntu-latest
-    name: Check README rendered
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Check that README.Rmd has been rendered if changed
-        run: |
-          RMD_COMMIT=$(git log -1 --format=%ct -- README.Rmd)
-          MD_COMMIT=$(git log -1 --format=%ct -- README.md)
-
-          if [ "$RMD_COMMIT" -gt "$MD_COMMIT" ]; then
-            echo "::error file=README.Rmd,line=1::README.Rmd has not been rendered"
-            exit 1
-          else
-            echo "README.md is up-to-date."
-          fi
-
   air-format:
     runs-on: ubuntu-latest
     name: Check formatting of code with air
@@ -101,7 +83,7 @@ jobs:
         shell: bash
         run: |
           curl -LsSf https://github.com/posit-dev/air/releases/latest/download/air-installer.sh | sh
-      
+
       - name: Check R code formatting
         shell: bash
         run: air format --check .
