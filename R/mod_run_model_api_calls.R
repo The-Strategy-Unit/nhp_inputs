@@ -18,9 +18,9 @@ mod_run_model_submit <- function(
     sep = ""
   )
 
-token <- azkit::get_auth_token(
-  resource = envvars$NHP_API_APP_ID
-)$credentials$access_token
+  token <- azkit::get_auth_token(
+    resource = envvars$NHP_API_APP_ID
+  )$credentials$access_token
 
   req <- httr2::request(envvars$NHP_API_URI) |>
     httr2::req_url_path("api", "run_model") |>
