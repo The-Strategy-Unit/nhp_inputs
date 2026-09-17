@@ -18,14 +18,18 @@ mod_run_model_submit <- function(
     sep = ""
   )
 
+  token <- azkit::get_auth_token(
+    envvars$NHP_API_APP_ID
+  )$credentials$access_token
+
   req <- httr2::request(envvars$NHP_API_URI) |>
     httr2::req_url_path("api", "run_model") |>
     httr2::req_url_query(
       app_version = app_version,
-      code = envvars$NHP_API_KEY,
       save_full_model_results = tolower(as.character(full_model_results)),
       results_viewable = tolower(as.character(viewable))
     ) |>
+    httr2::req_auth_bearer_token(token) |>
     httr2::req_body_raw(params_json, "application/json") |>
     httr2::req_method("POST")
 
