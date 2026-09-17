@@ -121,7 +121,7 @@ mod_expat_repat_ui <- function(id) {
             col_4(
               shiny::tags$div(
                 id = ns("icb_map"),
-                `data-carto-key` = Sys.getenv("CARTO_API_KEY"),
+                `data-carto-key` = envvars$CARTO_API_KEY,
                 style = "height: 400px;"
               )
             )
