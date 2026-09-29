@@ -1,0 +1,179 @@
+tretspef,specialty
+100,General Surgery Service
+101,Urology Service
+102,Transplant Surgery Service
+103,Breast Surgery Service
+104,Colorectal Surgery Service
+105,Hepatobiliary and Pancreatic Surgery Service
+106,Upper Gastrointestinal Surgery Service
+107,Vascular Surgery Service
+108,Spinal Surgery Service
+109,Bariatric Surgery Service
+110,Trauma and Orthopaedic Service
+111,Orthopaedic Service
+113,Endocrine Surgery Service
+115,Trauma Surgery Service
+120,Ear Nose and Throat Service
+130,Ophthalmology Service
+140,Oral Surgery Service
+141,Restorative Dentistry Service
+143,Orthodontic Service
+144,Maxillofacial Surgery Service
+145,Oral and Maxillofacial Surgery Service
+150,Neurosurgical Service
+160,Plastic Surgery Service
+161,Burns Care Service
+170,Cardiothoracic Surgery Service
+172,Cardiac Surgery Service
+173,Thoracic Surgery Service
+174,Cardiothoracic Transplantation Service
+191,Pain Management Service
+142,Paediatric Dentistry Service
+171,Paediatric Surgery Service
+211,Paediatric Urology Service
+212,Paediatric Transplantation Surgery Service
+213,Paediatric Gastrointestinal Surgery Service
+214,Paediatric Trauma and Orthopaedic Service
+215,Paediatric Ear Nose and Throat Service
+216,Paediatric Ophthalmology Service
+217,Paediatric Oral and Maxillofacial Surgery Service
+218,Paediatric Neurosurgery Service
+219,Paediatric Plastic Surgery Service
+220,Paediatric Burns Care Service
+221,Paediatric Cardiac Surgery Service
+222,Paediatric Thoracic Surgery Service
+223,Paediatric Epilepsy Service
+230,Paediatric Clinical Pharmacology Service
+240,Paediatric Palliative Medicine Service
+241,Paediatric Pain Management Service
+242,Paediatric Intensive Care Service
+250,Paediatric Hepatology Service
+251,Paediatric Gastroenterology Service
+252,Paediatric Endocrinology Service
+253,Paediatric Clinical Haematology Service
+254,Paediatric Audio Vestibular Medicine Service
+255,Paediatric Clinical Immunology and Allergy Service
+256,Paediatric Infectious Diseases Service
+257,Paediatric Dermatology Service
+258,Paediatric Respiratory Medicine Service
+259,Paediatric Nephrology Service
+260,Paediatric Medical Oncology Service
+261,Paediatric Inherited Metabolic Medicine Service
+262,Paediatric Rheumatology Service
+263,Paediatric Diabetes Service
+264,Paediatric Cystic Fibrosis Service
+270,Paediatric Emergency Medicine Service
+280,Paediatric Interventional Radiology Service
+290,Community Paediatric Service
+291,Paediatric Neurodisability Service
+321,Paediatric Cardiology Service
+421,Paediatric Neurology Service
+180,Emergency Medicine Service
+190,Anaesthetic Service
+192,Intensive Care Medicine Service
+200,Aviation and Space Medicine Service
+300,General Internal Medicine Service
+301,Gastroenterology Service
+302,Endocrinology Service
+303,Clinical Haematology Service
+304,Clinical Physiology Service
+305,Clinical Pharmacology Service
+306,Hepatology Service
+307,Diabetes Service
+308,Blood and Marrow Transplantation Service
+309,Haemophilia Service
+310,Audio Vestibular Medicine Service
+311,Clinical Genetics Service
+313,Clinical Immunology and Allergy Service
+314,Rehabilitation Medicine Service
+315,Palliative Medicine Service
+316,Clinical Immunology Service
+317,Allergy Service
+318,Intermediate Care Service
+319,Respite Care Service
+320,Cardiology Service
+322,Clinical Microbiology Service
+323,Spinal Injuries Service
+324,Anticoagulant Service
+325,Sport and Exercise Medicine Service
+326,Acute Internal Medicine Service
+327,Cardiac Rehabilitation Service
+328,Stroke Medicine Service
+329,Transient Ischaemic Attack Service
+330,Dermatology Service
+331,Congenital Heart Disease Service
+333,Rare Disease Service
+335,Inherited Metabolic Medicine Service
+340,Respiratory Medicine Service
+341,Respiratory Physiology Service
+342,Pulmonary Rehabilitation Service
+343,Adult Cystic Fibrosis Service
+344,Complex Specialised Rehabilitation Service
+345,Specialist Rehabilitation Service
+346,Local Specialist Rehabilitation Service
+347,Sleep Medicine Service
+348,Post-COVID-19 Syndrome Service
+350,Infectious Diseases Service
+352,Tropical Medicine Service
+360,Genitourinary Medicine Service
+361,Renal Medicine Service
+370,Medical Oncology Service
+371,Nuclear Medicine Service
+400,Neurology Service
+401,Clinical Neurophysiology Service
+410,Rheumatology Service
+420,Paediatric Service
+422,Neonatal Critical Care Service
+424,Well Baby Service
+430,Elderly Medicine Service
+431,Orthogeriatric Medicine Service
+450,Dental Medicine Service
+451,Special Care Dentistry Service
+460,Medical Ophthalmology Service
+461,Ophthalmic and Vision Science Service
+501,Obstetrics Service
+502,Gynaecology Service
+503,Gynaecological Oncology Service
+504,Community Sexual and Reproductive Health Service
+505,Fetal Medicine Service
+560,Midwifery Service
+656,Clinical Psychology Service
+700,Learning Disability Service
+710,Adult Mental Health Service
+711,Child and Adolescent Psychiatry Service
+712,Forensic Psychiatry Service
+713,Medical Psychotherapy Service
+715,Old Age Psychiatry Service
+720,Eating Disorders Service
+721,Addiction Service
+722,Liaison Psychiatry Service
+723,Psychiatric Intensive Care Service
+724,Perinatal Mental Health Service
+725,Mental Health Recovery and Rehabilitation Service
+726,Mental Health Dual Diagnosis Service
+727,Dementia Assessment Service
+730,Neuropsychiatry Service
+800,Clinical Oncology Service
+811,Interventional Radiology Service
+812,Diagnostic Imaging Service
+822,Chemical Pathology Service
+834,Medical Virology Service
+650,Physiotherapy Service
+651,Occupational Therapy Service
+652,Speech and Language Therapy Service
+653,Podiatry Service
+654,Dietetics Service
+655,Orthoptics Service
+657,Prosthetics Service
+658,Orthotics Service
+659,Dramatherapy Service
+660,Art Therapy Service
+661,Music Therapy Service
+662,Optometry Service
+663,Podiatric Surgery Service
+670,Urological Physiology Service
+673,Vascular Physiology Service
+675,Cardiac Physiology Service
+677,Gastrointestinal Physiology Service
+840,Audiology Service
+920,Diabetic Education Service
