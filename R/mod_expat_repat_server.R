@@ -4,8 +4,8 @@
 mod_expat_repat_server <- function(id, params) {
   providers <- get_lookups()[["providers"]]
 
-  rtt_specialties <- get_lookups()[["rtt_specialties"]] |>
-    dplyr::select("specialty", "code") |>
+  specialties <- get_lookups()[["specialties"]] |>
+    dplyr::select("specialty", "tretspef") |>
     tibble::deframe()
 
   mod_reasons_server(shiny::NS(id, "reasons"), params, "expat_repat")
@@ -21,6 +21,11 @@ mod_expat_repat_server <- function(id, params) {
 
     repat_nonlocal_data <- shiny::reactive({
       get_repat_nonlocal_data()
+    })
+
+    valid_specialties <- shiny::reactive({
+      df <- expat_data()
+      specialties[specialties %in% unique(df[["tretspef"]])]
     })
 
     # helpers ----
@@ -125,7 +130,7 @@ mod_expat_repat_server <- function(id, params) {
                 "op"
               )
             ),
-            specialty = rtt_specialties
+            specialty = valid_specialties()
           ) |>
             tidyr::unnest("activity_type") |>
             purrr::pmap(purrr::compose(unname, c)),
@@ -168,7 +173,7 @@ mod_expat_repat_server <- function(id, params) {
           type_values <- if (at == "ip" && input$ip_subgroup == "maternity") {
             "Other (Medical)"
           } else {
-            rtt_specialties
+            valid_specialties()
           }
         }
         shiny::updateSelectInput(session, "type", type_label, type_values)
