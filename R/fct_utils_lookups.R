@@ -54,10 +54,9 @@ get_nee_lookup <- function() {
   )
 }
 
-get_rtt_specialties_lookup <- function() {
-  lookup_file_path("rtt_specialties.csv") |>
-    readr::read_csv(col_types = "cc", progress = FALSE) |>
-    dplyr::mutate(sanitized_code = sanitize_input_name(.data[["code"]]))
+get_specialties_lookup <- function() {
+  lookup_file_path("specialties.csv") |>
+    readr::read_csv(col_types = "cc", progress = FALSE)
 }
 
 get_waiting_list_multipliers <- function() {
@@ -94,7 +93,7 @@ get_lookups <- function() {
         "providers" = get_providers_lookup(),
         "ndg_variants" = get_ndg_variants_lookup(),
         "nee_table" = get_nee_lookup(),
-        "rtt_specialties" = get_rtt_specialties_lookup(),
+        "specialties" = get_specialties_lookup(),
         "waiting_list_multipliers" = get_waiting_list_multipliers()
       ),
       envir = .lookups_cache
