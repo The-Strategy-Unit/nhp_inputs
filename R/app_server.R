@@ -59,6 +59,7 @@ app_server <- function(input, output, session) {
   # load all other modules once the home module has finished loading
   init <- shiny::observe({
     shiny::req(params$dataset)
+    params_filename <- shiny::req(params_file$filename())
 
     available_strategies <- shiny::reactive({
       # nolint start: object_usage_linter
@@ -141,13 +142,15 @@ app_server <- function(input, output, session) {
     }
 
     params_file$watcher <- watcher::watcher(
-      params_file$filename(),
+      params_filename,
       \(file) {
-        if (!session$isClosed()) {
-          params_file$session_id(
-            load_params(file)[["__inputs_app__"]][["session_id"]]
-          )
+        if (is.null(file) || session$isClosed()) {
+          return()
         }
+
+        params_file$session_id(
+          load_params(file)[["__inputs_app__"]][["session_id"]]
+        )
       }
     )
     params_file$watcher$start()
@@ -177,12 +180,13 @@ app_server <- function(input, output, session) {
   shiny::observe({
     shiny::req(params$dataset)
     shiny::req(params$scenario)
+    params_filename <- shiny::req(params_file$filename())
 
     params |>
       shiny::reactiveValuesToList() |>
       mod_run_model_fix_params() |>
       jsonlite::write_json(
-        params_file$filename(),
+        params_filename,
         pretty = TRUE,
         auto_unbox = TRUE
       )
