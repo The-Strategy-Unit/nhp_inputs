@@ -169,12 +169,7 @@ mod_expat_repat_server <- function(id, params) {
           )
         } else {
           type_label <- "Specialty"
-          # if the subgroup is maternity, just show the one specialty
-          type_values <- if (at == "ip" && input$ip_subgroup == "maternity") {
-            "Other (Medical)"
-          } else {
-            valid_specialties()
-          }
+          type_values <- valid_specialties()
         }
         shiny::updateSelectInput(session, "type", type_label, type_values)
 
