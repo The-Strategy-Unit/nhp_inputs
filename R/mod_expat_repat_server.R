@@ -24,32 +24,35 @@ mod_expat_repat_server <- function(id, params) {
     })
 
     valid_specialties <- shiny::reactive({
-      df <- expat_data()
+      at <- shiny::req(input$activity_type)
+
+      if (at == "aae") {
+        return(c("Other"))
+      }
+
+      st <- shiny::req(input$ip_subgroup)
+
+      df <- expat_data() |>
+        dplyr::filter(
+          .data[["activity_type"]] == at,
+          at == "op" | .data[["group"]] == st
+        )
+
+      print(df)
+
       specialties[specialties %in% unique(df[["tretspef"]])]
     })
 
     # helpers ----
 
     extract_expat_repat_data <- function(dat) {
-      # TODO: techdebt
-      # we should rename the dropdowns
-      # when op, set the group dropdown to ""
-      # when aae, set the tretspef dropdown to "Other"
       at <- shiny::req(input$activity_type)
-      st <- shiny::req(input$ip_subgroup) # < this should become tretspef
-      t <- shiny::req(input$type) # < this should become group
+      g <- shiny::req(input$group)
+      t <- shiny::req(input$tretspef)
 
-      dat <- dplyr::filter(dat, .data[["activity_type"]] == .env[["at"]])
-
-      if (at == "op") {
-        return(dplyr::filter(dat, .data[["tretspef"]] == .env[["t"]]))
-      }
-      if (at == "aae") {
-        return(dplyr::filter(dat, .data[["group"]] == .env[["t"]]))
-      }
       dat |>
         dplyr::filter(
-          .data$group == st,
+          .data$group == g,
           .data$tretspef == t
         )
     }
@@ -119,33 +122,18 @@ mod_expat_repat_server <- function(id, params) {
         )
 
         # copy the values of the params to shadow params
-        c(
-          tidyr::expand_grid(
-            type = c("expat", "repat_local", "repat_nonlocal"),
-            activity_type = list(
-              list(
-                c("ip", "elective"),
-                c("ip", "non-elective"),
-                c("ip", "maternity"),
-                "op"
-              )
-            ),
-            specialty = valid_specialties()
-          ) |>
-            tidyr::unnest("activity_type") |>
-            purrr::pmap(purrr::compose(unname, c)),
-          tidyr::expand_grid(
-            a = c("expat", "repat_local", "repat_nonlocal"),
-            b = "aae",
-            c = c("ambulance", "walk-in")
-          ) |>
-            purrr::pmap(purrr::compose(unname, c))
+        dplyr::cross_join(
+          tibble::tibble(type = c("expat", "repat_local", "repat_nonlocal")),
+          expat_data() |>
+            dplyr::filter(.data$fyear == params$start_year) |>
+            dplyr::select("activity_type", "group", "tretspef")
         ) |>
-          purrr::walk(\(.x) {
+          purrr::pmap(\(...) {
+            dots <- list(...)
             # if a value does exist in the params fallback to the default values
             # for that type
-            v <- purrr::pluck(p, !!!.x) %||% default_values[[.x[[1]]]]
-            purrr::pluck(shadow_params, !!!.x) <- v
+            v <- purrr::pluck(p, !!!dots) %||% default_values[[dots[[1]]]]
+            purrr::pluck(shadow_params, !!!dots) <- v
           })
 
         init$destroy()
@@ -153,38 +141,51 @@ mod_expat_repat_server <- function(id, params) {
       priority = 10 # this observer needs to trigger before the dropdown change observer
     )
 
-    # update the options in the type drop down based on the activity type dropdown
-    # also, toggle whether the ip_subgroup is visible or not
     shiny::observe(
       {
         at <- shiny::req(input$activity_type)
 
-        shinyjs::toggle("ip_subgroup", condition = at == "ip")
+        shinyjs::toggle("group", condition = at != "op")
+        shinyjs::toggle("tretspef", condition = at != "aae")
 
-        if (at == "aae") {
-          type_label <- "Attendance Type"
-          type_values <- c(
-            "Ambulance" = "ambulance",
-            "Walk-In" = "walk-in"
+        shiny::updateSelectInput(
+          session,
+          "group",
+          choices = switch(
+            at,
+            "ip" = c("elective", "non-elective", "maternity"),
+            "op" = c(""),
+            "aae" = c("ambulance", "walk-in")
           )
-        } else {
-          type_label <- "Specialty"
-          type_values <- valid_specialties()
-        }
-        shiny::updateSelectInput(session, "type", type_label, type_values)
-
-        # reset the subgroup selection if we aren't on inpatients
-        if (at != "ip") {
-          shiny::updateSelectInput(
-            session,
-            "ip_subgroup",
-            selected = "elective"
-          )
-        }
+        )
       },
       priority = 100
     ) |>
-      shiny::bindEvent(input$activity_type, input$ip_subgroup)
+      shiny::bindEvent(input$activity_type)
+
+    shiny::observe(
+      {
+        at <- shiny::req(input$activity_type)
+        g <- shiny::req(input$group)
+
+        specialties_to_select <- expat_data() |>
+          dplyr::filter(
+            .data$fyear == params$start_year,
+            .data$activity_type == at,
+            .data$group == g
+          ) |>
+          _$tretspef |>
+          unique()
+
+        shiny::updateSelectInput(
+          session,
+          "tretsepf",
+          choices = specialties[specialties %in% specialties_to_select]
+        )
+      },
+      priority = 100
+    ) |>
+      shiny::bindEvent(input$activity_type, input$group)
 
     # Watch for changes to the dropdowns.
     # Update the sliders to the values for the combination of the drop downs
@@ -196,8 +197,8 @@ mod_expat_repat_server <- function(id, params) {
           c("expat", "repat_local", "repat_nonlocal"),
           \(type) {
             at <- shiny::req(input$activity_type)
-            st <- shiny::req(input$ip_subgroup)
-            t <- shiny::req(input$type)
+            st <- shiny::req(input$group)
+            t <- shiny::req(input$tretspef)
 
             sp <- shadow_params[[type]][[at]]
             p <- params[[type]][[at]]
@@ -221,7 +222,7 @@ mod_expat_repat_server <- function(id, params) {
       },
       priority = 10
     ) |>
-      shiny::bindEvent(input$activity_type, input$ip_subgroup, input$type)
+      shiny::bindEvent(input$activity_type, input$group, input$tretspef)
 
     # set up the observers for the sliders/checkboxes
     purrr::walk(
@@ -235,8 +236,8 @@ mod_expat_repat_server <- function(id, params) {
         # if it is checked, set the value to null (i.e. delete it from the list)
         shiny::observe({
           at <- shiny::req(input$activity_type)
-          st <- shiny::req(input$ip_subgroup)
-          t <- shiny::req(input$type)
+          st <- shiny::req(input$group)
+          t <- shiny::req(input$tretspef)
 
           include <- input[[include_type]]
           v <- shiny::req(input[[type]]) / 100

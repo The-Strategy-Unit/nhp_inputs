@@ -148,8 +148,16 @@ app_server <- function(input, output, session) {
           return()
         }
 
-        params_file$session_id(
-          load_params(file)[["__inputs_app__"]][["session_id"]]
+        tryCatch(
+          params_file$session_id(
+            load_params(file)[["__inputs_app__"]][["session_id"]]
+          ),
+          error = function(e) {
+            rlang::abort(
+              paste("Failed to load params: ", file),
+              parent = e
+            )
+          }
         )
       }
     )

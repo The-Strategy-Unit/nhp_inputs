@@ -47,20 +47,18 @@ mod_expat_repat_ui <- function(id) {
               "A&E" = "aae"
             )
           ),
-          shinyjs::hidden(
-            shiny::selectInput(
-              ns("ip_subgroup"),
-              "Subgroup",
-              c(
-                "Elective" = "elective",
-                "Non-Elective" = "non-elective",
-                "Maternity" = "maternity"
-              )
+          shiny::selectInput(
+            ns("group"),
+            "Subgroup",
+            c(
+              "Elective" = "elective",
+              "Non-Elective" = "non-elective",
+              "Maternity" = "maternity"
             )
           ),
           shiny::selectInput(
-            ns("type"),
-            NULL,
+            ns("tretspef"),
+            "Specialty",
             NULL
           )
         ),
