@@ -148,6 +148,11 @@ app_server <- function(input, output, session) {
           return()
         }
 
+        # there can be cases where the file is changed multiple times before the
+        # callback fires, in which case the filename is repeated multiple times.
+        # just take the first one.
+        file <- file[[1]]
+
         params_file$session_id(
           load_params(file)[["__inputs_app__"]][["session_id"]]
         )
