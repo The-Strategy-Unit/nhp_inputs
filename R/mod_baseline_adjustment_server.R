@@ -14,20 +14,24 @@ mod_baseline_adjustment_server <- function(id, params) {
       p <- shiny::isolate(params)
 
       get_baseline_data(p$dataset, p$start_year) |>
-        dplyr::left_join(specialties, by = dplyr::join_by("tretspef")) |>
         dplyr::mutate(
           dplyr::across(
-            c("tretspef", "specialty"),
-            \(.x) ifelse(.data[["activity_type"]] == "aae", "Other", .x)
+            "tretspef",
+            \(.x) {
+              dplyr::replace_when(
+                .x,
+                .data[["activity_type"]] == "aae" ~ "Other",
+                .data[["count"]] < 10 ~ "Other"
+              )
+            }
           )
         ) |>
-        dplyr::select(
-          "activity_type",
-          "group",
-          "tretspef",
-          "specialty",
-          "count"
-        )
+        dplyr::left_join(specialties, by = dplyr::join_by("tretspef")) |>
+        dplyr::summarise(
+          .by = c("activity_type", "group", "tretspef", "specialty"),
+          dplyr::across("count", sum)
+        ) |>
+        dplyr::arrange(.data[["tretspef"]])
     })
 
     # observers ----
@@ -52,6 +56,10 @@ mod_baseline_adjustment_server <- function(id, params) {
           count,
           ...
         ) {
+          if ((activity_type != "aae") && (tretspef == "Other")) {
+            return(NULL)
+          }
+
           v <- purrr::pluck(
             p[["baseline_adjustment"]],
             activity_type,
