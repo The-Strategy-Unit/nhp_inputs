@@ -10,58 +10,6 @@
 mod_baseline_adjustment_ui <- function(id) {
   ns <- shiny::NS(id)
 
-  specs <- get_lookups()[["rtt_specialties"]]
-
-  create_table <- function(at, g, df = specs) {
-    df |>
-      dplyr::mutate(
-        baseline = purrr::map(
-          .data[["sanitized_code"]],
-          \(.x) {
-            shiny::textOutput(
-              ns(glue::glue("baseline_{at}_{g}_{.x}"))
-            ) |>
-              as.character() |>
-              gt::html()
-          }
-        ),
-        adjustment = purrr::map(
-          .data[["sanitized_code"]],
-          \(.x) {
-            shiny::sliderInput(
-              ns(glue::glue("adjustment_{at}_{g}_{.x}")),
-              label = NULL,
-              min = -1,
-              max = 1,
-              value = 0,
-              step = 1
-            ) |>
-              as.character() |>
-              gt::html()
-          }
-        ),
-        param = purrr::map(
-          .data[["sanitized_code"]],
-          \(.x) {
-            shiny::textOutput(
-              ns(glue::glue("param_{at}_{g}_{.x}"))
-            ) |>
-              as.character() |>
-              gt::html()
-          }
-        )
-      ) |>
-      dplyr::select(-tidyselect::ends_with("code")) |>
-      gt::gt(rowname_col = "specialty") |>
-      gt::cols_label(
-        baseline ~ "Baseline Count",
-        adjustment ~ "Adjustment",
-        param ~ "Relative Change"
-      ) |>
-      gt::tab_options(table.width = gt::pct(100)) |>
-      gt::as_raw_html()
-  }
-
   shiny::tagList(
     shiny::tags$h1("Baseline Adjustment"),
     shiny::fluidRow(
@@ -90,19 +38,15 @@ mod_baseline_adjustment_ui <- function(id) {
             bs4Dash::tabsetPanel(
               shiny::tabPanel(
                 "Elective",
-                create_table("ip", "elective")
+                shiny::uiOutput(ns("ip_elective"))
               ),
               shiny::tabPanel(
                 "Non-Elective",
-                create_table("ip", "non-elective")
+                shiny::uiOutput(ns("ip_non-elective"))
               ),
               shiny::tabPanel(
                 "Maternity",
-                create_table(
-                  "ip",
-                  "maternity",
-                  specs |> dplyr::filter(.data[["code"]] == "Other (Medical)")
-                )
+                shiny::uiOutput(ns("ip_maternity"))
               )
             )
           ),
@@ -111,34 +55,23 @@ mod_baseline_adjustment_ui <- function(id) {
             bs4Dash::tabsetPanel(
               shiny::tabPanel(
                 "First Attendance",
-                create_table("op", "first")
+                shiny::uiOutput(ns("op_first"))
               ),
               shiny::tabPanel(
                 "Follow-up Attendance",
-                create_table("op", "followup")
+                shiny::uiOutput(ns("op_followup"))
               ),
               shiny::tabPanel(
                 "Procedure",
-                create_table("op", "procedure")
+                shiny::uiOutput(ns("op_procedure"))
               )
             )
           ),
           shiny::tabPanel(
             "A&E",
-            create_table(
-              "aae",
-              "-",
-              tibble::tibble(code = c("ambulance", "walk-in")) |>
-                dplyr::mutate(
-                  dplyr::across(
-                    "code",
-                    .fns = c(
-                      specialty = snakecase::to_title_case,
-                      sanitized_code = sanitize_input_name
-                    ),
-                    .names = "{.fn}"
-                  )
-                )
+            bs4Dash::tabsetPanel(
+              shiny::tabPanel("Walk-in", shiny::uiOutput(ns("aae_walk-in"))),
+              shiny::tabPanel("Ambulance", shiny::uiOutput(ns("aae_ambulance")))
             )
           )
         )
