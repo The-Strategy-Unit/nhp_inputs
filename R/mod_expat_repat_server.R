@@ -12,7 +12,8 @@ mod_expat_repat_server <- function(id, params) {
 
   shiny::moduleServer(id, function(input, output, session) {
     expat_data <- shiny::reactive({
-      get_expat_data(params$dataset)
+      get_expat_data(params$dataset) |>
+        dplyr::filter(.data$count >= 10)
     })
 
     repat_local_data <- shiny::reactive({
