@@ -58,6 +58,173 @@ mod_population_growth_server <- function(id, params) {
       load_pop_factors("birth_factors")
     })
 
+    output$population_projection_text <- shiny::renderUI({
+      pf <- population_factors() |>
+        shiny::req() |>
+        dplyr::summarise(
+          .by = c("year"),
+          dplyr::across("value", sum)
+        ) |>
+        tibble::deframe()
+
+      baseline <- scales::comma(
+        pf[["baseline"]],
+        accuracy = 1,
+        scale = 0.001,
+        suffix = "k"
+      )
+      horizon <- scales::comma(
+        pf[["horizon"]],
+        accuracy = 1,
+        scale = 0.001,
+        suffix = "k"
+      )
+
+      rate <- scales::number(
+        pf[["horizon"]] / pf[["baseline"]],
+        accuracy = 0.001
+      )
+
+      htmltools::tags$div(
+        htmltools::tags$p(
+          glue::glue(
+            "In the baseline year, the catchment population is {baseline} and in the horizon year it is {horizon}."
+          )
+        ),
+        htmltools::tags$p(
+          glue::glue(
+            "This gives an overall activity growth rate of {rate}."
+          )
+        )
+      )
+    })
+
+    output$pop_pyramid <- shiny::renderPlot({
+      df <- population_factors()
+
+      df |>
+        dplyr::filter(.data$age < 90) |>
+        dplyr::mutate(
+          dplyr::across("value", \(.x) .x * ifelse(.data$sex == 1, -1, 1)),
+          dplyr::across(
+            "sex",
+            \(.x) {
+              forcats::fct_recode(
+                factor(.x, levels = c("1", "2")),
+                "Males" = "1",
+                "Females" = "2"
+              )
+            }
+          )
+        ) |>
+        ggplot2::ggplot(
+          ggplot2::aes(
+            x = .data$age,
+            y = .data$value,
+            fill = .data$sex,
+            group = paste0(.data$year, .data$sex)
+          )
+        ) +
+        ggplot2::geom_col(
+          data = \(.x) dplyr::filter(.x, .data$year == "baseline"),
+          width = 1,
+          position = "identity",
+          alpha = 0.5,
+          na.rm = TRUE
+        ) +
+        ggplot2::geom_step(
+          ggplot2::aes(colour = .data$sex),
+          data = \(.x) {
+            .x <- dplyr::filter(.x, .data$year == "baseline")
+
+            .x |>
+              dplyr::bind_rows(
+                .x |>
+                  dplyr::filter(.data$age == max(.data$age)) |>
+                  dplyr::mutate(age = .data$age + 1)
+              )
+          },
+          position = ggplot2::position_nudge(x = -0.5),
+          na.rm = TRUE
+        ) +
+        ggplot2::geom_step(
+          data = \(.x) {
+            .x <- dplyr::filter(.x, .data$year == "horizon")
+
+            .x |>
+              dplyr::bind_rows(
+                .x |>
+                  dplyr::filter(.data$age == max(.data$age)) |>
+                  dplyr::mutate(age = .data$age + 1)
+              )
+          },
+          position = ggplot2::position_nudge(x = -0.5),
+          colour = "black",
+          na.rm = TRUE
+        ) +
+        ggplot2::coord_flip() +
+        ggplot2::scale_y_continuous(
+          name = "Population Estimates",
+          labels = \(.x) scales::comma(abs(.x))
+        ) +
+        ggplot2::scale_x_continuous(
+          name = "Males",
+          breaks = seq(0, 90, by = 10),
+          sec.axis = ggplot2::sec_axis(~., name = "Females")
+        ) +
+        ggplot2::scale_colour_manual(
+          values = c("Males" = "#5881c1", "Females" = "#ec6555")
+        ) +
+        ggplot2::scale_fill_manual(
+          values = c("Males" = "#5881c1", "Females" = "#ec6555")
+        ) +
+        ggplot2::theme_minimal() +
+        ggplot2::theme(
+          legend.position = "bottom"
+        )
+    })
+
+    output$pop_rate <- shiny::renderPlot({
+      df <- population_factors() |>
+        tidyr::pivot_wider(
+          names_from = "year",
+          values_from = "value"
+        )
+
+      df |>
+        dplyr::mutate(
+          dplyr::across(
+            "sex",
+            \(.x) {
+              forcats::fct_recode(
+                factor(.x, levels = c("1", "2")),
+                "Males" = "1",
+                "Females" = "2"
+              )
+            }
+          )
+        ) |>
+        ggplot2::ggplot(
+          ggplot2::aes(
+            x = .data$age,
+            y = .data$horizon / .data$baseline,
+            colour = .data$sex
+          )
+        ) +
+        ggplot2::geom_line() +
+        ggplot2::scale_x_continuous(
+          breaks = seq(0, 90, by = 10)
+        ) +
+        ggplot2::scale_colour_manual(
+          values = c("Males" = "#5881c1", "Females" = "#ec6555")
+        ) +
+        ggplot2::theme_minimal() +
+        ggplot2::theme(
+          legend.position = "bottom"
+        ) +
+        ggplot2::labs(x = "Age", y = "Growth Rate")
+    })
+
     # the initial state might not have values for the population/births section of
     # the demographic_adjustment params entry.
     # but, because the default variant might not change the selection in the ui, the observer

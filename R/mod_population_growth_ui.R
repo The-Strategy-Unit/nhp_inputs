@@ -35,6 +35,15 @@ mod_population_growth_ui <- function(id, dataset) {
           label = "Projection",
           choices = stats::setNames(names(projections), projections),
           selected = default_projection
+        ),
+        shiny::uiOutput(ns("population_projection_text")),
+        shiny::fluidRow(
+          col_6(
+            shiny::plotOutput(ns("pop_pyramid"))
+          ),
+          col_6(
+            shiny::plotOutput(ns("pop_rate"))
+          )
         )
       )
     )
