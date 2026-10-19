@@ -5,8 +5,6 @@ mod_population_growth_server <- function(id, params) {
   mod_reasons_server(shiny::NS(id, "reasons"), params, "demographic_factors")
 
   shiny::moduleServer(id, function(input, output, session) {
-    projections <- get_population_growth_options(params$dataset)
-
     load_pop_factors <- function(file) {
       p <- shiny::req(params)
       v <- shiny::req(input$population_projection)
