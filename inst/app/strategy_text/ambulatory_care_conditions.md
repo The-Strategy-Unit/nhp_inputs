@@ -14,6 +14,6 @@ The full condition list and coding logic can be found within the [appendix][2].
 
 [2]: https://webarchive.nationalarchives.gov.uk/ukgwa/20210206234503/https://digital.nhs.uk/binaries/content/assets/website-assets/data-and-information/data-tools-and-services/data-services/innovative-uses-of-data/acsc-appendix-a.pdf
 
-The list of conditions that comprise Ambulatory Care Sensitive Conditions used within this model is one of several that are avaialble for example a slightly Different set of conditions are used in the [NHS Outcomes Framework][3].
+The list of conditions that comprise Ambulatory Care Sensitive Conditions used within this model is one of several that are available for example a slightly Different set of conditions are used in the [NHS Outcomes Framework][3].
 
 [3]: https://digital.nhs.uk/data-and-information/publications/statistical/nhs-outcomes-framework/february-2021/domain-2-enhancing-quality-of-life-for-people-with-long-term-conditions-nof/2.3.i-unplanned-hospitalisation-for-chronic-ambulatory-care-sensitive-conditions
