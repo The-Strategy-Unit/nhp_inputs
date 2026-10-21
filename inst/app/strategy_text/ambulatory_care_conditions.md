@@ -8,11 +8,11 @@ These conditions are categorised into three groups:
 
 The list of conditions used within this factor comes the [NHS Institute for Innovation and Improvement][1].
 
-[1]: https://digital.nhs.uk/data-and-information/data-tools-and-services/data-services/innovative-uses-of-data/demand-on-healthcare/ambulatory-care-sensitive-conditions
+[1]: https://webarchive.nationalarchives.gov.uk/ukgwa/20220301011245/https://digital.nhs.uk/data-and-information/data-tools-and-services/data-services/innovative-uses-of-data/demand-on-healthcare/ambulatory-care-sensitive-conditions
 
 The full condition list and coding logic can be found within the [appendix][2].
 
-[2]: https://digital.nhs.uk/binaries/content/assets/website-assets/data-and-information/data-tools-and-services/data-services/innovative-uses-of-data/acsc-appendix-a.pdf
+[2]: https://webarchive.nationalarchives.gov.uk/ukgwa/20210206234503/https://digital.nhs.uk/binaries/content/assets/website-assets/data-and-information/data-tools-and-services/data-services/innovative-uses-of-data/acsc-appendix-a.pdf
 
 The list of conditions that comprise Ambulatory Care Sensitive Conditions used within this model is one of several that are avaialble for example a slightly Different set of conditions are used in the [NHS Outcomes Framework][3].
 
