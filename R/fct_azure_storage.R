@@ -54,13 +54,15 @@ get_all_data_files <- function(
   }
 
   files <- c(
-    "rates",
     "age_sex",
-    "diagnoses",
-    "procedures",
     "baseline",
-    "inequalities",
+    "birth_factors",
+    "demographic_factors",
+    "diagnoses",
     "expat",
+    "inequalities",
+    "procedures",
+    "rates",
     "repat_local",
     "repat_nonlocal"
   )

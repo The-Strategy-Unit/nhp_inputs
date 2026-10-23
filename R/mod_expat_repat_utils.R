@@ -8,6 +8,10 @@ mod_expat_repat_trend_plot <- function(
 ) {
   v <- dplyr::filter(df, .data$fyear == start_year)$pcnt
 
+  if (length(v) == 0) {
+    return(NULL)
+  }
+
   ymax_ci <- values[[2]] * v / 100
 
   interval <- if (include) {
@@ -30,7 +34,7 @@ mod_expat_repat_trend_plot <- function(
       group = 1
     )) +
     interval +
-    ggplot2::geom_line() +
+    ggplot2::geom_line(na.rm = TRUE) +
     ggplot2::geom_point(
       data = \(.x) dplyr::filter(.x, .data$fyear == start_year),
       colour = "red"
