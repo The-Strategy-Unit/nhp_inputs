@@ -11,6 +11,14 @@ mod_baseline_adjustment_ui <- function(id) {
   ns <- shiny::NS(id)
 
   shiny::tagList(
+    shiny::tags$link(
+      href = "https://cdn.jsdelivr.net/gh/tofsjonas/sortable@latest/dist/sortable.min.css",
+      rel = "stylesheet"
+    ),
+    shiny::tags$script(
+      src = "https://cdn.jsdelivr.net/gh/tofsjonas/sortable@latest/dist/sortable.min.js"
+    ),
+    # OR:
     shiny::tags$h1("Baseline Adjustment"),
     shiny::fluidRow(
       col_4(
