@@ -35,7 +35,7 @@ mod_run_model_fix_params <- function(p) {
     "end_year",
     "app_version",
     "interval_type",
-    "demographic_factors",
+    "demographic_adjustment",
     "health_status_adjustment",
     "baseline_adjustment",
     "waiting_list_adjustment",
