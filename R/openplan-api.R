@@ -16,6 +16,5 @@ create_openplan_api_request <- function(...) {
 get_peers <- function(provider) {
   create_openplan_api_request("v1", "reference", "peers", provider) |>
     httr2::req_perform() |>
-    httr2::resp_check_status() |>
     httr2::resp_body_json()
 }
