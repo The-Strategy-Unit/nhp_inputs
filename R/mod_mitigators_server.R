@@ -175,6 +175,7 @@ mod_mitigators_server <- function(
     # rates data for the baseline year
     rates_baseline_data <- shiny::reactive({
       strategy <- shiny::req(input$strategy)
+      peers <- scheme_peers()
 
       rates_data() |>
         dplyr::filter(
@@ -184,7 +185,7 @@ mod_mitigators_server <- function(
         dplyr::mutate(
           is_peer = dplyr::case_when(
             .data$provider == params$dataset ~ FALSE,
-            .data$provider %in% .env$scheme_peers() ~ TRUE,
+            .data$provider %in% .env$peers ~ TRUE,
             .default = NA # if scheme is neither focal nor a peer
           )
         ) |>
