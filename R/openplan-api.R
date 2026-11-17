@@ -14,7 +14,13 @@ create_openplan_api_request <- function(...) {
 }
 
 get_peers <- function(provider) {
-  create_openplan_api_request("v1", "reference", "peers", provider) |>
+  create_openplan_api_request(
+    "v1",
+    "reference",
+    "peers",
+    "provider",
+    provider
+  ) |>
     httr2::req_perform() |>
     httr2::resp_body_json()
 }
