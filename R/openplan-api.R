@@ -1,10 +1,10 @@
 create_openplan_api_request <- function(...) {
-  uri <- Sys.getenv("OPENPLAN_API_URI")
-  app_id <- Sys.getenv("OPENPLAN_API_APP_ID")
+  uri <- envvars[["OPENPLAN_API_URI"]]
+  app_id <- envvars[["OPENPLAN_API_APP_ID"]]
 
   token <- azkit::get_auth_token(
     resource = app_id,
-    tenant = Sys.getenv("AZ_TENANT_ID")
+    tenant = envvars[["AZ_TENANT_ID"]]
   ) |>
     AzureAuth::extract_jwt()
 
