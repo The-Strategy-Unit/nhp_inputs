@@ -67,6 +67,9 @@ jobs:
           CONNECT_ENV_SET_NHP_INPUTS_DATA_VERSION: ${{ inputs.inputs_data_version }}
           CONNECT_ENV_SET_NHP_OUTPUTS_URI: ${{ secrets.NHP_OUTPUTS_URI }}
           CONNECT_ENV_SET_NHP_FEEDBACK_FORM_URL: ${{ secrets.FEEDBACK_FORM_URL }}
+          CONNECT_ENV_SET_OPENPLAN_API_URI: ${{ vars.OPENPLAN_API_URI }}
+          CONNECT_ENV_SET_OPENPLAN_API_APP_ID: ${{ vars.OPENPLAN_API_APP_ID }}
+          CONNECT_ENV_SET_AZ_TENANT_ID: ${{ vars.AZ_TENANT_ID }}
           CONNECT_ENV_SET_GOLEM_CONFIG_ACTIVE: "production"
         with:
           url: ${{ vars.RSCONNECT_URL }}

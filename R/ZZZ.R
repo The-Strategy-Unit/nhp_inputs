@@ -128,6 +128,7 @@ parse_url_query_filename <- function(query_string) {
 envvars <- c(
   "AZ_STORAGE_CONTAINER",
   "AZ_STORAGE_EP",
+  "AZ_TENANT_ID",
   "CARTO_API_KEY",
   "NHP_API_URI",
   "NHP_API_APP_ID",
@@ -135,6 +136,8 @@ envvars <- c(
   "NHP_OUTPUTS_URI",
   "NHP_MODEL_RUN_PROGRESS_URI",
   "NHP_FEEDBACK_FORM_URL",
+  "OPENPLAN_API_URI",
+  "OPENPLAN_API_APP_ID",
   "CACHE_VERSION"
 ) |>
   rlang::set_names() |>

@@ -26,14 +26,6 @@ get_mitigators_lookup <- function() {
     )
 }
 
-get_peers_lookup <- function() {
-  readr::read_csv(
-    lookup_file_path("peers.csv"),
-    col_types = "cc",
-    progress = FALSE
-  )
-}
-
 get_providers_lookup <- function() {
   lookup_file_path("providers.csv") |>
     readr::read_csv(col_types = "cc", progress = FALSE) |>
@@ -89,7 +81,6 @@ get_lookups <- function() {
         "diagnoses" = get_diagnoses_lookup(),
         "procedures" = get_procedures_lookup(),
         "mitigators" = get_mitigators_lookup(),
-        "peers" = get_peers_lookup(),
         "providers" = get_providers_lookup(),
         "ndg_variants" = get_ndg_variants_lookup(),
         "nee_table" = get_nee_lookup(),

@@ -33,6 +33,12 @@ mod_mitigators_server <- function(
     # module initialization
     # --------------------------------------------------------------------------
 
+    scheme_peers <- shiny::reactive({
+      ds <- shiny::req(params$dataset)
+      get_peers(ds)
+    }) |>
+      shiny::bindCache(params$dataset)
+
     # this will contain the slider values for each strategy. this is separate
     # from the params reactiveValues, because we want to keep track of the
     # values a user has set whether they have clicked "include" or not.
@@ -169,14 +175,7 @@ mod_mitigators_server <- function(
     # rates data for the baseline year
     rates_baseline_data <- shiny::reactive({
       strategy <- shiny::req(input$strategy)
-
-      # nolint start: object_usage_linter
-      scheme_peers <- lookups[["peers"]] |>
-        dplyr::filter(
-          .data$procode == params$dataset & .data$peer != params$dataset
-        ) |>
-        dplyr::pull(.data$peer)
-      # nolint end
+      peers <- scheme_peers()
 
       rates_data() |>
         dplyr::filter(
@@ -186,7 +185,7 @@ mod_mitigators_server <- function(
         dplyr::mutate(
           is_peer = dplyr::case_when(
             .data$provider == params$dataset ~ FALSE,
-            .data$provider %in% .env$scheme_peers ~ TRUE,
+            .data$provider %in% .env$peers ~ TRUE,
             .default = NA # if scheme is neither focal nor a peer
           )
         ) |>
