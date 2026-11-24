@@ -43,7 +43,7 @@ mod_run_model_ui <- function(id) {
             shiny::actionButton(ns("submit"), "Submit Model Run"),
           ),
           col_6(
-            shiny::downloadButton(ns("download_params"), "Download params")
+            shiny::downloadButton(ns("download_params"), "Download parameters")
           )
         ),
         shiny::uiOutput(ns("status"))

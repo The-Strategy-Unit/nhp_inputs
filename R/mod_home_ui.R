@@ -32,7 +32,7 @@ mod_home_ui <- function(id) {
 
   # build the home page outputs
   shiny::tagList(
-    htmltools::h1("NHP Model Inputs"),
+    htmltools::h1("OpenPlan Hospital Demand Model: Inputs"),
     shiny::fluidRow(
       left_column,
       right_column
