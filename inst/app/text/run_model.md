@@ -10,24 +10,25 @@ setting the model parameters and wish to come back to it later.
 
 ## Running the model
 
-When you submit the model to run you will see a status message appear. The
-messages that you will see are:
+When you submit the model to run you will see a status message appear.
+The messages that you will see are:
 
-* "Please wait" while the model run is being submitted,
-* "Submitted model run" once the model has been submitted, but the model engine
-has not yet started
-* "Model running" once the model engine has started
-* "Completed: View Outputs" once the model engine has finished. Clicking the
-'View Outputs' link will take you directly to the results
+1. 'Please wait' while the model run is being submitted.
+2. 'Submitted model run' once the model has been submitted, but the model engine
+has not yet started.
+3. 'Model running' once the model engine has started.
+4. 'Completed: View Outputs' once the model engine has finished.
+Clicking the 'View Outputs' link will take you directly to the results.
 
-The app may time out if the model is taking slightly longer to run than usual. A timeout in the app does not mean that the run has been stopped. Please wait a short while and go to the NHP outputs app to confirm success and to retrieve the results of the run. 
+The app may time out if the model is taking slightly longer to run than usual.
+A timeout in the app does not mean that the run has been stopped.
+Please wait a short while and go to the NHP outputs app to confirm success and to retrieve the results of the run.
 
-If anything goes wrong running the model then "Error" will appear in the status.
+If anything goes wrong running the model then 'Error' will appear in the status.
 
-## View params
+## Model parameters
 
-The complete model parameters are available to view as [JSON][1] in the right
-hand panel. This is the file that will be submitted to the model engine. This is
-primarly kept in for development purposes and may be removed in future releases.
+The complete model parameters are available to view as [JSON][1] in the 'View Params'  panel.
+This is the file that will be submitted to the model engine.
 
 [1]: https://en.wikipedia.org/wiki/JSON

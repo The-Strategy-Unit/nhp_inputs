@@ -5,4 +5,4 @@ This tool is designed to help determine how hospital activity might change in th
 
 For more information or help, please see the [project information site](https://connect.strategyunitwm.nhs.uk/nhp/project_information/) for the OpenPlan Hospital Demand Model, or contact the [MLCSU NHP Analytics mailbox](mailto:mlcsu.nhpanalytics@nhs.net).
 
-When communicating about a particular scenario, please quote the information in the 'Model Options' table on this page.
+When communicating about a particular scenario, please quote the information in the 'Scenario Options' table on this page.
