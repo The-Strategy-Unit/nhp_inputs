@@ -40,7 +40,7 @@ mod_run_model_ui <- function(id) {
         width = 12,
         shiny::fluidRow(
           col_6(
-            shiny::actionButton(ns("submit"), "Submit Model Run"),
+            shiny::actionButton(ns("submit"), "Submit Model Run")
           ),
           col_6(
             shiny::downloadButton(ns("download_params"), "Download parameters")
@@ -49,8 +49,8 @@ mod_run_model_ui <- function(id) {
         shiny::uiOutput(ns("status"))
       ),
       bs4Dash::box(
+        title = "About",
         collapsible = FALSE,
-        headerBorder = FALSE,
         width = 12,
         md_file_to_html("app", "text", "run_model.md")
       )

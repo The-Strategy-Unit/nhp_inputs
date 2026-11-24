@@ -12,8 +12,8 @@ mod_home_ui <- function(id) {
 
   left_column <- col_4(
     bs4Dash::box(
+      title = "About",
       collapsible = FALSE,
-      headerBorder = FALSE,
       width = 12,
       md_file_to_html("app", "text", "home.md")
     )
@@ -21,7 +21,7 @@ mod_home_ui <- function(id) {
 
   right_column <- col_8(
     bs4Dash::box(
-      title = "Model Options",
+      title = "Scenario Options",
       collapsible = FALSE,
       width = 12,
       shinycssloaders::withSpinner(

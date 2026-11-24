@@ -64,8 +64,8 @@ mod_expat_repat_ui <- function(id) {
         ),
         mod_reasons_ui(ns("reasons")),
         bs4Dash::box(
+          title = "About",
           collapsible = FALSE,
-          headerBorder = FALSE,
           width = 12,
           md_file_to_html("app", "text", "expat_repat.md")
         )

@@ -19,20 +19,20 @@ mod_population_growth_ui <- function(id, dataset) {
     shiny::fluidRow(
       col_4(
         bs4Dash::box(
+          title = "About",
           collapsible = FALSE,
-          headerBorder = FALSE,
           width = 12,
           md_file_to_html("app", "text", "population_growth.md")
         ),
         mod_reasons_ui(ns("reasons"))
       ),
       bs4Dash::box(
+        title = "Population Projection Variant",
         collapsible = FALSE,
-        headerBorder = FALSE,
         width = 8,
         shiny::selectInput(
           ns("population_projection"),
-          label = "Projection",
+          label = "Choose a Projection",
           choices = stats::setNames(names(projections), projections),
           selected = default_projection
         )

@@ -10,23 +10,20 @@
 mod_mitigators_summary_ui <- function(id) {
   ns <- NS(id)
   tagList(
+    shiny::tags$h1("Summary Totals"),
     shiny::fluidRow(
       col_4(
         bs4Dash::box(
-          title = "Types of Potentially Mitigatable Activity (TPMA)",
+          title = "About",
+          collapsible = FALSE,
           width = 12,
-          shiny::p(
-            "This table summarises the most common healthcare activities
-                   across inpatients, outpatients, and A&E, to help prioritise
-                   the setting of TPMAs. Some forms of activity are
-                   uncommon and so setting a mitigating factor will have
-                   relatively little influence over the model results"
-          )
+          md_file_to_html("app", "text", "summary_totals.md")
         )
       ),
-
-      col_4(
+      col_6(
         bs4Dash::box(
+          title = "TPMA Activity",
+          collapsible = FALSE,
           width = 12,
           shinycssloaders::withSpinner(
             shiny::htmlOutput(ns("diagnoses_table"))
