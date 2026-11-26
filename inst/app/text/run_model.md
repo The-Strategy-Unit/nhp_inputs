@@ -1,34 +1,18 @@
-Once you have set all of the parameters, you can submit these to the model
-to be run.
+Once you have set all of the parameters you want to set, you can submit them to the model to be run.
 
-Pressing the submit button will disable the rest of the application, preventing
-you from submitting that set of parameters multiple times.
+Before that, you can view your parameter selections by expanding the 'View Params' box on this page.
+The parameters are shown in the [JSON][json] format that will be submitted to the model engine.
+You can download the JSON file if you click the 'Download Params' button.
 
-You may download the parameters, which can be reuploaded at a later date on the
-home page of the application. This can be useful if you have not yet finished
-setting the model parameters and wish to come back to it later.
+[json]: https://en.wikipedia.org/wiki/JSON
 
-## Running the model
+When you are ready:
 
-When you submit the model to run you will see a status message appear.
-The messages that you will see are:
+1. Click the 'Submit Model Run' button in the 'Model Run' box. The rest of the app will be disabled to prevent multiple submissions.
+1. Text beneath the button will change to 'Please Wait...'.
+1. You'll be autoforwarded to the OpenPlan Demand Model Run Progress App. You can click the 'View Progress' link that appears under the button if you aren't forwarded within a few seconds.
+1. In the progress app, you'll see the text 'checking...' followed by 'Model Running [Inpatients: 0/256 (0.0%)]', which tells you how many model runs have been completed for each activity type (inpatients, outpatients and A&E). There are also overall progress for each activity type. The app will refresh every few seconds to give you an update. You can expand the model-run metadata box for a reminder of the scenario being submitted.
+1. When the model run is complete, you'll get be autoforwarded to the OpenPlan demand model outputs app, which will be pre-loaded with results for your scenario. You can click the 'View Results' button if you are not forwarded within a few seconds.
 
-1. 'Please wait' while the model run is being submitted.
-2. 'Submitted model run' once the model has been submitted, but the model engine
-has not yet started.
-3. 'Model running' once the model engine has started.
-4. 'Completed: View Outputs' once the model engine has finished.
-Clicking the 'View Outputs' link will take you directly to the results.
-
-The app may time out if the model is taking slightly longer to run than usual.
-A timeout in the app does not mean that the run has been stopped.
-Please wait a short while and go to the NHP outputs app to confirm success and to retrieve the results of the run.
-
-If anything goes wrong running the model then 'Error' will appear in the status.
-
-## Model parameters
-
-The complete model parameters are available to view as [JSON][1] in the 'View Params'  panel.
-This is the file that will be submitted to the model engine.
-
-[1]: https://en.wikipedia.org/wiki/JSON
+Note that the process may time out if the model is taking slightly longer to run than usual.
+A timeout does not mean that the run has been stopped.
