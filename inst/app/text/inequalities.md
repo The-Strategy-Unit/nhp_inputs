@@ -11,6 +11,6 @@ For each HRG shown, the user must choose whether and how removal of this inequal
 - 'Zero-sum redistribution': by the horizon year, the activity rate for this HRG in all quintiles will have increased or decreased to match the mean activity rate across the whole HRG. This means that activity rates across all quintiles will be the same, and that total levels of activity remain the same as in the baseline year.
 - No change: inequality in delivery for this HRG will remain as it is in the baseline year.
 
-For more information about the underlying method, please [see the inequalities page](https://connect.strategyunitwm.nhs.uk/nhp/project_information/modelling_methodology/inequalities.html) on the OpenPlan Hospital Demand Model's project information site.
+For more information about the underlying method, please [see the inequalities page](https://connect.strategyunitwm.nhs.uk/nhp/project_information/modelling_methodology/inequalities.html) of the OpenPlan demand model documentation.
 
 You can use the box below to add supporting notes to justify your decisions around setting the inequalities adjustment for each HRG.

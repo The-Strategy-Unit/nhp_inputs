@@ -6,6 +6,6 @@ The adjustments included in this factor were calculated using the results from a
 The adjustment is on by default, but you can uncheck the 'Enabled' box to disable it.
 The results are applied automatically in the model, so no further user inputs are required here.
 
-For more details on health status adjustment, please see the OpenPlan Hospital Demand Model's [project information site][hsa].
+For more details on health status adjustment, please see the [OpenPlan demand model documentation][docs].
 
-[hsa]: https://connect.strategyunitwm.nhs.uk/nhp/project_information/modelling_methodology/demographic_modelling/modelling_utilisation_rates.html#adjust-health-status
+[docs]: https://connect.strategyunitwm.nhs.uk/nhp/project_information/modelling_methodology/demographic_modelling/modelling_utilisation_rates.html#adjust-health-status

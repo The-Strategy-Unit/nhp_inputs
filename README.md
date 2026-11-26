@@ -1,4 +1,4 @@
-# OpenPlan hospital demand model: inputs app
+# OpenPlan Hospital Demand Model: Inputs App
 
 <!-- badges: start -->
 
@@ -17,7 +17,7 @@ You must have an account and sufficient permissions to view it.
 
 Results can then be viewed in [the outputs app](https://connect.strategyunitwm.nhs.uk/nhp/outputs/), which is generated from the [nhp_outputs](https://github.com/The-Strategy-Unit/nhp_outputs) repository.
 
-You can find more information on [the project information site for the OpenPlan hospital demand model](https://connect.strategyunitwm.nhs.uk/nhp/project_information/), including [a diagram](https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/components-overview.html) of how the components of the modelling process fit together.
+You can find more information in the [OpenPlan demand model documentation](https://connect.strategyunitwm.nhs.uk/nhp/project_information/), including [a diagram](https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/components-overview.html) of how the components of the modelling process fit together.
 
 ## For developers
 
