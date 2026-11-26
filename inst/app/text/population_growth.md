@@ -7,4 +7,4 @@ Other choices may be permitted from the dropdown on this page, but will require 
 These should be added to the 'Supporting Rationale' box on this page.
 Please discuss with your model relationship manager before selecting an alternative variant.
 
-Further information on the different population projections is available from the [OpenPlan demand model documentation](https://connect.strategyunitwm.nhs.uk/nhp/project_information/modelling_methodology/demographic_modelling/demographic_modelling.html).
+Further information on the different population projections is available from the [OpenPlan hospital demand model documentation](https://connect.strategyunitwm.nhs.uk/nhp/project_information/modelling_methodology/demographic_modelling/demographic_modelling.html).

@@ -17,15 +17,15 @@ You must have an account and sufficient permissions to view it.
 
 Results can then be viewed in [the outputs app](https://connect.strategyunitwm.nhs.uk/nhp/outputs/), which is generated from the [nhp_outputs](https://github.com/The-Strategy-Unit/nhp_outputs) repository.
 
-You can find more information in the [OpenPlan demand model documentation](https://connect.strategyunitwm.nhs.uk/nhp/project_information/), including [a diagram](https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/components-overview.html) of how the components of the modelling process fit together.
+You can find more information in the [OpenPlan hospital demand model documentation](https://connect.strategyunitwm.nhs.uk/nhp/project_information/), including [a diagram](https://connect.strategyunitwm.nhs.uk/nhp/project_information/project_plan_and_summary/components-overview.html) of how the components of the modelling process fit together.
 
 ## For developers
 
-The guidance below is for the members of [the Strategy Unit's Data Science team](https://the-strategy-unit.github.io/data_science/), who built and maintain this app.
+The guidance below is for the members of [The Strategy Unit's Data Science team](https://the-strategy-unit.github.io/data_science/), who built and maintain this app.
 
 ### Structure
 
-Visitors to the deployed inputs app will actually land on the inputs selection app first.
+Visitors to the inputs app will actually land on the inputs selection app first.
 Its code is packaged in [a separate repo](https://github.com/The-Strategy-Unit/nhp_inputs_selection_app).
 The selection app directs users to either the latest inputs app deployment (default), or a previous version (with sufficient permissions).
 
