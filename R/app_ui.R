@@ -23,7 +23,7 @@ app_ui <- function(request) {
   dataset <- jsonlite::read_json(file.path(file))$dataset
 
   header <- bs4Dash::dashboardHeader(
-    title = "NHP Model Inputs",
+    title = "OpenPlan: Inputs",
     shiny::actionButton(
       inputId = "feedback",
       label = "Give feedback",

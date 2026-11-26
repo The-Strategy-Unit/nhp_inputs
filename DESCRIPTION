@@ -1,5 +1,5 @@
 Package: inputs
-Title: NHP Model Inputs
+Title: OpenPlan Hospital Demand Model Inputs Selection App
 Version: 6.1.0
 Authors@R: c(
     person("Tom", "Jemmett", , "thomas.jemmett@nhs.net", role = c("cre", "aut")),
@@ -13,7 +13,8 @@ Authors@R: c(
     person("Claire", "Welsh", role = "ctb"),
     person("Steven", "Wyatt", role = "ctb")
   )
-Description: A shiny app for getting model input parameters.
+Description: A Shiny app to set and submit input parameters for the
+    OpenPlan Hospital Demand Model.
 License: MIT + file LICENSE
 Depends:
     R (>= 4.4.0)
@@ -59,8 +60,8 @@ Imports:
 Suggests:
     covr,
     devtools,
-    nhp.inputs.selection.app,
     mockery,
+    nhp.inputs.selection.app,
     rcmdcheck,
     rsconnect,
     spelling,
@@ -69,8 +70,8 @@ Suggests:
 Remotes:
     github::the-strategy-unit/azkit,
     nhp.inputs.selection.app=github::the-strategy-unit/nhp_inputs_selection_app
+Config/roxygen2/version: 8.1.1
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
-Config/roxygen2/version: 8.1.1

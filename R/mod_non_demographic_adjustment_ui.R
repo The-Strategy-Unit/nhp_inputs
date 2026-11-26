@@ -15,8 +15,8 @@ mod_non_demographic_adjustment_ui <- function(id) {
       bs4Dash::column(
         width = 4,
         bs4Dash::box(
+          title = "About",
           collapsible = FALSE,
-          headerBorder = FALSE,
           width = 12,
           md_file_to_html("app", "text", "non_demographic_adjustment.md")
         ),
@@ -45,9 +45,9 @@ mod_non_demographic_adjustment_ui <- function(id) {
         )
       ),
       bs4Dash::box(
+        title = "Adjustment Factors",
         collapsible = FALSE,
-        headerBorder = FALSE,
-        width = 4,
+        width = 6,
         shiny::htmlOutput(ns("non_demographic_adjustment_table"))
       )
     )

@@ -12,16 +12,23 @@ mod_health_status_adjustment_ui <- function(id) {
   shiny::tagList(
     shiny::tags$h1("Health Status Adjustment"),
     shiny::fluidRow(
+      col_4(
+        bs4Dash::box(
+          title = "About",
+          collapsible = FALSE,
+          width = 12,
+          md_file_to_html("app", "text", "health_status_adjustment.md")
+        )
+      ),
       bs4Dash::box(
+        title = "Health Status Adjustment",
         collapsible = FALSE,
-        headerBorder = FALSE,
-        width = 4,
-        md_file_to_html("app", "text", "health_status_adjustment.md"),
+        width = 8,
         shinyjs::hidden(
           shinyjs::disabled(
             shiny::checkboxInput(
               ns("enable_hsa"),
-              "Enable Health Status Adjustment?",
+              "Enabled",
               TRUE
             )
           )

@@ -15,21 +15,21 @@ mod_baseline_adjustment_ui <- function(id) {
     shiny::fluidRow(
       col_4(
         bs4Dash::box(
+          title = "About",
           collapsible = FALSE,
-          headerBorder = FALSE,
           width = 12,
           md_file_to_html("app", "text", "baseline_adjustment.md"),
           shinyjs::hidden(
             shiny::downloadButton(
               ns("download_baseline"),
-              "Download Baseline Values (excel)"
+              "Download Baseline Values (CSV)"
             )
           )
         ),
         mod_reasons_ui(ns("reasons"))
       ),
       bs4Dash::box(
-        title = "Parameters",
+        title = "Baseline Counts",
         width = 8,
         collapsible = FALSE,
         bs4Dash::tabsetPanel(

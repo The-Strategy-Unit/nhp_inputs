@@ -126,6 +126,12 @@ mod_baseline_adjustment_server <- function(id, params) {
               ) |>
               gt::fmt_number("count", decimals = 0) |>
               gt::tab_options(table.width = gt::pct(100)) |>
+              gt::cols_width(
+                1 ~ gt::pct(25),
+                count ~ gt::pct(15),
+                adjustment ~ gt::pct(45),
+                param ~ gt::pct(15)
+              ) |>
               gt::as_raw_html()
           })
         })
